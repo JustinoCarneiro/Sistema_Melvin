@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-SistemaApplication<sistema>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "br.com.melvin.sistema.SistemaApplication",
+            "projectName": "sistema",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

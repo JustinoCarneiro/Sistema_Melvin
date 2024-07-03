@@ -1,0 +1,7 @@
+.body{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: calc(100vh - 5rem);
+    background-color: red;
+}

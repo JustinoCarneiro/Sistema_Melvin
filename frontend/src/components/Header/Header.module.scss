@@ -1,0 +1,60 @@
+@import '../../index.scss';
+
+.body{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 5rem;
+    align-items: center;
+    background-color: #044D8C;
+    color: white;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    z-index: 1;
+    position: relative;
+}
+
+.icon{
+    font-size: 2.5rem;
+    cursor: pointer;
+}
+
+.title{
+    cursor: pointer;
+}
+
+.usuario{
+    font-size: 1.7rem;
+}
+
+.filtro{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: 1; 
+}
+
+@media (max-width: $size-c) {
+    .icon{
+        font-size: 2rem;
+        cursor: pointer;
+        margin-left: -1rem;
+    }
+
+    .title{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.5rem;
+        align-self: center;
+    }
+
+    .usuario {
+        display: none;
+    }
+}

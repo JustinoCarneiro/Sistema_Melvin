@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  postgresdb:
+    image: postgresqldb-melvin
+    build:
+      context: ./postgres
+    container_name: postgresdb
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: *********
+      POSTGRES_DB: sistemamelvin
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    image: backend-melvin
+    build:
+      context: ./sistema
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresdb:5432/sistemamelvin
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: *********
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_PROPERTIES_HIBERNATE_SHOW_SQL: "true"
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "true"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgresdb
+
+  frontend:
+    image: frontend-melvin
+    build:
+      context: ./frontend
+    ports:
+      - "4173:4173"
+    depends_on:
+      - backend
+  
+volumes:
+  postgres_data:

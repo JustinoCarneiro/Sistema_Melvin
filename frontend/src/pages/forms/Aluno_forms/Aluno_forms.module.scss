@@ -1,0 +1,174 @@
+@import "../../../index.scss";
+
+.body {
+    display: flex;
+    width: 100%;
+    height: auto;
+    justify-content: center;
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+    width: 80vw;
+    height: auto;
+}
+
+.linha_voltar{
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.voltar {
+    font-size: 2rem;
+    cursor: pointer;
+    margin-left: -4px;
+}
+
+.title {
+    margin-top: 4vh;
+}
+
+.subtitle {
+    margin-top: 0.5vh;
+    font-size: 1rem;
+}
+
+.informacoes {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-inline: 5vw;
+}
+
+.coluna {
+    width: 20rem;
+}
+
+.linha {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.linha>* {
+    width: 9rem;
+}
+
+.label_qtd_clt_auto {
+    padding-top: 1rem;
+}
+
+.cadastrar {
+    align-self: end;
+    margin-block: 1rem;
+    margin-right: 5vw;
+}
+
+.label_select {
+    margin-top: 0.7rem;
+    color: black;
+    font-family: inherit;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+}
+
+.select {
+    border-radius: 7px;
+    border: solid 2px black;
+    font-family: inherit;
+    height: 2rem;
+    background-color: white;
+    padding: 0.5rem;
+    font-size: 0.70rem;
+    margin-top: 0.3rem;
+    width: 8rem;
+}
+
+.sublabel_select {
+    display: flex;
+    flex-direction: row;
+}
+
+.asterisco {
+    color: red;
+    font-size: 0.5rem;
+    margin-left: 0.2rem;
+}
+
+.diario {
+    margin-top: 1rem;
+    width: 19rem;
+    font-size: 0.9rem;
+}
+
+.container_diario {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.download {
+    font-size: 1.8rem;
+    cursor: pointer;
+}
+
+.label_diario {
+    display: flex;
+    flex-direction: row;
+    cursor: pointer;
+    background-color: white;
+    border-radius: 7px;
+    border: solid 2px black;
+    padding: 0.5rem;
+    margin-top: 0.3rem;
+    height: 2rem;
+    font-size: 0.7rem;
+    width: 100%;
+}
+
+.dropzone {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.placeholderdiario {
+    display: inline-block;
+    /* ou block, conforme necessário */
+    max-width: 12rem;
+    /* ajuste conforme necessário */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    /* opcional, para alinhar verticalmente */
+}
+
+@media (max-width: $size-h){
+    .form{
+        width: 70vw;
+    }
+
+    .informacoes {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .coluna{
+        width: 100%;
+    }
+
+    .subtitle{
+        margin-top: 2vh;
+    }
+}
+
+@media (max-width: $size-c){
+    .form{
+        width: 90vw;
+    }
+}

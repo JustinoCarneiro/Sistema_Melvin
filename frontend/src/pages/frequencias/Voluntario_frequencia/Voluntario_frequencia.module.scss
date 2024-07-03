@@ -1,0 +1,276 @@
+@import "../../../index.scss";
+
+.body{
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: calc(100vh - 5rem);
+    align-items: center;
+    background-color: #D9D9D9;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
+    width: 80vw;
+    height: 80vh;
+    gap: 1rem;
+}
+
+.header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.title{
+    font-weight: 300;
+}
+
+.container_busca{
+    display: flex;
+    align-items: end;
+}
+
+.icon_busca{
+    background-color: #044D8C;
+    padding: 0.25rem;
+    color: white;
+    font-size: 1.75rem;
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
+    border: solid 1px black;
+    border-right: none;
+    cursor: pointer;
+}
+
+.busca{
+    width: 25rem;
+    height: 1.75rem;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+    border: solid 1px black;
+    border-left: none;
+    outline: none;
+    padding: 0.5rem;
+}
+
+.input_data{
+    all: unset;          
+    border-radius: 7px;
+    border: solid 2px;
+    padding: 0.5rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: #F29F05;
+    border-color: #8A6F3E;
+    box-shadow: 0.08rem 0.08rem 0.08rem rgba(0, 0, 0, 0.3);
+}
+
+.form{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.table {
+    width: 100%;
+    margin: 0;
+}
+
+.thead > tr > th{
+    padding-left: 2vw;
+    text-align: start;
+    margin: 0;
+    height: 100%;
+    border: none;
+}
+
+.tbody > tr > td {
+    padding-left: 2vw;
+    padding-block: 1vw;
+    margin: 0;
+    border: none;
+    border-top: solid 1px black;
+}
+
+.thead > tr > th:nth-child(3), .tbody > tr > td:nth-child(3) {
+    padding: 0;
+}
+
+.tbody > tr{
+    height: 100%;
+}
+
+.tbody tr:hover {
+    background-color: #f5f5f5;
+}
+
+.th_presenca {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.th_presenca > .ctn_presenca{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+}
+
+.th_presenca > .ctn_presenca > .th_turnos {
+    display: flex;
+    justify-content: space-between;
+    width: 5vw;
+    padding-right: 4px;
+    margin-top: 0.5rem;
+}
+
+.table > .tbody > tr > .td_presenca {
+    display: table-cell;
+    border: none;
+    border-top: solid 1px black;
+    height: 100%;
+}
+
+.select_turnos{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 5.7vw;
+    margin: 0 auto;
+}
+
+.select_presenca {
+    -webkit-appearance: none;  
+    -moz-appearance: none;    
+    appearance: none;          
+    background: none;          
+    background-color: white;  
+    border: solid 2px black;
+    cursor: pointer;
+    width: 1.4rem;
+    height: 1.4rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.input_justificativa{
+    all: unset;
+    border: solid 2px black;
+    width: 20vw;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 7px;
+    background-color: #EFEFEF;
+    box-shadow: 0.08rem 0.08rem 0.08rem rgba(0, 0, 0, 0.3);
+}
+
+.container_botao{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+}
+
+.toggleButton {
+    display: none;
+}
+
+@media (max-width: $size-f) {
+    .header {
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .container {
+        width: 90vw;
+    }
+
+    .container_busca {
+        order: 3;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .busca {
+        width: 100%;
+    }
+}
+
+@media (max-width: $size-e){
+    .table > .thead > tr > th:nth-child(4),
+    .table > .tbody > tr > td:nth-child(4) {
+        display: table-cell !important;
+        padding: 0 !important;
+        text-align: center;
+    }
+
+    .table > .thead > tr > th:nth-child(5),
+    .table > .tbody > tr > td:nth-child(5) {
+        display: none;
+    }
+
+    .input_justificativa {
+        box-sizing: border-box;
+        width: 100%;
+        height: 2.3rem;
+        padding: 0.4rem;
+        font-size: 1rem;
+    }
+
+    .th_presenca > .ctn_presenca > .th_turnos{
+        width: 2.6rem;
+    }
+
+    .select_turnos{
+        width: 3rem;
+    }
+}
+
+@media (max-width: $size-g){
+    .header {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .input_data{
+        order: 2;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .icon_busca {
+        font-size: 1.6rem;
+    }
+
+    .busca {
+        height: 1.6rem;
+        width: calc(100vw - 1.4rem);
+        font-size: 0.7rem;
+    }
+
+    .table{
+        font-size: 0.8rem;
+    }
+
+    .table > .thead > tr > th:nth-child(4){
+        display: none !important;
+    }
+
+    .table > .tbody > tr > td:nth-child(4){
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+
+    .tbody>tr>td {
+        padding-block: 4vw;
+    }
+}

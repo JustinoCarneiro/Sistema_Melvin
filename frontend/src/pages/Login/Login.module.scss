@@ -1,0 +1,92 @@
+.body{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+}
+
+.container{
+    width: 12rem;
+    position: relative;
+}
+
+.form{
+    justify-self: center;
+    align-self: center;
+    display: grid;
+    grid-template-rows: 10.4rem 2.5rem 2.5rem 2.5rem;
+    gap: 1rem;
+    justify-items: center;
+    align-items: end;
+}
+
+.logo{
+    width: 9.4rem;
+    padding-bottom: 1rem;
+}
+
+.button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #044D8C;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    text-align: center;
+    width: 12rem;
+    height: 2.5rem;
+    font-family: inherit;
+}
+
+.texto {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #ffffff;
+}
+
+.input {
+    height: 2.5rem;
+    width: 12rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border: solid 1px black;
+    border-radius: 7px;
+    outline: none; /* Remove a borda de foco */
+    font-family: inherit; /* Garante que os inputs herdem a fonte do body */
+    color: inherit;
+    -webkit-appearance: none; /* Remove estilos padrão do Safari */
+    -moz-appearance: none; /* Remove estilos padrão do Firefox */
+    appearance: none; /* Remove estilos padrão de outros navegadores */
+}
+
+.esqu_senha{
+    text-decoration: underline;
+    font-size: 0.7rem;
+    text-align: left;
+    font-family: inherit;
+    border: none;
+    background: none;
+    padding: 0;
+    color: inherit;
+    cursor: pointer;
+    outline: none;
+    box-shadow: none;
+}
+
+.obs{
+    background-color: #F29F05;
+    border-radius: 7px;
+    width: 100%;
+    top: 100%; /* Posicionando abaixo do contêiner */
+    position: absolute;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    border: solid #865906 1px;
+    font-size: 0.75rem;
+}
