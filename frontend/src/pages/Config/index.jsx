@@ -20,7 +20,7 @@ function Config(){
     const [senhaRegistrar, setSenhaRegistrar] = useState("");
     const [repetirSenhaRegistrar, setRepetirSenhaRegistrar] = useState("");
     const [divAtiva, setDivAtiva] = useState('');
-    const [isAdminOrDire, setIsAdminOrDire] = useState(false);
+    const [isAdm, setIsAdm] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -38,7 +38,7 @@ function Config(){
                     setUserData(response.data);
                     const userRole = Cookies.get('role');
 
-                    setIsAdminOrDire(userRole === 'COOR' || userRole === 'DIRE'); 
+                    setIsAdm(userRole === 'ADM'); 
 
                     console.log(response.data);
                 }
@@ -152,12 +152,20 @@ function Config(){
     };
 
     const handleNavigateAlunos = () => {
-        navigate('/config/matriculasdesativadas/alunos');
+        navigate('/app/config/matriculasdesativadas/alunos');
     };
 
     const handleNavigateVoluntarios = () => {
-        navigate('/config/matriculasdesativadas/voluntarios');
+        navigate('/app/config/matriculasdesativadas/voluntarios');
     };
+
+    const handleNavigateEmbaixadores = () => {
+        navigate('/app/config/embaixadoresdesativados');
+    }
+
+    const handleNavigateAmigosMelvin = () => {
+        navigate('/app/config/amigosmelvindesativados');
+    }
 
     const fields = {
         "Nome": "nome",
@@ -233,7 +241,7 @@ function Config(){
                         </div>
                     </div>
                 </div>
-                {isAdminOrDire && (
+                {isAdm && (
                     <>
                         <hr className={styles.linha_maior}/>
                         <h3 className={styles.subtitle}>Autenticação</h3>
@@ -333,21 +341,33 @@ function Config(){
                             }   
                         </div>
                         <hr className={styles.linha_maior}/>
-                        <h3 className={styles.subtitle}>Matrículas desativadas</h3>
+                        <h3 className={styles.subtitle}>Pessoas desativadas</h3>
                         <h4 className={styles.title_h4}>Click no botão abaixo para acessar matrículas desativadas</h4>
                         <hr className={styles.linha_menor}/>
                         <div className={styles.botao}>
                             <Botao
-                                nome="Matrículas alunos"
+                                nome="Alunos"
                                 corFundo="#7EA629" 
                                 corBorda="#58751A"
                                 onClick={handleNavigateAlunos}
                             />
                             <Botao
-                                nome="Matrículas voluntários"
+                                nome="Voluntários"
                                 corFundo="#044D8C" 
                                 corBorda="#043560"
                                 onClick={handleNavigateVoluntarios}
+                            />
+                            <Botao
+                                nome="Embaixadores"
+                                corFundo="#f29f05" 
+                                corBorda="#8A6F3E"
+                                onClick={handleNavigateEmbaixadores}
+                            />
+                            <Botao
+                                nome="Amigos Melvin"
+                                corFundo="#044D8C" 
+                                corBorda="#043560"
+                                onClick={handleNavigateAmigosMelvin}
                             />
                         </div>
                     </>

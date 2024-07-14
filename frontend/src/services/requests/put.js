@@ -19,7 +19,7 @@ const put = {
             const response = await http.put(endpoint, dados);
             return response;
         }catch(error){
-            console.error('1019:Erro ao alterar dados dos voluntarios:', error.response ? error.response.dados : error.message);
+            console.error('1018:Erro ao alterar dados dos voluntarios:', error.response ? error.response.dados : error.message);
         }
     },
 
@@ -30,7 +30,7 @@ const put = {
             const response = await http.put(endpoint, dados);
             return response;
         }catch(error){
-            console.error('1020:Erro ao alterar dados das frequências dos discentes:', error.response ? error.response.dados : error.message);
+            console.error('1018:Erro ao alterar dados das frequências dos discentes:', error.response ? error.response.dados : error.message);
         }
     },
 
@@ -41,7 +41,7 @@ const put = {
             const response = await http.put(endpoint, dados);
             return response;
         }catch(error){
-            console.error('1021:Erro ao alterar dados das frequências dos voluntarios:', error.response ? error.response.dados : error.message);
+            console.error('1018:Erro ao alterar dados das frequências dos voluntarios:', error.response ? error.response.dados : error.message);
         }
     },
 
@@ -70,7 +70,7 @@ const put = {
             
             return response;
         }catch(error){
-            console.log("1026:Error ao atualizar diário:", error.response ? error.response.dados : error.message);
+            console.log("1018:Error ao atualizar diário:", error.response ? error.response.dados : error.message);
         }
     },
 
@@ -81,7 +81,42 @@ const put = {
             const response = await http.put(endpoint);
             return response;
         }catch(error){
-            console.log("1024:Error ao alterar senha do usuário:", error.response ? error.response.dados : error.message);
+            console.log("1018:Erro ao alterar senha do usuário:", error.response ? error.response.dados : error.message);
+        }
+    },
+
+    async embaixadores(dados){
+        const endpoint="/embaixador";
+
+        try{
+            const response = await http.put(endpoint, dados);
+            console.log("response", response);
+            return response;
+        }catch(error){
+            console.log("1018:Erro ao alterar dados do embaixador:", error.response ? error.response.dados : error.message);
+        }
+    },
+
+    async amigosmelvin(dados){
+        const endpoint="/amigomelvin";
+
+        try{
+            const response = await http.put(endpoint, dados);
+            console.log("response", response);
+            return response;
+        }catch(error){
+            console.log("1018:Erro ao alterar dados do embaixador:", error.response ? error.response.dados : error.message);
+        }
+    },
+
+    async alterarRole(matricula, novaRole){
+        let endpoint = `/auth/alterar_role/${matricula}/${novaRole}`;
+
+        try{
+            const response = await http.put(endpoint);
+            return response;
+        }catch(error){
+            console.log("1018:Erro ao alterar role do usuário:", error.response ? error.response.dados : error.message);
         }
     }
 }

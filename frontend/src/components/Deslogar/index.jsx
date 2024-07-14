@@ -10,7 +10,7 @@ function Deslogar(){
         try {
             await auth.deslogar(); // Chama a função de logout no serviço de auth
             // Redirecionar para a página de login
-            navigate('/');
+            navigate('/login');
         } catch (error) {
             console.error("5005:Erro ao deslogar", error);
             alert('Erro ao deslogar');

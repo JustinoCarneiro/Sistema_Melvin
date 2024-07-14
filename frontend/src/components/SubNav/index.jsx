@@ -7,14 +7,14 @@ function SubNav({tipo}){
             case 'voluntários':
                 return (
                     <ul className={styles.body}>
-                        <li><Link to="/voluntario/diretoria" className={styles.link}>Diretoria</Link></li>
-                        <li><Link to="/voluntario/coordenadores" className={styles.link}>Coordenação</Link></li>
-                        <li><Link to="/voluntario/professores" className={styles.link}>Professores</Link></li>
-                        <li><Link to="/voluntario/auxiliares" className={styles.link}>Auxiliares de professor</Link></li>
-                        <li><Link to="/voluntario/administracao" className={styles.link}>Administração</Link></li>
-                        <li><Link to="/voluntario/cozinheiros" className={styles.link}>Cozinha</Link></li>
-                        <li><Link to="/voluntario/marketing" className={styles.link}>Marketing</Link></li>
-                        <li><Link to="/voluntario/zeladoria" className={styles.link}>Zeladoria</Link></li>
+                        <li><Link to="/app/voluntario/diretoria" className={styles.link}>Diretoria</Link></li>
+                        <li><Link to="/app/voluntario/coordenadores" className={styles.link}>Coordenação</Link></li>
+                        <li><Link to="/app/voluntario/professores" className={styles.link}>Professores</Link></li>
+                        <li><Link to="/app/voluntario/auxiliares" className={styles.link}>Auxiliares de professor</Link></li>
+                        <li><Link to="/app/voluntario/administracao" className={styles.link}>Administração</Link></li>
+                        <li><Link to="/app/voluntario/cozinheiros" className={styles.link}>Cozinha</Link></li>
+                        <li><Link to="/app/voluntario/marketing" className={styles.link}>Marketing</Link></li>
+                        <li><Link to="/app/voluntario/zeladoria" className={styles.link}>Zeladoria</Link></li>
                     </ul>
                 );
             case 'atividades':

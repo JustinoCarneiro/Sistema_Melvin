@@ -38,20 +38,31 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes").permitAll()
                     .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                     .requestMatchers(HttpMethod.GET, "/auth/role_{matricula}").authenticated()
-                    .requestMatchers(HttpMethod.POST, "/auth/register").hasRole("COOR")
+                    .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/alterar_senha/{matricula}/{senha}").hasRole("ADM")
 
-                    .requestMatchers(HttpMethod.POST,"/discente", "/voluntario", "/frequenciavoluntario", "/diarios").hasRole("COOR")
-                    .requestMatchers(HttpMethod.POST,"/discente").hasAnyRole("PROF", "COOR")
-                    .requestMatchers(HttpMethod.GET, "/voluntario", "/frequenciavoluntario", "/diarios").hasRole("COOR")
-                    .requestMatchers(HttpMethod.PUT, "/discente", "/voluntario", "/frequenciavoluntario", "/diarios").hasRole("COOR")
-                    .requestMatchers(HttpMethod.DELETE, "/discente", "/voluntario", "/frequenciavoluntario", "/diarios").hasRole("COOR")
+                    .requestMatchers(HttpMethod.POST,"/discente", "/voluntario").hasRole("ADM")
+                    .requestMatchers(HttpMethod.POST,"/diarios", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
+                    .requestMatchers(HttpMethod.POST, "/embaixador").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/amigomelvin").permitAll()
+
+                    .requestMatchers(HttpMethod.GET, "/embaixador", "/amigomelvin").hasRole("ADM")
+                    .requestMatchers(HttpMethod.GET, "/diarios", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
+                    .requestMatchers(HttpMethod.GET, "/discente").hasAnyRole("PROF", "ADM", "DIRE")
+                    .requestMatchers(HttpMethod.GET, "/voluntario").hasAnyRole("ADM", "DIRE")
+
+                    .requestMatchers(HttpMethod.PUT, "/discente", "/voluntario", "/embaixador", "/amigomelvin", "/auth/alterar_role/{matricula}/{role}").hasRole("ADM")
+                    .requestMatchers(HttpMethod.PUT, "/diarios", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
+
+                    .requestMatchers(HttpMethod.DELETE, "/discente", "/voluntario").hasRole("ADM")
+                    .requestMatchers(HttpMethod.DELETE, "/diarios", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
                     
-                    .requestMatchers(HttpMethod.POST, "/frequenciadiscente").hasAnyRole("PROF", "AUX")
-                    .requestMatchers(HttpMethod.GET, "/frequenciadiscente").hasAnyRole("PROF", "AUX")
-                    .requestMatchers(HttpMethod.PUT, "/frequenciadiscente").hasAnyRole("PROF", "AUX")
-                    .requestMatchers(HttpMethod.DELETE, "/frequenciadiscente").hasAnyRole("PROF", "AUX")
+                    .requestMatchers(HttpMethod.POST, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
+                    .requestMatchers(HttpMethod.GET, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
+                    .requestMatchers(HttpMethod.PUT, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
+                    .requestMatchers(HttpMethod.DELETE, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
                     
                     .anyRequest().authenticated()
                 )

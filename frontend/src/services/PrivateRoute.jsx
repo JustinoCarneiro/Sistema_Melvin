@@ -34,7 +34,7 @@ const PrivateRoute = ({ element: Component, role, ...rest }) => {
         return <div>Loading...</div>;
     }
 
-    return isAuthorized ? <Component {...rest} /> : <Navigate to="/" />;
+    return isAuthorized ? <Component {...rest} /> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

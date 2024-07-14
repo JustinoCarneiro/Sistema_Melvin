@@ -78,7 +78,6 @@ public class AuthenticationController {
 
         return ResponseEntity.ok().build();
     }
-    
 
     @GetMapping("/role_{matricula}")
     public ResponseEntity<?> role(@PathVariable String matricula) {
@@ -89,5 +88,22 @@ public class AuthenticationController {
         
         UserRole role = user.getRole();
         return ResponseEntity.ok(role);
+    }
+
+    @PutMapping("/alterar_role/{matricula}/{role}")
+    public ResponseEntity<?> alterarRole(@PathVariable String matricula, @PathVariable String role){
+        User user = repositoryUser.findByLogin(matricula);
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            UserRole userRole = UserRole.valueOf(role.toUpperCase());
+            user.setRole(userRole);
+            repositoryUser.save(user);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Role inválida");
+        }
     }
 }

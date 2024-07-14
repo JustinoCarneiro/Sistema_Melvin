@@ -79,12 +79,63 @@ function Voluntario_forms({tipo}){
         fetchVoluntario();
     }, [matricula]);
 
-    const handleChange = (e) => {
+    const handleRoleChange = async novaFuncao => {
+        let novaRole = '';
+    
+        switch (novaFuncao) {
+            case 'coordenador':
+                novaRole = 'COOR';
+                break;
+            case 'professor':
+                novaRole = 'PROF';
+                break;
+            case 'auxiliar':
+                novaRole = 'AUX';
+                break;
+            case 'cozinheiro':
+                novaRole = 'COZI';
+                break;
+            case 'administrador':
+                novaRole = 'ADM';
+                break;
+            case 'marketing':
+                novaRole = 'MARK';
+                break;
+            case 'zelador':
+                novaRole = 'ZELA';
+                break;
+            case 'diretor':
+                novaRole = 'DIRE';
+                break;
+            default:
+                novaRole = '';
+        }
+    
+        if (novaRole) {
+            try {
+                await put.alterarRole(formDado.matricula, novaRole);
+                setFormDado(prevData => ({
+                    ...prevData,
+                    funcao: novaFuncao,
+                }));
+            } catch (error) {
+                console.error('Erro ao alterar função do voluntário!', error);
+                alert('Erro ao alterar função do voluntário!');
+            }
+        }
+    };
+
+
+    const handleChange = async (e) => {
         const { name, value } = e.target;
         setFormDado((prevData) => ({
             ...prevData,
             [name]: value
         }));
+
+        if (name === 'funcao') {
+            handleRoleChange(value);
+        }
     };
 
 
@@ -114,7 +165,6 @@ function Voluntario_forms({tipo}){
         }
     };
     
-
     return(
         <div className={styles.body}>
             <form className={styles.form} onSubmit={handleSubmit}>

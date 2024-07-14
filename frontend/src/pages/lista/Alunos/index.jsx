@@ -13,7 +13,7 @@ import Botao from '../../../components/gerais/Botao';
 function Alunos(){
     const [busca, setBusca] = useState('');
     const [alunos, setAlunos] = useState([]);
-    const [isAdminOrDire, setIsAdminOrDire] = useState(false);
+    const [isAdm, setIsAdm] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,7 +27,7 @@ function Alunos(){
                     setAlunos(alunosAtivos);
 
                     const userRole = Cookies.get('role');
-                    setIsAdminOrDire(userRole === 'COOR' || userRole === 'DIRE'); 
+                    setIsAdm(userRole === 'ADM'); 
                 } else {
                     console.error("5003:Formato inesperado no response:", response);
                     alert('Erro ao obter objeto! Formato inesperado de resposta.');
@@ -43,7 +43,7 @@ function Alunos(){
     }, []);
 
     const handleEditClick = (matricula) => {
-        navigate(`/aluno/editar/${matricula}`);
+        navigate(`/app/aluno/editar/${matricula}`);
     };
 
     const handleBuscaChange = (e) => {
@@ -61,7 +61,7 @@ function Alunos(){
     });
 
     const handleFrequenciasClick = () => {
-        navigate("/frequencias/alunos");
+        navigate("/app/frequencias/alunos");
     };
 
     return(
@@ -94,7 +94,7 @@ function Alunos(){
                             <th>Matrícula</th>
                             <th>Nome</th>
                             <th>Responsável</th>
-                            {isAdminOrDire && (
+                            {isAdm && (
                                 <>
                                     <th className={styles.edicao}>Edição</th>
                                 </>
@@ -107,7 +107,7 @@ function Alunos(){
                                 <td>{aluno.matricula}</td>
                                 <td>{aluno.nome}</td>
                                 <td>{aluno.nome_pai || aluno.nome_mae || ''}</td>
-                                {isAdminOrDire && (
+                                {isAdm && (
                                     <>
                                         <td className={styles.edicao}>
                                             <MdOutlineModeEdit 
@@ -119,9 +119,9 @@ function Alunos(){
                                 )}
                             </tr>
                         ))}
-                        {isAdminOrDire && (
+                        {isAdm && (
                                 <>
-                                    <tr className={styles.plus} onClick={()=>navigate("/aluno/criar")}>
+                                    <tr className={styles.plus} onClick={()=>navigate("/app/aluno/criar")}>
                                         <td colSpan="4"><FaPlus className={styles.icon_plus}/></td>
                                     </tr>
                                 </>

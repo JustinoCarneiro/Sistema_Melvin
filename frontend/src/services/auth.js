@@ -9,12 +9,12 @@ const auth = {
             const response = await http.post(endpoint, data);
             if (response.data && response.data.token) {
                 Cookies.set('token', response.data.token, { 
-                    expires: 1, 
+                    expires: 0.5, 
                     sameSite: 'Lax',
                     secure: false
                 });
                 Cookies.set('login', data.login, { 
-                    expires: 1, 
+                    expires: 0.5, 
                     sameSite: 'Lax',
                     secure: false
                 });

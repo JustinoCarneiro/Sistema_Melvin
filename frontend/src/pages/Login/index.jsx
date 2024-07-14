@@ -28,26 +28,26 @@ function Login(){
                         const role = responseRole.data;
                         
                         Cookies.set('role', role, { 
-                            sameSite: 'Lax', 
-                            secure: false 
+                            sameSite: 'Lax',
+                            secure: false
                         });
 
                         if (role === 'COOR') {
-                            navigate('/coor'); 
+                            navigate('/app/coor'); 
                         } else if (role === 'PROF') {
-                            navigate('/prof'); 
+                            navigate('/app/prof'); 
                         } else if (role === 'AUX') {
-                            navigate('/aux');
+                            navigate('/app/aux');
                         } else if (role === 'COZI') {
-                            navigate('/cozi'); 
+                            navigate('/app/cozi'); 
                         } else if (role === 'DIRE') {
-                            navigate('/dire'); 
+                            navigate('/app/dire'); 
                         } else if (role === 'MARK') {
-                            navigate('/mark'); 
+                            navigate('/app/mark'); 
                         } else if (role === 'ADM') {
-                            navigate('/adm'); 
+                            navigate('/app/adm'); 
                         } else if (role === 'ZELA') {
-                            navigate('/zela'); 
+                            navigate('/app/zela'); 
                         }
                     }
                 } catch(error){

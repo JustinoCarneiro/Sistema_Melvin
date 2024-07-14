@@ -1,8 +1,23 @@
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route} from 'react-router-dom';
+
+import HeaderSite from './site/components/HeaderSite';
+import FooterSite from './site/components/FooterSite';
+import Home from './site/pages/Home';
+import MaisSobreNos from './site/pages/MaisSobreNos';
+import Embaixadores from './site/pages/Embaixadores';
+import AmigosMelvin from './site/pages/AmigosMelvin';
+import CadastroAmigo from './site/pages/CadastroAmigo';
+import SerEmbaixador from './site/pages/SerEmbaixador';
 
 import Login from "./pages/Login";
 import Coor from "./pages/Coor";
 import Prof from "./pages/Prof";
+import Cozi from "./pages/Cozi";
+import Adm from "./pages/Adm";
+import Aux from "./pages/Aux";
+import Mark from "./pages/Mark";
+import Dire from "./pages/Dire";
+import Zela from "./pages/Zela";
 import Registro from "./pages/Registro";
 import PrivateRoute from "./services/PrivateRoute";
 import Alunos from "./pages/lista/Alunos";
@@ -15,33 +30,63 @@ import Config from "./pages/Config";
 import Header from "./components/Header";
 import AlunosDesativados from "./pages/lista_matriculas_desativadas/AlunosDesativados";
 import VoluntariosDesativados from "./pages/lista_matriculas_desativadas/VoluntariosDesativados";
+import EmbaixadoresApp from './pages/lista/EmbaixadoresApp';
+import EmbabaixadoresDesativados from './pages/lista_matriculas_desativadas/EmbaixadoresDesativados';
+import AmigoMelvinForms from './pages/forms/AmigoMelvin_forms';
+import AmigosMelvinApp from './pages/lista/AmigosMelvinApp';
+import AmigosMelvinDesativados from './pages/lista_matriculas_desativadas/AmigosMelvinDesativados';
 
-function AppRoutes(){
-    return(
+function AppRoutes() {
+    return (
         <Router>
             <MainLayout />
         </Router>
-    )
+    );
 }
 
 function MainLayout() {
-    const location = useLocation();
-    const isLoginRoute = location.pathname === "/";
-
     return (
         <>
-            {!isLoginRoute && <Header />}
+            <Routes>
+                <Route path="/*"     element={ <SiteContent/> } />
+                <Route path="/login" element={ <Login/> } />
+                <Route path="/app/*" element={ <AppContent/> } />
+            </Routes>
+        </>
+    );
+}
+
+function SiteContent(){
+    return(
+        <>
+            <HeaderSite/>
+            <Routes>
+                <Route path="" element={ <Home/> }/>
+                <Route path="/maissobrenos" element={ <MaisSobreNos/> } />
+                <Route path="/embaixadores" element={ <Embaixadores/> } />
+                <Route path="/amigosmelvin" element={ <AmigosMelvin/> } />
+                <Route path="/cadastroamigo" element={ <CadastroAmigo/> } />
+                <Route path="/serembaixador" element={ <SerEmbaixador/> }/>
+            </Routes>
+            <FooterSite/>
+        </>
+    )
+}
+
+function AppContent() {
+    return (
+        <>
+            <Header/>
             <div className="main-wrapper">
-                <Routes>            
-                    <Route path="/" element={ <Login/> }></Route>
+                <Routes>
                     <Route path="/coor" element={<PrivateRoute element={Coor} role="COOR" />} />
                     <Route path="/prof" element={<PrivateRoute element={Prof} role="PROF" />} />
-                    <Route path="/aux" element={<PrivateRoute element={Prof} role="AUX" />} />
-                    <Route path="/cozi" element={<PrivateRoute element={Prof} role="COZI" />} />
-                    <Route path="/dire" element={<PrivateRoute element={Prof} role="DIRE" />} />
-                    <Route path="/adm" element={<PrivateRoute element={Prof} role="ADM" />} />
-                    <Route path="/mark" element={<PrivateRoute element={Prof} role="MARK" />} />
-                    <Route path="/zela" element={<PrivateRoute element={Prof} role="ZELA" />} />
+                    <Route path="/aux" element={<PrivateRoute element={Aux} role="AUX" />} />
+                    <Route path="/cozi" element={<PrivateRoute element={Cozi} role="COZI" />} />
+                    <Route path="/dire" element={<PrivateRoute element={Dire} role="DIRE" />} />
+                    <Route path="/adm" element={<PrivateRoute element={Adm} role="ADM" />} />
+                    <Route path="/mark" element={<PrivateRoute element={Mark} role="MARK" />} />
+                    <Route path="/zela" element={<PrivateRoute element={Zela} role="ZELA" />} />
                     <Route path="/registro" element={ <Registro/> } />
 
                     <Route path="/alunos" element={ <Alunos/> } />
@@ -50,9 +95,11 @@ function MainLayout() {
                     <Route path="/voluntario/auxiliares" element={ <Voluntarios tipo="auxiliar"/> } />
                     <Route path="/voluntario/cozinheiros" element={ <Voluntarios tipo="cozinheiro"/> } />
                     <Route path="/voluntario/diretoria" element={ <Voluntarios tipo="diretor"/> } />
-                    <Route path="/voluntario/cooristracao" element={ <Voluntarios tipo="cooristrador"/> } />
+                    <Route path="/voluntario/administracao" element={ <Voluntarios tipo="administrador"/> } />
                     <Route path="/voluntario/marketing" element={ <Voluntarios tipo="marketing"/> } />
                     <Route path="/voluntario/zeladoria" element={ <Voluntarios tipo="zelador"/> } />
+                    <Route path="/embaixadores" element={ <EmbaixadoresApp/> }/>
+                    <Route path="/amigosmelvin" element={ <AmigosMelvinApp/> }/>
 
                     <Route path="/aluno/criar" element={<AlunoForms />} />
                     <Route path="/voluntario/criar/coordenador" element={<VoluntarioForms tipo="coordenador"/>} />
@@ -64,13 +111,14 @@ function MainLayout() {
                     <Route path="/voluntario/criar/marketing" element={ <VoluntarioForms tipo="marketing"/> } />
                     <Route path="/voluntario/criar/zelador" element={ <VoluntarioForms tipo="zelador"/> } />
 
+                    <Route path="/amigomelvin/editar/:id" element={<AmigoMelvinForms/>} />
                     <Route path="/aluno/editar/:matricula" element={<AlunoForms />} />
                     <Route path="/voluntario/coordenador/editar/:matricula" element={<VoluntarioForms tipo="coordenador"/>} />
                     <Route path="/voluntario/professor/editar/:matricula" element={<VoluntarioForms tipo="professor"/>} />
                     <Route path="/voluntario/auxiliar/editar/:matricula" element={<VoluntarioForms tipo="auxiliar"/>} />
                     <Route path="/voluntario/cozinheiro/editar/:matricula" element={<VoluntarioForms tipo="cozinheiro"/>} />
                     <Route path="/voluntario/diretor/editar/:matricula" element={<VoluntarioForms tipo="diretor"/>} />
-                    <Route path="/voluntario/cooristrador/editar/:matricula" element={<VoluntarioForms tipo="cooristrador"/>} />
+                    <Route path="/voluntario/administrador/editar/:matricula" element={<VoluntarioForms tipo="administrador"/>} />
                     <Route path="/voluntario/marketing/editar/:matricula" element={<VoluntarioForms tipo="marketing"/>} />
                     <Route path="/voluntario/zelador/editar/:matricula" element={<VoluntarioForms tipo="zelador"/>} />
                     
@@ -80,13 +128,15 @@ function MainLayout() {
                     <Route path="/voluntario/frequencias/auxiliares" element={<Voluntario_frequencia tipo="auxiliar"/>} />
                     <Route path="/voluntario/frequencias/cozinheiros" element={<Voluntario_frequencia tipo="cozinheiro"/>} />
                     <Route path="/voluntario/frequencias/diretores" element={<Voluntario_frequencia tipo="diretor"/>} />
-                    <Route path="/voluntario/frequencias/cooristradores" element={<Voluntario_frequencia tipo="cooristrador"/>} />
+                    <Route path="/voluntario/frequencias/administradores" element={<Voluntario_frequencia tipo="administrador"/>} />
                     <Route path="/voluntario/frequencias/marketing" element={<Voluntario_frequencia tipo="marketing"/>} />
                     <Route path="/voluntario/frequencias/zeladores" element={<Voluntario_frequencia tipo="zelador"/>} />
 
                     <Route path="/config" element={<Config />} />
                     <Route path="/config/matriculasdesativadas/alunos" element={<AlunosDesativados/>} />
                     <Route path="/config/matriculasdesativadas/voluntarios" element={<VoluntariosDesativados/>} />
+                    <Route path="/config/embaixadoresdesativados" element={ <EmbabaixadoresDesativados/> } />
+                    <Route path="/config/amigosmelvindesativados" element={ <AmigosMelvinDesativados/> } />
                 </Routes>
             </div>
         </>

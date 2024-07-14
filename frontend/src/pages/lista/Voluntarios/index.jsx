@@ -66,7 +66,7 @@ function Voluntarios({tipo}){
     }
 
     const handleEditClick = (matricula) => {
-        navigate(`/voluntario/${tipo}/editar/${matricula}`);
+        navigate(`/app/voluntario/${tipo}/editar/${matricula}`);
     };
 
     const handleBuscaChange = (e) => {
@@ -83,7 +83,7 @@ function Voluntarios({tipo}){
     });
 
     const handleFrequenciasClick = () => {
-        navigate(`/voluntario/frequencias/${prox_rota}`);
+        navigate(`/app/voluntario/frequencias/${prox_rota}`);
     };
 
     return(
@@ -135,7 +135,7 @@ function Voluntarios({tipo}){
                                 </td>
                             </tr>
                         ))}
-                        <tr className={styles.plus} onClick={()=>navigate(`/voluntario/criar/${tipo}`)}>
+                        <tr className={styles.plus} onClick={()=>navigate(`/app/voluntario/criar/${tipo}`)}>
                             <td colSpan="4"><FaPlus className={styles.icon_plus}/></td>
                         </tr>
                     </tbody>

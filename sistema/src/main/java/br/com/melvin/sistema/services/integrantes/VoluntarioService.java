@@ -3,12 +3,14 @@ package br.com.melvin.sistema.services.integrantes;
 import java.time.Year;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.melvin.sistema.dto.VoluntarioDTO;
 import br.com.melvin.sistema.model.integrantes.Voluntario;
 import br.com.melvin.sistema.repository.integrantes.VoluntarioRepository;
 import jakarta.persistence.EntityManager;
@@ -30,6 +32,13 @@ public class VoluntarioService {
 
     public Voluntario capturaPorMatricula(String matricula){
         return voluntarioRepository.findByMatricula(matricula);
+    }
+
+    public List<VoluntarioDTO> listarVoluntariosComNomeFuncao() {
+        return voluntarioRepository.findAll().stream()
+                .filter(Voluntario::getStatus)
+                .map(voluntario -> new VoluntarioDTO(voluntario.getNome(), voluntario.getFuncao()))
+                .collect(Collectors.toList());
     }
 
     private String generateMatricula() {

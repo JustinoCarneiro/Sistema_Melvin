@@ -20,6 +20,14 @@ function Voluntario_frequencia({tipo}){
         title = "Frequência auxiliares";
     } else if(tipo === "cozinheiro"){
         title = "Frequência cozinheiros";
+    } else if(tipo === "administrador"){
+        title = "Frequência administradores";
+    } else if(tipo === "marketing"){
+        title = "Frequência marketing";
+    } else if(tipo === "zelador"){
+        title = "Frequência zeladores";
+    } else if(tipo === "diretor"){
+        title = "Frequência diretores";
     }
 
     const [data, setData] = useState('');

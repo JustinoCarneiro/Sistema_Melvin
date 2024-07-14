@@ -56,7 +56,7 @@ function VoluntariosDesativados(){
     }
 
     const handleEditClick = (matricula) => {
-        navigate(`/voluntario/${funcao}/editar/${matricula}`);
+        navigate(`/app/voluntario/${funcao}/editar/${matricula}`);
     };
 
     const handleBuscaChange = (e) => {

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import br.com.melvin.sistema.dto.VoluntarioDTO;
 import br.com.melvin.sistema.model.integrantes.Voluntario;
 import br.com.melvin.sistema.services.integrantes.VoluntarioService;
 
@@ -26,6 +27,12 @@ public class VoluntarioController {
     @GetMapping
     public List<Voluntario> listar(){
         return service.listar();
+    }
+
+    @GetMapping("/nomesfuncoes")
+    public ResponseEntity<List<VoluntarioDTO>> listarVoluntariosComNomeFuncao() {
+        List<VoluntarioDTO> voluntarios = service.listarVoluntariosComNomeFuncao();
+        return ResponseEntity.ok(voluntarios);
     }
 
     @GetMapping("/matricula/{matricula}")

@@ -21,7 +21,7 @@ const get = {
             const response = await http.get(endpoint);
             return response;
         }catch(error){
-            console.error('1022:Erro ao obter dados dos discentes por matricula:', error.response ? error.response.data : error.message);
+            console.error('1009:Erro ao obter dados dos discentes por matricula:', error.response ? error.response.data : error.message);
         }
     },
     async voluntario(){
@@ -31,7 +31,17 @@ const get = {
             const response = await http.get(endpoint);
             return response;
         }catch(error){
-            console.error('1010:Erro ao obter dados dos voluntarios:', error.response ? error.response.data : error.message);
+            console.error('1009:Erro ao obter dados dos voluntarios:', error.response ? error.response.data : error.message);
+        }
+    },
+    async voluntarioNomesFuncoes(){
+        const endpoint = "/voluntario/nomesfuncoes";
+        
+        try{
+            const response = await http.get(endpoint);
+            return response;
+        }catch(error){
+            console.error('1009:Erro ao obter nomes e funções dos voluntarios:', error.response ? error.response.data : error.message);
         }
     },
     async voluntarioByMatricula(matricula){
@@ -42,7 +52,7 @@ const get = {
             console.log('response:', response);
             return response;
         }catch{
-            console.error('1023:Erro ao obter dados dos voluntarios por matricula:', error.response ? error.response.data : error.message);
+            console.error('1009:Erro ao obter dados dos voluntarios por matricula:', error.response ? error.response.data : error.message);
         }
     },
     async frequenciavoluntario(data, matricula){
@@ -60,7 +70,7 @@ const get = {
             console.log("resposta get:", response);
             return response;
         }catch(error){
-            console.error('1011:Erro ao obter dados das frequências dos discente:', error.response ? error.response.data : error.message);
+            console.error('1009:Erro ao obter dados das frequências dos discente:', error.response ? error.response.data : error.message);
         }
     },
     async frequenciadiscente(data, matricula){
@@ -76,7 +86,7 @@ const get = {
             const response = await http.get(endpoint);
             return response;
         }catch(error){
-            console.error('1012:Erro ao obter dados das frequências dos voluntario:', error.response ? error.response.data : error.message);
+            console.error('1009:Erro ao obter dados das frequências dos voluntario:', error.response ? error.response.data : error.message);
         }
     },
     async diarioByMatricula(matricula){
@@ -86,7 +96,7 @@ const get = {
             const response = await http.get(endpoint);
             return response;
         }catch(error){
-            console.error('1028:Erro ao obter dados das frequências dos voluntario:', error.response ? error.response.data : error.message);
+            console.error('1009:Erro ao obter dados das frequências dos voluntario:', error.response ? error.response.data : error.message);
         }
     },
     async downloadFile(matricula, filename){
@@ -110,6 +120,26 @@ const get = {
             window.URL.revokeObjectURL(url);
         }catch(error){
             console.error('Erro ao baixar o arquivo:', error.response ? error.response.data : error.message);
+        }
+    },
+    async embaixadores(){
+        const endpoint = "/embaixador";
+
+        try{
+            const response = await http.get(endpoint);
+            return response;
+        }catch(error){
+            console.error('1009:Erro ao obter dados dos embaixadores:', error.response ? error.response.data : error.message);
+        }
+    },
+    async amigosmelvin(){
+        const endpoint = "/amigomelvin";
+
+        try{
+            const response = await http.get(endpoint);
+            return response;
+        }catch(error){
+            console.error('1009:Erro ao obter dados dos amigos do melvin:', error.response ? error.response.data : error.message);
         }
     }
 }

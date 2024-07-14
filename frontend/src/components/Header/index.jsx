@@ -24,28 +24,28 @@ function Header(){
     let caminho;
     if(userRole === "COOR"){
         tipo = "Coordenação";
-        caminho = "/coor";
+        caminho = "/app/coor";
     }else if(userRole === "PROF"){
         tipo = "Docência";
-        caminho = "/prof";
+        caminho = "/app/prof";
     }else if(userRole === "AUX"){
         tipo = "Auxiliação";
-        caminho = "/aux";
+        caminho = "/app/aux";
     }else if(userRole === "COZI"){
         tipo = "Cozinha";
-        caminho = "/cozi";
+        caminho = "/app/cozi";
     }else if(userRole === "DIRE"){
         tipo = "Diretoria";
-        caminho = "/dire";
+        caminho = "/app/dire";
     }else if(userRole === "MARK"){
         tipo = "Marketing";
-        caminho = "/mark";
+        caminho = "/app/mark";
     }else if(userRole === "ZELA"){
         tipo = "Zeladoria";
-        caminho = "/zela";
+        caminho = "/app/zela";
     }else if(userRole === "ADM"){
         tipo = "Administração";
-        caminho = "/adm";
+        caminho = "/app/adm";
     }
 
     return(

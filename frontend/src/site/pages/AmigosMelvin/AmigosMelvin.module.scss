@@ -1,0 +1,78 @@
+@import "../../../index.scss";
+
+.body{
+    width: 100%;
+    min-height: calc(100vh - 15rem);
+    display: flex;
+    justify-content: space-around;
+    align-content: start;
+    padding-top: 2rem;
+    background-color: #F29F05;
+    padding-bottom: 2rem;
+}
+
+.imagens{
+    position: relative;
+    width: 20rem;
+    height: 20rem;
+}
+
+.imagens > * {
+    position: absolute;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 1rem;
+}
+
+.imagem_back{
+    background-color: #d5c4a2;
+    z-index: 1;
+}
+
+.imagem_front{
+    background-color: rgb(115, 115, 115);
+    z-index: 2;
+    top: 1rem;
+    left: 1rem;
+}
+
+.conteudo{
+    display: flex;
+    flex-direction: column;
+    width: 25rem;
+    gap: 1rem;
+    color: white;
+}
+
+.title{
+    font-weight: 200;
+}
+
+.texto{
+    text-align: justify;
+}
+
+.button{
+    all: unset;
+    font-size: 0.8rem;
+    color: black;
+    background-color: aliceblue;
+    padding-inline: 1rem;
+    padding-block: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: start;
+}
+
+@media (max-width: $size-d){
+    .body{
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: $size-c){
+    .conteudo{
+        width: 19rem;
+    }
+}

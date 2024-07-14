@@ -36,7 +36,7 @@ function AlunosDesativados(){
     }, []);
 
     const handleEditClick = (matricula) => {
-        navigate(`/aluno/editar/${matricula}`);
+        navigate(`/app/aluno/editar/${matricula}`);
     };
 
     const handleBuscaChange = (e) => {

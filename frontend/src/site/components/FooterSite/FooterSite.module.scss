@@ -1,0 +1,93 @@
+@import '../../../index.scss';
+
+.body{
+    background-color: white;
+    width: 100%;
+    height: 10rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.contato{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.contato_container{
+    display: flex;
+    gap: 0.5rem;
+    cursor: pointer;
+
+    &:nth-of-type(1){
+        color: #044D8C; 
+    }
+
+    &:nth-of-type(2) {
+        color: #000000; 
+    }
+
+    &:nth-of-type(3){
+        color: #7EA629; 
+    }
+
+    &:nth-of-type(4) {
+        color: #C60108; 
+    }
+
+    &:nth-of-type(5) {
+        color: #F29F05; 
+    }
+}
+
+.container_mapa{
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    height: 9rem;
+    gap: 0.5rem;
+}
+
+.container_mapa > .title{
+    font-size: 0.8rem;
+}
+
+.mapa{
+    width: 20rem;
+    height: 7rem;
+}
+
+.direita{
+    align-self:flex-end;
+    padding-bottom: 1rem;
+}
+
+.direita_container{
+    display: flex;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+@media (max-width: $size-c){
+    .container_mapa{
+        display: none;
+    }
+}
+
+@media (max-width: $size-b){
+    .body{
+        flex-direction: column;
+        align-items: start;
+        padding-left: 1rem;
+    }
+
+    .direita{
+        align-self: start;
+        padding-bottom: 0.2rem;
+        padding-top: 0.5rem;
+    }
+}

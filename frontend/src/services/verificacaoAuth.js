@@ -18,10 +18,22 @@ const verificacaoAuth = () => {
                     const responseRole = await auth.receberRole(login);
 
                     if (responseRole.status === 200) {
-                        if (responseRole.data === 'ADMIN') {
-                            navigate('/admin'); // Redirecione para a página de administração
+                        if (responseRole.data === 'COOR') {
+                            navigate('/app/coor'); 
                         } else if (responseRole.data === 'PROF') {
-                            navigate('/prof'); // Redirecione para a página de professor
+                            navigate('/app/prof'); 
+                        } else if (responseRole.data === 'ADM') {
+                            navigate('/app/adm'); 
+                        } else if (responseRole.data === 'AUX') {
+                            navigate('/app/aux'); 
+                        } else if (responseRole.data === 'COZI') {
+                            navigate('/app/cozi'); 
+                        } else if (responseRole.data === 'DIRE') {
+                            navigate('/app/dire'); 
+                        } else if (responseRole.data === 'MARK') {
+                            navigate('/app/mark'); 
+                        } else if (responseRole.data === 'ZELA') {
+                            navigate('/app/zela'); 
                         }
                     } else {
                         console.error('2000:Erro ao obter role de usuário:', responseRole.status);

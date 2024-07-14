@@ -1,0 +1,167 @@
+@import "../../../index.scss";
+
+.body{
+    background-color: #ffffff;
+    width: 100%;
+    min-height: calc(100vh - 15rem);
+    color: white;
+}
+
+.faixa_embaixadores{
+    background-color: #db5252;
+    padding-inline: 12rem;
+    padding-block: 2rem;
+}
+
+.title_faixa_embaixadores{
+    font-weight: 300;
+    text-align: center;
+    padding-bottom: 2rem;
+}
+
+.container_embaixadores{
+    display: grid;
+    grid-template-columns: 15rem 15rem 15rem;
+    justify-content: space-between;
+    row-gap: 2rem;
+}
+
+.embaixador{
+    width: 15rem;
+    height: 15rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.foto{
+    background-color: rgb(255, 255, 255);
+    width: 7rem;
+    height: 7rem;
+    border-radius: 4rem;
+    margin-bottom: 1rem;
+}
+
+.descricao{
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.faixa_embaixadores_explicacao{
+    display: flex;
+    justify-content: space-around;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    background-color: #EE9595;
+}
+
+.imagens{
+    display: flex;
+    justify-content: end;
+    position: relative;
+    align-self: center;
+    width: 20rem;
+    height: 20rem;
+}
+
+.imagens > * {
+    position: absolute;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 1rem;
+}
+
+.imagem_back{
+    background-color: rgb(243, 238, 140);
+    z-index: 1;
+}
+
+.imagem_front{
+    background-color: rgb(115, 115, 115);
+    z-index: 2;
+    bottom: 1rem;
+    left: 1rem;
+}
+
+.conteudo{
+    display: flex;
+    flex-direction: column;
+    width: 25rem;
+    gap: 1rem;
+    color: white;
+}
+
+.title{
+    font-weight: 200;
+}
+
+.texto{
+    text-align: justify;
+}
+
+.button{
+    all: unset;
+    font-size: 0.8rem;
+    color: black;
+    background-color: aliceblue;
+    padding-inline: 1rem;
+    padding-block: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: start;
+}
+
+@media (max-width: $size-f){
+    .faixa_embaixadores{
+        padding-inline: 4rem;
+    }
+}
+
+@media (max-width: $size-e){
+    .faixa_embaixadores{
+        padding-inline: 1rem;
+    }
+}
+
+@media (max-width: $size-d){
+    .faixa_embaixadores_explicacao{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .faixa_embaixadores{
+        padding-inline: 1rem;
+    }
+
+    .embaixador{
+        width: 12rem;
+    }
+
+    .container_embaixadores{
+        grid-template-columns: 12rem 12rem;
+        justify-content: space-around;
+    }
+
+    .imagens{
+        order: 1;
+        align-self: center;
+    }
+
+    .conteudo{
+        order: 2;
+    }
+}
+
+@media (max-width: $size-c){
+    .conteudo{
+        width: 19rem;
+    }
+}
+
+@media (max-width: $size-b){
+    .container_embaixadores{
+        grid-template-columns: 12rem;
+        justify-content: space-around;
+    }
+}
