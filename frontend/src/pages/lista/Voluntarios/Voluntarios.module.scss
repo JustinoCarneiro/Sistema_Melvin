@@ -77,8 +77,9 @@
 }
 
 .table tr {
-    border-left: solid 1px black;   /* Aplicar borda esquerda na linha */
-    border-right: solid 1px black;  /* Aplicar borda direita na linha */
+    border-left: solid 1px black !important;   /* Aplicar borda esquerda na linha */
+    border-right: solid 1px black !important;  /* Aplicar borda direita na linha */
+    background-color: #044D8C;
 }
 
 tbody tr:hover {
