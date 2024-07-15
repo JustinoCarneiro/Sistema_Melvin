@@ -76,10 +76,9 @@
     text-align: start;
 }
 
-.tr_body, .tr_head {
-    border-left: solid 1px black !important;
-    border-right: solid 1px black !important;
-    background-color: aqua;
+.table tr {
+    border-left: solid 1px black;   /* Aplicar borda esquerda na linha */
+    border-right: solid 1px black;  /* Aplicar borda direita na linha */
 }
 
 tbody tr:hover {
