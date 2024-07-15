@@ -112,7 +112,7 @@ function Voluntarios({tipo}){
                 </div>
                 <table className={styles.table}>
                     <thead className={styles.thead}>
-                        <tr>
+                        <tr className={styles.tr_head}>
                             <th>Matrícula</th>
                             <th>Nome</th>
                             <th>Email</th>
@@ -123,7 +123,7 @@ function Voluntarios({tipo}){
                         {voluntariosFiltradosBusca
                             .filter(voluntario => voluntario.funcao === tipo)
                             .map((voluntario) => (
-                            <tr key={voluntario.matricula}>
+                            <tr key={voluntario.matricula} className={styles.tr_body}>
                                 <td>{voluntario.matricula}</td>
                                 <td>{voluntario.nome}</td>
                                 <td>{voluntario.email}</td>

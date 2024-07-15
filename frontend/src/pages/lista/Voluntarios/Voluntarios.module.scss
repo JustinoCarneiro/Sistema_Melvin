@@ -76,9 +76,10 @@
     text-align: start;
 }
 
-.table > .thead > tr {
+.tr_body, .tr_head {
     border-left: solid 1px black !important;
     border-right: solid 1px black !important;
+    background-color: aqua;
 }
 
 tbody tr:hover {
