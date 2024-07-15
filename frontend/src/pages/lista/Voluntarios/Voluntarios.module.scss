@@ -59,8 +59,12 @@
 .table {
     background-color: white;
     border-collapse: collapse;
+    border-spacing: 0;
     margin-top: 0.75rem;
-    border: solid 1px black !important;
+    border-top: solid 1px black !important;
+    border-bottom: solid 1px black !important;
+    border-left: none !important;
+    border-right: none !important;
     margin-bottom: 3rem;
 }
 
