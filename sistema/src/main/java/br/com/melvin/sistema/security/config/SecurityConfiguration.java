@@ -39,14 +39,14 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/auth/login", "/frequenciavoluntario", "/embaixador", "/amigomelvin").permitAll()
+                    .requestMatchers(HttpMethod.PUT, "/frequenciavoluntario").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/frequenciavoluntario").permitAll()
                     .requestMatchers(HttpMethod.GET, "/auth/role_{matricula}").authenticated()
                     .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/alterar_senha/{matricula}/{senha}").hasRole("ADM")
 
                     .requestMatchers(HttpMethod.POST,"/discente", "/voluntario").hasRole("ADM")
-                    .requestMatchers(HttpMethod.POST,"/diarios", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
-                    .requestMatchers(HttpMethod.POST, "/embaixador").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/amigomelvin").permitAll()
+                    .requestMatchers(HttpMethod.POST,"/diarios").hasAnyRole("ADM", "COOR")
 
                     .requestMatchers(HttpMethod.GET, "/embaixador", "/amigomelvin").hasRole("ADM")
                     .requestMatchers(HttpMethod.GET, "/diarios", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")

@@ -190,6 +190,35 @@
     gap: 1rem;
 }
 
+.form{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.select{
+    border-radius: 7px;
+    border: solid 2px black;
+    font-family: inherit;
+    height: 2rem;
+    background-color: white;
+    padding: 0.5rem;
+    font-size: 0.70rem;
+    margin-top: 0.3rem;
+}
+
+.input_justificativa{
+    border-radius: 7px;
+    border: solid 2px black;
+    font-family: inherit;
+    max-width: 25rem;
+    height: 2rem;
+    background-color: white;
+    padding: 0.5rem;
+    font-size: 0.70rem;
+    margin-top: 0.3rem;
+}
+
 @media (max-width: $size-i){
     .coluna{
         width: 100%;

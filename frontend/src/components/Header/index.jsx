@@ -26,10 +26,10 @@ function Header(){
         tipo = "Coordenação";
         caminho = "/app/coor";
     }else if(userRole === "PROF"){
-        tipo = "Docência";
+        tipo = "Professor";
         caminho = "/app/prof";
     }else if(userRole === "AUX"){
-        tipo = "Auxiliação";
+        tipo = "Auxiliar";
         caminho = "/app/aux";
     }else if(userRole === "COZI"){
         tipo = "Cozinha";

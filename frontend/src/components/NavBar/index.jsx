@@ -16,7 +16,6 @@ function NavBar({close}){
     const closeNavBar = () => {close(false)}
 
     const [subnavvol, setSubNavVol] = useState(false);
-    const [subnavatv, setSubNavAtv] = useState(false);
     const [isAdmOrDire, setIsAdmOrDire] = useState(false);
 
     useEffect(() => {
@@ -26,10 +25,6 @@ function NavBar({close}){
 
     const handleVol = () =>{
         setSubNavVol(!subnavvol);
-    }
-
-    const handleAtv = () =>{
-        setSubNavAtv(!subnavatv);
     }
 
     const handleRouteConfig = () => {
@@ -66,14 +61,6 @@ function NavBar({close}){
                                 <p>Amigos Melvin</p>
                             </Link>
                         </li>
-                        {/* 
-                        <li onClick={handleAtv} className={styles.link}> 
-                            <PiNotebook className={styles.icon}/> 
-                            <p>Atividades</p> 
-                            {subnavatv ? <IoChevronUp className={styles.seta}/> : <IoChevronDown className={styles.seta}/>}
-                        </li>
-                        {subnavatv && <SubNav tipo="atividades"/>}
-                        */}
                     </>
                 )}
             </ul>

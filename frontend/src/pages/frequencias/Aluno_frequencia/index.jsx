@@ -1,5 +1,7 @@
 import styles from './Aluno_frequencia.module.scss';
 import React, { useState, useEffect } from 'react';
+import Cookies from "js-cookie";
+
 import { IoMdSearch } from "react-icons/io";
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
@@ -16,6 +18,8 @@ function Aluno_frequencia(){
     const [presencas, setPresencas] = useState({});
     const [busca, setBusca] = useState('');
     const [expandedRows, setExpandedRows] = useState({});
+    const [isEditable, setIsEditable] = useState(true);
+    
 
     const fetchAlunos = async (selectedSala) => {
         try {
@@ -75,6 +79,24 @@ function Aluno_frequencia(){
 
     useEffect(() => {
         setData(getCurrentDate());
+
+        const fetch = async () => {
+
+            let role = Cookies.get('role');
+            let matricula = Cookies.get('login');
+
+            if(role === "PROF" || role === "AUX"){
+                try {
+                    const dadosVoluntario = await get.voluntarioByMatricula(matricula);
+                    setSala(dadosVoluntario.data.sala);
+                    setIsEditable(false);
+                } catch (error) {
+                    console.error("Erro ao buscar dados do voluntário:", error);
+                }
+            }
+        };
+
+        fetch();
     }, []);
 
     const handleSubmit = async (e) => {
@@ -217,7 +239,12 @@ function Aluno_frequencia(){
                         />
                     </div>
                     <div className={styles.botoes}>
-                        <select className={styles.select_sala} value={sala} onChange={handleChange(setSala)}>
+                        <select 
+                            className={styles.select_sala} 
+                            value={sala} 
+                            onChange={handleChange(setSala)}
+                            disabled={!isEditable}
+                        >
                             <option value="" hidden></option>
                             <option value="1">Sala 1</option>
                             <option value="2">Sala 2</option>

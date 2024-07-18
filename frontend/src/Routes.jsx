@@ -10,14 +10,7 @@ import CadastroAmigo from './site/pages/CadastroAmigo';
 import SerEmbaixador from './site/pages/SerEmbaixador';
 
 import Login from "./pages/Login";
-import Coor from "./pages/Coor";
-import Prof from "./pages/Prof";
-import Cozi from "./pages/Cozi";
-import Adm from "./pages/Adm";
-import Aux from "./pages/Aux";
-import Mark from "./pages/Mark";
-import Dire from "./pages/Dire";
-import Zela from "./pages/Zela";
+import HomeApp from "./pages/HomeApp";
 import Registro from "./pages/Registro";
 import PrivateRoute from "./services/PrivateRoute";
 import Alunos from "./pages/lista/Alunos";
@@ -79,14 +72,14 @@ function AppContent() {
             <Header/>
             <div className="main-wrapper">
                 <Routes>
-                    <Route path="/coor" element={<PrivateRoute element={Coor} role="COOR" />} />
-                    <Route path="/prof" element={<PrivateRoute element={Prof} role="PROF" />} />
-                    <Route path="/aux" element={<PrivateRoute element={Aux} role="AUX" />} />
-                    <Route path="/cozi" element={<PrivateRoute element={Cozi} role="COZI" />} />
-                    <Route path="/dire" element={<PrivateRoute element={Dire} role="DIRE" />} />
-                    <Route path="/adm" element={<PrivateRoute element={Adm} role="ADM" />} />
-                    <Route path="/mark" element={<PrivateRoute element={Mark} role="MARK" />} />
-                    <Route path="/zela" element={<PrivateRoute element={Zela} role="ZELA" />} />
+                    <Route path="/coor" element={<PrivateRoute element={HomeApp} role="COOR" />} />
+                    <Route path="/prof" element={<PrivateRoute element={HomeApp} role="PROF" />} />
+                    <Route path="/aux" element={<PrivateRoute element={HomeApp} role="AUX" />} />
+                    <Route path="/cozi" element={<PrivateRoute element={HomeApp} role="COZI" />} />
+                    <Route path="/dire" element={<PrivateRoute element={HomeApp} role="DIRE" />} />
+                    <Route path="/adm" element={<PrivateRoute element={HomeApp} role="ADM" />} />
+                    <Route path="/mark" element={<PrivateRoute element={HomeApp} role="MARK" />} />
+                    <Route path="/zela" element={<PrivateRoute element={HomeApp} role="ZELA" />} />
                     <Route path="/registro" element={ <Registro/> } />
 
                     <Route path="/alunos" element={ <Alunos/> } />

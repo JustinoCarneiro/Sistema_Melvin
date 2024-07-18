@@ -1,5 +1,5 @@
 import styles from "./Config.module.scss";
-import { useState, useEffect} from 'react';
+import React, { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaCheck } from "react-icons/fa";
 import Cookies from "js-cookie";
@@ -14,17 +14,59 @@ import Deslogar from "../../components/Deslogar";
 
 function Config(){
     const [userData, setUserData] = useState(null);
-    const [matricula, setMatricula] = useState("");
+    const [matricula, setMatricula] = useState('');
     const [novaSenhaAlterar, setNovaSenhaAlterar] = useState("");
     const [repetirSenhaAlterar, setRepetirSenhaAlterar] = useState("");
     const [senhaRegistrar, setSenhaRegistrar] = useState("");
     const [repetirSenhaRegistrar, setRepetirSenhaRegistrar] = useState("");
     const [divAtiva, setDivAtiva] = useState('');
     const [isAdm, setIsAdm] = useState(false);
+    const [data, setData] = useState('');
+    const [frequencia, setFrequencia] = useState({
+        presenca_manha: '',
+        presenca_tarde: '',
+        justificativa: ''
+    });
     const navigate = useNavigate();
+
+    const getCurrentDate = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    useEffect(()=>{
+        setData(getCurrentDate());
+    }, []);
+
+    useEffect(() => {
+        const fetchFrequencia = async () => {
+            try {
+                let matricula = Cookies.get('login');
+
+                const response = await get.frequenciavoluntario(data, matricula);
+                if (response.data) {
+
+                    setFrequencia({
+                        presenca_manha: response.data.presenca_manha || '',
+                        presenca_tarde: response.data.presenca_tarde || '',
+                        justificativa: response.data.justificativa || ''
+                    });
+                }
+            } catch (error) {
+                console.error('Erro ao capturar dados da frequência:', error);
+            }
+        };
+
+        fetchFrequencia();
+    }, [data]);
+    
 
     useEffect(() => {
         async function fetchUserData() {
+
             const login = Cookies.get('login');
 
             if (!login) {
@@ -40,7 +82,6 @@ function Config(){
 
                     setIsAdm(userRole === 'ADM'); 
 
-                    console.log(response.data);
                 }
             } catch (error) {
                 console.error("Erro ao buscar dados do usuário:", error);
@@ -49,6 +90,11 @@ function Config(){
 
         fetchUserData();
     }, []);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFrequencia({ ...frequencia, [name]: value });
+    };
 
     if (!userData) {
         return <div>Carregando...</div>;
@@ -118,7 +164,7 @@ function Config(){
             const password = senhaRegistrar;
 
             const response = await post.registrarvoluntario({login, password, role});
-            console.log("response:", response);
+
             if (response && response.status === 200) {
                 alert("voluntário registrado com sucesso!");
             } else {
@@ -180,6 +226,46 @@ function Config(){
         "RG/CPF": "rg",
         "Matrícula": "matricula"
     };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try{
+            const matricula = userData.matricula;
+            const nome = userData.nome;
+            const presenca_manha = frequencia.presenca_manha;
+            const presenca_tarde = frequencia.presenca_tarde;
+            const justificativa = frequencia.justificativa;
+
+            const frequenciaVoluntarioExistente = await get.frequenciavoluntario(data, matricula);
+
+            if (frequenciaVoluntarioExistente && frequenciaVoluntarioExistente.data) {
+                console.log('Tentando fazer PUT...');
+                try {
+                    
+                    const response = await put.frequenciavoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });  
+                    console.log('PUT bem-sucedido:', response);
+                    return response;
+                } catch (error) {
+                    console.error('5011:Erro capturado no PUT:', error);
+                    throw error;
+                }
+            } else {
+                console.log('Tentando fazer POST...');
+                try {
+                    console.log("Teste dados::", matricula, nome, data, justificativa, presenca_manha, presenca_tarde);
+                    const response = await post.frequenciavoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });
+                    console.log('POST bem-sucedido:', response);
+                    return response;
+                } catch (error) {
+                    console.error('5012:Erro capturado no POST:', error);
+                    throw error;
+                }
+            }
+        } catch(error) {
+            console.error('5014:Erro ao marcar presença!', error);
+            alert('Erro ao marcar presença!');
+        }
+    }
 
     return(
         <div className={styles.body}>
@@ -357,6 +443,12 @@ function Config(){
                                 corBorda="#043560"
                                 onClick={handleNavigateVoluntarios}
                             />
+                        </div>
+                        <hr className={styles.linha_maior}/>
+                        <h3 className={styles.subtitle}>Solicitações</h3>
+                        <h4 className={styles.title_h4}>Click no botão abaixo para acessar as solicitações</h4>
+                        <hr className={styles.linha_menor}/>
+                        <div className={styles.botao}>
                             <Botao
                                 nome="Embaixadores"
                                 corFundo="#f29f05" 
@@ -372,6 +464,46 @@ function Config(){
                         </div>
                     </>
                 )}
+                <hr className={styles.linha_maior}/>
+                <h3 className={styles.subtitle}>Auto frequência</h3>
+                <hr className={styles.linha_menor}/>
+                <form onSubmit={handleSubmit} className={styles.form}>
+                    <label className={styles.label_select}>
+                        <div className={styles.sublabel_select}>Presença manhã:</div>
+                        <select className={styles.select} name="presenca_manha" value={frequencia ? frequencia.presenca_manha : ''} onChange={handleChange}>
+                            <option value="" hidden>Selecione...</option>
+                            <option value="P">Presente</option>
+                            <option value="F">Falta</option>
+                            <option value="FJ">Falta Justificada</option>
+                            <option value="X">Nenhuma</option>
+                        </select>
+                    </label>
+                    <label className={styles.label_select}>
+                        <div className={styles.sublabel_select}>Presença tarde:</div>
+                        <select className={styles.select} name="presenca_tarde" value={frequencia ? frequencia.presenca_tarde : ''} onChange={handleChange}>
+                            <option value="" hidden>Selecione...</option>
+                            <option value="P">Presente</option>
+                            <option value="F">Falta</option>
+                            <option value="FJ">Falta Justificada</option>
+                            <option value="X">Nenhuma</option>
+                        </select>
+                    </label>
+                    <input
+                        className={styles.input_justificativa}
+                        type="text"
+                        name="justificativa"
+                        value={frequencia ? frequencia.justificativa : ''}
+                        onChange={handleChange}
+                    />
+                    <div className={styles.botao_form}>
+                        <Botao
+                            nome="Marcar presença"
+                            corFundo="#044D8C" 
+                            corBorda="#043560"
+                            type="submit"
+                        />
+                    </div>
+                </form>
                 <hr className={styles.linha_maior}/>
                 <div className={styles.botao}>
                     <Deslogar/>
