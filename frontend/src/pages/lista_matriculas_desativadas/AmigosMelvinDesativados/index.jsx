@@ -3,7 +3,7 @@ import styles from "./AmigosMelvinDesativados.module.scss";
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import { IoMdSearch } from "react-icons/io";
+import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
 
 import get from "../../../services/requests/get";
@@ -54,6 +54,9 @@ function AmigosMelvinDesativados(){
 
     return(
         <div className={styles.body}>
+            <div className={styles.linha_voltar}>
+                <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
+            </div>
             <div className={styles.container}>
                 <div className={styles.header}>
                     <h2 className={styles.title}>Amigos Melvin desativados</h2>

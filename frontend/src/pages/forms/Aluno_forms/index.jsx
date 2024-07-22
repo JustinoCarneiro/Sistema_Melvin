@@ -3,9 +3,8 @@ import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { IoMdArrowRoundBack } from "react-icons/io";
+import { IoMdArrowRoundBack, IoIosDownload } from "react-icons/io";
 import { SiGoogledocs } from "react-icons/si";
-import { IoIosDownload } from "react-icons/io";
 
  
 import Botao from '../../../components/gerais/Botao';
@@ -81,7 +80,7 @@ function Aluno_forms(){
                 const alunoExistente = await get.discenteByMatricula(matricula);
                 const diarioExistente = await get.diarioByMatricula(matricula);
 
-                if(diarioExistente){
+                if(diarioExistente.data != ""){
                     console.log("Diario existente", diarioExistente);
                     setDiario(diarioExistente);
                 }
@@ -165,6 +164,7 @@ function Aluno_forms(){
     };
 
     const onDrop = (acceptedFiles) => {
+        console.log('Files dropped:', acceptedFiles);
         if (acceptedFiles.length > 0) {
             const file = acceptedFiles[0];
             setDiario(file);
@@ -187,14 +187,14 @@ function Aluno_forms(){
                 console.log("Matrícula já existe. Atualizando dados...");
                 response = await put.discente(formDado);
 
-                if (diario.data != "") {
+                if (diario && diario instanceof File) {
                     responseDiario = await put.atualizarDiario({ matricula: formDado.matricula, file: diario });
                 }
             } else {
                 console.log("Matrícula não existe. Criando novo aluno...");
                 response = await post.discente(formDado);
 
-                if(diario.data != ""){
+                if(diario && diario instanceof File){
                     responseDiario = await post.uploadDiario({ matricula: formDado.matricula, file: diario });
                 }
             }

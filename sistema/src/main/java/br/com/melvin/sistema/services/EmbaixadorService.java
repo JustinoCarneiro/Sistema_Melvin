@@ -41,6 +41,8 @@ public class EmbaixadorService {
             existente.setEmail(embaixador.getEmail());
             existente.setStatus(embaixador.getStatus());
             existente.setContato(embaixador.getContato());
+            existente.setApelido(embaixador.getApelido());
+            existente.setDescricao(embaixador.getDescricao());
 
             existente.setId(id);
 

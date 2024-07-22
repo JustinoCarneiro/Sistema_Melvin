@@ -1,18 +1,17 @@
 import styles from "./EmbaixadoresApp.module.scss";
 
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 import { IoMdSearch } from "react-icons/io";
-import { LuArrowRightLeft } from "react-icons/lu";
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { MdOutlineModeEdit } from "react-icons/md";
 
 import get from "../../../services/requests/get";
-import put from "../../../services/requests/put";
 
 function EmbaixadoresApp(){
     const [busca, setBusca] = useState('');
     const [embaixadores, setEmbaixadores] = useState([]);
-    const [expandedRows, setExpandedRows] = useState({});
+    const navigate = useNavigate();
 
     const fetchEmbaixadores = async () => {
         try{
@@ -36,7 +35,7 @@ function EmbaixadoresApp(){
         fetchEmbaixadores();
     }, []);
 
-    const handleStatusChange = async (id) => {
+    {/*const handleStatusChange = async (id) => {
         try {
             // Encontre o embaixador correspondente
             const embaixador = embaixadores.find(e => e.id === id);
@@ -54,7 +53,7 @@ function EmbaixadoresApp(){
             console.error("6006:Erro ao alterar o status do embaixador:", error);
             alert('Erro ao alterar o status do embaixador. Tente novamente.');
         }
-    };
+    }; */}
 
     const handleBuscaChange = (e) => {
         setBusca(e.target.value);
@@ -70,26 +69,9 @@ function EmbaixadoresApp(){
         );
     });
 
-    const handleToggleRow = (id) => {
-        setExpandedRows(prevState => ({
-            ...prevState,
-            [id]: !prevState[id]
-        }));
+    const handleEditClick = (id) => {
+        navigate(`/app/embaixador/editar/${id}`);
     };
-
-    const handleResize = () => {
-        const sizeE = 1215;
-        if (window.innerWidth > sizeE) {
-            setExpandedRows({});
-        }
-    };
-
-    useEffect(() => {
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
 
     return(
         <div className={styles.body}>
@@ -98,7 +80,7 @@ function EmbaixadoresApp(){
                     <h2 className={styles.title}>Embaixadores</h2>
                     <div className={styles.container_busca}>
                         <IoMdSearch className={styles.icon_busca}/>
-                        <input 
+                        <input
                             className={styles.busca} 
                             type='text'
                             placeholder='Buscar'
@@ -115,8 +97,7 @@ function EmbaixadoresApp(){
                             <th>Instagram</th>
                             <th>Contato</th>
                             <th>Email</th>
-                            <th>Alterar status</th>
-                            <th></th>
+                            <th className={styles.edicao}>Edição</th>
                         </tr>
                     </thead>
                     <tbody className={styles.tbody}>
@@ -128,31 +109,13 @@ function EmbaixadoresApp(){
                                     <td>{embaixador.instagram}</td>
                                     <td>{embaixador.contato}</td>
                                     <td>{embaixador.email}</td>
-                                    <td>
-                                        <LuArrowRightLeft
-                                            onClick={() => handleStatusChange(embaixador.id)}
-                                            style={{ fontSize: '1.2rem' }}
+                                    <td className={styles.edicao}>
+                                        <MdOutlineModeEdit 
+                                            className={styles.icon_editar}
+                                            onClick={()=>handleEditClick(embaixador.id)}
                                         />
                                     </td>
-                                    <td className={styles.toggleButton} onClick={() => handleToggleRow(embaixador.id)}>
-                                        {expandedRows[embaixador.id] ? <FaChevronUp /> : <FaChevronDown />}
-                                    </td>
                                 </tr>
-                                {expandedRows[embaixador.id] && (
-                                    <tr className={styles.expanded} key={`${embaixador.id}-expanded`}>
-                                        <td colSpan="5" className={styles.row_expanded}>
-                                            <div>
-                                                Instagram: {embaixador.instagram}
-                                            </div>
-                                            <div>
-                                                Email: {embaixador.email}
-                                            </div>
-                                            <div>
-                                                Contato: {embaixador.contato}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )}
                             </React.Fragment>
                         ))}
                     </tbody>

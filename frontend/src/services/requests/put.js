@@ -46,6 +46,7 @@ const put = {
     },
 
     async atualizarDiario(dados){
+        console.log("dados diario:", dados);
         // Forma o endpoint usando a matrícula presente nos dados
         let endpoint = `/diarios/atualizar/${dados.matricula}`;
 
@@ -63,6 +64,7 @@ const put = {
             });
 
             if (response.status === 200) {
+                console.log("dados diario:", dados);
                 console.log("Diário atualizado ou carregado com sucesso:", response.data);
             } else {
                 console.log("Diário não foi atualizado ou carregado, mas não é um erro crítico.");
@@ -117,6 +119,33 @@ const put = {
             return response;
         }catch(error){
             console.log("1018:Erro ao alterar role do usuário:", error.response ? error.response.dados : error.message);
+        }
+    },
+
+    async imagem(id, tipo, dados){
+        let endpoint = `/imagens/atualizar/${id}/${tipo}`;
+        console.log("dados", dados);
+
+        const formData = new FormData();
+        formData.append('file', dados);
+        
+        try{ 
+            const response = await http.put(endpoint, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            
+            if (response.status === 200) {
+                console.log("Imagem atualizada com sucesso:", response.data);
+            } else {
+                console.log("A imagem não foi atualizada, mas não é um erro crítico.");
+            }
+
+            return response;
+
+        }catch(error){
+            console.log("1018:Erro ao atualizar imagem:", error.response ? error.response.dados : error.message);
         }
     }
 }

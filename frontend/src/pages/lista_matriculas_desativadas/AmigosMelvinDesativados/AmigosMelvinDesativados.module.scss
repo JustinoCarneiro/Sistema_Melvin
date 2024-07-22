@@ -10,6 +10,17 @@
     align-items: center;
 }
 
+.linha_voltar{
+    width: 80vw;
+}
+
+.voltar{
+    font-size: 2rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    margin-left: -4px;
+}
+
 .container{
     display: flex;
     flex-direction: column;

@@ -31,7 +31,6 @@ function AmigoMelvin_forms(){
                 if (response.data && Array.isArray(response.data)) {
                     const amigo = response.data.find(amg => amg.id === id);
                     if (amigo) {
-                        console.log("amigo:", amigo);
                         setFormDado({
                             nome: amigo.nome || '',
                             email: amigo.email || '',
@@ -99,7 +98,7 @@ function AmigoMelvin_forms(){
                 <div className={styles.linha_voltar}>
                     <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
                 </div>
-                <h2 className={styles.title}>INFORMAÇÕES PESSOAIS DO VOLUNTÁRIO</h2>
+                <h2 className={styles.title}>INFORMAÇÕES AMIGO DO MELVIN</h2>
                 <div className={styles.informacoes}>
                     <div className={styles.coluna}>
                         <Input

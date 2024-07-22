@@ -23,6 +23,7 @@ import Config from "./pages/Config";
 import Header from "./components/Header";
 import AlunosDesativados from "./pages/lista_matriculas_desativadas/AlunosDesativados";
 import VoluntariosDesativados from "./pages/lista_matriculas_desativadas/VoluntariosDesativados";
+import EmbaixadorForms from './pages/forms/Embaixador_forms';
 import EmbaixadoresApp from './pages/lista/EmbaixadoresApp';
 import EmbabaixadoresDesativados from './pages/lista_matriculas_desativadas/EmbaixadoresDesativados';
 import AmigoMelvinForms from './pages/forms/AmigoMelvin_forms';
@@ -105,6 +106,7 @@ function AppContent() {
                     <Route path="/voluntario/criar/zelador" element={ <VoluntarioForms tipo="zelador"/> } />
 
                     <Route path="/amigomelvin/editar/:id" element={<AmigoMelvinForms/>} />
+                    <Route path="/embaixador/editar/:id" element={<EmbaixadorForms/>} />
                     <Route path="/aluno/editar/:matricula" element={<AlunoForms />} />
                     <Route path="/voluntario/coordenador/editar/:matricula" element={<VoluntarioForms tipo="coordenador"/>} />
                     <Route path="/voluntario/professor/editar/:matricula" element={<VoluntarioForms tipo="professor"/>} />

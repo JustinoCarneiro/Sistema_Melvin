@@ -14,31 +14,24 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="embaixador")
-public class Embaixador {
+@Table(name="imagem")
+public class Imagem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(nullable = false)
-    private String nome;
-
-    private String instagram;
+    @Column(nullable = false, unique = true)
+    private UUID idAtrelado;
 
     @Column(nullable = false)
-    private String contato;
-
-    private String email;
+    private String fileName;
 
     @Column(nullable = false)
-    private Boolean status;
+    private String fileType;
 
     @Column(nullable = false)
-    private Boolean contatado;
+    private String filePath;
 
-    @Column(nullable = true)
-    private String apelido;
-
-    @Column(nullable = true)
-    private String descricao;
+    @Column(nullable = false)
+    private String tipo;
 }

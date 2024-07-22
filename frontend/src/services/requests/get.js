@@ -101,7 +101,7 @@ const get = {
     },
     async downloadFile(matricula, filename){
         console.log("filename", filename);
-        const endpoint = `/diarios/download/${matricula}`;
+        let endpoint = `/diarios/download/${matricula}`;
 
         // Nome padrão do arquivo se não for fornecido ou extraído
         if (filename == null) {
@@ -140,6 +140,16 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter dados dos amigos do melvin:', error.response ? error.response.data : error.message);
+        }
+    },
+    async imagemPorId(id, tipo){
+        let endpoint = `/imagens/captura/${id}/${tipo}`;
+
+        try{
+            const response = await http.get(endpoint);
+            return response;
+        }catch(error){
+            console.error('1009:Erro ao obter dados da imagem:', error.response ? error.response.data : error.message);
         }
     }
 }

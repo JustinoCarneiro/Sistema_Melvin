@@ -24,7 +24,7 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class DiarioService {
 
-    @Value("${file.upload-dir}")
+    @Value("${file.upload-dir-diarios}")
     private String uploadDir;
 
     @Autowired
@@ -72,10 +72,10 @@ public class DiarioService {
     }
 
     private Path uploadFile(MultipartFile file) throws IOException {
-        return uploadFile(file, UUID.randomUUID().toString() + "_" + file.getOriginalFilename());
+        return uploadFileName(file, UUID.randomUUID().toString() + "_" + file.getOriginalFilename());
     }
 
-    private Path uploadFile(MultipartFile file, String fileName) throws IOException {
+    private Path uploadFileName(MultipartFile file, String fileName) throws IOException {
         // Criar o diretório de upload se não existir
         Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
         if (!Files.exists(uploadPath)) {

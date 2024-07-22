@@ -7,14 +7,27 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "file")
 public class FileStorageProperties {
 
-    private String uploadDir;
+    private String uploadDirDiarios;
+    private String uploadDirImagensembaixadores;
+    private String uploadDirImagensavisos;
 
-    // Getters and setters
-    public String getUploadDir() {
-        return uploadDir;
+    public String getUploadDirDiarios() {
+        return uploadDirDiarios;
+    }
+    public void setUploadDirDiarios(String uploadDirDiarios) {
+        this.uploadDirDiarios = uploadDirDiarios;
+    }
+    public String getUploadDirImagensavisos() {
+        return uploadDirImagensavisos;
+    }
+    public void setUploadDirImagensavisos(String uploadDirImagensavisos) {
+        this.uploadDirImagensavisos = uploadDirImagensavisos;
+    }
+    public String getUploadDirImagensembaixadores() {
+        return uploadDirImagensembaixadores;
+    }
+    public void setUploadDirImagensembaixadores(String uploadDirImagensembaixadores) {
+        this.uploadDirImagensembaixadores = uploadDirImagensembaixadores;
     }
 
-    public void setUploadDir(String uploadDir) {
-        this.uploadDir = uploadDir;
-    }
 }

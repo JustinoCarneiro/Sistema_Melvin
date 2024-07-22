@@ -25,11 +25,11 @@
     margin-left: -4px;
 }
 
-.title {
+.title{
     margin-top: 4vh;
 }
 
-.subtitle {
+.subtitle{
     margin-top: 0.5vh;
     font-size: 1rem;
 }
@@ -41,32 +41,32 @@
     margin-inline: 5vw;
 }
 
-.coluna {
+.coluna{
     width: 20rem;
 }
 
-.linha {
+.linha{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: end;
 }
 
-.linha>* {
+.linha > *{
     width: 9rem;
 }
 
-.label_qtd_clt_auto {
+.label_qtd_clt_auto{
     padding-top: 1rem;
 }
 
-.cadastrar {
+.cadastrar{
     align-self: end;
     margin-block: 1rem;
     margin-right: 5vw;
 }
 
-.label_select {
+.label_select{
     margin-top: 0.7rem;
     color: black;
     font-family: inherit;
@@ -75,7 +75,7 @@
     font-size: 0.9rem;
 }
 
-.select {
+.select{
     border-radius: 7px;
     border: solid 2px black;
     font-family: inherit;
@@ -87,15 +87,63 @@
     width: 8rem;
 }
 
-.sublabel_select {
+.sublabel_select{
     display: flex;
     flex-direction: row;
 }
 
-.asterisco {
+.asterisco{
     color: red;
     font-size: 0.5rem;
     margin-left: 0.2rem;
+}
+
+.turnos{
+    margin-top: 1rem;
+    margin-left: 5vw;
+    width: 30rem;
+}
+
+.container{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 1vw;
+}
+
+.dia{
+    width: 5rem;
+}
+
+.label_turnos{
+    display: flex;
+    flex-direction: row;
+}
+
+.label_select_semana{
+    margin-top: 0.7rem;
+    color: black;
+    font-family: inherit;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+}
+
+.select_semana{
+    border-radius: 7px;
+    border: solid 2px black;
+    font-family: inherit;
+    height: 2rem;
+    background-color: white;
+    padding: 0.5rem;
+    font-size: 0.70rem;
+    margin-top: 0.3rem;
+}
+
+.sublabel_select_semana{
+    display: flex;
+    flex-direction: row;
 }
 
 .diario {
@@ -119,6 +167,7 @@
 .label_diario {
     display: flex;
     flex-direction: row;
+    cursor: pointer;
     background-color: white;
     border-radius: 7px;
     border: solid 2px black;
@@ -133,7 +182,6 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    cursor: pointer;
 }
 
 .placeholderdiario {
@@ -165,10 +213,89 @@
     .subtitle{
         margin-top: 2vh;
     }
+
+    .turnos{
+        width: auto;
+        margin-inline: 5vw;
+    }
 }
 
 @media (max-width: $size-c){
     .form{
         width: 90vw;
+    }
+}
+
+@media (max-width: 100px) {
+    .voltar {
+        margin-top: 4vh;
+        margin-left: 7vw;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    .title {
+        margin-top: 4vh;
+        margin-left: 8vw;
+        font-size: 1rem;
+    }
+
+    .subtitle {
+        margin-top: 2vh;
+        margin-left: 8vw;
+        font-size: 1rem;
+    }
+
+    .informacoes {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .coluna {
+        font-size: 0.5rem;
+    }
+
+    .linha {
+        width: 100%;
+    }
+
+    .linha>* {
+        width: auto;
+    }
+
+    .label_select{
+        font-size: 0.8rem;
+    }
+
+    .turnos{
+        align-self: center;
+        margin: 0;
+        margin-top: 1rem;
+        width: 20rem;
+    }
+
+    .sublabel_select_semana {
+        font-size: 0.7rem;
+    }
+
+    .select_semana {
+        font-size: 0.7rem;
+    }
+
+    .container{
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content:flex-start;
+    }
+
+    .cadastrar{
+        display: flex;
+        width: 100%;
+        align-self: center;
+        justify-content: end;
+        margin: 0;
+        margin-right: 4rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
     }
 }
