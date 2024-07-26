@@ -35,50 +35,6 @@ function EmbaixadoresApp(){
         fetchEmbaixadores();
     }, []);
 
-    {/*const handleStatusChange = async (id) => {
-        try {
-            // Encontre o embaixador correspondente
-            const embaixador = embaixadores.find(e => e.id === id);
-            if (!embaixador) {
-                console.error("6006: Embaixador não encontrado:", id);
-                return;
-            }
-
-            // Atualize o status do embaixador
-            const updatedEmbaixador = { ...embaixador, status: !embaixador.status };
-            await put.embaixadores(updatedEmbaixador);
-
-            // Refetch the embaixadores after updating the status
-            await fetchEmbaixadores();
-        } catch (error) {
-            console.error("6006: Erro ao alterar o status do embaixador:", error);
-            alert('Erro ao alterar o status do embaixador. Tente novamente.');
-        }
-    };*/}
-
-    {/*const handleContatadoChange = async (id) => {
-        try {
-            // Encontre o embaixador correspondente
-            const embaixador = embaixadores.find(e => e.id === id);
-            if (!embaixador) {
-                console.error("6007: Embaixador não encontrado:", id);
-                return;
-            }
-
-            // Atualize o atributo contatado do embaixador
-            const updatedEmbaixador = { ...embaixador, contatado: !embaixador.contatado };
-            await put.embaixadores(updatedEmbaixador);
-
-            // Atualize a lista de embaixadores no estado
-            setEmbaixadores(prevEmbaixadores =>
-                prevEmbaixadores.map(e => (e.id === id ? updatedEmbaixador : e))
-            );
-        } catch (error) {
-            console.error("6007: Erro ao alterar o atributo contatado do embaixador:", error);
-            alert('Erro ao alterar o atributo contatado do embaixador. Tente novamente.');
-        }
-    };*/}
-
     const handleBuscaChange = (e) => {
         setBusca(e.target.value);
     };

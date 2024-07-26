@@ -35,26 +35,6 @@ function EmbaixadoresApp(){
         fetchEmbaixadores();
     }, []);
 
-    {/*const handleStatusChange = async (id) => {
-        try {
-            // Encontre o embaixador correspondente
-            const embaixador = embaixadores.find(e => e.id === id);
-            if (!embaixador) {
-                console.error("6006:Embaixador não encontrado:", id);
-                return;
-            }
-
-            // Atualize o status do embaixador
-            const updatedEmbaixador = { ...embaixador, status: !embaixador.status };
-            await put.embaixadores(updatedEmbaixador);
-
-            await fetchEmbaixadores();
-        } catch (error) {
-            console.error("6006:Erro ao alterar o status do embaixador:", error);
-            alert('Erro ao alterar o status do embaixador. Tente novamente.');
-        }
-    }; */}
-
     const handleBuscaChange = (e) => {
         setBusca(e.target.value);
     };

@@ -213,6 +213,10 @@ function Config(){
         navigate('/app/config/amigosmelvindesativados');
     }
 
+    const handleNavigateAvisos = () => {
+        navigate('/app/config/avisosdesativados');
+    }
+
     const fields = {
         "Nome": "nome",
         "Contato": "contato",
@@ -460,6 +464,17 @@ function Config(){
                                 corFundo="#044D8C" 
                                 corBorda="#043560"
                                 onClick={handleNavigateAmigosMelvin}
+                            />
+                        </div>
+                        <hr className={styles.linha_maior}/>
+                        <h3 className={styles.subtitle}>Avisos desativados</h3>
+                        <hr className={styles.linha_menor}/>
+                        <div className={styles.botao}>
+                            <Botao
+                                nome="Avisos"
+                                corFundo="#f29f05" 
+                                corBorda="#8A6F3E"
+                                onClick={handleNavigateAvisos}
                             />
                         </div>
                     </>

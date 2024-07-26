@@ -17,6 +17,10 @@ function Home(){
     const [totalManha, setTotalManha] = useState(0);
     const [totalTarde, setTotalTarde] = useState(0);
 
+    const [avisos, setAvisos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
     useEffect(() => {
         const fetch = async () => {
             const dataDeHoje = new Date().toISOString().split('T')[0];
@@ -55,6 +59,61 @@ function Home(){
 
         fetch();
     }, []);
+
+    useEffect(() => {
+        const fetch = async () => {
+            try{
+                const response = await get.aviso();
+                console.log("response", response);
+                const avisosData = await Promise.all(response.data
+                    .filter(aviso => {
+                        return aviso.status;
+                    })
+                    .map(async aviso => {
+                        try{
+                            const imagemResponse = await get.imagemlista();
+                            const imagemParaAviso = imagemResponse.data.find(imagem => imagem.idAtrelado === aviso.id && imagem.tipo === 'aviso');
+                            if(imagemParaAviso){
+                                const imageUrl = `${import.meta.env.VITE_REACT_APP_FETCH_URL}${imagemParaAviso.filePath}`;
+                                return {
+                                    ...aviso,
+                                    imageUrl: imageUrl,
+                                };
+                            }else {
+                                console.warn(`Não foi encontrada imagem para aviso ${aviso.id}`);
+                                return {
+                                    ...aviso,
+                                    imageUrl: null,
+                                };
+                            }
+                        } catch (imageError) {
+                            console.error(`Erro ao obter imagem para aviso ${aviso.id}:`, imageError.response ? imageError.response.data : imageError.message);
+                            return {
+                                ...aviso,
+                                imageUrl: null,
+                            };
+                        }
+                    })
+                );
+
+                setAvisos(avisosData);
+                setLoading(false);
+
+            }catch (error) {
+                setError(error);
+                setLoading(false);
+            }
+        }
+        fetch();
+    }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error.message}</div>;
+    }
 
     let tipo;
     if(userRole === "COOR"){
@@ -133,23 +192,31 @@ function Home(){
                         </div>
                     </div>
                 </div>
-                <div className={styles.aviso}>
-                    <div className={styles.aviso_texto}>
-                        <h3 className={styles.title_aviso}>Título do aviso</h3>
-                        <p className={styles.texto}>Lorem Ipsum é simplesmente uma simulação de texto da  indústria tipográfica e de impressos, e vem sendo utilizado desde o  século XVI, quando um impressor desconhecido pegou uma bandeja de tipmax-width: $size-bos e  os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum  sobreviveu não só a cinco séculos, como também ao salto para a  editoração eletrônica, permanecendo essencialmente inalterado. Se  popularizou na década de 60, quando a Letraset lançou decalques contendo  passagens de Lorem Ipsum, e mais recentemente quando passou a ser  integrado a softwares de editoração eletrônica como Aldus PageMaker.</p>
+                {avisos.length > 0 && (
+                    <div className={styles.aviso}>
+                        <div className={styles.aviso_texto}>
+                            <h3 className={styles.title_aviso}>{avisos[0]?.titulo}</h3>
+                            <p className={styles.texto}>{avisos[0]?.corpo}</p>
+                        </div>
+                        <div className={styles.imagem}>
+                            {avisos[0]?.imageUrl && <img src={avisos[0].imageUrl} alt={`Aviso ${avisos[0].id}`} className={styles.img} />}
+                        </div>
                     </div>
-                    <div className={styles.imagem}></div>
-                </div>
+                )}
             </div>
-            <div className={styles.linha}>
-                <div className={styles.aviso}>
-                    <div className={styles.aviso_texto}>
-                        <h3 className={styles.title_aviso}>Título do aviso</h3>
-                        <p className={styles.texto}>Lorem Ipsum é simplesmente uma simulação de texto da  indústria tipográfica e de impressos, e vem sendo utilizado desde o  século XVI, quando um impressor desconhecido pegou uma bandeja de tipmax-width: $size-bos e  os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum  sobreviveu não só a cinco séculos, como também ao salto para a  editoração eletrônica, permanecendo essencialmente inalterado. Se  popularizou na década de 60, quando a Letraset lançou decalques contendo  passagens de Lorem Ipsum, e mais recentemente quando passou a ser  integrado a softwares de editoração eletrônica como Aldus PageMaker.</p>
+            {avisos.slice(1).map((aviso, index) => (
+                <div key={index} className={styles.linha}>
+                    <div className={styles.aviso}>
+                        <div className={styles.aviso_texto}>
+                            <h3 className={styles.title_aviso}>{aviso.titulo}</h3>
+                            <p className={styles.texto}>{aviso.corpo}</p>
+                        </div>
+                        <div className={styles.imagem}>
+                            {aviso.imageUrl && <img src={aviso.imageUrl} alt={`Aviso ${aviso.id}`} className={styles.img}/>}
+                        </div>
                     </div>
-                    <div className={styles.imagem}></div>
                 </div>
-            </div>
+            ))}
         </div>
     )
 }

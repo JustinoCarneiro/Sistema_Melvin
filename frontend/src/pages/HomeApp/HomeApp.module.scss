@@ -97,6 +97,8 @@
 
 .texto{
     text-align: justify;
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
 .imagem{
@@ -104,6 +106,12 @@
     height: 10rem;
     background-color: rgb(72, 148, 123);
     flex-shrink: 0;
+}
+
+.img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 @media (max-width: $size-i){

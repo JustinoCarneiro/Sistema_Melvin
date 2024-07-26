@@ -147,6 +147,17 @@ const put = {
         }catch(error){
             console.log("1018:Erro ao atualizar imagem:", error.response ? error.response.dados : error.message);
         }
+    },
+
+    async aviso(dados){
+        const endpoint="/aviso";
+
+        try{
+            const response = await http.put(endpoint, dados);
+            return response;
+        }catch(error){
+            console.log("1018:Erro ao alterar dados do embaixador:", error.response ? error.response.dados : error.message);
+        }
     }
 }
 

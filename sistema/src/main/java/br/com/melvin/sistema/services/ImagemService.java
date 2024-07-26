@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,10 @@ public class ImagemService {
 
     @Autowired
     ImagemRepository repositorio;
+
+    public List<Imagem> listar(){
+        return repositorio.findAll();
+    }
 
     public ResponseEntity<?> upload(MultipartFile file, UUID idAtrelado, String tipo) {
         if (file.isEmpty()) {

@@ -38,22 +38,21 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes", "/frequenciavoluntario", "/frequenciadiscente", "/imagens/**", "/embaixador/**", "/app/docs/imagens_embaixadores/**", "/app/docs/diarios/**", "/app/docs/imagens_avisos/**", "/aviso").permitAll()
                     .requestMatchers(HttpMethod.POST, "/auth/login", "/frequenciavoluntario", "/embaixador", "/amigomelvin").permitAll()
                     .requestMatchers(HttpMethod.PUT, "/frequenciavoluntario").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/frequenciavoluntario", "/frequenciadiscente", "/imagens").permitAll()
                     .requestMatchers(HttpMethod.GET, "/auth/role_{matricula}").authenticated()
-                    .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/alterar_senha/{matricula}/{senha}", "/imagens").hasRole("ADM")
+                    .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/alterar_senha/{matricula}/{senha}", "/imagens", "/aviso").hasRole("ADM")
 
-                    .requestMatchers(HttpMethod.POST,"/discente", "/voluntario", "/imagens").hasRole("ADM")
+                    .requestMatchers(HttpMethod.POST,"/discente", "/voluntario", "/imagens/**", "/aviso").hasRole("ADM")
                     .requestMatchers(HttpMethod.POST,"/diarios").hasAnyRole("ADM", "COOR")
 
-                    .requestMatchers(HttpMethod.GET, "/embaixador", "/amigomelvin").hasRole("ADM")
+                    .requestMatchers(HttpMethod.GET, "/amigomelvin").hasRole("ADM")
                     .requestMatchers(HttpMethod.GET, "/diarios", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
                     .requestMatchers(HttpMethod.GET, "/discente").hasAnyRole("PROF", "ADM", "DIRE")
                     .requestMatchers(HttpMethod.GET, "/voluntario").hasAnyRole("ADM", "DIRE")
 
-                    .requestMatchers(HttpMethod.PUT, "/discente", "/voluntario", "/embaixador", "/amigomelvin", "/auth/alterar_role/{matricula}/{role}", "/imagens").hasRole("ADM")
+                    .requestMatchers(HttpMethod.PUT, "/discente", "/voluntario", "/embaixador", "/amigomelvin", "/auth/alterar_role/{matricula}/{role}", "/imagens/**", "/aviso").hasRole("ADM")
                     .requestMatchers(HttpMethod.PUT, "/diarios", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
 
                     .requestMatchers(HttpMethod.DELETE, "/discente", "/voluntario").hasRole("ADM")
@@ -62,7 +61,7 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.POST, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
                     .requestMatchers(HttpMethod.PUT, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
                     .requestMatchers(HttpMethod.DELETE, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
-                    
+
                     .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

@@ -59,15 +59,15 @@ function Embaixador_forms(){
                     console.log('Nenhum embaixador encontrado');
                 }
             } catch (error) {
-                console.error('5008:Erro ao obter dados do amigo!', error);
-                alert('Erro ao obter dados do aluno!');
+                console.error('5008:Erro ao obter dados do embaixador!', error);
+                alert('Erro ao obter dados do embaixador!');
             }
         };
 
         if(id){
             fetchEmbaixador();
         }
-    }, [id])
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -109,7 +109,7 @@ function Embaixador_forms(){
                         responseImagem = await put.imagem(id, "embaixador", imagem);
                     }
                 } else {
-                    console.log("Embaixador não existe. Criando novo voluntário...");
+                    console.log("Embaixador não existe. Criando novo embaixador...");
                     response = await post.embaixadores(formDado);
     
                     if (imagem && imagem instanceof File) {

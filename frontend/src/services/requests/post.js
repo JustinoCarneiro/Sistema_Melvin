@@ -141,6 +141,17 @@ const post = {
         }catch(error){
             console.error('1013:Erro ao fazer upload de imagem:', error.response ? error.response.dados : error.message);
         }
+    },
+
+    async aviso(dados){
+        const endpoint = "/aviso";
+
+        try{
+            const response = await http.post(endpoint, dados);
+            return response;
+        }catch(error){
+            console.error('1013:Erro ao registrar aviso:', error.response ? error.response.dados : error.message);
+        }
     }
 }
 

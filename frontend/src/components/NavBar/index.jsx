@@ -1,7 +1,8 @@
 import styles from './NavBar.module.scss';
 import { useState, useEffect } from 'react'
 import {IoClose, IoChevronDown, IoChevronUp,IoSettings} from 'react-icons/io5';
-import { PiStudentBold, PiChalkboardTeacher, PiNotebook } from "react-icons/pi";
+import { PiStudentBold, PiChalkboardTeacher } from "react-icons/pi";
+import { GoAlertFill } from "react-icons/go";
 import { LuHeartHandshake } from "react-icons/lu";
 import { Link, useNavigate } from 'react-router-dom';
 import { TbSocial } from "react-icons/tb";
@@ -59,6 +60,12 @@ function NavBar({close}){
                             <Link to="/app/amigosmelvin" className={styles.link}>
                                 <LuHeartHandshake className={styles.icon}/> 
                                 <p>Amigos Melvin</p>
+                            </Link>
+                        </li>
+                        <li> 
+                            <Link to="/app/avisos" className={styles.link}>
+                                <GoAlertFill className={styles.icon}/> 
+                                <p>Avisos</p>
                             </Link>
                         </li>
                     </>

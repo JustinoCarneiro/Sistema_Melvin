@@ -29,6 +29,9 @@ import EmbabaixadoresDesativados from './pages/lista_matriculas_desativadas/Emba
 import AmigoMelvinForms from './pages/forms/AmigoMelvin_forms';
 import AmigosMelvinApp from './pages/lista/AmigosMelvinApp';
 import AmigosMelvinDesativados from './pages/lista_matriculas_desativadas/AmigosMelvinDesativados';
+import Avisos from './pages/lista/Avisos';
+import AvisoForms from './pages/forms/Aviso_forms';
+import AvisosDesativados from './pages/lista_matriculas_desativadas/AvisosDesativados';
 
 function AppRoutes() {
     return (
@@ -94,6 +97,7 @@ function AppContent() {
                     <Route path="/voluntario/zeladoria" element={ <Voluntarios tipo="zelador"/> } />
                     <Route path="/embaixadores" element={ <EmbaixadoresApp/> }/>
                     <Route path="/amigosmelvin" element={ <AmigosMelvinApp/> }/>
+                    <Route path="/avisos" element={<Avisos/>}/>
 
                     <Route path="/aluno/criar" element={<AlunoForms />} />
                     <Route path="/voluntario/criar/coordenador" element={<VoluntarioForms tipo="coordenador"/>} />
@@ -104,6 +108,7 @@ function AppContent() {
                     <Route path="/voluntario/criar/cooristrador" element={ <VoluntarioForms tipo="cooristrador"/> } />
                     <Route path="/voluntario/criar/marketing" element={ <VoluntarioForms tipo="marketing"/> } />
                     <Route path="/voluntario/criar/zelador" element={ <VoluntarioForms tipo="zelador"/> } />
+                    <Route path="/avisos/criar" element={<AvisoForms/>}/>
 
                     <Route path="/amigomelvin/editar/:id" element={<AmigoMelvinForms/>} />
                     <Route path="/embaixador/editar/:id" element={<EmbaixadorForms/>} />
@@ -116,6 +121,7 @@ function AppContent() {
                     <Route path="/voluntario/administrador/editar/:matricula" element={<VoluntarioForms tipo="administrador"/>} />
                     <Route path="/voluntario/marketing/editar/:matricula" element={<VoluntarioForms tipo="marketing"/>} />
                     <Route path="/voluntario/zelador/editar/:matricula" element={<VoluntarioForms tipo="zelador"/>} />
+                    <Route path="/avisos/editar/:id" element={<AvisoForms/>}/>
                     
                     <Route path="/frequencias/alunos" element={<Aluno_frequencia />} />
                     <Route path="/voluntario/frequencias/coordenadores" element={<Voluntario_frequencia tipo="coordenador"/>} />
@@ -132,6 +138,7 @@ function AppContent() {
                     <Route path="/config/matriculasdesativadas/voluntarios" element={<VoluntariosDesativados/>} />
                     <Route path="/config/embaixadoresdesativados" element={ <EmbabaixadoresDesativados/> } />
                     <Route path="/config/amigosmelvindesativados" element={ <AmigosMelvinDesativados/> } />
+                    <Route path="/config/avisosdesativados" element={<AvisosDesativados/>}/>
                 </Routes>
             </div>
         </>

@@ -127,6 +127,7 @@ const get = {
 
         try{
             const response = await http.get(endpoint);
+            console.log("response embaixadores:", response);
             return response;
         }catch(error){
             console.error('1009:Erro ao obter dados dos embaixadores:', error.response ? error.response.data : error.message);
@@ -146,10 +147,33 @@ const get = {
         let endpoint = `/imagens/captura/${id}/${tipo}`;
 
         try{
+            console.log("id:", id);
+            console.log("tipo:", tipo);
             const response = await http.get(endpoint);
+            console.log("response get:", response);
             return response;
         }catch(error){
             console.error('1009:Erro ao obter dados da imagem:', error.response ? error.response.data : error.message);
+        }
+    },
+    async imagemlista(){
+        const endpoint = "/imagens/lista";
+
+        try{
+            const response = await http.get(endpoint);
+            return response;
+        }catch(error){
+            console.error('1009:Erro ao obter lista de imagens:', error.response ? error.response.data : error.message);
+        }
+    },
+    async aviso(){
+        const endpoint = "/aviso";
+
+        try{
+            const response = await http.get(endpoint);
+            return response;
+        }catch(error){
+            console.error('1009:Erro ao obter lista de avisos:', error.response ? error.response.data : error.message);
         }
     }
 }
