@@ -13,6 +13,7 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter dados dos discentes:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async discenteByMatricula(matricula){
@@ -22,6 +23,7 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter dados dos discentes por matricula:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async voluntario(){
@@ -32,6 +34,7 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter dados dos voluntarios:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async voluntarioNomesFuncoes(){
@@ -42,6 +45,7 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter nomes e funções dos voluntarios:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async voluntarioByMatricula(matricula){
@@ -53,6 +57,7 @@ const get = {
             return response;
         }catch{
             console.error('1009:Erro ao obter dados dos voluntarios por matricula:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async frequenciavoluntario(data, matricula){
@@ -71,6 +76,7 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter dados das frequências dos discente:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async frequenciadiscente(data, matricula){
@@ -87,6 +93,7 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter dados das frequências dos voluntario:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async diarioByMatricula(matricula){
@@ -97,6 +104,7 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter dados das frequências dos voluntario:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async downloadFile(matricula, filename){
@@ -120,6 +128,7 @@ const get = {
             window.URL.revokeObjectURL(url);
         }catch(error){
             console.error('Erro ao baixar o arquivo:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async embaixadores(){
@@ -131,6 +140,7 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter dados dos embaixadores:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async amigosmelvin(){
@@ -141,6 +151,7 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter dados dos amigos do melvin:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async imagemPorId(id, tipo){
@@ -154,6 +165,7 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter dados da imagem:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async imagemlista(){
@@ -164,6 +176,7 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter lista de imagens:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     },
     async aviso(){
@@ -174,6 +187,7 @@ const get = {
             return response;
         }catch(error){
             console.error('1009:Erro ao obter lista de avisos:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
         }
     }
 }

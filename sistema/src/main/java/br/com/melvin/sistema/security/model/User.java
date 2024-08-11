@@ -2,6 +2,7 @@ package br.com.melvin.sistema.security.model;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,8 +28,8 @@ import lombok.Setter;
 @EqualsAndHashCode(of = "id")
 public class User implements UserDetails{
     @Id 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
     private String login;
     private String password;
     private UserRole role;
@@ -41,15 +42,7 @@ public class User implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == UserRole.COOR)     return List.of( new SimpleGrantedAuthority("ROLE_COOR"), 
-                                                            new SimpleGrantedAuthority("ROLE_PROF"),
-                                                            new SimpleGrantedAuthority("ROLE_AUX"),
-                                                            new SimpleGrantedAuthority("ROLE_COZI"),
-                                                            new SimpleGrantedAuthority("ROLE_ADM"),
-                                                            new SimpleGrantedAuthority("ROLE_MARK"),
-                                                            new SimpleGrantedAuthority("ROLE_ZELA"),
-                                                            new SimpleGrantedAuthority("ROLE_DIRE")
-                                                            );
+        if     (this.role == UserRole.COOR)     return List.of( new SimpleGrantedAuthority("ROLE_COOR"));
         else if(this.role == UserRole.PROF)     return List.of(new SimpleGrantedAuthority("ROLE_PROF"));
         else if(this.role == UserRole.AUX)      return List.of(new SimpleGrantedAuthority("ROLE_AUX")); 
         else if(this.role == UserRole.COZI)     return List.of(new SimpleGrantedAuthority("ROLE_COZI"));

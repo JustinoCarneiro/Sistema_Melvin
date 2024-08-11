@@ -17,11 +17,15 @@ function NavBar({close}){
     const closeNavBar = () => {close(false)}
 
     const [subnavvol, setSubNavVol] = useState(false);
-    const [isAdmOrDire, setIsAdmOrDire] = useState(false);
+    const [isDire, setIsDire] = useState(false);
+    const [isProf, setIsProf] = useState(false);
+    const [isAdm, setIsAdm] = useState(false);
 
     useEffect(() => {
         const userRole = Cookies.get('role');
-        setIsAdmOrDire(userRole === 'ADM' || userRole === 'DIRE');     
+        setIsProf(userRole === 'PROF')
+        setIsDire(userRole === 'DIRE');     
+        setIsAdm(userRole === "ADM");
     }, []);
 
     const handleVol = () =>{
@@ -36,13 +40,17 @@ function NavBar({close}){
         <div className={styles.body}>
             <IoClose className={styles.close} onClick={closeNavBar}/>
             <ul className={styles.nav}>
-                <li> 
-                    <Link to="/app/alunos" className={styles.link}>
-                        <PiStudentBold className={styles.icon}/> 
-                        <p>Alunos</p>
-                    </Link>
-                </li>
-                {isAdmOrDire && (
+                {(isAdm || isProf || isDire) && (
+                    <>
+                        <li> 
+                            <Link to="/app/alunos" className={styles.link}>
+                                <PiStudentBold className={styles.icon}/> 
+                                <p>Alunos</p>
+                            </Link>
+                        </li>
+                    </>
+                )}
+                {(isAdm || isDire) && (
                     <>
                         <li onClick={handleVol} className={styles.link}> 
                             <PiChalkboardTeacher className={styles.icon}/> 
@@ -62,6 +70,10 @@ function NavBar({close}){
                                 <p>Amigos Melvin</p>
                             </Link>
                         </li>
+                    </>
+                )}
+                {isAdm && (
+                    <>
                         <li> 
                             <Link to="/app/avisos" className={styles.link}>
                                 <GoAlertFill className={styles.icon}/> 

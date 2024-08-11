@@ -38,33 +38,35 @@ public class DiscenteService {
         return discenteRepository.findByMatricula(matricula);
     }
 
-    private String generateMatricula() {
+    private synchronized String generateMatricula() {
         int currentYear = Year.now().getValue();
         String yearPrefix = String.valueOf(currentYear);
-
+    
         Query query = entityManager.createNativeQuery("SELECT COUNT(*) FROM discente");
         int count = ((Number) query.getSingleResult()).intValue();
         int nextNumber = count + 1;
-
-        return "%s%04d".formatted(yearPrefix, nextNumber);
+    
+        // Gera a matrícula
+        String newMatricula = "%s%04d".formatted(yearPrefix, nextNumber);
+    
+        // Verifica se a matrícula já existe
+        while (discenteRepository.findByMatricula(newMatricula) != null) {
+            nextNumber++;
+            newMatricula = "%s%04d".formatted(yearPrefix, nextNumber);
+        }
+    
+        return newMatricula;
     }
 
     // Método para cadastrar discente
     public ResponseEntity<?> cadastrar(Discente discente){
         String resposta;
-        /*if( discente.getMatricula() == null             || discente.getMatricula().isEmpty()            ||
-            discente.getNome() == null                  || discente.getNome().isEmpty()                 ||
-            discente.getEndereco() == null              || discente.getEndereco().isEmpty()             ||
-            discente.getBairro() == null                || discente.getBairro().isEmpty()               ||
-            discente.getCidade() == null                || discente.getCidade().isEmpty()               ||
-            discente.getRG() == null                    || discente.getRG().isEmpty()                   ||
-            discente.getSerie() == null                 || discente.getSerie().isEmpty()                ||
-            discente.getTurno() == null                 || discente.getTurno().isEmpty()                   ){
-            resposta = "As informações de matricula, nome e idade são obrigatórias!";
-            return new ResponseEntity<String>(resposta, HttpStatus.BAD_REQUEST);
-        } else */
+        
         if(discenteRepository.findByMatricula(discente.getMatricula())!=null){
             resposta = "Matricula já cadastrada!";
+            return new ResponseEntity<String>(resposta, HttpStatus.CONFLICT);
+        } else if(discenteRepository.findByNome(discente.getNome())!=null){
+            resposta = "Discente já matriculado!";
             return new ResponseEntity<String>(resposta, HttpStatus.CONFLICT);
         }
         

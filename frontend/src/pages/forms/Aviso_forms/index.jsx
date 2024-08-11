@@ -38,7 +38,7 @@ function AvisoForms(){
                 console.log("response get", response);
                 const imagemExistente = await get.imagemPorId(id, "aviso");
 
-                if(imagemExistente.data != ""){
+                if(imagemExistente && imagemExistente.data){
                     console.log("Imagem existente", imagemExistente);
                     setImagem(imagemExistente);
                 }
@@ -105,7 +105,7 @@ function AvisoForms(){
                     response = await put.aviso(formDado);
                     if(imagem instanceof File){
                         console.log("imagem", imagem);
-                        responseImagem = await put.imagem(id, "aviso", imagem);
+                        responseImagem = await put.imagem(response.data.id, "aviso", imagem);
                     }
                 } else {
                     console.log("Aviso não existe. Criando novo aviso...");

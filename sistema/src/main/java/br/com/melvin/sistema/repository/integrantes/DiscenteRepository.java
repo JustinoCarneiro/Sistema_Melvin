@@ -11,6 +11,8 @@ import br.com.melvin.sistema.model.integrantes.Discente;
 public interface DiscenteRepository extends JpaRepository<Discente, UUID>{
     Discente findByMatricula(String matricula);
 
+    Discente findByNome(String nome);
+
     void deleteByMatricula(String matricula);
 
     List<Discente> findAllBySala(Integer sala);

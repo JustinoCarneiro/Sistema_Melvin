@@ -3,6 +3,7 @@ package br.com.melvin.sistema.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,6 +44,12 @@ public class DiarioController {
     public ResponseEntity<?> atualizarFile(@RequestParam MultipartFile file,
                                            @PathVariable String matriculaAtrelada) {
         ResponseEntity<?> response = diarioService.upload(file, matriculaAtrelada);
+        return response;
+    }
+
+    @DeleteMapping("/delete/{matriculaAtrelada}")
+    public ResponseEntity<?> deletarDiario(@PathVariable String matriculaAtrelada){
+        ResponseEntity<?> response = diarioService.deleteDiarioByMatricula(matriculaAtrelada);
         return response;
     }
 }

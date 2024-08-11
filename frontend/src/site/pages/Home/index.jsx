@@ -2,6 +2,7 @@ import styles from "./Home.module.scss";
 
 import { useNavigate } from "react-router-dom";
 
+import foto_principal from "../../../docs/imagem_principal.jpeg";
 
 function Home() {
     const navigate = useNavigate();
@@ -10,12 +11,17 @@ function Home() {
         <div className={styles.body}>
             <div className={styles.faixa_instmelvin}>
                 <div className={styles.imagens}>
-                    <div className={styles.imagem_front}></div>
+                    <div className={styles.imagem_front}>
+                        <img src={foto_principal} alt="foto_principal" className={styles.img}/>
+                    </div>
                     <div className={styles.imagem_back}></div>
                 </div>
                 <div className={styles.conteudo}>
                     <h2 className={styles.title}>Instituto Melvin Huber</h2>
-                    <p className={styles.texto}>Lorem Ipsum é simplesmente uma simulação de texto da  indústria tipográfica e de impressos, e vem sendo utilizado desde o  século XVI, quando um impressor desconhecido pegou uma bandeja de tipmax-width: $size-bos e  os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum  sobreviveu não só a cinco séculos, como também ao salto para a  editoração eletrônica, permanecendo essencialmente inalterado. Se  popularizou na década de 60, quando a Letraset lançou decalques contendo  passagens de Lorem Ipsum, e mais recentemente quando passou a ser  integrado a softwares de editoração eletrônica como Aldus PageMaker.</p>
+                    <p className={styles.texto}>
+                        <p>O Instituto Melvin Edward Huber é uma organização da sociedade civil de interesse público e sem fins lucrativos, o Instituto é voltado ao auxílio e amparo de crianças, jovens, adultos e idosos em situação de vulnerabilidade social.</p>
+                        <p>Iniciou suas atividades em outubro de 2009, com 18 famílias, e hoje atende mais de 400 famílias.</p>
+                    </p>
                     <button className={styles.button} onClick={() => navigate("/maissobrenos")}>Saiba mais</button>
                 </div>
             </div>

@@ -102,16 +102,20 @@
 }
 
 .imagem{
-    width: 10rem;
-    height: 10rem;
+    max-width: 10rem;
+    max-height: 10rem;
     background-color: rgb(72, 148, 123);
     flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
 
 .img{
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
 }
 
 @media (max-width: $size-i){

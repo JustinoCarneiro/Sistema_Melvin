@@ -30,6 +30,7 @@ const auth = {
         const endpoint = "/auth/register";
 
         try{
+            console.log("response dados pré-post: ", dados);
             const response = await http.post(endpoint, dados);
             return response;
         }catch(error){
@@ -67,6 +68,7 @@ const auth = {
             Cookies.remove('login');
         } catch (error) {
             console.error('1004:Erro ao deslogar:', error);
+            return Promise.reject(error);
         }
     }
 };

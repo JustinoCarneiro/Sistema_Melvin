@@ -9,6 +9,7 @@ const put = {
             return response;
         }catch(error){
             console.error('1018:Erro ao alterar dados dos discentes:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -20,6 +21,7 @@ const put = {
             return response;
         }catch(error){
             console.error('1018:Erro ao alterar dados dos voluntarios:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -31,6 +33,7 @@ const put = {
             return response;
         }catch(error){
             console.error('1018:Erro ao alterar dados das frequências dos discentes:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -42,6 +45,7 @@ const put = {
             return response;
         }catch(error){
             console.error('1018:Erro ao alterar dados das frequências dos voluntarios:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -73,6 +77,7 @@ const put = {
             return response;
         }catch(error){
             console.log("1018:Error ao atualizar diário:", error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -84,6 +89,7 @@ const put = {
             return response;
         }catch(error){
             console.log("1018:Erro ao alterar senha do usuário:", error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -96,6 +102,7 @@ const put = {
             return response;
         }catch(error){
             console.log("1018:Erro ao alterar dados do embaixador:", error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -108,6 +115,7 @@ const put = {
             return response;
         }catch(error){
             console.log("1018:Erro ao alterar dados do embaixador:", error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -119,6 +127,7 @@ const put = {
             return response;
         }catch(error){
             console.log("1018:Erro ao alterar role do usuário:", error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -146,6 +155,7 @@ const put = {
 
         }catch(error){
             console.log("1018:Erro ao atualizar imagem:", error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -157,6 +167,7 @@ const put = {
             return response;
         }catch(error){
             console.log("1018:Erro ao alterar dados do embaixador:", error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     }
 }

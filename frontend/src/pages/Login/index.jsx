@@ -1,6 +1,6 @@
 import styles from './Login.module.scss';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 import auth from '../../services/auth';
@@ -71,7 +71,9 @@ function Login(){
         <div className={styles.body}>
             <div className={styles.container}>
                 <form className={styles.form} onSubmit={handleSubmit}>
-                    <img src={logo} alt="logo" className={styles.logo}/>
+                    <Link to="/">
+                        <img src={logo} alt="logo" className={styles.logo}/>
+                    </Link>
                     <input
                         type="text" 
                         name="matricula" 

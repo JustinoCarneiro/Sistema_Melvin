@@ -3,6 +3,11 @@ import styles from './MaisSobreNos.module.scss';
 import { useState, useEffect} from "react";
 import get from '../../../services/requests/get';
 
+import objetivo1 from '../../../docs/objetivo1.png';
+import objetivo3 from '../../../docs/objetivo3.png';
+import objetivo4 from '../../../docs/objetivo4.png';
+import objetivo16 from '../../../docs/objetivo16.png';
+
 function MaisSobreNos(){
 
     const [voluntarios, setVoluntarios] = useState([]);
@@ -34,7 +39,9 @@ function MaisSobreNos(){
                 <div className={styles.conteudo}>
                     <h2 className={styles.title}>Instituto Melvin Huber</h2>
                     <p className={styles.paragrafo_acima}>
-                        Lorem Ipsum é simplesmente uma simulação de texto da  indústria tipográfica e de impressos, e vem sendo utilizado desde o  século XVI, quando um impressor desconhecido pegou uma bandeja de tipmax-width: $size-bos e  os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum  sobreviveu não só a cinco séculos, como também ao salto para a  editoração eletrônica, permanecendo essencialmente inalterado. Se  popularizou na década de 60, quando a Letraset lançou decalques contendo  passagens de Lorem Ipsum, e mais recentemente quando passou a ser  integrado a softwares de editoração eletrônica como Aldus PageMaker. Lorem Ipsum é simplesmente uma simulação de texto da  indústria tipográfica e de impressos, e vem sendo utilizado desde o  século XVI, quando um impressor desconhecido pegou uma bandeja de tipmax-width: $size-bos e  os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum  sobreviveu não só a cinco séculos, como também ao salto para a  editoração eletrônica, permanecendo essencialmente inalterado. Se  popularizou na década de 60, quando a Letraset lançou decalques contendo  passagens de Lorem Ipsum, e mais recentemente quando passou a ser  integrado a softwares de editoração eletrônica como Aldus PageMaker.
+                        <p>O Instituto Melvin trabalha no espaço de contra turno escolar, criado para fortalecer os vínculos familiares e sociais, reforçar e garantir a aquisição do conhecimento formal, descobrir e ativar potenciais através de escolas/oficinas de arte, esporte, cursos profissionalizantes, palestras, rodas de conversa e terapias de grupo.</p>
+                        <p>Objetiva prevenir a marginalidade de crianças e adolescentes, bem como, construir e reconstruir famílias através de um trabalho focado no ensino por princípios, com vistas à formação do caráter e do núcleo familiar.</p>
+                        <p>O Instituto Melvin recebeu esse nome para homenagear e honrar o trabalho do missionário norte-americano Melvin Edward Huber (1920-2008). Nascido no estado americano de Indiana, casado com Catherine Von tobel, deixaram a vida confortável e promissora nos EUA e mudaram para o Brasil em 1956 onde serviram por 52 anos. Deixaram um legado de compaixão e intensa dedicação às pessoas.</p>
                     </p>
                 </div>
                 <div className={styles.imagens}>
@@ -44,27 +51,28 @@ function MaisSobreNos(){
                     <div className={styles.imagem_di}></div>
                 </div>
             </div>
-            <p className={styles.paragrafo_abaixo}>
-                Lorem Ipsum é simplesmente uma simulação de texto da  indústria tipográfica e de impressos, e vem sendo utilizado desde o  século XVI, quando um impressor desconhecido pegou uma bandeja de tipmax-width: $size-bos e  os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum  sobreviveu não só a cinco séculos, como também ao salto para a  editoração eletrônica, permanecendo essencialmente inalterado. Se  popularizou na década de 60, quando a Letraset lançou decalques contendo  passagens de Lorem Ipsum, e mais recentemente quando passou a ser  integrado a softwares de editoração eletrônica como Aldus PageMaker. Lorem Ipsum é simplesmente uma simulação de texto da  indústria tipográfica e de impressos, e vem sendo utilizado desde o  século XVI, quando um impressor desconhecido pegou uma bandeja de tipmax-width: $size-bos e  os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum  sobreviveu não só a cinco séculos, como também ao salto para a  editoração eletrônica, permanecendo essencialmente inalterado. Se  popularizou na década de 60, quando a Letraset lançou decalques contendo  passagens de Lorem Ipsum, e mais recentemente quando passou a ser  integrado a softwares de editoração eletrônica como Aldus PageMaker.
-            </p>
             <div className={styles.faixa_objetivos}>
                 <h3 className={styles.title_faixa_objetivo}>Objetivos</h3>
                 <div className={styles.objetivos}>
                     <div className={styles.caixa_objetivo}>
-                        <div className={styles.imagem_objetivo}></div>
-                        <p className={styles.descricao_objetivo}>Descrição rápida do objetivo 1</p>
+                        <div className={styles.imagem_objetivo}>
+                            <img src={objetivo1} alt="objetivo 1" className={styles.img}/>
+                        </div>
                     </div>
                     <div className={styles.caixa_objetivo}>
-                        <div className={styles.imagem_objetivo}></div>
-                        <p className={styles.descricao_objetivo}>Descrição rápida do objetivo 2</p>
+                        <div className={styles.imagem_objetivo}>
+                            <img src={objetivo3} alt="objetivo 3" className={styles.img}/>
+                        </div>
                     </div>
                     <div className={styles.caixa_objetivo}>
-                        <div className={styles.imagem_objetivo}></div>
-                        <p className={styles.descricao_objetivo}>Descrição rápida do objetivo 3</p>
+                        <div className={styles.imagem_objetivo}>
+                            <img src={objetivo4} alt="objetivo 4" className={styles.img}/>
+                        </div>
                     </div>
                     <div className={styles.caixa_objetivo}>
-                        <div className={styles.imagem_objetivo}></div>
-                        <p className={styles.descricao_objetivo}>Descrição rápida do objetivo 4</p>
+                        <div className={styles.imagem_objetivo}>
+                            <img src={objetivo16} alt="objetivo 16" className={styles.img}/>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -72,19 +80,22 @@ function MaisSobreNos(){
                 <div className={styles.caixa_valor}>
                     <h4 className={styles.title_valor}>Missão</h4>
                     <p className={styles.descricao_valor}>
-                        Lorem Ipsum é simplesmente uma simulação de texto da  indústria tipográfica e de impressos, e vem sendo utilizado desde o  século XVI, quando um impressor desconhecido pegou uma bandeja de tipmax-width: $size-bos e  os
+                        Promover o desenvolvimento integral de crianças e adolescentes e
+                        suas famílias com vista ao exercício de sua plena cidadania.
                     </p>
                 </div>
                 <div className={styles.caixa_valor}>
                     <h4 className={styles.title_valor}>Visão</h4>
                     <p className={styles.descricao_valor}>
-                        Lorem Ipsum é simplesmente uma simulação de texto da  indústria tipográfica e de impressos, e vem sendo utilizado desde o  século XVI, quando um impressor desconhecido pegou uma bandeja de tipmax-width: $size-bos e  os
+                        Ser uma instituição que serve com responsabilidade e amor às
+                        crianças buscando sempre proporcionar o desenvolvimento físico,
+                        emocional e espiritual, fortalecendo os vínculos familiares.
                     </p>
                 </div>
                 <div className={styles.caixa_valor}>
                     <h4 className={styles.title_valor}>Valores</h4>
                     <p className={styles.descricao_valor}>
-                        Lorem Ipsum é simplesmente uma simulação de texto da  indústria tipográfica e de impressos, e vem sendo utilizado desde o  século XVI, quando um impressor desconhecido pegou uma bandeja de tipmax-width: $size-bos e  os
+                        Ambiente de Amor, Solidariedade, Transparência, Misericórdia, Ética, Amizade, Compromisso, Obediência, Respeito ao Próximo, Serviço.
                     </p>
                 </div>
             </div>

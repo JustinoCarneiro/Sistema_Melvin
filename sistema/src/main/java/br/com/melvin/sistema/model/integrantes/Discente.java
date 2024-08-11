@@ -95,13 +95,13 @@ public class Discente{
 
     private String estado_civil_mae;
 
-    private Integer qtd_filho;
+    private String qtd_filho;
 
     private String beneficio_governo;
 
     private String meio_transporte;
 
-    private Integer qtd_transporte;
+    private String qtd_transporte;
 
     private String mora_familiar;
 
@@ -109,11 +109,11 @@ public class Discente{
 
     private String todos_moram_casa;
 
-    private Float renda_total;
+    private String renda_total;
 
-    private Integer clt;
+    private String clt;
 
-    private Integer autonomo;
+    private String autonomo;
 
     private String familia_congrega;
 

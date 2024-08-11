@@ -13,6 +13,7 @@ import Input from '../../../components/gerais/Input';
 import post from '../../../services/requests/post';
 import get from '../../../services/requests/get';
 import put from '../../../services/requests/put';
+import del from '../../../services/requests/delete';
 
 
 function Aluno_forms(){
@@ -77,78 +78,83 @@ function Aluno_forms(){
     useEffect(() => {
         const fetchAluno = async () => {
             try {
-                const alunoExistente = await get.discenteByMatricula(matricula);
                 const diarioExistente = await get.diarioByMatricula(matricula);
 
-                if(diarioExistente.data != ""){
+                if(diarioExistente && diarioExistente.data != ""){
                     console.log("Diario existente", diarioExistente);
                     setDiario(diarioExistente);
                 }
 
-                if (alunoExistente) {
-                    const response = await get.discenteByMatricula(matricula);
-                    console.log("reponse:", response);
-                    if(response.data){
-                        setFormDado({
-                            matricula: response.data.matricula || '',
-                            nome: response.data.nome || '',
-                            email: response.data.email || '',
-                            contato: response.data.contato || '',
-                            sexo: response.data.sexo || '',
-                            data: response.data.data || '',
-                            cor: response.data.cor || '',
-                            nacionalidade: response.data.nacionalidade || '',
-                            endereco: response.data.endereco || '',
-                            bairro: response.data.bairro || '',
-                            cidade: response.data.cidade || '',
-                            rg: response.data.rg || '',
-                            sala: response.data.sala || '',
-                            turno: response.data.turno || '',
-                            nome_pai: response.data.nome_pai || '',
-                            contato_pai: response.data.contato_pai || '',
-                            instrucao_pai: response.data.instrucao_pai || '',
-                            ocupacao_pai: response.data.ocupacao_pai || '',
-                            local_trabalho_pai: response.data.local_trabalho_pai || '',
-                            contato_trabalho_pai: response.data.contato_trabalho_pai || '',
-                            alfabetizacao_pai: response.data.alfabetizacao_pai || '',
-                            estado_civil_pai: response.data.estado_civil_pai || '',
-                            nome_mae: response.data.nome_mae || '',
-                            contato_mae: response.data.contato_mae || '',
-                            instrucao_mae: response.data.instrucao_mae || '',
-                            ocupacao_mae: response.data.ocupacao_mae || '',
-                            local_trabalho_mae: response.data.local_trabalho_mae || '',
-                            contato_trabalho_mae: response.data.contato_trabalho_mae || '',
-                            alfabetizacao_mae: response.data.alfabetizacao_mae || '',
-                            estado_civil_mae: response.data.estado_civil_mae || '',
-                            qtd_filho: response.data.qtd_filho || '',
-                            beneficio_governo: response.data.beneficio_governo || '',
-                            meio_transporte: response.data.meio_transporte || '',
-                            qtd_transporte: response.data.qtd_transporte || '',
-                            mora_familiar: response.data.mora_familiar || '',
-                            outro_familiar: response.data.outro_familiar || '',
-                            todos_moram_casa: response.data.todos_moram_casa || '',
-                            renda_total: response.data.renda_total || '',
-                            clt: response.data.clt || '',
-                            autonomo: response.data.autonomo || '',
-                            familia_congrega: response.data.familia_congrega || '',
-                            gostaria_congregar: response.data.gostaria_congregar || '',
-                            doenca: response.data.doenca || '',
-                            medicacao: response.data.medicacao || '',
-                            remedio_instituto: response.data.remedio_instituto || '',
-                            tratamento: response.data.tratamento || '',
-                            horario_medicamento: response.data.horario_medicamento || '',
-                            esportes: response.data.esportes || '',
-                            saida_aluno: response.data.saida_aluno || '',
-                            contato_saida: response.data.contato_saida || '',
-                            status: response.data.status || ''
-                        });
-                    }
+                const response = await get.discenteByMatricula(matricula);
+                console.log("reponse:", response);
+                if(response.data){
+                    setFormDado({
+                        matricula: response.data.matricula || '',
+                        nome: response.data.nome || '',
+                        email: response.data.email || '',
+                        contato: response.data.contato || '',
+                        sexo: response.data.sexo || '',
+                        data: response.data.data || '',
+                        cor: response.data.cor || '',
+                        nacionalidade: response.data.nacionalidade || '',
+                        endereco: response.data.endereco || '',
+                        bairro: response.data.bairro || '',
+                        cidade: response.data.cidade || '',
+                        rg: response.data.rg || '',
+                        sala: response.data.sala || '',
+                        turno: response.data.turno || '',
+                        nome_pai: response.data.nome_pai || '',
+                        contato_pai: response.data.contato_pai || '',
+                        instrucao_pai: response.data.instrucao_pai || '',
+                        ocupacao_pai: response.data.ocupacao_pai || '',
+                        local_trabalho_pai: response.data.local_trabalho_pai || '',
+                        contato_trabalho_pai: response.data.contato_trabalho_pai || '',
+                        alfabetizacao_pai: response.data.alfabetizacao_pai || '',
+                        estado_civil_pai: response.data.estado_civil_pai || '',
+                        nome_mae: response.data.nome_mae || '',
+                        contato_mae: response.data.contato_mae || '',
+                        instrucao_mae: response.data.instrucao_mae || '',
+                        ocupacao_mae: response.data.ocupacao_mae || '',
+                        local_trabalho_mae: response.data.local_trabalho_mae || '',
+                        contato_trabalho_mae: response.data.contato_trabalho_mae || '',
+                        alfabetizacao_mae: response.data.alfabetizacao_mae || '',
+                        estado_civil_mae: response.data.estado_civil_mae || '',
+                        qtd_filho: response.data.qtd_filho || '',
+                        beneficio_governo: response.data.beneficio_governo || '',
+                        meio_transporte: response.data.meio_transporte || '',
+                        qtd_transporte: response.data.qtd_transporte || '',
+                        mora_familiar: response.data.mora_familiar || '',
+                        outro_familiar: response.data.outro_familiar || '',
+                        todos_moram_casa: response.data.todos_moram_casa || '',
+                        renda_total: response.data.renda_total || '',
+                        clt: response.data.clt || '',
+                        autonomo: response.data.autonomo || '',
+                        familia_congrega: response.data.familia_congrega || '',
+                        gostaria_congregar: response.data.gostaria_congregar || '',
+                        doenca: response.data.doenca || '',
+                        medicacao: response.data.medicacao || '',
+                        remedio_instituto: response.data.remedio_instituto || '',
+                        tratamento: response.data.tratamento || '',
+                        horario_medicamento: response.data.horario_medicamento || '',
+                        esportes: response.data.esportes || '',
+                        saida_aluno: response.data.saida_aluno || '',
+                        contato_saida: response.data.contato_saida || '',
+                        status: response.data.status || ''
+                    });
                 } else {
                     console.log('Aluno não encontrado');
                 }
             } catch (error) {
                 console.error('5002:Erro ao obter dados do aluno!', error);
-                alert('Erro ao obter dados do aluno!');
+
+                // Verificar se o erro tem uma resposta e pegar o texto ou JSON
+                if (error.response) {
+                    const errorMessage = error.response.data ? JSON.stringify(error.response.data) : error.response.statusText;
+                    console.error(`Erro ao obter dados do aluno: ${errorMessage}`);
+                    alert(`Erro ao obter dados do aluno: ${errorMessage}`);
+                } else {
+                    alert('Erro ao obter dados do aluno!');
+                }
             }
         };
     
@@ -181,6 +187,29 @@ function Aluno_forms(){
             let response;
             let responseDiario;
 
+            if (formDado.status === 'deletar') {
+                const confirmar = window.confirm('Você realmente deseja deletar este registro? Esta ação não pode ser desfeita.');
+        
+                if (confirmar) {
+                    // Executar o método de deleção do discente
+                    await del.discente(matricula);
+                    
+                    // Tentar deletar o diário, mas sem impedir a exclusão do discente se o diário não existir
+                    try {
+                        await del.diario(matricula);
+                    } catch (error) {
+                        console.warn(`Diário não encontrado para a matrícula: ${matricula}. Prosseguindo com a exclusão do discente.`);
+                    }
+    
+                    alert('Registro deletado com sucesso!');
+                    navigate(-1);
+                    return;
+                } else {
+                    // Se o usuário cancelar a exclusão, apenas retorne
+                    return;
+                }
+            }
+
             const alunoExistente = await get.discenteByMatricula(matricula);
 
             if (alunoExistente && alunoExistente.data) {
@@ -188,14 +217,14 @@ function Aluno_forms(){
                 response = await put.discente(formDado);
 
                 if (diario && diario instanceof File) {
-                    responseDiario = await put.atualizarDiario({ matricula: formDado.matricula, file: diario });
+                    responseDiario = await put.atualizarDiario({ matricula: response.data.matricula, file: diario });
                 }
             } else {
                 console.log("Matrícula não existe. Criando novo aluno...");
                 response = await post.discente(formDado);
 
                 if(diario && diario instanceof File){
-                    responseDiario = await post.uploadDiario({ matricula: formDado.matricula, file: diario });
+                    responseDiario = await post.uploadDiario({ matricula: response.data.matricula, file: diario });
                 }
             }
 
@@ -206,7 +235,22 @@ function Aluno_forms(){
             navigate(-1);
         } catch (error) {
             console.error('5001:Erro ao salvar!', error);
-            alert('Erro ao salvar!');
+
+            if (error.response) {
+                // Verificar se a resposta é um texto simples ou JSON
+                let errorMessage;
+                try {
+                    errorMessage = JSON.parse(error.response.data);
+                } catch (e) {
+                    // Se der erro ao fazer o parse, considerar que é um texto simples
+                    errorMessage = error.response.data;
+                }
+
+                console.error(`Erro ao salvar: ${errorMessage}`);
+                alert(`Erro ao salvar: ${errorMessage}`);
+            } else {
+                alert('Erro ao salvar!');
+            }
         }
     };
 
@@ -362,6 +406,7 @@ function Aluno_forms(){
                                     <option value="" hidden>Selecione...</option>
                                     <option value="true">Ativa</option>
                                     <option value="false">Inativa</option>
+                                    <option value="deletar">Deletar</option>
                                 </select>
                             </label>
                         </div>
@@ -500,7 +545,7 @@ function Aluno_forms(){
                                 label="Ocupação:"
                                 type="text"
                                 placeholder=""
-                                name="ocupação_mae"
+                                name="ocupacao_mae"
                                 value={formDado.ocupacao_mae}
                                 onChange={handleChange}
                                 comp="pequeno"
@@ -556,7 +601,7 @@ function Aluno_forms(){
                                 label="Alfabetização:"
                                 type="text"
                                 placeholder=""
-                                name="alfabetizacao_mãe"
+                                name="alfabetizacao_mae"
                                 value={formDado.alfabetizacao_mae}
                                 onChange={handleChange}
                                 comp="pequeno"
@@ -583,7 +628,7 @@ function Aluno_forms(){
                                 label="Quantos filhos além do aluno:"
                                 type="text"
                                 placeholder=""
-                                name="qtd_filhos"
+                                name="qtd_filho"
                                 value={formDado.qtd_filho}
                                 onChange={handleChange}
                                 comp="pequeno"

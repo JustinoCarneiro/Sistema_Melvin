@@ -26,7 +26,7 @@ import jakarta.validation.Valid;
 
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping("/auth")
 public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -55,10 +55,15 @@ public class AuthenticationController {
     
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody ResgisterDTO dados) {
-        if(this.repositoryVoluntario.findByMatricula(dados.login()) == null) return ResponseEntity.badRequest().build();
-    
+        // Adiciona um log inicial para ver se o método está sendo chamado
+        System.out.println("Register endpoint called");
+
+        if (this.repositoryVoluntario.findByMatricula(dados.login()) == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
         String encryptedPassword = passwordEncoder.encode(dados.password());
-        User newUser =  new User(dados.login(), encryptedPassword, dados.role());
+        User newUser = new User(dados.login(), encryptedPassword, dados.role());
 
         this.repositoryUser.save(newUser);
 
@@ -67,6 +72,8 @@ public class AuthenticationController {
 
     @PutMapping("/alterar_senha/{matricula}/{senha}")
     public ResponseEntity<?> alterarSenha(@PathVariable String matricula, @PathVariable String senha) {
+        System.out.println("Alterar Senha endpoint called");
+
         User user = repositoryUser.findByLogin(matricula);
         if (user == null) {
             return ResponseEntity.badRequest().build();
@@ -88,6 +95,18 @@ public class AuthenticationController {
         
         UserRole role = user.getRole();
         return ResponseEntity.ok(role);
+    }
+
+    @GetMapping("/senha/{matricula}")
+    public ResponseEntity<?> senha(@PathVariable String matricula){
+        User user = repositoryUser.findByLogin(matricula);
+
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        String password = user.getPassword();
+        return ResponseEntity.ok(password);
     }
 
     @PutMapping("/alterar_role/{matricula}/{role}")

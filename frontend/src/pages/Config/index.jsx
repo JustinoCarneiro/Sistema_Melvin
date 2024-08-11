@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import get from "../../services/requests/get";
 import put from "../../services/requests/put";
 import post from "../../services/requests/post";
+import auth from "../../services/auth";
 
 import Input from "../../components/gerais/Input";
 import Botao from "../../components/gerais/Botao";
@@ -97,7 +98,14 @@ function Config(){
     };
 
     if (!userData) {
-        return <div>Carregando...</div>;
+        return (
+            <div>
+                <div>Carregando...</div>
+                <div className={styles.botao}>
+                    <Deslogar/>
+                </div>
+            </div>
+        );
     }
 
     const weekDays = ["segunda", "terca", "quarta", "quinta", "sexta"];
@@ -139,7 +147,7 @@ function Config(){
 
             const voluntario = await get.voluntarioByMatricula(matricula);
 
-            const funcao = voluntario.data.funcao;
+            let funcao = voluntario.data.funcao;
 
             let role;
             if(funcao === "coordenador"){
@@ -163,12 +171,15 @@ function Config(){
             const login = matricula;
             const password = senhaRegistrar;
 
-            const response = await post.registrarvoluntario({login, password, role});
+            console.log("role para registrar", role);
+            console.log("role do adm", Cookies.get('role'));
+            const response = await auth.registrar({login, password, role});
 
             if (response && response.status === 200) {
                 alert("voluntário registrado com sucesso!");
             } else {
                 alert("Erro ao registrar voluntário.");
+                console.log("status", response.status);
             }
         } catch (error) {
             console.error("Erro ao registrar voluntário:", error);

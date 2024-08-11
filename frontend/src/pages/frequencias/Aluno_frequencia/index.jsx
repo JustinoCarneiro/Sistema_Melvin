@@ -15,11 +15,17 @@ function Aluno_frequencia(){
     const [alunos, setAlunos] = useState([]);
     const [data, setData] = useState('');
     const [sala, setSala] = useState('1');
+    const [turno, setTurno] = useState('');
     const [presencas, setPresencas] = useState({});
     const [busca, setBusca] = useState('');
     const [expandedRows, setExpandedRows] = useState({});
     const [isEditable, setIsEditable] = useState(true);
     
+    const getTurnoAtual = () => {
+        const now = new Date();
+        const hour = now.getHours();
+        return hour < 12 ? 'manha' : 'tarde';
+    };
 
     const fetchAlunos = async (selectedSala) => {
         try {
@@ -27,7 +33,7 @@ function Aluno_frequencia(){
             const objetoDados = response.data;
 
             if (Array.isArray(objetoDados)) {
-                const alunosAtivos = objetoDados.filter(aluno => aluno.status === true);
+                const alunosAtivos = objetoDados.filter(aluno => aluno.status === true && aluno.turno === turno);
                 setAlunos(alunosAtivos);
             } else {
                 console.error("5006: Formato inesperado no response:", response);
@@ -60,8 +66,10 @@ function Aluno_frequencia(){
     };
 
     useEffect(() => {
-        fetchAlunos(sala);
-    }, [sala]);
+        if (turno) {
+            fetchAlunos(sala);
+        }
+    }, [sala, turno]);
 
     useEffect(() => {
         if (data) {
@@ -79,6 +87,7 @@ function Aluno_frequencia(){
 
     useEffect(() => {
         setData(getCurrentDate());
+        setTurno(getTurnoAtual());
 
         const fetch = async () => {
 
@@ -239,6 +248,16 @@ function Aluno_frequencia(){
                         />
                     </div>
                     <div className={styles.botoes}>
+                        <select
+                            className={styles.select_turno} 
+                            value={turno} 
+                            onChange={handleChange(setTurno)}
+                            disabled={!isEditable}
+                        >
+                            <option value="" hidden></option>
+                            <option value="manha">Manhã</option>
+                            <option value="tarde">Tarde</option>
+                        </select>
                         <select 
                             className={styles.select_sala} 
                             value={sala} 
@@ -271,10 +290,6 @@ function Aluno_frequencia(){
                                 <th className={styles.th_presenca}>
                                     <div className={styles.ctn_presenca}>
                                         <p className={styles.p}>Presença</p>
-                                        <div className={styles.th_turnos}>
-                                            <p>M</p>
-                                            <p>T</p>
-                                        </div>
                                     </div>
                                 </th>
                                 <th className={styles.coluna_justificativa_th}>Justificativa</th>
@@ -288,25 +303,18 @@ function Aluno_frequencia(){
                                         <td>{aluno.nome}</td>
                                         <td className={styles.td_presenca}>
                                             <div className={styles.select_turnos}>
-                                                <select className={styles.select_presenca}
-                                                        value={presencas[aluno.matricula]?.presenca_manha || ''}
-                                                        onChange={handlePresenceChange(aluno.matricula, 'presenca_manha')}
+                                                <select
+                                                    className={styles.select_presenca}
+                                                    value={turno === 'manha' 
+                                                        ? presencas[aluno.matricula]?.presenca_manha || '' 
+                                                        : presencas[aluno.matricula]?.presenca_tarde || ''
+                                                    }
+                                                    onChange={handlePresenceChange(aluno.matricula, turno === 'manha' ? 'presenca_manha' : 'presenca_tarde')}
                                                 >
                                                     <option value="" hidden></option>
                                                     <option value="P">P</option>
                                                     <option value="F">F</option>
                                                     <option value="FJ">FJ</option>
-                                                    <option value="X">X</option>
-                                                </select>
-                                                <select className={styles.select_presenca}
-                                                        value={presencas[aluno.matricula]?.presenca_tarde || ''}
-                                                        onChange={handlePresenceChange(aluno.matricula, 'presenca_tarde')}
-                                                >
-                                                    <option value="" hidden></option>
-                                                    <option value="P">P</option>
-                                                    <option value="F">F</option>
-                                                    <option value="FJ">FJ</option>
-                                                    <option value="X">X</option>
                                                 </select>
                                             </div>
                                         </td>

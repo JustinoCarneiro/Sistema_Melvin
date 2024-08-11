@@ -58,7 +58,7 @@ function SiteContent(){
         <>
             <HeaderSite/>
             <Routes>
-                <Route path="" element={ <Home/> }/>
+                <Route path="/" element={ <Home/> }/>
                 <Route path="/maissobrenos" element={ <MaisSobreNos/> } />
                 <Route path="/embaixadores" element={ <Embaixadores/> } />
                 <Route path="/amigosmelvin" element={ <AmigosMelvin/> } />
@@ -105,7 +105,7 @@ function AppContent() {
                     <Route path="/voluntario/criar/auxiliar" element={<VoluntarioForms tipo="auxiliar"/>} />
                     <Route path="/voluntario/criar/cozinheiro" element={<VoluntarioForms tipo="cozinheiro"/>} />
                     <Route path="/voluntario/criar/diretor" element={ <VoluntarioForms tipo="diretor"/> } />
-                    <Route path="/voluntario/criar/cooristrador" element={ <VoluntarioForms tipo="cooristrador"/> } />
+                    <Route path="/voluntario/criar/administrador" element={ <VoluntarioForms tipo="administrador"/> } />
                     <Route path="/voluntario/criar/marketing" element={ <VoluntarioForms tipo="marketing"/> } />
                     <Route path="/voluntario/criar/zelador" element={ <VoluntarioForms tipo="zelador"/> } />
                     <Route path="/avisos/criar" element={<AvisoForms/>}/>

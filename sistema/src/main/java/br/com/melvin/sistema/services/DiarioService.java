@@ -96,6 +96,27 @@ public class DiarioService {
         }
     }
 
+    public ResponseEntity<?> deleteDiarioByMatricula(String matriculaAtrelada) {
+        // Buscar o diário pela matrícula
+        Diario diario = repositoryDiario.findByMatriculaAtrelada(matriculaAtrelada);
+        
+        if (diario == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Diário não encontrado para a matrícula: " + matriculaAtrelada);
+        }
+    
+        try {
+            // Deletar o arquivo do sistema de arquivos
+            deleteFile(diario.getFilePath());
+            
+            // Deletar o registro do banco de dados
+            repositoryDiario.delete(diario);
+            
+            return ResponseEntity.status(HttpStatus.OK).body("Diário deletado com sucesso para a matrícula: " + matriculaAtrelada);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Falha ao deletar o diário: " + e.getMessage());
+        }
+    }
+
     public Diario capturaPorMatricula(String matricula){
         return repositoryDiario.findByMatriculaAtrelada(matricula);
     }

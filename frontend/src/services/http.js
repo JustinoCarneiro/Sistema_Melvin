@@ -3,10 +3,12 @@ import Cookies from 'js-cookie';
 
 const http = axios.create({
     baseURL: import.meta.env.VITE_REACT_APP_FETCH_URL,
-    header: {
+    headers: {
         'Content-Type': 'application/json'
     }
 });
+
+console.log(import.meta.env.VITE_REACT_APP_FETCH_URL);
 
 // Interceptor para adicionar o token no header de cada requisição
 http.interceptors.request.use(

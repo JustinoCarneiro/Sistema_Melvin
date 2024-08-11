@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 import br.com.melvin.sistema.config.UrlFrontend;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +27,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfiguration.class);
+    
     @Autowired
     SecurityFilter securityFilter;
 
@@ -33,30 +37,41 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        logger.info("Configuring security filter chain");
         return httpSecurity
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> {
+                    logger.info("Configuring CORS");
+                    cors.configurationSource(corsConfigurationSource());
+                })
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes", "/frequenciavoluntario", "/frequenciadiscente", "/imagens/**", "/embaixador/**", "/app/docs/imagens_embaixadores/**", "/app/docs/diarios/**", "/app/docs/imagens_avisos/**", "/aviso").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/auth/login", "/frequenciavoluntario", "/embaixador", "/amigomelvin").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/frequenciavoluntario/**", "/frequenciadiscente/**", "/imagens/**", "/embaixador/**", "/app/docs/imagens_embaixadores/**", "/app/docs/diarios/**", "/app/docs/imagens_avisos/**", "/aviso").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/auth/login", "/frequenciavoluntario", "/embaixador/**", "/amigomelvin").permitAll()
                     .requestMatchers(HttpMethod.PUT, "/frequenciavoluntario").permitAll()
+
                     .requestMatchers(HttpMethod.GET, "/auth/role_{matricula}").authenticated()
-                    .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/alterar_senha/{matricula}/{senha}", "/imagens", "/aviso").hasRole("ADM")
 
-                    .requestMatchers(HttpMethod.POST,"/discente", "/voluntario", "/imagens/**", "/aviso").hasRole("ADM")
-                    .requestMatchers(HttpMethod.POST,"/diarios").hasAnyRole("ADM", "COOR")
+                    .requestMatchers(HttpMethod.POST,  "/auth/register", "/auth/alterar_senha/{matricula}/{senha}", "/imagens/**", "/aviso/**").hasRole("ADM")
 
-                    .requestMatchers(HttpMethod.GET, "/amigomelvin").hasRole("ADM")
-                    .requestMatchers(HttpMethod.GET, "/diarios", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
+                    .requestMatchers(HttpMethod.POST,"/discente", "/imagens/**").hasAnyRole("ADM", "DIRE")
+                    .requestMatchers(HttpMethod.POST, "/voluntario", "/aviso/**").hasRole("ADM")
+                    .requestMatchers(HttpMethod.POST,"/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
+
+                    .requestMatchers(HttpMethod.GET, "/amigomelvin").hasAnyRole("ADM", "DIRE")
+                    .requestMatchers(HttpMethod.GET, "/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
+                    .requestMatchers(HttpMethod.GET, "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
                     .requestMatchers(HttpMethod.GET, "/discente").hasAnyRole("PROF", "ADM", "DIRE")
                     .requestMatchers(HttpMethod.GET, "/voluntario").hasAnyRole("ADM", "DIRE")
+                    .requestMatchers(HttpMethod.GET, "/voluntario/matricula/{matricula}").permitAll()
 
-                    .requestMatchers(HttpMethod.PUT, "/discente", "/voluntario", "/embaixador", "/amigomelvin", "/auth/alterar_role/{matricula}/{role}", "/imagens/**", "/aviso").hasRole("ADM")
-                    .requestMatchers(HttpMethod.PUT, "/diarios", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
+                    .requestMatchers(HttpMethod.PUT, "/discente", "/amigomelvin", "/embaixador/**", "/imagens/**").hasAnyRole("ADM", "DIRE")
+                    .requestMatchers(HttpMethod.PUT, "/voluntario", "/auth/alterar_role/{matricula}/{role}", "/aviso/**").hasRole("ADM")
+                    .requestMatchers(HttpMethod.PUT, "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
+                    .requestMatchers(HttpMethod.PUT, "/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
 
                     .requestMatchers(HttpMethod.DELETE, "/discente", "/voluntario").hasRole("ADM")
-                    .requestMatchers(HttpMethod.DELETE, "/diarios", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
+                    .requestMatchers(HttpMethod.DELETE, "/diarios/**", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
                     
                     .requestMatchers(HttpMethod.POST, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
                     .requestMatchers(HttpMethod.PUT, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
@@ -87,10 +102,13 @@ public class SecurityConfiguration {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(urlFrontend.getUrl()));
+        configuration.addAllowedOriginPattern("*");
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE));
         configuration.setAllowCredentials(true);
+
+        logger.info("CORS configuration: Allowed origins = {}", configuration.getAllowedOriginPatterns());
+        logger.info("CORS configuration: Allowed methods = {}", configuration.getAllowedMethods());
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

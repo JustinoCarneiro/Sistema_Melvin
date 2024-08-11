@@ -41,15 +41,24 @@ public class VoluntarioService {
                 .collect(Collectors.toList());
     }
 
-    private String generateMatricula() {
+    private synchronized String generateMatricula() {
         int currentYear = Year.now().getValue();
-        String yearPrefix = String.valueOf(currentYear) + "7";
-
-        Query query = entityManager.createNativeQuery("SELECT COUNT(*) FROM voluntario");
+        String yearPrefix = String.valueOf(currentYear);
+    
+        Query query = entityManager.createNativeQuery("SELECT COUNT(*) FROM discente");
         int count = ((Number) query.getSingleResult()).intValue();
         int nextNumber = count + 1;
-
-        return "%s%03d".formatted(yearPrefix, nextNumber);
+    
+        // Gera a matrícula
+        String newMatricula = "%s%04d".formatted(yearPrefix, nextNumber);
+    
+        // Verifica se a matrícula já existe
+        while (voluntarioRepository.findByMatricula(newMatricula) != null) {
+            nextNumber++;
+            newMatricula = "%s%04d".formatted(yearPrefix, nextNumber);
+        }
+    
+        return newMatricula;
     }
 
     public ResponseEntity<?> cadastrar(Voluntario voluntario){

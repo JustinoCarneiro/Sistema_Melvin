@@ -10,6 +10,7 @@ import Input from '../../../components/gerais/Input';
 import post from '../../../services/requests/post';
 import get from '../../../services/requests/get';
 import put from '../../../services/requests/put';
+import del from '../../../services/requests/delete';
 
 function Voluntario_forms({tipo}){
     const {matricula} = useParams();
@@ -143,6 +144,23 @@ function Voluntario_forms({tipo}){
         e.preventDefault();
         try {
             let response;
+
+            if (formDado.status === 'deletar') {
+                const confirmar = window.confirm('Você realmente deseja deletar este registro? Esta ação não pode ser desfeita.');
+        
+                if (confirmar) {
+                    // Executar o método de deleção do discente
+                    await del.voluntario(matricula);
+    
+                    alert('Registro deletado com sucesso!');
+                    navigate(-1);
+                    return;
+                } else {
+                    // Se o usuário cancelar a exclusão, apenas retorne
+                    return;
+                }
+            }
+
             const voluntarioExistente = await get.voluntarioByMatricula(matricula);
 
             if (voluntarioExistente && voluntarioExistente.data) {
@@ -302,6 +320,7 @@ function Voluntario_forms({tipo}){
                                     <option value="" hidden>Selecione...</option>
                                     <option value="true">Ativo</option>
                                     <option value="false">Inativo</option>
+                                    <option value="deletar">Deletar</option>
                                 </select>
                             </label>
                         </div>

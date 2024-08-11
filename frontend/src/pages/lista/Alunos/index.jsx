@@ -17,6 +17,10 @@ function Alunos(){
     const navigate = useNavigate();
 
     useEffect(() => {
+        const userRole = Cookies.get('role');
+        const isUserAdm = userRole === 'ADM' || userRole === 'DIRE';
+        setIsAdm(isUserAdm);
+
         const fetchAlunos = async () => {
             try {
                 const response = await get.discente();
@@ -25,9 +29,6 @@ function Alunos(){
                 if (Array.isArray(objetoDados)) {
                     const alunosAtivos = objetoDados.filter(aluno => aluno.status === true);
                     setAlunos(alunosAtivos);
-
-                    const userRole = Cookies.get('role');
-                    setIsAdm(userRole === 'ADM'); 
                 } else {
                     console.error("5003:Formato inesperado no response:", response);
                     alert('Erro ao obter objeto! Formato inesperado de resposta.');

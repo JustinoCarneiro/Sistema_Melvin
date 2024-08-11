@@ -35,7 +35,7 @@ function Embaixador_forms(){
                 const response = await get.embaixadores();
                 const imagemExistente = await get.imagemPorId(id, "embaixador");
 
-                if(imagemExistente.data != ""){
+                if(imagemExistente && imagemExistente.data){
                     console.log("Imagem existente", imagemExistente);
                     setImagem(imagemExistente);
                 }
@@ -106,14 +106,14 @@ function Embaixador_forms(){
     
                     if (imagem instanceof File) {
                         console.log("imagem", imagem);
-                        responseImagem = await put.imagem(id, "embaixador", imagem);
+                        responseImagem = await put.imagem(response.data.id, "embaixador", imagem);
                     }
                 } else {
                     console.log("Embaixador não existe. Criando novo embaixador...");
                     response = await post.embaixadores(formDado);
     
                     if (imagem && imagem instanceof File) {
-                        responseImagem = await post.imagem(id, "embaixador", imagem);
+                        responseImagem = await post.imagem(response.data.id, "embaixador", imagem);
                     }
                 }
             }

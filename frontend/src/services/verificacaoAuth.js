@@ -40,6 +40,7 @@ const verificacaoAuth = () => {
                     }
                 } catch (error) {
                     console.error('2001:Erro ao verificar role do usuário', error);
+                    return Promise.reject(error);
                 }
             })();
         }

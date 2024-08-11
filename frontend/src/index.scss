@@ -28,7 +28,6 @@ html, body, #root {
 .main-wrapper, .wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 5rem);
 }
 
 * {

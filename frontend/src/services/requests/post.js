@@ -9,17 +9,7 @@ const post = {
             return response;
         }catch(error){
             console.error('1013:Erro ao cadastrar discente:', error.response ? error.response.dados : error.message);
-        }
-    },
-
-    async voluntario(dados){
-        const endpoint = "/voluntario";
-
-        try{
-            const response = await http.post(endpoint, dados);
-            return response;
-        }catch(error){
-            console.error('1013:Erro ao cadastrar voluntario:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -32,6 +22,7 @@ const post = {
             return response;
         }catch(error){
             console.error('1013:Erro ao cadastrar voluntario:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -43,6 +34,7 @@ const post = {
             return response;
         }catch(error){
             console.error('1013:Erro ao cadastrar frequência de discente:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -54,6 +46,7 @@ const post = {
             return response;
         }catch(error){
             console.error('1013:Erro ao cadastrar frequência de voluntario:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -82,17 +75,7 @@ const post = {
             return response;
         }catch(error){
             console.error('1013:Erro ao fazer upload de diário:', error.response ? error.response.dados : error.message);
-        }
-    },
-
-    async registrarvoluntario(dados){
-        const endpoint = "/auth/register";
-
-        try{
-            const response = await http.post(endpoint, dados);
-            return response;
-        }catch(error){
-            console.error('1013:Erro ao registrar voluntario:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -104,6 +87,7 @@ const post = {
             return response;
         }catch(error){
             console.error('1013:Erro ao registrar embaixador:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -115,6 +99,7 @@ const post = {
             return response;
         }catch(error){
             console.error('1013:Erro ao registrar amigo do melvin:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -140,6 +125,7 @@ const post = {
             return response;
         }catch(error){
             console.error('1013:Erro ao fazer upload de imagem:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     },
 
@@ -151,6 +137,7 @@ const post = {
             return response;
         }catch(error){
             console.error('1013:Erro ao registrar aviso:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
         }
     }
 }
