@@ -6,6 +6,8 @@ import { MdOutlineModeEdit } from "react-icons/md";
 import { FaPlus } from "react-icons/fa6";
 import { IoMdSearch } from "react-icons/io";
 
+import Cookies from "js-cookie";
+
 import get from '../../../services/requests/get';
 import Botao from '../../../components/gerais/Botao';
 
@@ -13,8 +15,12 @@ function Voluntarios({tipo}){
     const [busca, setBusca] = useState('');
     const [voluntarios, setVoluntarios] = useState([]);
     const navigate = useNavigate();
+    const [isAdm, setIsAdm] = useState(false);
 
     useEffect(() => {
+        const userRole = Cookies.get('role');  
+        setIsAdm(userRole === "ADM");
+
         const fetchVoluntarios = async () => {
             try {
                 const response = await get.voluntario();
@@ -116,7 +122,9 @@ function Voluntarios({tipo}){
                             <th>Matrícula</th>
                             <th>Nome</th>
                             <th>Email</th>
-                            <th className={styles.edicao}>Edição</th>
+                            {isAdm && (
+                                <th className={styles.edicao}>Edição</th>
+                            )}
                         </tr>
                     </thead>
                     <tbody className={styles.tbody}>
@@ -127,17 +135,23 @@ function Voluntarios({tipo}){
                                 <td>{voluntario.matricula}</td>
                                 <td>{voluntario.nome}</td>
                                 <td>{voluntario.email}</td>
-                                <td className={styles.edicao}>
-                                    <MdOutlineModeEdit 
-                                        className={styles.icon_editar}
-                                        onClick={()=>handleEditClick(voluntario.matricula)}
-                                    />
-                                </td>
+                                {isAdm && (
+                                    <td className={styles.edicao}>
+                                        <MdOutlineModeEdit 
+                                            className={styles.icon_editar}
+                                            onClick={()=>handleEditClick(voluntario.matricula)}
+                                        />
+                                    </td>
+                                )}
                             </tr>
                         ))}
-                        <tr className={styles.plus} onClick={()=>navigate(`/app/voluntario/criar/${tipo}`)}>
-                            <td colSpan="4"><FaPlus className={styles.icon_plus}/></td>
-                        </tr>
+                        {isAdm && (
+                            <>
+                                <tr className={styles.plus} onClick={()=>navigate(`/app/voluntario/criar/${tipo}`)}>
+                                    <td colSpan="4"><FaPlus className={styles.icon_plus}/></td>
+                                </tr>
+                            </>
+                        )}
                     </tbody>
                 </table>
             </div>

@@ -19,7 +19,8 @@ function Aluno_frequencia(){
     const [presencas, setPresencas] = useState({});
     const [busca, setBusca] = useState('');
     const [expandedRows, setExpandedRows] = useState({});
-    const [isEditable, setIsEditable] = useState(true);
+    const [salasDisponiveis, setSalasDisponiveis] = useState([]);
+
     
     const getTurnoAtual = () => {
         const now = new Date();
@@ -97,11 +98,20 @@ function Aluno_frequencia(){
             if(role === "PROF" || role === "AUX"){
                 try {
                     const dadosVoluntario = await get.voluntarioByMatricula(matricula);
-                    setSala(dadosVoluntario.data.sala);
-                    setIsEditable(false);
+                    const { salaUm, salaDois } = dadosVoluntario.data;
+
+                    // Definir as salas que o professor ou auxiliar pode ver
+                    const salas = [];
+                    if (salaUm) salas.push(salaUm);
+                    if (salaDois) salas.push(salaDois);
+                    setSalasDisponiveis(salas);
+                    setSala(salas[0] || '1');
                 } catch (error) {
                     console.error("Erro ao buscar dados do voluntário:", error);
                 }
+            } else {
+                // Caso não seja professor ou auxiliar, mostrar todas as salas
+                setSalasDisponiveis(['1', '2', '3', '4']);
             }
         };
 
@@ -252,7 +262,6 @@ function Aluno_frequencia(){
                             className={styles.select_turno} 
                             value={turno} 
                             onChange={handleChange(setTurno)}
-                            disabled={!isEditable}
                         >
                             <option value="" hidden></option>
                             <option value="manha">Manhã</option>
@@ -261,14 +270,13 @@ function Aluno_frequencia(){
                         <select 
                             className={styles.select_sala} 
                             value={sala} 
-                            onChange={handleChange(setSala)}
-                            disabled={!isEditable}
+                            onChange={(e) => setSala(e.target.value)}
                         >
-                            <option value="" hidden></option>
-                            <option value="1">Sala 1</option>
-                            <option value="2">Sala 2</option>
-                            <option value="3">Sala 3</option>
-                            <option value="4">Sala 4</option>
+                            {salasDisponiveis.map((sala) => (
+                                <option key={sala} value={sala}>
+                                    Sala {sala}
+                                </option>
+                            ))}
                         </select>
                         <input 
                             className={styles.input_data}

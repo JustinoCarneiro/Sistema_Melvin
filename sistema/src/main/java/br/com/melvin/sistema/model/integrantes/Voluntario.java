@@ -37,7 +37,9 @@ public class Voluntario {
     @Column(nullable = false)
 	private String funcao;
 
-    private String sala;
+    private String salaUm; 
+
+    private String salaDois;
 
     @Column(nullable = false)
     private LocalDate data;

@@ -169,6 +169,18 @@ const put = {
             console.log("1018:Erro ao alterar dados do embaixador:", error.response ? error.response.dados : error.message);
             return Promise.reject(error);
         }
+    },
+
+    async aviso(dados){
+        const endpoint="/cestas";
+
+        try{
+            const response = await http.put(endpoint, dados);
+            return response;
+        }catch(error){
+            console.log("1018:Erro ao alterar dados da entrega da cesta:", error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
+        }
     }
 }
 

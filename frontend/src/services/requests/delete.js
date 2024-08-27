@@ -38,7 +38,7 @@ const del = {
     },
 
     async frequenciadiscente(dados){
-        const endpoint = `/frequenciadiscente/${dados.matricula}/${dados.data}`;
+        let endpoint = `/frequenciadiscente/${dados.matricula}/${dados.data}`;
 
         try{
             const response = await http.delete(endpoint);
@@ -50,13 +50,25 @@ const del = {
     },
 
     async frequenciavoluntario(dados){
-        const endpoint = `/frequenciavoluntario/${dados.matricula}/${dados.data}`;
+        let endpoint = `/frequenciavoluntario/${dados.matricula}/${dados.data}`;
 
         try{
             const response = await http.delete(endpoint);
             return response;
         }catch(error){
             console.error('1008:Erro ao deletar dados das frequências dos voluntarios:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
+        }
+    },
+
+    async cestas(dados){
+        const endpoint = "/cestas";
+
+        try{
+            const response = await http.delete(endpoint, dados);
+            return response;
+        }catch(error){
+            console.error('1008:Erro ao deletar entrega de cesta:', error.response ? error.response.dados : error.message);
             return Promise.reject(error);
         }
     }

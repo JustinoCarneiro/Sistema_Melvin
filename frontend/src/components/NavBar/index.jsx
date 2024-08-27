@@ -1,6 +1,6 @@
 import styles from './NavBar.module.scss';
-import { useState, useEffect } from 'react'
-import {IoClose, IoChevronDown, IoChevronUp,IoSettings} from 'react-icons/io5';
+import { useState, useEffect } from 'react';
+import {IoClose, IoChevronDown, IoChevronUp, IoSettings, IoBasket} from 'react-icons/io5';
 import { PiStudentBold, PiChalkboardTeacher } from "react-icons/pi";
 import { GoAlertFill } from "react-icons/go";
 import { LuHeartHandshake } from "react-icons/lu";
@@ -20,12 +20,14 @@ function NavBar({close}){
     const [isDire, setIsDire] = useState(false);
     const [isProf, setIsProf] = useState(false);
     const [isAdm, setIsAdm] = useState(false);
+    const [isCoor, setIsCoor] = useState(false);
 
     useEffect(() => {
         const userRole = Cookies.get('role');
-        setIsProf(userRole === 'PROF')
+        setIsProf(userRole === 'PROF');
         setIsDire(userRole === 'DIRE');     
         setIsAdm(userRole === "ADM");
+        setIsCoor(userRole === "COOR");
     }, []);
 
     const handleVol = () =>{
@@ -40,7 +42,7 @@ function NavBar({close}){
         <div className={styles.body}>
             <IoClose className={styles.close} onClick={closeNavBar}/>
             <ul className={styles.nav}>
-                {(isAdm || isProf || isDire) && (
+                {(isAdm || isProf || isDire || isCoor) && (
                     <>
                         <li> 
                             <Link to="/app/alunos" className={styles.link}>
@@ -50,7 +52,7 @@ function NavBar({close}){
                         </li>
                     </>
                 )}
-                {(isAdm || isDire) && (
+                {(isAdm || isDire || isCoor) && (
                     <>
                         <li onClick={handleVol} className={styles.link}> 
                             <PiChalkboardTeacher className={styles.icon}/> 
@@ -58,6 +60,10 @@ function NavBar({close}){
                             {subnavvol ? <IoChevronUp className={styles.seta}/> : <IoChevronDown className={styles.seta}/>}
                         </li>
                         {subnavvol && <SubNav tipo="voluntários"/>}
+                    </>
+                )}
+                {(isAdm || isDire) && (
+                    <>
                         <li> 
                             <Link to="/app/embaixadores" className={styles.link}>
                                 <TbSocial className={styles.icon}/> 
@@ -68,6 +74,12 @@ function NavBar({close}){
                             <Link to="/app/amigosmelvin" className={styles.link}>
                                 <LuHeartHandshake className={styles.icon}/> 
                                 <p>Amigos Melvin</p>
+                            </Link>
+                        </li>
+                        <li> 
+                            <Link to="/app/cestas" className={styles.link}>
+                                <IoBasket className={styles.icon}/> 
+                                <p>Cestas Básicas</p>
                             </Link>
                         </li>
                     </>

@@ -8,6 +8,7 @@ import Embaixadores from './site/pages/Embaixadores';
 import AmigosMelvin from './site/pages/AmigosMelvin';
 import CadastroAmigo from './site/pages/CadastroAmigo';
 import SerEmbaixador from './site/pages/SerEmbaixador';
+import Doacao from './site/pages/Doacao';
 
 import Login from "./pages/Login";
 import HomeApp from "./pages/HomeApp";
@@ -32,6 +33,8 @@ import AmigosMelvinDesativados from './pages/lista_matriculas_desativadas/Amigos
 import Avisos from './pages/lista/Avisos';
 import AvisoForms from './pages/forms/Aviso_forms';
 import AvisosDesativados from './pages/lista_matriculas_desativadas/AvisosDesativados';
+import Cestas from './pages/lista/Cestas';
+import CestasForms from './pages/forms/Cestas_forms';
 
 function AppRoutes() {
     return (
@@ -64,6 +67,7 @@ function SiteContent(){
                 <Route path="/amigosmelvin" element={ <AmigosMelvin/> } />
                 <Route path="/cadastroamigo" element={ <CadastroAmigo/> } />
                 <Route path="/serembaixador" element={ <SerEmbaixador/> }/>
+                <Route path="/doacoes" element={ <Doacao/> }/>
             </Routes>
             <FooterSite/>
         </>
@@ -98,6 +102,7 @@ function AppContent() {
                     <Route path="/embaixadores" element={ <EmbaixadoresApp/> }/>
                     <Route path="/amigosmelvin" element={ <AmigosMelvinApp/> }/>
                     <Route path="/avisos" element={<Avisos/>}/>
+                    <Route path="/cestas" element={<Cestas/>}/>
 
                     <Route path="/aluno/criar" element={<AlunoForms />} />
                     <Route path="/voluntario/criar/coordenador" element={<VoluntarioForms tipo="coordenador"/>} />
@@ -109,6 +114,7 @@ function AppContent() {
                     <Route path="/voluntario/criar/marketing" element={ <VoluntarioForms tipo="marketing"/> } />
                     <Route path="/voluntario/criar/zelador" element={ <VoluntarioForms tipo="zelador"/> } />
                     <Route path="/avisos/criar" element={<AvisoForms/>}/>
+                    <Route path="/cestas/criar" element={<CestasForms/>}/>
 
                     <Route path="/amigomelvin/editar/:id" element={<AmigoMelvinForms/>} />
                     <Route path="/embaixador/editar/:id" element={<EmbaixadorForms/>} />
@@ -122,6 +128,7 @@ function AppContent() {
                     <Route path="/voluntario/marketing/editar/:matricula" element={<VoluntarioForms tipo="marketing"/>} />
                     <Route path="/voluntario/zelador/editar/:matricula" element={<VoluntarioForms tipo="zelador"/>} />
                     <Route path="/avisos/editar/:id" element={<AvisoForms/>}/>
+                    <Route path="/cestas/editar/:id" element={<CestasForms/>}/>
                     
                     <Route path="/frequencias/alunos" element={<Aluno_frequencia />} />
                     <Route path="/voluntario/frequencias/coordenadores" element={<Voluntario_frequencia tipo="coordenador"/>} />

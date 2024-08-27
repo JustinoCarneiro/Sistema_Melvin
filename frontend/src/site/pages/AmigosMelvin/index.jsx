@@ -2,19 +2,14 @@ import styles from './AmigosMelvin.module.scss';
 
 import { useNavigate } from "react-router-dom";
 
-import foto_principal from "../../../docs/imagem_amigomelvin.jpeg";
+import foto_principal from "../../../docs/imagem_amigomelvin.png";
 
 function AmigosMelvin(){
     const navigate = useNavigate();
 
     return(
         <div className={styles.body}>
-                <div className={styles.imagens}>
-                    <div className={styles.imagem_front}>
-                        <img src={foto_principal} alt="foto_principal" className={styles.img}/>
-                    </div>
-                    <div className={styles.imagem_back}></div>
-                </div>
+                <img src={foto_principal} alt="foto_principal" className={styles.img}/>
                 <div className={styles.conteudo}>
                     <h2 className={styles.title}>Amigos do Melvin</h2>
                     <p className={styles.texto}>

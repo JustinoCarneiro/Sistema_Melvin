@@ -139,6 +139,18 @@ const post = {
             console.error('1013:Erro ao registrar aviso:', error.response ? error.response.dados : error.message);
             return Promise.reject(error);
         }
+    },
+
+    async cestas(dados){
+        const endpoint = "/cestas";
+
+        try{
+            const response = await http.post(endpoint, dados);
+            return response;
+        }catch(error){
+            console.error('1013:Erro ao registrar entrega de cesta:', error.response ? error.response.dados : error.message);
+            return Promise.reject(error);
+        }
     }
 }
 

@@ -189,6 +189,17 @@ const get = {
             console.error('1009:Erro ao obter lista de avisos:', error.response ? error.response.data : error.message);
             return Promise.reject(error);
         }
+    },
+    async cestas(){
+        const endpoint = "/cestas";
+
+        try{
+            const response = await http.get(endpoint);
+            return response;
+        }catch(error){
+            console.error('1009:Erro ao obter lista de cestas entregas:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
+        }
     }
 }
 

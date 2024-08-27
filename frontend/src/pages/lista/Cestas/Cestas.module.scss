@@ -13,8 +13,11 @@
 .container{
     display: flex;
     flex-direction: column;
+    margin-top: 2rem;
     width: 80vw;
     height: auto;
+    gap: 1rem;
+    flex-grow: 1;
 }
 
 .header{
@@ -56,22 +59,54 @@
     padding: 0.5rem;
 }
 
+.botoes {
+    display: flex;
+    gap: 1rem;
+}
+
+.botao{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: none;
+    border-radius: 7px;
+    border: solid 2px;
+    padding: 0.5rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: #044D8C;
+    border-color: #043560;
+    box-shadow: 0.08rem 0.08rem 0.08rem rgba(0, 0, 0, 0.3);
+}
+
+.input_data {
+    all: unset;
+    border-radius: 7px;
+    border: solid 2px;
+    padding: 0.5rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: #F29F05;
+    border-color: #8A6F3E;
+    box-shadow: 0.08rem 0.08rem 0.08rem rgba(0, 0, 0, 0.3);
+}
+
 .table {
     background-color: white;
     border-collapse: collapse;
-    border-spacing: 0;
     margin-top: 0.75rem;
-    border-top: solid 1px black !important;
-    border-bottom: solid 1px black !important;
-    border-left: none !important;
-    border-right: none !important;
+    border: solid 1px black;
     margin-bottom: 3rem;
 }
 
-.table > .thead > .tr_head > th, .table > .tbody > .tr_body > td {
+.table > .thead > tr > th, .table > .tbody > tr > td {
     padding: 0.5rem;
     padding-left: 2rem;
-    border-bottom: solid 1px black;
+    border-bottom: solid 1px black; /* Aplicar borda nas células */
 }
 
 .table > .thead > tr > th {
@@ -80,12 +115,7 @@
     text-align: start;
 }
 
-.table > .thead > .tr_head, .table > .tbody > .tr_body {
-    border-left: solid 1px black !important;   /* Aplicar borda esquerda na linha */
-    border-right: solid 1px black !important;  /* Aplicar borda direita na linha */
-}
-
-.tbody > .tr_body:hover {
+tbody tr:hover {
     background-color: #f5f5f5;
 }
 
@@ -97,35 +127,24 @@
     margin-left: 0.9rem;
 }
 
-.plus{
-    cursor: pointer;
-    border-left: solid 1px black !important;   /* Aplicar borda esquerda na linha */
-    border-right: solid 1px black !important; 
-}
+@media (max-width: $size-f) {
+    .header {
+        flex-wrap: wrap;
+        align-items: center;
+    }
 
-.plus:hover{
-    background-color: #f5f5f5;
-}
+    .container {
+        width: 90vw;
+    }
 
-.plus > td {
-    padding: 0.5rem;
-    padding-left: 2rem;
-    border-bottom: solid 1px black;
-}
+    .container_busca {
+        order: 3;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
 
-.edicao{
-    padding: 0 !important;
-    margin: 0 !important;
-    text-align: center !important;
-}
-
-.icon_editar{
-    margin: 0;
-}
-
-@media (max-width: $size-e) {
-    .table > .thead > tr > th:nth-child(3), .table > .tbody > tr > td:nth-child(3) {
-        display: none;
+    .busca {
+        width: 100%;
     }
 }
 
@@ -162,5 +181,32 @@
 
     .icon_editar{
         font-size: 1rem;
+        margin-right: 0.3rem;
+    }
+}
+
+@media (max-width: $size-g){
+    .header {
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .botoes{
+        order: 2;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .icon_busca {
+        font-size: 1.6rem;
+    }
+
+    .busca {
+        height: 1.6rem;
+        width: calc(100vw - 1.4rem);
+        font-size: 0.7rem;
     }
 }

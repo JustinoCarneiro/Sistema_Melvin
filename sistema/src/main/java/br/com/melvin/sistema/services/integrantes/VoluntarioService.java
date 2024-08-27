@@ -44,20 +44,23 @@ public class VoluntarioService {
     private synchronized String generateMatricula() {
         int currentYear = Year.now().getValue();
         String yearPrefix = String.valueOf(currentYear);
-    
+        
+        // Adiciona o número 7 após o ano
+        String fixedNumber = "7";
+        
         Query query = entityManager.createNativeQuery("SELECT COUNT(*) FROM discente");
         int count = ((Number) query.getSingleResult()).intValue();
         int nextNumber = count + 1;
-    
-        // Gera a matrícula
-        String newMatricula = "%s%04d".formatted(yearPrefix, nextNumber);
-    
+        
+        // Gera a matrícula com o formato 202470001, 202470002, etc.
+        String newMatricula = "%s%s%04d".formatted(yearPrefix, fixedNumber, nextNumber);
+        
         // Verifica se a matrícula já existe
         while (voluntarioRepository.findByMatricula(newMatricula) != null) {
             nextNumber++;
-            newMatricula = "%s%04d".formatted(yearPrefix, nextNumber);
+            newMatricula = "%s%s%04d".formatted(yearPrefix, fixedNumber, nextNumber);
         }
-    
+        
         return newMatricula;
     }
 
@@ -105,7 +108,8 @@ public class VoluntarioService {
             existente.setBairro(voluntario.getBairro());
             existente.setCidade(voluntario.getCidade());
             existente.setFuncao(voluntario.getFuncao());
-            existente.setSala(voluntario.getSala());
+            existente.setSalaUm(voluntario.getSalaUm());
+            existente.setSalaDois(voluntario.getSalaDois());
             existente.setSegunda(voluntario.getSegunda());
             existente.setTerca(voluntario.getTerca());
             existente.setQuarta(voluntario.getQuarta());

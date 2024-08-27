@@ -121,12 +121,12 @@ function Alunos(){
                             </tr>
                         ))}
                         {isAdm && (
-                                <>
-                                    <tr className={styles.plus} onClick={()=>navigate("/app/aluno/criar")}>
-                                        <td colSpan="4"><FaPlus className={styles.icon_plus}/></td>
-                                    </tr>
-                                </>
-                            )}
+                            <>
+                                <tr className={styles.plus} onClick={()=>navigate("/app/aluno/criar")}>
+                                    <td colSpan="4"><FaPlus className={styles.icon_plus}/></td>
+                                </tr>
+                            </>
+                        )}
                     </tbody>
                 </table>
             </div>

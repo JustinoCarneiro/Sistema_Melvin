@@ -102,7 +102,7 @@ function MaisSobreNos(){
             <div className={styles.faixa_voluntarios}>
                 <h4 className={styles.title_faixa_voluntarios}>Corpo de voluntários</h4>
                 <div className={styles.grid_voluntarios}>
-                    {voluntarios.map((voluntario, index) => (
+                    {voluntarios.slice(1).map((voluntario, index) => (
                         <div key={index} className={styles.linha}>
                             <p className={styles.funcao}>{capitalizeFirstLetter(voluntario.funcao)}</p>
                             <p className={styles.nome}>{voluntario.nome}</p>

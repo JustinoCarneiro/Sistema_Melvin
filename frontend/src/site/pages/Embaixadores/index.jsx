@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import get from '../../../services/requests/get';
 
-import foto_principal from "../../../docs/imagem_embaixadores.jpeg";
+import foto_principal from "../../../docs/imagem_embaixadores.png";
 
 function Embaixadores(){
     const navigate = useNavigate();
@@ -105,12 +105,7 @@ function Embaixadores(){
                     </p>
                     <button className={styles.button} onClick={() => navigate("/serembaixador")}>Quero ser um embaixador!</button>
                 </div>
-                <div className={styles.imagens}>
-                    <div className={styles.imagem_front}>
-                        <img src={foto_principal} alt="foto_principal" className={styles.img}/>
-                    </div>
-                    <div className={styles.imagem_back}></div>
-                </div>
+                <img src={foto_principal} alt="foto_principal" className={styles.img}/>
             </div>
         </div>
     )

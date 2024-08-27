@@ -1,0 +1,97 @@
+@import "../../../index.scss";
+
+.body{
+    width: 100%;
+    min-height: calc(100vh - 15rem);
+    display: flex;
+    justify-content: space-around;
+    align-content: start;
+    padding-top: 2rem;
+    background-color: #df298d;
+    padding-bottom: 2rem;
+}
+
+.imagens{
+    position: relative;
+    width: 20rem;
+    height: 20rem;
+}
+
+.imagens > * {
+    position: absolute;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 1rem;
+}
+
+.imagem_back{
+    background-color: rgb(216, 106, 214);
+    z-index: 1;
+}
+
+.imagem_front{
+    background-color: rgb(115, 115, 115);
+    z-index: 2;
+    bottom: 1rem;
+    left: 1rem;
+}
+
+.img{
+    width: 100%;
+    height: 100%;
+    border-radius: 1rem;
+    object-fit: cover;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.qrcode{
+    width: 10rem;
+    height: 10rem;
+    object-fit: cover;
+}
+
+.conteudo{
+    display: flex;
+    flex-direction: column;
+    width: 25rem;
+    gap: 1rem;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.title{
+    font-weight: 200;
+}
+
+.texto{
+    text-align: justify;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.texto > *{
+    font-weight: 600;
+}
+
+@media (max-width: $size-d){
+    .body{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .imagens{
+        order: 1;
+        align-self: center;
+    }
+
+    .conteudo{
+        order: 2;
+    }
+}
+
+@media (max-width: $size-c){
+    .conteudo{
+        width: 19rem;
+    }
+}
