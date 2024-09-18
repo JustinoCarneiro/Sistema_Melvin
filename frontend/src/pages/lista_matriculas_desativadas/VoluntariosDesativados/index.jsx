@@ -20,7 +20,7 @@ function VoluntariosDesativados(){
                 const objetoDados = response.data;
 
                 if (Array.isArray(objetoDados)) {
-                    const voluntariosAtivos = objetoDados.filter(voluntario => voluntario.status === false);
+                    const voluntariosAtivos = objetoDados.filter(voluntario => voluntario.status === 'false');
                     setVoluntarios(voluntariosAtivos);
                 } else {
                     console.error("5015:Formato inesperado no response:", response);

@@ -34,7 +34,7 @@ function Aluno_frequencia(){
             const objetoDados = response.data;
 
             if (Array.isArray(objetoDados)) {
-                const alunosAtivos = objetoDados.filter(aluno => aluno.status === true && aluno.turno === turno);
+                const alunosAtivos = objetoDados.filter(aluno => aluno.status === 'true' && aluno.turno === turno);
                 setAlunos(alunosAtivos);
             } else {
                 console.error("5006: Formato inesperado no response:", response);

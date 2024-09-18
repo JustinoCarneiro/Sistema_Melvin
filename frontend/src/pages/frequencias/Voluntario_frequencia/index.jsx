@@ -44,7 +44,7 @@ function Voluntario_frequencia({tipo}){
                 const objetoDados = response.data;
 
                 if (Array.isArray(objetoDados)) {
-                    const voluntariosAtivos = objetoDados.filter(voluntario => voluntario.status === true);
+                    const voluntariosAtivos = objetoDados.filter(voluntario => voluntario.status === 'true');
                     setVoluntarios(voluntariosAtivos);
                 } else {
                     console.error("5003:Formato inesperado no response:", response);

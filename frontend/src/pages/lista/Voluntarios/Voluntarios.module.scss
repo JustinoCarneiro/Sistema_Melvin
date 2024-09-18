@@ -56,6 +56,11 @@
     padding: 0.5rem;
 }
 
+.botoes {
+    display: flex;
+    gap: 1rem;
+}
+
 .table {
     background-color: white;
     border-collapse: collapse;
@@ -162,5 +167,16 @@
 
     .icon_editar{
         font-size: 1rem;
+    }
+}
+
+@media (max-width: $size-g){
+    .botoes{
+        order: 2;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
     }
 }

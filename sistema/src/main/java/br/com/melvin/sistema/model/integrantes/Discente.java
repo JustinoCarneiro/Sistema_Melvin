@@ -136,5 +136,5 @@ public class Discente{
     private String contato_saida;
 
     @Column(nullable = false)
-    private Boolean status;
+    private String status;
 }

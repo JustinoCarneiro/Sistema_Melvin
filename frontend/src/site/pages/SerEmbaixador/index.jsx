@@ -19,7 +19,7 @@ function SerEmbaixador(){
             instagram,
             email,
             contatado: false,
-            status: false
+            status: 'false'
         };
 
         try {

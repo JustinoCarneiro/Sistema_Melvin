@@ -323,6 +323,7 @@ function Voluntario_forms({tipo}){
                                     <option value="true">Ativo</option>
                                     <option value="false">Inativo</option>
                                     <option value="deletar">Deletar</option>
+                                    <option value="espera">Em espera...</option>
                                 </select>
                             </label>
                         </div>

@@ -19,7 +19,7 @@ function AlunosDesativados(){
                 const objetoDados = response.data;
 
                 if (Array.isArray(objetoDados)) {
-                    const alunosAtivos = objetoDados.filter(aluno => aluno.status === false);
+                    const alunosAtivos = objetoDados.filter(aluno => aluno.status === 'false');
                     setAlunos(alunosAtivos);
                 } else {
                     console.error("5003:Formato inesperado no response:", response);

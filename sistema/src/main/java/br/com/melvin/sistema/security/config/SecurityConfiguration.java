@@ -54,9 +54,9 @@ public class SecurityConfiguration {
 
                     .requestMatchers(HttpMethod.POST,  "/auth/register", "/auth/alterar_senha/{matricula}/{senha}", "/imagens/**", "/aviso/**").hasRole("ADM")
 
-                    .requestMatchers(HttpMethod.POST,"/discente", "/imagens/**", "/cestas").hasAnyRole("ADM", "DIRE")
+                    .requestMatchers(HttpMethod.POST, "/imagens/**", "/cestas").hasAnyRole("ADM", "DIRE")
                     .requestMatchers(HttpMethod.POST, "/voluntario", "/aviso/**").hasRole("ADM")
-                    .requestMatchers(HttpMethod.POST,"/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
+                    .requestMatchers(HttpMethod.POST,"/diarios/**", "/discente").hasAnyRole("ADM", "COOR", "DIRE")
 
                     .requestMatchers(HttpMethod.GET, "/amigomelvin", "/cestas").hasAnyRole("ADM", "DIRE")
                     .requestMatchers(HttpMethod.GET, "/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
@@ -64,13 +64,13 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.GET, "/voluntario").hasAnyRole("ADM", "DIRE", "COOR")
                     .requestMatchers(HttpMethod.GET, "/voluntario/matricula/{matricula}").permitAll()
 
-                    .requestMatchers(HttpMethod.PUT, "/discente", "/amigomelvin", "/embaixador/**", "/imagens/**", "/cestas").hasAnyRole("ADM", "DIRE")
+                    .requestMatchers(HttpMethod.PUT, "/amigomelvin", "/embaixador/**", "/imagens/**", "/cestas").hasAnyRole("ADM", "DIRE")
                     .requestMatchers(HttpMethod.PUT, "/voluntario", "/auth/alterar_role/{matricula}/{role}", "/aviso/**").hasRole("ADM")
-                    .requestMatchers(HttpMethod.PUT, "/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
+                    .requestMatchers(HttpMethod.PUT, "/diarios/**", "/discente").hasAnyRole("ADM", "COOR", "DIRE")
 
-                    .requestMatchers(HttpMethod.DELETE, "/discente", "/voluntario").hasRole("ADM")
+                    .requestMatchers(HttpMethod.DELETE, "/voluntario").hasRole("ADM")
                     .requestMatchers(HttpMethod.DELETE, "/cestas").hasAnyRole("ADM", "DIRE")
-                    .requestMatchers(HttpMethod.DELETE, "/diarios/**", "/frequenciavoluntario").hasAnyRole("ADM", "COOR")
+                    .requestMatchers(HttpMethod.DELETE, "/diarios/**", "/frequenciavoluntario", "/discente").hasAnyRole("ADM", "COOR")
                     
                     .requestMatchers(HttpMethod.POST, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
                     .requestMatchers(HttpMethod.PUT, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")

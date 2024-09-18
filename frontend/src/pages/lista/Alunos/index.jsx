@@ -14,11 +14,12 @@ function Alunos(){
     const [busca, setBusca] = useState('');
     const [alunos, setAlunos] = useState([]);
     const [isAdm, setIsAdm] = useState(false);
+    const [filtroEspera, setFiltroEspera] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const userRole = Cookies.get('role');
-        const isUserAdm = userRole === 'ADM' || userRole === 'DIRE';
+        const isUserAdm = userRole === 'ADM' || userRole === 'DIRE' || userRole === 'COOR';
         setIsAdm(isUserAdm);
 
         const fetchAlunos = async () => {
@@ -27,8 +28,7 @@ function Alunos(){
                 const objetoDados = response.data;
 
                 if (Array.isArray(objetoDados)) {
-                    const alunosAtivos = objetoDados.filter(aluno => aluno.status === true);
-                    setAlunos(alunosAtivos);
+                    setAlunos(objetoDados);
                 } else {
                     console.error("5003:Formato inesperado no response:", response);
                     alert('Erro ao obter objeto! Formato inesperado de resposta.');
@@ -53,13 +53,22 @@ function Alunos(){
 
     const alunosFiltrados = alunos.filter((aluno) => {
         const termoBusca = busca.toLowerCase();
+        const statusCondicao = filtroEspera ? aluno.status === 'espera' : aluno.status === 'true';
+    
         return (
-            aluno.matricula.toString().includes(termoBusca) ||
-            aluno.nome.toLowerCase().includes(termoBusca)   ||
-            (aluno.nome_pai || '').toLowerCase().includes(termoBusca) ||
-            (aluno.nome_mae || '').toLowerCase().includes(termoBusca)
+            statusCondicao &&
+            (
+                aluno.matricula.toString().includes(termoBusca) ||
+                aluno.nome.toLowerCase().includes(termoBusca) ||
+                (aluno.nome_pai || '').toLowerCase().includes(termoBusca) ||
+                (aluno.nome_mae || '').toLowerCase().includes(termoBusca)
+            )
         );
     });
+
+    const handleEsperaClick = () => {
+        setFiltroEspera(!filtroEspera);
+    };
 
     const handleFrequenciasClick = () => {
         navigate("/app/frequencias/alunos");
@@ -69,7 +78,7 @@ function Alunos(){
         <div className={styles.body}>
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <h2 className={styles.title}>Alunos</h2>
+                    <h2 className={styles.title}>{filtroEspera ? "Alunos em espera...": "Alunos"}</h2>
                     <div className={styles.container_busca}>
                         <IoMdSearch className={styles.icon_busca}/>
                         <input 
@@ -81,13 +90,27 @@ function Alunos(){
                             onChange={handleBuscaChange}
                         />
                     </div>
-                    <Botao 
-                        nome="Frequências" 
-                        corFundo="#7EA629" 
-                        corBorda="#58751A" 
-                        type="button"
-                        onClick={handleFrequenciasClick}
-                    />
+                    <div className={styles.botoes}>
+                        { isAdm &&(
+                            <>
+                                <Botao 
+                                    nome={filtroEspera ? "Mostrar Ativos" : "Em espera"} 
+                                    corFundo="#F29F05" 
+                                    corBorda="#8A6F3E" 
+                                    type="button"
+                                    onClick={handleEsperaClick}
+                                />
+                            </>
+                        )}
+                        
+                        <Botao 
+                            nome="Frequências" 
+                            corFundo="#7EA629" 
+                            corBorda="#58751A" 
+                            type="button"
+                            onClick={handleFrequenciasClick}
+                        />
+                    </div>
                 </div>
                 <table className={styles.table}>
                     <thead className={styles.thead}>

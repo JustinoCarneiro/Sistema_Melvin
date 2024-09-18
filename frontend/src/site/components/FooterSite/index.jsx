@@ -23,7 +23,7 @@ function FooterSite(){
                 </div>
                 <div className={styles.contato_container}>
                     <FaBookmark/>
-                    <p>CNPJ xxxxxxxxxxxxx</p>
+                    <p>CNPJ 13.285.292/0001-06</p>
                 </div>
                 <div className={styles.contato_container}>
                     <FaWhatsapp/>
@@ -35,7 +35,7 @@ function FooterSite(){
                 </div>
                 <div className={styles.contato_container}>
                     <MdOutlineEmail/>
-                    <p>institutomelvin@gmail.com</p>
+                    <p>imeh@igrejadapaz.com.br</p>
                 </div>
             </div>
             <div className={styles.container_mapa}>

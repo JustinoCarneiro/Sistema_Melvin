@@ -1,0 +1,134 @@
+@import "../../../index.scss";
+
+.body{
+    background-color: #ffffff;
+    width: 100%;
+    min-height: calc(100vh - 15rem);
+    color: white;
+}
+
+.faixa_um{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    background-color: #d9e8d1;
+}
+
+.faixa_dois{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    background-color: #214210;
+}
+
+.faixa_tres{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    background-color: #4b5645;
+}
+
+.img{
+    width: 20rem;
+    object-fit: cover;
+}
+
+.conteudo{
+    display: flex;
+    flex-direction: column;
+    width: 30rem;
+    gap: 1rem;
+    color: rgb(61, 96, 53);
+}
+
+.title{
+    font-weight: 400;
+}
+
+.texto{
+    text-align: justify;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.faixa_dois > *{
+    color: white;
+}
+
+.button{
+    all: unset;
+    font-size: 0.8rem;
+    color: black;
+    background-color: aliceblue;
+    padding-inline: 1rem;
+    padding-block: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: start;
+    color: rgb(61, 96, 53);;
+}
+
+@media (max-width: $size-f){
+    .faixa_embaixadores{
+        padding-inline: 4rem;
+    }
+
+    .img{
+        width: 20rem;
+        height: 12rem;
+    }
+}
+
+@media (max-width: $size-e){
+    .faixa_embaixadores{
+        padding-inline: 1rem;
+    }
+}
+
+@media (max-width: $size-d){
+    .faixa_embaixadores_explicacao{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .faixa_embaixadores{
+        padding-inline: 1rem;
+    }
+
+    .embaixador{
+        width: 12rem;
+    }
+
+    .container_embaixadores{
+        grid-template-columns: 12rem 12rem;
+        justify-content: space-around;
+    }
+
+    .img{
+        margin-bottom: 2rem;
+    }
+
+    .conteudo{
+        order: 2;
+    }
+}
+
+@media (max-width: $size-c){
+    .conteudo{
+        width: 19rem;
+    }
+}
+
+@media (max-width: $size-b){
+    .container_embaixadores{
+        grid-template-columns: 12rem;
+        justify-content: space-around;
+    }
+}

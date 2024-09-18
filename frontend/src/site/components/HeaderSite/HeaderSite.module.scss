@@ -49,6 +49,24 @@
     border-radius: 7px;
 }
 
+.caixa_botao_nota{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #1f9c23;
+    border-radius: 7px;
+    padding-left: 0.5rem;
+    cursor: pointer;
+}
+
+.caixa_botao_nota > *{
+    color: white;
+}
+
+.caixa_botao_nota:hover {
+    background-color: #39652e;
+}
+
 .caixa_botao_doacao{
     display: flex;
     flex-direction: row;

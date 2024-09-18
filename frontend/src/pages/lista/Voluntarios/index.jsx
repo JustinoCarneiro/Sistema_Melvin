@@ -16,6 +16,7 @@ function Voluntarios({tipo}){
     const [voluntarios, setVoluntarios] = useState([]);
     const navigate = useNavigate();
     const [isAdm, setIsAdm] = useState(false);
+    const [filtroEspera, setFiltroEspera] = useState(false);
 
     useEffect(() => {
         const userRole = Cookies.get('role');  
@@ -27,8 +28,7 @@ function Voluntarios({tipo}){
                 const objetoDados = response.data;
 
                 if (Array.isArray(objetoDados)) {
-                    const voluntariosAtivos = objetoDados.filter(voluntario => voluntario.status === true);
-                    setVoluntarios(voluntariosAtivos);
+                    setVoluntarios(objetoDados);
                 } else {
                     console.error("5005:Formato inesperado no response:", response);
                     alert('Erro ao obter objeto! Formato inesperado de resposta.');
@@ -79,14 +79,23 @@ function Voluntarios({tipo}){
         setBusca(e.target.value);
     };
 
-    const voluntariosFiltradosBusca = voluntarios.filter((aluno) => {
+    const voluntariosFiltradosBusca = voluntarios.filter((voluntario) => {
         const termoBusca = busca.toLowerCase();
+        const statusCondicao = filtroEspera ? voluntario.status === 'espera' : voluntario.status === 'true';
+
         return (
-            aluno.matricula.toString().includes(termoBusca) ||
-            aluno.nome.toLowerCase().includes(termoBusca)   ||
-            (aluno.email || '').toLowerCase().includes(termoBusca)
+            statusCondicao && 
+            (
+                voluntario.matricula.toString().includes(termoBusca) ||
+                voluntario.nome.toLowerCase().includes(termoBusca)   ||
+                (voluntario.email || '').toLowerCase().includes(termoBusca)
+            )
         );
     });
+
+    const handleEsperaClick = () => {
+        setFiltroEspera(!filtroEspera);
+    };
 
     const handleFrequenciasClick = () => {
         navigate(`/app/voluntario/frequencias/${prox_rota}`);
@@ -96,7 +105,7 @@ function Voluntarios({tipo}){
         <div className={styles.body}>
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <h2 className={styles.title}>{title}</h2>
+                    <h2 className={styles.title}>{filtroEspera ? title + " em espera..." : title}</h2>
                     <div className={styles.container_busca}>
                         <IoMdSearch className={styles.icon_busca}/>
                         <input 
@@ -108,13 +117,22 @@ function Voluntarios({tipo}){
                             onChange={handleBuscaChange}
                         />
                     </div>
-                    <Botao 
-                        nome="Frequências" 
-                        corFundo="#7EA629" 
-                        corBorda="#58751A"
-                        type="button"
-                        onClick={handleFrequenciasClick}
-                    />
+                    <div className={styles.botoes}>
+                        <Botao 
+                            nome={filtroEspera ? "Mostrar Ativos" : "Em espera"} 
+                            corFundo="#F29F05" 
+                            corBorda="#8A6F3E" 
+                            type="button"
+                            onClick={handleEsperaClick}
+                        />
+                        <Botao 
+                            nome="Frequências" 
+                            corFundo="#7EA629" 
+                            corBorda="#58751A"
+                            type="button"
+                            onClick={handleFrequenciasClick}
+                        />
+                    </div>
                 </div>
                 <table className={styles.table}>
                     <thead className={styles.thead}>

@@ -1,6 +1,7 @@
 package br.com.melvin.sistema.security.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -60,6 +61,10 @@ public class AuthenticationController {
 
         if (this.repositoryVoluntario.findByMatricula(dados.login()) == null) {
             return ResponseEntity.badRequest().build();
+        }
+
+        if (this.repositoryUser.findByLogin(dados.login()) != null){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Matrícula já registrada.");
         }
 
         String encryptedPassword = passwordEncoder.encode(dados.password());

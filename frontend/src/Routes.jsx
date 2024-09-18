@@ -9,6 +9,7 @@ import AmigosMelvin from './site/pages/AmigosMelvin';
 import CadastroAmigo from './site/pages/CadastroAmigo';
 import SerEmbaixador from './site/pages/SerEmbaixador';
 import Doacao from './site/pages/Doacao';
+import NotaValor from './site/pages/NotaValor';
 
 import Login from "./pages/Login";
 import HomeApp from "./pages/HomeApp";
@@ -68,6 +69,7 @@ function SiteContent(){
                 <Route path="/cadastroamigo" element={ <CadastroAmigo/> } />
                 <Route path="/serembaixador" element={ <SerEmbaixador/> }/>
                 <Route path="/doacoes" element={ <Doacao/> }/>
+                <Route path="/notatemvalor" element={ <NotaValor/> }/>
             </Routes>
             <FooterSite/>
         </>

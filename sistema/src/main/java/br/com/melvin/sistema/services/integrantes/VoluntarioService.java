@@ -36,7 +36,7 @@ public class VoluntarioService {
 
     public List<VoluntarioDTO> listarVoluntariosComNomeFuncao() {
         return voluntarioRepository.findAll().stream()
-                .filter(Voluntario::getStatus)
+                .filter(voluntario -> "true".equals(voluntario.getStatus()))
                 .map(voluntario -> new VoluntarioDTO(voluntario.getNome(), voluntario.getFuncao()))
                 .collect(Collectors.toList());
     }

@@ -407,6 +407,7 @@ function Aluno_forms(){
                                     <option value="true">Ativa</option>
                                     <option value="false">Inativa</option>
                                     <option value="deletar">Deletar</option>
+                                    <option value="espera">Em espera...</option>
                                 </select>
                             </label>
                         </div>

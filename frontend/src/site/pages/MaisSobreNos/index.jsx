@@ -42,6 +42,7 @@ function MaisSobreNos(){
                         <p>O Instituto Melvin trabalha no espaço de contra turno escolar, criado para fortalecer os vínculos familiares e sociais, reforçar e garantir a aquisição do conhecimento formal, descobrir e ativar potenciais através de escolas/oficinas de arte, esporte, cursos profissionalizantes, palestras, rodas de conversa e terapias de grupo.</p>
                         <p>Objetiva prevenir a marginalidade de crianças e adolescentes, bem como, construir e reconstruir famílias através de um trabalho focado no ensino por princípios, com vistas à formação do caráter e do núcleo familiar.</p>
                         <p>O Instituto Melvin recebeu esse nome para homenagear e honrar o trabalho do missionário norte-americano Melvin Edward Huber (1920-2008). Nascido no estado americano de Indiana, casado com Catherine Von tobel, deixaram a vida confortável e promissora nos EUA e mudaram para o Brasil em 1956 onde serviram por 52 anos. Deixaram um legado de compaixão e intensa dedicação às pessoas.</p>
+                        <p>Uma OSCIP - Organização Social Civil de Interesse Público, reconhecido pelo Ministério da Justiça, desde 2018, reconhecido como instituição de utilidade pública municipal pela Lei Nº 11.170/21, estadual pela Lei Nº 17.960/22 </p>
                     </p>
                 </div>
                 <div className={styles.imagens}>
@@ -102,12 +103,14 @@ function MaisSobreNos(){
             <div className={styles.faixa_voluntarios}>
                 <h4 className={styles.title_faixa_voluntarios}>Corpo de voluntários</h4>
                 <div className={styles.grid_voluntarios}>
-                    {voluntarios.slice(1).map((voluntario, index) => (
-                        <div key={index} className={styles.linha}>
-                            <p className={styles.funcao}>{capitalizeFirstLetter(voluntario.funcao)}</p>
-                            <p className={styles.nome}>{voluntario.nome}</p>
-                        </div>
-                    ))}
+                    {voluntarios
+                        .filter(voluntario => voluntario.nome !== 'admin')
+                        .map((voluntario, index) => (
+                            <div key={index} className={styles.linha}>
+                                <p className={styles.funcao}>{capitalizeFirstLetter(voluntario.funcao)}</p>
+                                <p className={styles.nome}>{voluntario.nome}</p>
+                            </div>
+                        ))}
                 </div>
             </div>
         </div>

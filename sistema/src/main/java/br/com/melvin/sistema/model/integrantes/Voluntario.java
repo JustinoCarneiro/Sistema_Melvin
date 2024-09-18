@@ -70,5 +70,5 @@ public class Voluntario {
     private String sexta;
 
     @Column(nullable = false)
-    private Boolean status;
+    private String status;
 }

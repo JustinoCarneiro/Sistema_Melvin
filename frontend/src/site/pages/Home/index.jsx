@@ -20,7 +20,7 @@ function Home() {
                     <h2 className={styles.title}>Instituto Melvin Huber</h2>
                     <p className={styles.texto}>
                         <p>O Instituto Melvin Edward Huber é uma organização da sociedade civil de interesse público e sem fins lucrativos, o Instituto é voltado ao auxílio e amparo de crianças, jovens, adultos e idosos em situação de vulnerabilidade social.</p>
-                        <p>Iniciou suas atividades em outubro de 2009, com 18 famílias, e hoje atende mais de 400 famílias.</p>
+                        <p>Fundada em 23 de fevereiro de 2010 com 18 famílias, e hoje atende mais de 400 famílias.</p>
                     </p>
                     <button className={styles.button} onClick={() => navigate("/maissobrenos")}>Saiba mais</button>
                 </div>
