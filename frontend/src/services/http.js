@@ -5,7 +5,8 @@ const http = axios.create({
     baseURL: import.meta.env.VITE_REACT_APP_FETCH_URL,
     headers: {
         'Content-Type': 'application/json'
-    }
+    },
+    withCredentials: true
 });
 
 console.log(import.meta.env.VITE_REACT_APP_FETCH_URL);
