@@ -72,7 +72,14 @@ function Aluno_forms(){
         esportes: '',
         saida_aluno: '',
         contato_saida: '',
-        status: ''
+        status: '',
+        karate: false, 
+        ballet: false,
+        informatica: false,
+        musica: false,
+        artesanato: false,
+        futsal: false, 
+        ingles: false
     });
 
     useEffect(() => {
@@ -139,7 +146,14 @@ function Aluno_forms(){
                         esportes: response.data.esportes || '',
                         saida_aluno: response.data.saida_aluno || '',
                         contato_saida: response.data.contato_saida || '',
-                        status: response.data.status || ''
+                        status: response.data.status || '',
+                        karate: response.data.karate || false,
+                        ballet: response.data.ballet || false,
+                        informatica: response.data.informatica || false,
+                        musica: response.data.musica || false,
+                        artesanato: response.data.artesanato || false,
+                        futsal: response.data.futsal || false,
+                        ingles: response.data.ingles || false
                     });
                 } else {
                     console.log('Aluno não encontrado');
@@ -808,6 +822,89 @@ function Aluno_forms(){
                                 prioridade=""
                             />
                         </div>
+                        <div className={styles.aulas_extras}>
+                            <div className={styles.label_aulas}>Aulas extras:</div>
+                            <div className={styles.container}>
+                                <div className={styles.aula}>
+                                    <label className={styles.label_select_aula}>
+                                        <div className={styles.sublabel_select_aula}>Karatê:</div>
+                                        <input
+                                            type="checkbox"
+                                            name="karate"
+                                            checked={formDado.karate === true}
+                                            onChange={(e) => setFormDado({ ...formDado, karate: e.target.checked })}
+                                        />
+                                    </label>
+                                </div>
+                                <div className={styles.aula}>
+                                    <label className={styles.label_select_aula}>
+                                        <div className={styles.sublabel_select_aula}>Ballet:</div>
+                                        <input
+                                            type="checkbox"
+                                            name="ballet"
+                                            checked={formDado.ballet === true}
+                                            onChange={(e) => setFormDado({ ...formDado, ballet: e.target.checked })}
+                                        />
+                                    </label>
+                                </div>
+                                <div className={styles.aula}>
+                                    <label className={styles.label_select_aula}>
+                                        <div className={styles.sublabel_select_aula}>Informática:</div>
+                                        <input
+                                            type="checkbox"
+                                            name="informatica"
+                                            checked={formDado.informatica === true}
+                                            onChange={(e) => setFormDado({ ...formDado, informatica: e.target.checked })}
+                                        />
+                                    </label>
+                                </div>
+                                <div className={styles.aula}>
+                                    <label className={styles.label_select_aula}>
+                                        <div className={styles.sublabel_select_aula}>Música:</div>
+                                        <input
+                                            type="checkbox"
+                                            name="musica"
+                                            checked={formDado.musica === true}
+                                            onChange={(e) => setFormDado({ ...formDado, musica: e.target.checked })}
+                                        />
+                                    </label>
+                                </div>
+                                <div className={styles.aula}>
+                                    <label className={styles.label_select_aula}>
+                                        <div className={styles.sublabel_select_aula}>Artesanato:</div>
+                                        <input
+                                            type="checkbox"
+                                            name="artesanato"
+                                            checked={formDado.artesanato === true}
+                                            onChange={(e) => setFormDado({ ...formDado, artesanato: e.target.checked })}
+                                        />
+                                    </label>
+                                </div>
+                                <div className={styles.aula}>
+                                    <label className={styles.label_select_aula}>
+                                        <div className={styles.sublabel_select_aula}>Futsal:</div>
+                                        <input
+                                            type="checkbox"
+                                            name="futsal"
+                                            checked={formDado.futsal === true}
+                                            onChange={(e) => setFormDado({ ...formDado, futsal: e.target.checked })}
+                                        />
+                                    </label>
+                                </div>
+                                <div className={styles.aula}>
+                                    <label className={styles.label_select_aula}>
+                                        <div className={styles.sublabel_select_aula}>Inglês:</div>
+                                        <input
+                                            type="checkbox"
+                                            name="ingles"
+                                            checked={formDado.ingles === true}
+                                            onChange={(e) => setFormDado({ ...formDado, ingles: e.target.checked })}
+                                        />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div className={styles.diario}>
                             Diário de acompanhamento:
                             <div className={styles.container_diario}>

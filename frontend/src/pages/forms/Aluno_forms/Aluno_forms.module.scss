@@ -148,6 +148,56 @@
     /* opcional, para alinhar verticalmente */
 }
 
+.aulas_extras{
+    margin-top: 1rem;
+    width: 19rem;
+}
+
+.container{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1vw;
+}
+
+.aula{
+    width: 7rem;
+}
+
+.label_aulas{
+    display: flex;
+    flex-direction: row;
+}
+
+.label_select_aula{
+    margin-top: 0.7rem;
+    color: black;
+    font-family: inherit;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.select_aula{
+    border-radius: 7px;
+    border: solid 2px black;
+    font-family: inherit;
+    height: 2rem;
+    background-color: white;
+    padding: 0.5rem;
+    font-size: 0.70rem;
+    margin-top: 0.3rem;
+}
+
+.sublabel_select_aula{
+    display: flex;
+    flex-direction: row;
+}
+
 @media (max-width: $size-h){
     .form{
         width: 70vw;
@@ -164,6 +214,11 @@
 
     .subtitle{
         margin-top: 2vh;
+    }
+
+    .aulas_extras{
+        width: auto;
+        margin-inline: 5vw;
     }
 }
 

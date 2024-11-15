@@ -36,6 +36,7 @@ import AvisoForms from './pages/forms/Aviso_forms';
 import AvisosDesativados from './pages/lista_matriculas_desativadas/AvisosDesativados';
 import Cestas from './pages/lista/Cestas';
 import CestasForms from './pages/forms/Cestas_forms';
+import AlunosExtra from './pages/lista/AlunosExtra';
 
 function AppRoutes() {
     return (
@@ -93,6 +94,7 @@ function AppContent() {
                     <Route path="/registro" element={ <Registro/> } />
 
                     <Route path="/alunos" element={ <Alunos/> } />
+                    <Route path="/alunos/extra" element={ <AlunosExtra/> } />
                     <Route path="/voluntario/coordenadores" element={ <Voluntarios tipo="coordenador"/> } />
                     <Route path="/voluntario/professores" element={ <Voluntarios tipo="professor"/> } />
                     <Route path="/voluntario/auxiliares" element={ <Voluntarios tipo="auxiliar"/> } />

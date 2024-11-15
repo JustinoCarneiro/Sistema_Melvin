@@ -46,10 +46,10 @@ function MaisSobreNos(){
                     </p>
                 </div>
                 <div className={styles.imagens}>
-                    <div className={styles.imagem_es}></div>
-                    <div className={styles.imagem_ei}></div>
-                    <div className={styles.imagem_ds}></div>
-                    <div className={styles.imagem_di}></div>
+                    <div className={styles.imagem_front}>
+                        <img src={''} alt="" className={styles.img}/>
+                    </div>
+                    <div className={styles.imagem_back}></div>
                 </div>
             </div>
             <div className={styles.faixa_objetivos}>

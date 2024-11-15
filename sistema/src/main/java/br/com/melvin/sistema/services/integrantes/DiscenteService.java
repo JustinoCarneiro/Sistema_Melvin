@@ -139,6 +139,14 @@ public class DiscenteService {
             existente.setSaida_aluno(discente.getSaida_aluno());
             existente.setEsportes(discente.getEsportes());
             existente.setStatus(discente.getStatus());
+            existente.setKarate(discente.isKarate());
+            existente.setFutsal(discente.isFutsal());
+            existente.setInformatica(discente.isInformatica());
+            existente.setMusica(discente.isMusica());
+            existente.setBallet(discente.isBallet());
+            existente.setArtesanato(discente.isArtesanato());
+            existente.setIngles(discente.isIngles());
+
 
             // Reatribui o id ao discente existente para garantir que ele não seja alterado
             existente.setId(id);

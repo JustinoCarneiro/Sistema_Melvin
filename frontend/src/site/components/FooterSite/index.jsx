@@ -27,11 +27,18 @@ function FooterSite(){
                 </div>
                 <div className={styles.contato_container}>
                     <FaWhatsapp/>
-                    <p>(85) 998203980</p>
+                    <p>(85) 986028979</p>
                 </div>
                 <div className={styles.contato_container}>
                     <FaInstagram/>
-                    <p>@institutomelvin</p>
+                    <a 
+                        href="https://www.instagram.com/instituto_melvin/?hl=pt" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                        <p>@institutomelvin</p>
+                    </a>
                 </div>
                 <div className={styles.contato_container}>
                     <MdOutlineEmail/>

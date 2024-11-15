@@ -1,12 +1,10 @@
 import styles from './NotaValor.module.scss';
 
-import { useNavigate } from "react-router-dom";
-
 import foto_principal from "../../../docs/suanotatemvalor.png";
+import foto_segunda_faixa from "../../../docs/premiado.png";
+import foto_terceira_faixa from "../../../docs/money.jpg";
 
-function Embaixadores(){
-    const navigate = useNavigate();
-
+function NotaValor(){
     const openNewTab = () => {
         window.open('https://suanotatemvalor.sefaz.ce.gov.br/app/#/services/usuario/cadastro', '_blank');
     };
@@ -23,6 +21,7 @@ function Embaixadores(){
                 <img src={foto_principal} alt="foto_principal" className={styles.img}/>
             </div>
             <div className={styles.faixa_dois}>
+                <img src={foto_segunda_faixa} alt="foto_segunda_faixa" className={styles.img}/>
                 <div className={styles.conteudo}>
                     <h2 className={styles.title}>Premiações!</h2>
                     <p className={styles.texto}>
@@ -38,10 +37,10 @@ function Embaixadores(){
                     </p>
                     <button className={styles.button} onClick={openNewTab}>Acesse aqui!</button>
                 </div>
-                <img src={foto_principal} alt="foto_principal" className={styles.img}/>
+                <img src={foto_terceira_faixa} alt="foto_terceira_faixa" className={styles.img}/>
             </div>
         </div>
     )
 }
 
-export default Embaixadores;
+export default NotaValor;

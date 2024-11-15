@@ -137,4 +137,25 @@ public class Discente{
 
     @Column(nullable = false)
     private String status;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean karate;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean ballet;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean informatica;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean futsal;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean artesanato;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean musica;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean ingles;
 }

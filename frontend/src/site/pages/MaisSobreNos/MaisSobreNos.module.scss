@@ -36,18 +36,35 @@
 }
 
 .imagens{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    width: 23rem;
-    height: 23rem;
+    position: relative;
+    width: 20rem;
+    height: 20rem;
 }
 
-.imagens > *{
-    width: 11rem;
-    height: 11rem;
-    background-color: rgb(169, 169, 169);
-    border-radius: 7px;
+.imagens > * {
+    position: absolute;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 1rem;
+}
+
+.imagem_back{
+    background-color: rgb(147, 138, 147);
+    z-index: 1;
+}
+
+.imagem_front{
+    background-color: rgb(115, 115, 115);
+    z-index: 2;
+    bottom: 1rem;
+    left: 1rem;
+}
+
+.img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .faixa_objetivos{

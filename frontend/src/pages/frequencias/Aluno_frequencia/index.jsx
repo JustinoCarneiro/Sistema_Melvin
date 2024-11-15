@@ -30,8 +30,42 @@ function Aluno_frequencia(){
 
     const fetchAlunos = async (selectedSala) => {
         try {
-            const response = await get.discente(selectedSala);
-            const objetoDados = response.data;
+            selectedSala = Number(selectedSala);
+
+            let response;
+            let objetoDados = [];
+            if(selectedSala>4){
+                response = await get.discente();
+                switch (selectedSala){
+                    case 5:
+                        objetoDados = response.data.filter(aluno => aluno.ingles === true);
+                        break;
+                    case 6:
+                        objetoDados = response.data.filter(aluno => aluno.karate === true);
+                        break;
+                    case 7:
+                        objetoDados = response.data.filter(aluno => aluno.informatica === true);
+                        break;
+                    case 8:
+                        objetoDados = response.data.filter(aluno => aluno.musica === true);
+                        break;
+                    case 9:
+                        objetoDados = response.data.filter(aluno => aluno.teatro === true);
+                        break;
+                    case 10:
+                        objetoDados = response.data.filter(aluno => aluno.ballet === true);
+                        break;
+                    case 11:
+                        objetoDados = response.data.filter(aluno => aluno.futsal === true);
+                        break;
+                    default:
+                        console.warn("Sala inválida: ", selectedSala);
+                        break;
+                }
+            } else {
+                response = await get.discente(selectedSala);
+                objetoDados = response.data;
+            }
 
             if (Array.isArray(objetoDados)) {
                 const alunosAtivos = objetoDados.filter(aluno => aluno.status === 'true' && aluno.turno === turno);
@@ -53,12 +87,16 @@ function Aluno_frequencia(){
             const presencaObj = {};
 
             response.data.forEach(frequencia => {
-                presencaObj[frequencia.matricula] = {
+
+                const chave = `${frequencia.matricula}-${frequencia.sala}`;
+                
+                presencaObj[chave] = {
                     presenca_manha: frequencia.presenca_manha,
                     presenca_tarde: frequencia.presenca_tarde,
                     justificativa: frequencia.justificativa
                 };
             });
+
             setPresencas(presencaObj);
         } catch (error) {
             console.error("Erro ao obter frequências!", error);
@@ -111,7 +149,7 @@ function Aluno_frequencia(){
                 }
             } else {
                 // Caso não seja professor ou auxiliar, mostrar todas as salas
-                setSalasDisponiveis(['1', '2', '3', '4']);
+                setSalasDisponiveis(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']);
             }
         };
 
@@ -237,7 +275,10 @@ function Aluno_frequencia(){
         return (
             aluno.matricula.toString().includes(termoBusca) ||
             aluno.nome.toLowerCase().includes(termoBusca) ||
-            (presencas[aluno.matricula]?.justificativa || '').toLowerCase().includes(termoBusca)
+            (Object.keys(presencas).some(key => 
+                key.startsWith(aluno.matricula) && 
+                (presencas[key]?.justificativa || '').toLowerCase().includes(termoBusca)
+            ))
         );
     });
 
@@ -248,7 +289,7 @@ function Aluno_frequencia(){
                     <h2 className={styles.title}>Frequência de alunos</h2>
                     <div className={styles.container_busca}>
                         <IoMdSearch className={styles.icon_busca}/>
-                        <input 
+                        <input
                             className={styles.busca} 
                             type='text'
                             placeholder='Buscar'
@@ -274,7 +315,15 @@ function Aluno_frequencia(){
                         >
                             {salasDisponiveis.map((sala) => (
                                 <option key={sala} value={sala}>
-                                    Sala {sala}
+                                    {sala <= 4 ? `Sala ${sala}` : (
+                                        sala === '5' ? 'Inglês' :
+                                        sala === '6' ? 'Karatê' :
+                                        sala === '7' ? 'Informática' :
+                                        sala === '8' ? 'Música' :
+                                        sala === '9' ? 'Teatro' :
+                                        sala === '10' ? 'Ballet' :
+                                        sala === '11' ? 'Futsal' : `Sala ${sala}`
+                                    )}
                                 </option>
                             ))}
                         </select>
@@ -314,8 +363,8 @@ function Aluno_frequencia(){
                                                 <select
                                                     className={styles.select_presenca}
                                                     value={turno === 'manha' 
-                                                        ? presencas[aluno.matricula]?.presenca_manha || '' 
-                                                        : presencas[aluno.matricula]?.presenca_tarde || ''
+                                                        ? presencas[`${aluno.matricula}-${sala}`]?.presenca_manha || '' 
+                                                        : presencas[`${aluno.matricula}-${sala}`]?.presenca_tarde || ''
                                                     }
                                                     onChange={handlePresenceChange(aluno.matricula, turno === 'manha' ? 'presenca_manha' : 'presenca_tarde')}
                                                 >
@@ -334,7 +383,7 @@ function Aluno_frequencia(){
                                                 className={styles.input_justificativa}
                                                 type="text"
                                                 name="justificativa"
-                                                value={presencas[aluno.matricula]?.justificativa || ''}
+                                                value={presencas[`${aluno.matricula}-${sala}`]?.justificativa || ''}
                                                 onChange={handleJustificativaChange(aluno.matricula)}
                                             />
                                         </td>
@@ -346,7 +395,7 @@ function Aluno_frequencia(){
                                                     className={styles.input_justificativa}
                                                     type="text"
                                                     name="justificativa"
-                                                    value={presencas[aluno.matricula]?.justificativa || ''} 
+                                                    value={presencas[`${aluno.matricula}-${sala}`]?.justificativa || ''} 
                                                     onChange={handleJustificativaChange(aluno.matricula)} 
                                                 />
                                             </td>

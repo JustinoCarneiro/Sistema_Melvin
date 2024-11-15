@@ -50,6 +50,12 @@ function NavBar({close}){
                                 <p>Alunos</p>
                             </Link>
                         </li>
+                        <li>
+                            <Link to="/app/alunos/extra" className={styles.link}>
+                                <PiStudentBold className={styles.icon}/> 
+                                <p>Aulas Extras</p>
+                            </Link>
+                        </li>
                     </>
                 )}
                 {(isAdm || isDire || isCoor) && (
