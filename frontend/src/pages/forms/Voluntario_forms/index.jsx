@@ -29,6 +29,7 @@ function Voluntario_forms({tipo}){
         cidade: '',
         rg: '',
         funcao: tipo || '',
+        aulaExtra: '',
         salaUm: '',
         salaDois:'',
         segunda: '',
@@ -60,6 +61,7 @@ function Voluntario_forms({tipo}){
                             cidade: response.data.cidade || '',
                             rg: response.data.rg || '',
                             funcao:  response.data.funcao || tipo || '',
+                            aulaExtra: response.data.aulaExtra || '',
                             salaUm: response.data.salaUm || '',
                             salaDois: response.data.salaDois || '',
                             segunda: response.data.segunda || '',
@@ -329,20 +331,37 @@ function Voluntario_forms({tipo}){
                         </div>
                     </div>
                     <div className={styles.coluna}>
-                        <label className={styles.label_select}>
-                            <div className={styles.sublabel_select}>Função:<p className={styles.asterisco}>*</p></div>
-                            <select className={styles.select} name="funcao" value={formDado.funcao} onChange={handleChange}>
-                                <option value="" hidden>Selecione...</option>
-                                <option value="diretor">Diretoria</option>
-                                <option value="coordenador">Coordenador</option>
-                                <option value="professor">Professor</option>
-                                <option value="auxiliar">Auxiliar</option>
-                                <option value="administrador">Administração</option>
-                                <option value="marketing">Marketing</option>
-                                <option value="zelador">Zeladoria</option>
-                                <option value="cozinheiro">Cozinheiro</option>
-                            </select>
-                        </label>
+                        <div className={styles.linha}>
+                            <label className={styles.label_select}>
+                                <div className={styles.sublabel_select}>Função:<p className={styles.asterisco}>*</p></div>
+                                <select className={styles.select} name="funcao" value={formDado.funcao} onChange={handleChange}>
+                                    <option value="" hidden>Selecione...</option>
+                                    <option value="diretor">Diretoria</option>
+                                    <option value="coordenador">Coordenador</option>
+                                    <option value="professor">Professor</option>
+                                    <option value="auxiliar">Auxiliar</option>
+                                    <option value="administrador">Administração</option>
+                                    <option value="marketing">Marketing</option>
+                                    <option value="zelador">Zeladoria</option>
+                                    <option value="cozinheiro">Cozinheiro</option>
+                                </select>
+                            </label>
+                            <label className={styles.label_select}>
+                                <div className={styles.sublabel_select}>Aula extra:</div>
+                                <select className={styles.select} name="aulaExtra" value={formDado.aulaExtra} onChange={handleChange}>
+                                    <option value="" hidden>Selecione...</option>
+                                    <option value="">Nenhuma</option>
+                                    <option value="5">Inglês</option>
+                                    <option value="6">Karatê</option>
+                                    <option value="7">Informática</option>
+                                    <option value="8">Teatro</option>
+                                    <option value="9">Ballet</option>
+                                    <option value="10">Música</option>
+                                    <option value="11">Futsal</option>
+                                    <option value="12">Artesanato</option>
+                                </select>
+                            </label>
+                        </div>
                         <div className={styles.linha}>
                             <label className={styles.label_select}>
                                 <div className={styles.sublabel_select}>Primeira sala:</div>
@@ -353,8 +372,6 @@ function Voluntario_forms({tipo}){
                                     <option value="2">Sala 2</option>
                                     <option value="3">Sala 3</option>
                                     <option value="4">Sala 4</option>
-                                    <option value="5">Lab Informática</option>
-                                    <option value="6">Brinquedoteca</option>
                                 </select>
                             </label>
                             <label className={styles.label_select}>
@@ -366,8 +383,6 @@ function Voluntario_forms({tipo}){
                                     <option value="2">Sala 2</option>
                                     <option value="3">Sala 3</option>
                                     <option value="4">Sala 4</option>
-                                    <option value="5">Lab Informática</option>
-                                    <option value="6">Brinquedoteca</option>
                                 </select>
                             </label>
                         </div>

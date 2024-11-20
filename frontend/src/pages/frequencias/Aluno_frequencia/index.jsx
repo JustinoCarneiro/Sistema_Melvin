@@ -136,12 +136,15 @@ function Aluno_frequencia(){
             if(role === "PROF" || role === "AUX"){
                 try {
                     const dadosVoluntario = await get.voluntarioByMatricula(matricula);
-                    const { salaUm, salaDois } = dadosVoluntario.data;
+                    const { salaUm, salaDois, aulaExtra} = dadosVoluntario.data;
 
                     // Definir as salas que o professor ou auxiliar pode ver
                     const salas = [];
                     if (salaUm) salas.push(salaUm);
                     if (salaDois) salas.push(salaDois);
+
+                    if (aulaExtra) salas.push(aulaExtra.toString());
+                    
                     setSalasDisponiveis(salas);
                     setSala(salas[0] || '1');
                 } catch (error) {
@@ -149,7 +152,7 @@ function Aluno_frequencia(){
                 }
             } else {
                 // Caso não seja professor ou auxiliar, mostrar todas as salas
-                setSalasDisponiveis(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']);
+                setSalasDisponiveis(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
             }
         };
 
@@ -322,7 +325,8 @@ function Aluno_frequencia(){
                                         sala === '8' ? 'Música' :
                                         sala === '9' ? 'Teatro' :
                                         sala === '10' ? 'Ballet' :
-                                        sala === '11' ? 'Futsal' : `Sala ${sala}`
+                                        sala === '11' ? 'Futsal' : 
+                                        sala === '12' ? 'Artesanato' : `Sala ${sala}`
                                     )}
                                 </option>
                             ))}

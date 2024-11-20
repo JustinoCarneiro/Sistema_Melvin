@@ -100,6 +100,24 @@ tbody tr:hover {
     cursor: pointer;
 }
 
+.select_sala {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: none;
+    border-radius: 7px;
+    border: solid 2px;
+    padding: 0.5rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    background-color: #044D8C;
+    border-color: #043560;
+    box-shadow: 0.08rem 0.08rem 0.08rem rgba(0, 0, 0, 0.3);
+}
+
 @media (max-width: $size-e) {
     .table > .thead > tr > th:nth-child(3), .table > .tbody > tr > td:nth-child(3) {
         display: none;

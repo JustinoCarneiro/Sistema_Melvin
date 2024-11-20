@@ -8,8 +8,8 @@
 
 .faixa_instmelvin{
     display: flex;
-    justify-content: space-between;
-    padding-inline: 12rem;
+    justify-content: space-around;
+    align-content: start;
     padding-top: 2rem;
     background-color: #06721f;
     padding-bottom: 2rem;
@@ -182,29 +182,7 @@
     gap: 0.3rem;
 }
 
-@media (max-width: $size-j){
-    .faixa_instmelvin{
-        flex-direction: column;
-    }
-
-    .imagens{
-        order: 1;
-        width: auto;
-        height: auto;
-        padding-bottom: 2rem;
-    }
-
-    .conteudo{
-        order: 2;
-        width: auto;
-    }
-}
-
 @media (max-width: $size-i){
-    .faixa_instmelvin{
-        padding-inline: 8rem;
-    }
-
     .paragrafo_abaixo{
         padding-inline: 8rem;
     }
@@ -226,11 +204,23 @@
     }
 }
 
-@media (max-width: $size-f){
+@media (max-width: $size-h){
     .faixa_instmelvin{
-        padding-inline: 3rem;
+        flex-direction: column;
+        align-items: center;
     }
 
+    .imagens{
+        order: 1;
+        align-self: center;
+    }
+
+    .conteudo{
+        order: 2;
+    }
+}
+
+@media (max-width: $size-f){
     .paragrafo_abaixo{
         padding-inline: 3rem;
     }
@@ -275,6 +265,14 @@
 }
 
 @media (max-width: $size-c){
+    .faixa_instmelvin{
+        padding-inline: 1.5rem;
+    }
+
+    .conteudo{
+        width: 25rem;
+    }
+
     .imagem_ds{
         display: none;
     }
@@ -291,6 +289,10 @@
 
     .faixa_instmelvin{
         padding-inline: 1.5rem;
+    }
+
+    .conteudo{
+        width: 22.5rem;
     }
 
     .paragrafo_abaixo{
@@ -311,5 +313,11 @@
 
     .grid_voluntarios{
         padding-inline: 1.5rem;
+    }
+}
+
+@media (max-width: $size-a){
+    .conteudo{
+        width: 18rem;
     }
 }

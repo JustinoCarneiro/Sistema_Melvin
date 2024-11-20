@@ -37,6 +37,8 @@ public class Voluntario {
     @Column(nullable = false)
 	private String funcao;
 
+    private String aulaExtra;
+
     private String salaUm; 
 
     private String salaDois;

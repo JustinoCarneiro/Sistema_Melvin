@@ -108,6 +108,7 @@ public class VoluntarioService {
             existente.setBairro(voluntario.getBairro());
             existente.setCidade(voluntario.getCidade());
             existente.setFuncao(voluntario.getFuncao());
+            existente.setAulaExtra(voluntario.getAulaExtra());
             existente.setSalaUm(voluntario.getSalaUm());
             existente.setSalaDois(voluntario.getSalaDois());
             existente.setSegunda(voluntario.getSegunda());

@@ -13,8 +13,10 @@ import Botao from '../../../components/gerais/Botao';
 function Alunos(){
     const [busca, setBusca] = useState('');
     const [alunos, setAlunos] = useState([]);
+    const [aula, setAula] = useState('1');
     const [isAdm, setIsAdm] = useState(false);
     const [filtroEspera, setFiltroEspera] = useState(false);
+    const [salasDisponiveis, setSalasDisponiveis] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -43,6 +45,39 @@ function Alunos(){
         fetchAlunos();
     }, []);
 
+    useEffect(() => {
+        const fetchSalasDisponiveis = async () => {
+            const role = Cookies.get('role');
+            const matricula = Cookies.get('login');
+        
+            if (role === 'PROF' || role === 'AUX') {
+                try {
+                    const dadosVoluntario = await get.voluntarioByMatricula(matricula);
+                    const { salaUm, salaDois, aulaExtra } = dadosVoluntario.data;
+        
+                    // Salas regulares
+                    const salas = [];
+                    if (salaUm) salas.push(salaUm.toString());
+                    if (salaDois) salas.push(salaDois.toString());
+        
+                    // Sala extra (se existir)
+                    if (aulaExtra) salas.push(aulaExtra.toString());
+        
+                    setSalasDisponiveis(salas);
+                    setAula(salas[0] || '1'); // Define a primeira sala como padrão
+                } catch (error) {
+                    console.error("Erro ao buscar dados do voluntário:", error);
+                    alert('Erro ao carregar as salas disponíveis!');
+                }
+            } else {
+                setSalasDisponiveis(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
+            }
+        };
+        
+        fetchSalasDisponiveis();
+    }, []);    
+    
+
     const handleEditClick = (matricula) => {
         navigate(`/app/aluno/editar/${matricula}`);
     };
@@ -55,8 +90,30 @@ function Alunos(){
         const termoBusca = busca.toLowerCase();
         const statusCondicao = filtroEspera ? aluno.status === 'espera' : aluno.status === 'true';
     
+        // Verifica se o aluno pertence à sala ou aula extra selecionada
+        const aulaCondicao = (() => {
+            if (aula <= 4) {
+                // Filtro para salas regulares
+                return aluno.sala === parseInt(aula, 10);
+            } else {
+                // Mapeamento das aulas extras por sala selecionada
+                const mapeamentoAulasExtras = {
+                    '5': aluno.ingles,
+                    '6': aluno.karate,
+                    '7': aluno.informatica,
+                    '8': aluno.teatro,
+                    '9': aluno.ballet,
+                    '10': aluno.musica,
+                    '11': aluno.futsal,
+                    '12': aluno.artesanato,
+                };
+                return mapeamentoAulasExtras[aula] || false;
+            }
+        })();
+    
         return (
             statusCondicao &&
+            aulaCondicao &&
             (
                 aluno.matricula.toString().includes(termoBusca) ||
                 aluno.nome.toLowerCase().includes(termoBusca) ||
@@ -65,6 +122,7 @@ function Alunos(){
             )
         );
     });
+    
 
     const handleEsperaClick = () => {
         setFiltroEspera(!filtroEspera);
@@ -73,6 +131,10 @@ function Alunos(){
     const handleFrequenciasClick = () => {
         navigate("/app/frequencias/alunos");
     };
+
+    const handleChange = (setter) => (event) => {
+        setter(event.target.value);
+    };  
 
     return(
         <div className={styles.body}>
@@ -102,7 +164,26 @@ function Alunos(){
                                 />
                             </>
                         )}
-                        
+                        <select 
+                            className={styles.select_sala} 
+                            value={aula} 
+                            onChange={(e) => setAula(e.target.value)}
+                        >
+                            {salasDisponiveis.map((sala) => (
+                                <option key={sala} value={sala}>
+                                    {sala <= 4 ? `Sala ${sala}` : (
+                                        sala === '5' ? 'Inglês' :
+                                        sala === '6' ? 'Karatê' :
+                                        sala === '7' ? 'Informática' :
+                                        sala === '8' ? 'Teatro' :
+                                        sala === '9' ? 'Ballet' :
+                                        sala === '10' ? 'Música' :
+                                        sala === '11' ? 'Futsal' :
+                                        sala === '12' ? 'Artesanato' : `Sala ${sala}`
+                                    )}
+                                </option>
+                            ))}
+                        </select>
                         <Botao 
                             nome="Frequências" 
                             corFundo="#7EA629" 
