@@ -25,6 +25,7 @@ function Home() {
                     <button className={styles.button} onClick={() => navigate("/maissobrenos")}>Saiba mais</button>
                 </div>
             </div>
+            {/*
             <div className={styles.faixa_eventos}>
                 <h3 className={styles.title_faixa_evento}>Eventos</h3>
                 <div className={styles.rolagem_eventos}>
@@ -54,6 +55,7 @@ function Home() {
                     </div>
                 </div>
             </div>
+            */}
         </div>
     );
 }

@@ -29,6 +29,7 @@
 }
 
 .title {
+    font-size: 1.3rem;
     font-weight: 300;
 }
 
@@ -234,10 +235,22 @@
     display: none;
 }
 
+.justificativa_td{
+    padding-inline: 0.5rem !important;
+    padding-block: 0.5rem !important;
+
+}
+
 @media (max-width: $size-f) {
     .header {
         flex-wrap: wrap;
+        gap: 0.5rem;
         align-items: center;
+    }
+
+    .botoes{
+        gap: 0.5rem;
+        flex-wrap: wrap;
     }
 
     .container {

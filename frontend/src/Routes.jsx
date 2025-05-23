@@ -36,6 +36,7 @@ import AvisoForms from './pages/forms/Aviso_forms';
 import AvisosDesativados from './pages/lista_matriculas_desativadas/AvisosDesativados';
 import Cestas from './pages/lista/Cestas';
 import CestasForms from './pages/forms/Cestas_forms';
+import Rendimento from './pages/Rendimento';
 
 function AppRoutes() {
     return (
@@ -120,7 +121,7 @@ function AppContent() {
 
                     <Route path="/amigomelvin/editar/:id" element={<AmigoMelvinForms/>} />
                     <Route path="/embaixador/editar/:id" element={<EmbaixadorForms/>} />
-                    <Route path="/aluno/editar/:matricula" element={<AlunoForms />} />
+                    <Route path="/aluno/editar/:matricula" element={<AlunoForms/>} />
                     <Route path="/voluntario/coordenador/editar/:matricula" element={<VoluntarioForms tipo="coordenador"/>} />
                     <Route path="/voluntario/professor/editar/:matricula" element={<VoluntarioForms tipo="professor"/>} />
                     <Route path="/voluntario/auxiliar/editar/:matricula" element={<VoluntarioForms tipo="auxiliar"/>} />
@@ -131,6 +132,7 @@ function AppContent() {
                     <Route path="/voluntario/zelador/editar/:matricula" element={<VoluntarioForms tipo="zelador"/>} />
                     <Route path="/avisos/editar/:id" element={<AvisoForms/>}/>
                     <Route path="/cestas/editar/:id" element={<CestasForms/>}/>
+                    <Route path="/rendimento_aluno/:matricula" element={<Rendimento/>} />
                     
                     <Route path="/frequencias/alunos" element={<Aluno_frequencia />} />
                     <Route path="/voluntario/frequencias/coordenadores" element={<Voluntario_frequencia tipo="coordenador"/>} />

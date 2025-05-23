@@ -63,15 +63,16 @@ const del = {
 
     async cestas(dados){
         const endpoint = "/cestas";
-
-        try{
-            const response = await http.delete(endpoint, dados);
+    
+        try {
+            const response = await http.delete(endpoint, { data: dados });
             return response;
-        }catch(error){
-            console.error('1008:Erro ao deletar entrega de cesta:', error.response ? error.response.dados : error.message);
+        } catch (error) {
+            console.error('Erro ao deletar entrega de cesta:', error.response ? error.response.data : error.message);
             return Promise.reject(error);
         }
     }
+    
 }
 
 export default del;

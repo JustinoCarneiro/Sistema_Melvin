@@ -30,6 +30,8 @@ public class Cestas {
 
     private String lider_celula;
 
+    private String responsavel;
+
     @Column(nullable = false)
     private LocalDate dataEntrega;
 }

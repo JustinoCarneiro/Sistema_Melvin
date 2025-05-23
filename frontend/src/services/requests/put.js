@@ -171,7 +171,7 @@ const put = {
         }
     },
 
-    async aviso(dados){
+    async cestas(dados){
         const endpoint="/cestas";
 
         try{

@@ -12,7 +12,7 @@ function Cestas(){
     const [busca, setBusca] = useState('');
     const [cestas, setCestas] = useState([]);
     const navigate = useNavigate();
-    const [data, setData] = useState(new Date().toISOString().split('T')[0]);
+    const [data, setData] = useState("todos");
 
     const fetchCestas = async () => {
         try{
@@ -49,7 +49,7 @@ function Cestas(){
         return (
             (cesta.contato.includes(termoBusca) ||
             cesta.nome.toLowerCase().includes(termoBusca)) &&
-            dataEntrega === data
+            (data === "todos" || dataEntrega === data)
         );
     });
 
@@ -75,21 +75,34 @@ function Cestas(){
                     </div>
                     <div className={styles.botoes}>
                         <button className={styles.botao} onClick={()=>navigate("/app/cestas/criar")}>Adicionar</button>
-                        <input 
+                        <select
                             className={styles.input_data}
-                            type="date"
-                            name="data"
-                            value={data}
-                            onChange={handleDataChange}
-                            autoFocus
-                        />
+                            name="filtroData"
+                            value={data === "todos" ? "todos" : "especifica"}
+                            onChange={(e) => {
+                                setData(e.target.value === "todos" ? "todos" : new Date().toISOString().split('T')[0]);
+                            }}
+                        >
+                            <option value="todos">Todos</option>
+                            <option value="especifica">Especificar Data</option>
+                        </select>
+                        {data !== "todos" && (
+                            <input
+                                className={styles.input_data}
+                                type="date"
+                                name="data"
+                                value={data}
+                                onChange={(e) => setData(e.target.value)}
+                            />
+                        )}
                     </div>
                 </div>
                 <table className={styles.table}>
                     <thead className={styles.thead}>
                         <tr>
                             <th>Nome</th>
-                            <th>Contato</th>
+                            <th>Responsável</th>
+                            <th>Data</th>
                             <th className={styles.edicao}>Edição</th>
                         </tr>
                     </thead>
@@ -99,7 +112,8 @@ function Cestas(){
                             <React.Fragment key={cesta.id}>
                                 <tr key={cesta.id}>
                                     <td>{cesta.nome}</td>
-                                    <td>{cesta.contato}</td>
+                                    <td>{cesta.responsavel}</td>
+                                    <td>{new Date(cesta.dataEntrega + "T00:00:00").toLocaleDateString('pt-BR')}</td>
                                     <td className={styles.edicao}>
                                         <MdOutlineModeEdit 
                                             className={styles.icon_editar}

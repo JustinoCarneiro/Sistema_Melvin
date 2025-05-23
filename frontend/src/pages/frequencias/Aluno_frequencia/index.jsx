@@ -166,9 +166,10 @@ function Aluno_frequencia(){
             const promises = alunos
                 .map(async (aluno) => {
                 const { matricula, nome } = aluno;
-                const presenca_manha = presencas[matricula]?.presenca_manha || '';
-                const presenca_tarde = presencas[matricula]?.presenca_tarde || '';
-                const justificativa = presencas[matricula]?.justificativa || '';
+                const key = `${matricula}-${sala}`;
+                const presenca_manha = presencas[key]?.presenca_manha || '';
+                const presenca_tarde = presencas[key]?.presenca_tarde || '';
+                const justificativa = presencas[key]?.justificativa || '';
 
                 console.log(`Enviando dados para matrícula ${matricula}:`, {
                     matricula,
@@ -228,21 +229,32 @@ function Aluno_frequencia(){
 
     const handlePresenceChange = (matricula, periodo) => (e) => {
         const { value } = e.target;
+        const key = `${matricula}-${sala}`;
+
+        console.log("Sala:", sala);  
+        console.log("Presença atual:", presencas[`${matricula}-${sala}`]);
+        
         setPresencas((prev) => ({
             ...prev,
-            [matricula]: {
-                ...prev[matricula],
-                [periodo]: value
+            [key]: {
+                ...prev[key],  
+                [periodo]: value,
             }
         }));
     };
 
+    useEffect(() => {
+        console.log("Estado de presenças atualizado:", presencas);
+    }, [presencas]);
+
     const handleJustificativaChange = (matricula) => (e) => {
         const { value } = e.target;
+        const key = `${matricula}-${sala}`;
+
         setPresencas((prev) => ({
             ...prev,
-            [matricula]: {
-                ...prev[matricula],
+            [key]: {
+                ...prev[key],
                 justificativa: value
             }
         }));

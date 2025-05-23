@@ -17,6 +17,7 @@ function Alunos(){
     const [isAdm, setIsAdm] = useState(false);
     const [filtroEspera, setFiltroEspera] = useState(false);
     const [salasDisponiveis, setSalasDisponiveis] = useState([]);
+    const [turnoSelecionado, setTurnoSelecionado] = useState('manha');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -89,14 +90,16 @@ function Alunos(){
     const alunosFiltrados = alunos.filter((aluno) => {
         const termoBusca = busca.toLowerCase();
         const statusCondicao = filtroEspera ? aluno.status === 'espera' : aluno.status === 'true';
-    
+        const turnoCondicao = turnoSelecionado === 'todos' || aluno.turno === turnoSelecionado;
+
         // Verifica se o aluno pertence à sala ou aula extra selecionada
         const aulaCondicao = (() => {
+            if (aula === "todos") {
+                return true; // Exibe todos os alunos
+            }
             if (aula <= 4) {
-                // Filtro para salas regulares
                 return aluno.sala === parseInt(aula, 10);
             } else {
-                // Mapeamento das aulas extras por sala selecionada
                 const mapeamentoAulasExtras = {
                     '5': aluno.ingles,
                     '6': aluno.karate,
@@ -113,6 +116,7 @@ function Alunos(){
     
         return (
             statusCondicao &&
+            turnoCondicao &&
             aulaCondicao &&
             (
                 aluno.matricula.toString().includes(termoBusca) ||
@@ -122,7 +126,7 @@ function Alunos(){
             )
         );
     });
-    
+
 
     const handleEsperaClick = () => {
         setFiltroEspera(!filtroEspera);
@@ -155,6 +159,15 @@ function Alunos(){
                     <div className={styles.botoes}>
                         { isAdm &&(
                             <>
+                                <select 
+                                    className={styles.select_sala}
+                                    value={turnoSelecionado}
+                                    onChange={(e) => setTurnoSelecionado(e.target.value)}
+                                >
+                                    <option value="manha">Manhã</option>
+                                    <option value="tarde">Tarde</option>
+                                    <option value="todos">Todos</option>
+                                </select>
                                 <Botao 
                                     nome={filtroEspera ? "Mostrar Ativos" : "Em espera"} 
                                     corFundo="#F29F05" 
@@ -169,6 +182,7 @@ function Alunos(){
                             value={aula} 
                             onChange={(e) => setAula(e.target.value)}
                         >
+                            <option value="todos">Todos</option>
                             {salasDisponiveis.map((sala) => (
                                 <option key={sala} value={sala}>
                                     {sala <= 4 ? `Sala ${sala}` : (

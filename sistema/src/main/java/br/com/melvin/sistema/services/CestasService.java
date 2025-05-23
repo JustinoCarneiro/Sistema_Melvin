@@ -40,6 +40,7 @@ public class CestasService {
             existente.setContato(cesta.getContato());
             existente.setLider_celula(cesta.getLider_celula());
             existente.setRede(cesta.getRede());
+            existente.setResponsavel(cesta.getResponsavel());
 
             existente.setId(id);
 

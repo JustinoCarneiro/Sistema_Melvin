@@ -11,6 +11,7 @@ import Input from '../../../components/gerais/Input';
 import post from '../../../services/requests/post';
 import get from '../../../services/requests/get';
 import put from '../../../services/requests/put';
+import del from '../../../services/requests/delete';
 
 function CestasForms(){
     const {id} = useParams();
@@ -20,6 +21,7 @@ function CestasForms(){
         nome: '',
         contato: '',
         dataEntrega: '',
+        responsavel: '',
         lider_celula: '',
         rede: ''
     })
@@ -37,6 +39,7 @@ function CestasForms(){
                             nome: cesta.nome || '',
                             contato: cesta.contato || '',
                             dataEntrega: cesta.dataEntrega || '',
+                            responsavel: cesta.responsavel || '',
                             lider_celula: cesta.lider_celula || '',
                             rede: cesta.rede || ''
                         })
@@ -91,6 +94,23 @@ function CestasForms(){
         } catch (error) {
             console.error('Erro ao salvar!', error);
             alert('Erro ao salvar!');
+        }
+    }
+
+    const handleDelete = async () => {
+        const confirmDelete = window.confirm('Tem certeza que deseja deletar esta cesta?');
+        if (confirmDelete) {
+            try {
+                const response = await del.cestas(formDado);
+                if (response.error) {
+                    throw new Error(response.error.message);
+                }
+                alert('Cesta deletada com sucesso!');
+                navigate(-1);
+            } catch (error) {
+                console.error('Erro ao deletar!', error);
+                alert('Erro ao deletar!');
+            }
         }
     }
 
@@ -154,9 +174,26 @@ function CestasForms(){
                             comp="pequeno"
                             prioridade="true"
                         />
+                        <Input
+                            label="Responsável pela entrega:"
+                            type="text"
+                            name="responsavel"
+                            value={formDado.responsavel}
+                            onChange={handleChange}
+                            comp="grande"
+                            prioridade="true"
+                        />
                     </div>
                 </div>
                 <div className={styles.cadastrar}>
+                    <Botao 
+                        nome="Deletar" 
+                        corFundo="#C60108" 
+                        corBorda="#602929" 
+                        comp="pequeno"
+                        type="button"
+                        onClick={handleDelete}
+                    />
                     <Botao 
                         nome="Salvar" 
                         corFundo="#F29F05" 

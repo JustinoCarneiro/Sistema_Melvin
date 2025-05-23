@@ -4,7 +4,8 @@
     display: flex;
     width: 100%;
     height: auto;
-    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .form{
@@ -12,6 +13,11 @@
     flex-direction: column;
     width: 80vw;
     height: auto;
+}
+
+.botao{
+    align-self: flex-start;
+    margin-top: 1rem;
 }
 
 .linha_voltar{

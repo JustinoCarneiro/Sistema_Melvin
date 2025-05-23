@@ -3,6 +3,8 @@ import styles from './MaisSobreNos.module.scss';
 import { useState, useEffect} from "react";
 import get from '../../../services/requests/get';
 
+import imagem from '../../../docs/imagem_sobrenos.jpeg'
+
 import objetivo1 from '../../../docs/objetivo1.png';
 import objetivo3 from '../../../docs/objetivo3.png';
 import objetivo4 from '../../../docs/objetivo4.png';
@@ -47,7 +49,7 @@ function MaisSobreNos(){
                 </div>
                 <div className={styles.imagens}>
                     <div className={styles.imagem_front}>
-                        <img src={''} alt="" className={styles.img}/>
+                        <img src={imagem} alt="imagem com duas meninas" className={styles.img}/>
                     </div>
                     <div className={styles.imagem_back}></div>
                 </div>

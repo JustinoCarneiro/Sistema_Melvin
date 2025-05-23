@@ -281,11 +281,23 @@ function Aluno_forms(){
             alert('Erro ao baixar arquivo!');
         }
     };
-    
+
+    const handleRedimentoClick = () => {
+        navigate(`/app/rendimento_aluno/${matricula}`);
+    };
 
     return(
         <div className={styles.body}>
             <form className={styles.form} onSubmit={handleSubmit}>
+                <div className={styles.botao}>
+                    <Botao 
+                        nome="Rendimento" 
+                        corFundo="#7EA629" 
+                        corBorda="#58751A" 
+                        type="button"
+                        onClick={handleRedimentoClick}
+                    />
+                </div>
                 <div className={styles.linha_voltar}>
                     <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
                 </div>
