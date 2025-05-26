@@ -63,32 +63,54 @@
 
 .table {
     background-color: white;
-    border-collapse: collapse;
-    border-spacing: 0;
+    border-collapse: separate; // Alterado de 'collapse' para 'separate'
+    border-spacing: 0;         // Remove o espaçamento entre as bordas das células
     margin-top: 0.75rem;
-    border-top: solid 1px black !important;
-    border-bottom: solid 1px black !important;
-    border-left: none !important;
-    border-right: none !important;
     margin-bottom: 3rem;
+    width: 100%;               // Garante que a tabela ocupe a largura disponível
+
+    // Remova quaisquer definições de 'border' diretas na tag .table aqui
+    // para evitar bordas duplicadas com as células.
+    // Ex: border-top, border-bottom, border-left, border-right da .table devem ser removidas.
 }
 
-.table > .thead > .tr_head > th, .table > .tbody > .tr_body > td {
+.table > thead > tr > th,
+.table > tbody > tr > td {
     padding: 0.5rem;
-    padding-left: 2rem;
-    border-bottom: solid 1px black;
+    padding-left: 2rem; // Mantendo seu padding original
+    border-bottom: 1px solid black;
+    border-right: 1px solid black; // Aplicando a borda direita em todas as células
 }
 
-.table > .thead > tr > th {
-    border-left: none; 
-    border-right: none;
+// Aplica a borda esquerda apenas na primeira célula de cada linha
+.table > thead > tr > th:first-child,
+.table > tbody > tr > td:first-child {
+    border-left: 1px solid black;
+}
+
+// Aplica a borda superior apenas nas células da primeira linha do cabeçalho
+.table > thead > tr:first-child > th {
+    border-top: 1px solid black;
+}
+
+// Se você tiver linhas no tbody que também precisam de uma borda superior
+// (por exemplo, se não houver thead ou para a primeira linha do tbody).
+// .table > tbody > tr:first-child > td {
+//    border-top: 1px solid black; // Adicione se necessário
+// }
+
+.table > thead > tr > th {
     text-align: start;
+    background-color: #f0f0f0; // Opcional: para diferenciar o cabeçalho
 }
 
-.table > .thead > .tr_head, .table > .tbody > .tr_body {
-    border-left: solid 1px black !important;   /* Aplicar borda esquerda na linha */
-    border-right: solid 1px black !important;  /* Aplicar borda direita na linha */
-}
+// Certifique-se de remover ou comentar os estilos anteriores que aplicavam
+// bordas diretamente às linhas (ex: .tr_head, .tr_body) se eles existirem.
+// Por exemplo:
+// .table > .thead > .tr_head, .table > .tbody > .tr_body {
+//    border-left: none !important;  // COMENTE OU REMOVA
+//    border-right: none !important; // COMENTE OU REMOVA
+// }
 
 .tbody > .tr_body:hover {
     background-color: #f5f5f5;
