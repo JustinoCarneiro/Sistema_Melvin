@@ -7,8 +7,8 @@ services:
       context: ./postgres
     container_name: postgresdb
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: Trigonometria7@
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: sistemamelvin
     ports:
       - "5432:5432"
@@ -25,8 +25,8 @@ services:
       context: ./sistema
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgresdb:5432/sistemamelvin
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: Trigonometria7@
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
