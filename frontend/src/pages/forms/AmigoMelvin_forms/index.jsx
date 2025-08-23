@@ -14,6 +14,8 @@ import put from '../../../services/requests/put';
 function AmigoMelvin_forms(){
     const {id} = useParams();
     const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState('');
+
     const [formDado, setFormDado] = useState({
         nome: '',
         email: '',
@@ -26,6 +28,8 @@ function AmigoMelvin_forms(){
     
     useEffect(() => {
         const fetchAmigo = async () => {
+            setErrorMessage('');
+
             try {
                 const response = await get.amigosmelvin();
                 if (response.data && Array.isArray(response.data)) {
@@ -47,8 +51,8 @@ function AmigoMelvin_forms(){
                     console.log('Nenhum amigo encontrado');
                 }
             } catch (error) {
-                console.error('5008:Erro ao obter dados do amigo!', error);
-                alert('Erro ao obter dados do aluno!');
+                console.error('Erro ao buscar amigo do Melvin!', error);
+                setErrorMessage(error.message || 'Não foi possível carregar os dados.');
             }
         };
     
@@ -68,6 +72,8 @@ function AmigoMelvin_forms(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorMessage('');
+
         try {
             let response;
             const amigoExistente = formDado;
@@ -87,8 +93,8 @@ function AmigoMelvin_forms(){
             alert('Salvo com sucesso!');
             navigate(-1);
         } catch (error) {
-            console.error('Erro ao salvar!', error);
-            alert('Erro ao salvar!');
+            console.error('Erro ao salvar amigo do Melvin!', error);
+            setErrorMessage(error.message || 'Ocorreu um erro ao salvar.');
         }
     };
 
@@ -175,6 +181,7 @@ function AmigoMelvin_forms(){
                     </div>
                 </div>
                 <div className={styles.cadastrar}>
+                    {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
                     <Botao 
                         nome="Salvar" 
                         corFundo="#F29F05" 

@@ -146,6 +146,13 @@
     flex-direction: row;
 }
 
+.errorMessage {
+    color: #e74c3c;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
 @media (max-width: $size-h){
     .form{
         width: 70vw;

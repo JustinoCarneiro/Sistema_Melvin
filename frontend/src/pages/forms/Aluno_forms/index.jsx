@@ -20,6 +20,7 @@ function Aluno_forms(){
     const {matricula} = useParams();
     const navigate = useNavigate();
     const [diario, setDiario] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const [formDado, setFormDado] = useState({
         matricula: '',
@@ -84,6 +85,7 @@ function Aluno_forms(){
 
     useEffect(() => {
         const fetchAluno = async () => {
+            setErrorMessage(''); 
             try {
                 const diarioExistente = await get.diarioByMatricula(matricula);
 
@@ -160,15 +162,7 @@ function Aluno_forms(){
                 }
             } catch (error) {
                 console.error('5002:Erro ao obter dados do aluno!', error);
-
-                // Verificar se o erro tem uma resposta e pegar o texto ou JSON
-                if (error.response) {
-                    const errorMessage = error.response.data ? JSON.stringify(error.response.data) : error.response.statusText;
-                    console.error(`Erro ao obter dados do aluno: ${errorMessage}`);
-                    alert(`Erro ao obter dados do aluno: ${errorMessage}`);
-                } else {
-                    alert('Erro ao obter dados do aluno!');
-                }
+                setErrorMessage(error.message || 'Não foi possível carregar os dados do aluno.');
             }
         };
     
@@ -197,6 +191,8 @@ function Aluno_forms(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorMessage('');
+
         try {
             let response;
             let responseDiario;
@@ -249,27 +245,14 @@ function Aluno_forms(){
             navigate(-1);
         } catch (error) {
             console.error('5001:Erro ao salvar!', error);
-
-            if (error.response) {
-                // Verificar se a resposta é um texto simples ou JSON
-                let errorMessage;
-                try {
-                    errorMessage = JSON.parse(error.response.data);
-                } catch (e) {
-                    // Se der erro ao fazer o parse, considerar que é um texto simples
-                    errorMessage = error.response.data;
-                }
-
-                console.error(`Erro ao salvar: ${errorMessage}`);
-                alert(`Erro ao salvar: ${errorMessage}`);
-            } else {
-                alert('Erro ao salvar!');
-            }
+            setErrorMessage(error.message || 'Ocorreu um erro ao salvar. Verifique os dados e tente novamente.');
         }
     };
 
     const handleDownload = async(e) => {
         e.preventDefault();
+        setErrorMessage('');
+
         try{
             if (diario) {
                 console.log("Diario", diario);
@@ -278,7 +261,7 @@ function Aluno_forms(){
             }
         }catch(error){
             console.error('5001:Erro ao baixar arquivo!', error);
-            alert('Erro ao baixar arquivo!');
+            setErrorMessage(error.message || 'Não foi possível baixar o arquivo.');
         }
     };
 
@@ -983,6 +966,11 @@ function Aluno_forms(){
                     </div>
                 </div>
                 <div className={styles.cadastrar}>
+                    {errorMessage && (
+                        <p className={styles.errorMessage}>
+                            {errorMessage}
+                        </p>
+                    )}
                     <Botao
                         nome="Salvar" 
                         corFundo="#F29F05" 

@@ -196,6 +196,23 @@
     /* opcional, para alinhar verticalmente */
 }
 
+.errorContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.errorMessage {
+    color: #e74c3c;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #e74c3c;
+    border-radius: 5px;
+    background-color: #fbecec;
+}
+
 @media (max-width: $size-h){
     .form{
         width: 70vw;

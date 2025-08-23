@@ -18,6 +18,8 @@ function AvisoForms(){
     const {id} = useParams();
     const navigate = useNavigate();
     const [imagem, setImagem] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
+
     const [formDado, setFormDado] = useState({
         titulo: '',
         corpo: '',
@@ -27,6 +29,8 @@ function AvisoForms(){
     })
 
     useEffect(()=>{
+        setErrorMessage('');
+
         if (!id) {
             return;
         }
@@ -60,8 +64,10 @@ function AvisoForms(){
                 }
 
             } catch (error) {
-                console.error('5008:Erro ao obter dados do aviso!', error);
-                alert('Erro ao obter dados do aviso!');
+                console.error('Erro ao buscar aviso!', error);
+                if (error.response?.status !== 404) {
+                    setErrorMessage(error.message || 'Não foi possível carregar os dados do aviso.');
+                }
             }
         };
 
@@ -91,6 +97,7 @@ function AvisoForms(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorMessage('');
 
         try{
             let response;
@@ -125,8 +132,8 @@ function AvisoForms(){
             alert('Salvo com sucesso!');
             navigate(-1);
         } catch (error) {
-            console.error('Erro ao salvar!', error);
-            alert('Erro ao salvar!');
+            console.error('Erro ao salvar aviso!', error);
+            setErrorMessage(error.message || 'Ocorreu um erro ao salvar. Tente novamente.');
         }
     }
 
@@ -209,6 +216,7 @@ function AvisoForms(){
                     </div>
                 </div>
                 <div className={styles.cadastrar}>
+                    {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
                     <Botao 
                         nome="Salvar" 
                         corFundo="#F29F05" 

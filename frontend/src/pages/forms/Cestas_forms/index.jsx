@@ -16,6 +16,7 @@ import del from '../../../services/requests/delete';
 function CestasForms(){
     const {id} = useParams();
     const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState('');
 
     const [formDado, setFormDado] = useState({
         nome: '',
@@ -28,6 +29,8 @@ function CestasForms(){
 
     useEffect(()=>{
         const fetchCesta = async () => {
+            setErrorMessage('');
+
             try{
                 const response = await get.cestas();
 
@@ -50,7 +53,7 @@ function CestasForms(){
 
             }catch(error){
                 console.error('5008:Erro ao obter dados da cesta!', error);
-                alert('Erro ao obter dados da cesta!');
+                setErrorMessage(error.message || 'Não foi possível carregar os dados da cesta.');
             }
         };
 
@@ -69,6 +72,8 @@ function CestasForms(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorMessage('');
+
         try{
             let response;
 
@@ -93,11 +98,13 @@ function CestasForms(){
             navigate(-1);
         } catch (error) {
             console.error('Erro ao salvar!', error);
-            alert('Erro ao salvar!');
+            setErrorMessage(error.message || 'Ocorreu um erro ao salvar a cesta.');
         }
     }
 
     const handleDelete = async () => {
+        setErrorMessage('');
+
         const confirmDelete = window.confirm('Tem certeza que deseja deletar esta cesta?');
         if (confirmDelete) {
             try {
@@ -109,7 +116,7 @@ function CestasForms(){
                 navigate(-1);
             } catch (error) {
                 console.error('Erro ao deletar!', error);
-                alert('Erro ao deletar!');
+                setErrorMessage(error.message || 'Não foi possível deletar o registro.');
             }
         }
     }
@@ -185,6 +192,11 @@ function CestasForms(){
                         />
                     </div>
                 </div>
+                {errorMessage && (
+                    <div className={styles.errorContainer}>
+                        <p className={styles.errorMessage}>{errorMessage}</p>
+                    </div>
+                )}
                 <div className={styles.cadastrar}>
                     <Botao 
                         nome="Deletar" 

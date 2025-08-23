@@ -15,6 +15,8 @@ import del from '../../../services/requests/delete';
 function Voluntario_forms({tipo}){
     const {matricula} = useParams();
     const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState('');
+
     const [formDado, setFormDado] = useState({
         matricula: '',
         nome: '',
@@ -42,6 +44,8 @@ function Voluntario_forms({tipo}){
     
     useEffect(() => {
         const fetchVoluntario = async () => {
+            setErrorMessage('');
+
             try {
                 const voluntarioExistente = await get.voluntarioByMatricula(matricula);
                 if (voluntarioExistente) {
@@ -76,8 +80,8 @@ function Voluntario_forms({tipo}){
                     console.log('Voluntario não encontrado');
                 }
             } catch (error) {
-                console.error('5007:Erro ao obter dados do voluntario!', error);
-                alert('Erro ao obter dados do aluno!');
+                console.error('Erro ao buscar voluntário!', error);
+                setErrorMessage(error.message || 'Não foi possível carregar os dados do voluntário.');
             }
         };
     
@@ -146,6 +150,8 @@ function Voluntario_forms({tipo}){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorMessage('');
+
         try {
             let response;
 
@@ -182,8 +188,8 @@ function Voluntario_forms({tipo}){
             alert('Salvo com sucesso!');
             navigate(-1);
         } catch (error) {
-            console.error('5008:Erro ao salvar!', error);
-            alert('Erro ao salvar!');
+            console.error('Erro ao salvar voluntário!', error);
+            setErrorMessage(error.message || 'Ocorreu um erro ao salvar. Verifique os dados e tente novamente.');
         }
     };
     
@@ -454,6 +460,7 @@ function Voluntario_forms({tipo}){
                     </div>
                 </div>
                 <div className={styles.cadastrar}>
+                {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
                     <Botao 
                         nome="Salvar" 
                         corFundo="#F29F05" 

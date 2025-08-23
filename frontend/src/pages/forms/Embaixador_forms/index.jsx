@@ -18,6 +18,8 @@ function Embaixador_forms(){
     const navigate = useNavigate();
     const [imagem, setImagem] = useState(null);
 
+    const [errorMessage, setErrorMessage] = useState('');
+
     const [formDado, setFormDado] = useState({
         nome: '',
         email: '',
@@ -31,6 +33,8 @@ function Embaixador_forms(){
 
     useEffect(()=>{
         const fetchEmbaixador = async () => {
+            setErrorMessage('');
+
             try{
                 const response = await get.embaixadores();
                 const imagemExistente = await get.imagemPorId(id, "embaixador");
@@ -59,8 +63,10 @@ function Embaixador_forms(){
                     console.log('Nenhum embaixador encontrado');
                 }
             } catch (error) {
-                console.error('5008:Erro ao obter dados do embaixador!', error);
-                alert('Erro ao obter dados do embaixador!');
+                console.error('Erro ao buscar embaixador!', error);
+                if (error.response?.status !== 404) {
+                    setErrorMessage(error.message || 'Não foi possível carregar os dados.');
+                }
             }
         };
 
@@ -91,6 +97,8 @@ function Embaixador_forms(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorMessage('');
+
         try{
             let response;
             let responseImagem;
@@ -125,8 +133,8 @@ function Embaixador_forms(){
             alert('Salvo com sucesso!');
             navigate(-1);
         } catch (error) {
-            console.error('Erro ao salvar!', error);
-            alert('Erro ao salvar!');
+            console.error('Erro ao salvar embaixador!', error);
+            setErrorMessage(error.message || 'Ocorreu um erro ao salvar. Verifique os dados.');
         }
     }
 
@@ -246,6 +254,7 @@ function Embaixador_forms(){
                     </div>
                 </div>
                 <div className={styles.cadastrar}>
+                    {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
                     <Botao 
                         nome="Salvar" 
                         corFundo="#F29F05" 
