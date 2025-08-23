@@ -200,7 +200,18 @@ const get = {
             console.error('1009:Erro ao obter lista de cestas entregas:', error.response ? error.response.data : error.message);
             return Promise.reject(error);
         }
-    }
+    },
+    async avaliacoesPorMatricula(matricula) {
+        const endpoint = `/avaliacoes/aluno/${matricula}`;
+        try {
+            const response = await http.get(endpoint);
+            return response;
+        } catch (error) {
+            console.error('Erro ao obter avaliações:', error.response ? error.response.data : error.message);
+            const errorMessage = error.response?.data || error.message;
+            return Promise.reject(new Error(errorMessage));
+        }
+    },
 }
 
 export default get;

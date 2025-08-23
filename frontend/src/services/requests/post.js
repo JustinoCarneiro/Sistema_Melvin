@@ -134,6 +134,17 @@ const post = {
             const errorMessage = error.response?.data || error.message;
             return Promise.reject(new Error(errorMessage));
         }
+    },
+    async avaliacao(dados) {
+        const endpoint = "/avaliacoes";
+        try {
+            const response = await http.post(endpoint, dados);
+            return response;
+        } catch (error) {
+            console.error('Erro ao registrar avaliação:', error.response ? error.response.data : error.message);
+            const errorMessage = error.response?.data || error.message;
+            return Promise.reject(new Error(errorMessage));
+        }
     }
 }
 
