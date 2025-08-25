@@ -168,4 +168,13 @@ public class DiscenteService {
             return new ResponseEntity<String>(resposta, HttpStatus.OK);
         }
     }
+
+    public List<Discente> searchDiscentes(String searchTerm) {
+        // Se o termo de busca for nulo ou vazio, retorna todos os discentes
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return discenteRepository.findAll();
+        }
+        // Caso contrário, chama o método de busca avançada do repositório
+        return discenteRepository.searchByTerm(searchTerm);
+    }
 }

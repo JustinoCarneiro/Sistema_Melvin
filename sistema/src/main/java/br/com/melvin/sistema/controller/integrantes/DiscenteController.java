@@ -1,33 +1,28 @@
 package br.com.melvin.sistema.controller.integrantes;
 
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired; 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*; // O wildcard (*) já inclui o RequestParam
 
 import br.com.melvin.sistema.model.integrantes.Discente;
 import br.com.melvin.sistema.services.integrantes.DiscenteService;
 
-
-
 @RestController
 @RequestMapping("/discente")
 public class DiscenteController {
-
+    
     @Autowired
     private DiscenteService service;
 
+    // MÉTODO 'listar' ATUALIZADO
     @GetMapping
-    public List<Discente> listar(){
-        return service.listar();
+    public List<Discente> listar(@RequestParam(value = "search", required = false) String searchTerm) {
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            return service.searchDiscentes(searchTerm);
+        } else {
+            return service.listar();
+        }
     }
 
     @GetMapping("/sala/{sala}")

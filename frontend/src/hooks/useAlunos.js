@@ -3,35 +3,25 @@ import Cookies from "js-cookie";
 import get from '../services/requests/get';
 
 export function useAlunos() {
-    // Estados relacionados aos dados e filtros
     const [alunos, setAlunos] = useState([]);
     const [busca, setBusca] = useState('');
     const [aula, setAula] = useState('1');
     const [filtroEspera, setFiltroEspera] = useState(false);
     const [turnoSelecionado, setTurnoSelecionado] = useState('manha');
     
-    // Estados de controle da UI
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isAdm, setIsAdm] = useState(false);
     const [salasDisponiveis, setSalasDisponiveis] = useState([]);
 
-    // Efeito para buscar dados iniciais
+    // Efeito para buscar dados iniciais (permissões e salas)
     useEffect(() => {
         const carregarDadosIniciais = async () => {
-            setLoading(true);
-            setError(null);
             try {
-                // 1. Verificar permissões
                 const userRole = Cookies.get('role');
                 const isUserAdm = userRole === 'ADM' || userRole === 'DIRE' || userRole === 'COOR';
                 setIsAdm(isUserAdm);
 
-                // 2. Buscar lista de alunos
-                const responseAlunos = await get.discente();
-                setAlunos(responseAlunos.data || []);
-
-                // 3. Buscar salas disponíveis com base na permissão
                 if (isUserAdm) {
                     setSalasDisponiveis(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
                 } else {
@@ -46,20 +36,32 @@ export function useAlunos() {
                     setAula(salas[0] || '1');
                 }
             } catch (err) {
-                console.error("Erro ao carregar dados da página de alunos:", err);
-                setError(err.message || 'Falha ao carregar dados.');
-            } finally {
-                setLoading(false);
+                setError(err.message || 'Falha ao carregar configurações.');
             }
         };
-
         carregarDadosIniciais();
     }, []);
 
-    // Lógica de filtragem, agora dentro do hook e otimizada com useMemo
+    // Efeito para BUSCAR os alunos no backend sempre que 'busca' mudar (com debounce)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(true);
+            get.discente(busca)
+                .then(response => {
+                    setAlunos(response.data || []);
+                })
+                .catch(err => {
+                    setError(err.message || 'Falha ao buscar alunos.');
+                })
+                .finally(() => setLoading(false));
+        }, 500); // Atraso de 500ms para evitar chamadas excessivas à API
+
+        return () => clearTimeout(timer); // Limpa o timer se o usuário digitar novamente
+    }, [busca]);
+
+    // A filtragem por busca (nome, matricula, etc) agora é feita no backend.
+    // O useMemo agora aplica apenas os filtros LOCAIS (status, turno, aula).
     const alunosFiltrados = useMemo(() => {
-        const termoBusca = busca.toLowerCase();
-        
         return alunos.filter((aluno) => {
             const statusCondicao = filtroEspera ? aluno.status === 'espera' : aluno.status === 'true';
             const turnoCondicao = turnoSelecionado === 'todos' || aluno.turno === turnoSelecionado;
@@ -70,18 +72,10 @@ export function useAlunos() {
                 return aluno[mapeamento[aula]] || false;
             })();
     
-            const buscaCondicao = (
-                aluno.matricula.toString().includes(termoBusca) ||
-                aluno.nome.toLowerCase().includes(termoBusca) ||
-                (aluno.nome_pai || '').toLowerCase().includes(termoBusca) ||
-                (aluno.nome_mae || '').toLowerCase().includes(termoBusca)
-            );
-
-            return statusCondicao && turnoCondicao && aulaCondicao && buscaCondicao;
+            return statusCondicao && turnoCondicao && aulaCondicao;
         });
-    }, [alunos, busca, aula, filtroEspera, turnoSelecionado]);
+    }, [alunos, aula, filtroEspera, turnoSelecionado]);
 
-    // Retorna apenas o que o componente precisa para renderizar e interagir
     return {
         busca,
         setBusca,

@@ -136,4 +136,11 @@ public class VoluntarioService {
             return new ResponseEntity<String>(resposta, HttpStatus.OK);
         }
     }
+
+    public List<Voluntario> searchVoluntarios(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return voluntarioRepository.findAll();
+        }
+        return voluntarioRepository.searchByTerm(searchTerm);
+    }
 }

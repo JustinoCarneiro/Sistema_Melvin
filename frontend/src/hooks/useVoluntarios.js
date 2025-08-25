@@ -29,50 +29,55 @@ export function useVoluntarios(tipo) {
         return { title: titulos[tipo] || "Voluntários", prox_rota: rotas[tipo] || tipo };
     }, [tipo]);
 
+    // Efeito para buscar os dados iniciais (todos os voluntários e permissões)
     useEffect(() => {
-        const carregarVoluntarios = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                // Verificar permissões
-                const userRole = Cookies.get('role');
-                setIsAdm(userRole === "ADM");
+        setLoading(true);
+        const userRole = Cookies.get('role');
+        setIsAdm(userRole === "ADM");
 
-                // Buscar todos os voluntários de uma vez
-                const response = await get.voluntario();
+        get.voluntario()
+            .then(response => {
                 setVoluntarios(response.data || []);
-            } catch (err) {
-                console.error("Erro ao carregar voluntários:", err);
-                setError(err.message || 'Falha ao carregar os dados.');
-            } finally {
-                setLoading(false);
-            }
-        };
+            })
+            .catch(err => {
+                setError(err.message || 'Falha ao carregar voluntários.');
+            })
+            .finally(() => setLoading(false));
+    }, []); // Roda apenas uma vez na montagem do componente
 
-        carregarVoluntarios();
-    }, []);
+    // EFEITO DE BUSCA NO BACKEND (com debounce refinado)
+    useEffect(() => {
 
-    // Lógica de filtragem completa dentro do hook
+        const timer = setTimeout(() => {
+            setLoading(true); // Mostra "Carregando" apenas após o atraso
+            get.voluntario(busca)
+                .then(response => {
+                    setVoluntarios(response.data || []);
+                })
+                .catch(err => {
+                    setError(err.message || 'Falha ao buscar voluntários.');
+                })
+                .finally(() => setLoading(false));
+        }, 500); // Atraso de 500ms antes de enviar a requisição
+
+        return () => clearTimeout(timer); // Limpa o timer se o usuário digitar novamente
+    }, [busca]);
+
+    // A filtragem por busca (nome, etc.) agora é feita no backend.
+    // O useMemo aplica apenas os filtros LOCAIS (por tipo de voluntário e status de espera).
     const voluntariosFiltrados = useMemo(() => {
-        const termoBusca = busca.toLowerCase();
-        
         return voluntarios.filter((voluntario) => {
-            // Primeiro, o filtro mais importante: pelo tipo da página
+            // Filtro principal pelo tipo da página
             if (voluntario.funcao !== tipo) {
                 return false;
             }
 
+            // Filtro pelo status (ativo ou em espera)
             const statusCondicao = filtroEspera ? voluntario.status === 'espera' : voluntario.status === 'true';
             
-            const buscaCondicao = (
-                voluntario.matricula.toString().includes(termoBusca) ||
-                voluntario.nome.toLowerCase().includes(termoBusca) ||
-                (voluntario.email || '').toLowerCase().includes(termoBusca)
-            );
-
-            return statusCondicao && buscaCondicao;
+            return statusCondicao;
         });
-    }, [voluntarios, busca, filtroEspera, tipo]);
+    }, [voluntarios, filtroEspera, tipo]);
 
     return {
         busca,

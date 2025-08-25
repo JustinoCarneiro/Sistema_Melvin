@@ -1,19 +1,20 @@
 import http from '../http';
 
 const get = {
-    async discente(sala){
+    async discente(searchTerm = '') {
         let endpoint = "/discente";
-
-        if(sala){
-            endpoint += `/sala/${sala}`;
+        
+        if (searchTerm) {
+            endpoint += `?search=${encodeURIComponent(searchTerm)}`;
         }
         
-        try{
+        try {
             const response = await http.get(endpoint);
             return response;
-        }catch(error){
+        } catch (error) {
             console.error('1009:Erro ao obter dados dos discentes:', error.response ? error.response.data : error.message);
-            return Promise.reject(error);
+            const errorMessage = error.response?.data || error.message;
+            return Promise.reject(new Error(errorMessage));
         }
     },
     async discenteByMatricula(matricula){
@@ -26,15 +27,18 @@ const get = {
             return Promise.reject(error);
         }
     },
-    async voluntario(){
-        const endpoint = "/voluntario";
-        
-        try{
+    async voluntario(searchTerm = '') {
+        let endpoint = "/voluntario";
+        if (searchTerm) {
+            endpoint += `?search=${encodeURIComponent(searchTerm)}`;
+        }
+        try {
             const response = await http.get(endpoint);
             return response;
-        }catch(error){
-            console.error('1009:Erro ao obter dados dos voluntarios:', error.response ? error.response.data : error.message);
-            return Promise.reject(error);
+        } catch (error) {
+            console.error('1010:Erro ao obter dados dos voluntários:', error.response ? error.response.data : error.message);
+            const errorMessage = error.response?.data || error.message;
+            return Promise.reject(new Error(errorMessage));
         }
     },
     async voluntarioNomesFuncoes(){
