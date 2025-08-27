@@ -52,7 +52,7 @@ function Home() {
             <div className={styles.gridContainer}>
                 {/* Card Melhores Alunos */}
                 <div className={`${styles.card} ${styles.rankingCard}`}>
-                    <h3 className={styles.cardTitle}><FaArrowUp color="#28a745"/> Melhores Alunos</h3>
+                    <h3 className={styles.cardTitle}><FaArrowUp color="#28a745"/> Melhores alunos</h3>
                     <ul>
                         {rankingMelhores.map(aluno => (
                             <li key={aluno.matricula}>
@@ -65,7 +65,7 @@ function Home() {
 
                 {/* Card Piores Alunos */}
                 <div className={`${styles.card} ${styles.rankingCard}`}>
-                    <h3 className={styles.cardTitle}><FaArrowDown color="#dc3545"/> Alunos em Destaque</h3>
+                    <h3 className={styles.cardTitle}><FaArrowDown color="#dc3545"/> Alunos em atenção</h3>
                     <ul>
                         {rankingPiores.map(aluno => (
                             <li key={aluno.matricula}>
