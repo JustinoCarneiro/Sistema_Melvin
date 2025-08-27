@@ -1,160 +1,102 @@
-@import "../../index.scss";
-
 .body {
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: auto;
-    padding-bottom: 2rem;
+    gap: 2rem;
 }
 
-.linha{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    padding-top: 2rem;
-    gap: 3rem;
-    padding-inline: 2rem;
+.gridContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
 }
 
-.qtd_alunos{
-    display: flex;
-    flex-direction: column;
-    background-color: #F29F05;
-    width: 25rem;
-    height: auto;
-    padding: 1rem;
-    gap: 1rem;
-    border-radius: 7px;
-    box-shadow: 1px 1px 3px #8A6F3E;
-    flex-shrink: 0;
-}
-
-.title{
-    font-weight: 300;
-}
-
-.turnos{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.turnos > *{
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
+}
+
+.cardTitle {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
 }
 
-.subtitle{
-    font-weight: 300;
-}
-
-.salas{
+.frequenciaCard .turnos {
     display: flex;
-    flex-direction: column;
+    justify-content: space-around;
     gap: 1rem;
 }
 
-.salas > * {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: 8rem;
-    color: rgb(55, 55, 55);
+.frequenciaCard .turno p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
 }
 
-.salas > * > p{
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: white;
-}
-
-.aviso{
+.avisoCard .avisoContent {
     display: flex;
-    flex-direction: row;
-    background-color: #7EA629;
-    width: 100%;
-    padding: 1rem;
-    gap: 2rem;
-    border-radius: 7px;
-    box-shadow: 1px 1px 3px #58751A;
-    justify-content: space-between;
-}
-
-.aviso_texto{
-    display: flex;
-    flex-direction: column;
-    width: auto;
     gap: 1rem;
-    color: white;
+    flex-grow: 1;
 }
 
-.title_aviso{
-    font-weight: 600;
+.avisoCard .avisoImg {
+    max-width: 120px;
+    max-height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
 }
 
-.texto{
+.avisoCard .avisoTexto {
     text-align: justify;
-    word-wrap: break-word;
-    word-break: break-word;
+    font-size: 0.9rem;
+    line-height: 1.5;
 }
 
-.imagem{
-    max-width: 10rem;
-    max-height: 10rem;
-    background-color: rgb(72, 148, 123);
-    flex-shrink: 0;
+.avisoExtra {
+    margin-top: 1rem;
+}
+
+.rankingCard ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.rankingCard li {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    overflow: hidden;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 0.5rem;
 }
 
-.img{
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+.rankingCard .nota {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: bold;
+    color: #495057;
 }
 
-@media (max-width: $size-i){
-    .linha{
-        flex-direction: column;
-    }
+.centeredMessage {
+    padding: 2rem;
+    text-align: center;
 }
 
-@media (max-width: $size-e){
-    .qtd_alunos{
-        width: 100%;
-        flex-shrink: 1;
-        flex-grow: 1;
-    }
-
-    .turnos{
-        justify-content: space-around;
-    }
-
-    .aviso{
-        flex-direction: column;
-    }
-
-    .imagem{
-        order: 1;
-        align-self: center;
-    }
-
-    .aviso_texto{
-        order: 2;
-    }
-}
-
-@media (max-width: $size-b){
-    .linha{
-        align-items: center;
-    }
-
-    .qtd_alunos{
-        width: 20rem;
-    }
+.error {
+    color: #dc3545;
 }

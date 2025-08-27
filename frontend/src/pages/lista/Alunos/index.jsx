@@ -1,15 +1,18 @@
 import styles from './Alunos.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { useAlunos } from '../../../hooks/useAlunos';
+import { useState } from 'react';
 
 import { MdOutlineModeEdit } from "react-icons/md";
-import { FaPlus } from "react-icons/fa6";
+import { FaPlus, FaFileExcel } from "react-icons/fa6";
 import { IoMdSearch } from "react-icons/io";
 
 import Botao from '../../../components/gerais/Botao';
+import get from '../../../services/requests/get';
 
 function Alunos() {
     const navigate = useNavigate();
+    const [exporting, setExporting] = useState(false);
 
     // 2. Use o hook para obter todos os dados e funções de que precisa
     const {
@@ -35,6 +38,17 @@ function Alunos() {
 
     const handleFrequenciasClick = () => {
         navigate("/app/frequencias/alunos");
+    };
+
+    const handleExportClick = async () => {
+        setExporting(true);
+        try {
+            await get.exportarDiscentes(busca);
+        } catch (error) {
+            alert(error.message || "Não foi possível exportar os dados.");
+        } finally {
+            setExporting(false);
+        }
     };
 
     // Renderização condicional para loading e erro
@@ -96,6 +110,16 @@ function Alunos() {
                             type="button"
                             onClick={handleFrequenciasClick}
                         />
+                        <Botao 
+                            nome={exporting ? "Exportando..." : "Exportar"}
+                            corFundo="#217346"
+                            corBorda="#107C41"
+                            type="button"
+                            onClick={handleExportClick}
+                            disabled={exporting}
+                        >
+                            <FaFileExcel />
+                        </Botao>
                     </div>
                 </div>
                 <table className={styles.table}>

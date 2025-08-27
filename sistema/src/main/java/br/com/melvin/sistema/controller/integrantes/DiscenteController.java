@@ -3,10 +3,16 @@ package br.com.melvin.sistema.controller.integrantes;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*; // O wildcard (*) já inclui o RequestParam
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.core.io.InputStreamResource;
+import java.io.ByteArrayInputStream;                  
+import java.io.IOException; 
 
 import br.com.melvin.sistema.model.integrantes.Discente;
 import br.com.melvin.sistema.services.integrantes.DiscenteService;
+
+
 
 @RestController
 @RequestMapping("/discente")
@@ -48,5 +54,18 @@ public class DiscenteController {
     @DeleteMapping("/{matricula}")
     public ResponseEntity<String> remover(@PathVariable String matricula){
         return service.remover(matricula);
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<InputStreamResource> exportarDiscentes(@RequestParam(value = "search", required = false) String searchTerm) throws IOException {
+        ByteArrayInputStream bais = service.exportarDiscentes(searchTerm);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=discentes.xlsx");
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(new InputStreamResource(bais));
     }
 }

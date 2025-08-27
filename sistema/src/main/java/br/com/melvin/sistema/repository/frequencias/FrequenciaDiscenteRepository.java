@@ -12,4 +12,7 @@ public interface FrequenciaDiscenteRepository extends JpaRepository<FrequenciaDi
     FrequenciaDiscente findByMatriculaAndData(String matricula, LocalDate data);
     void deleteByMatriculaAndData(String matricula, LocalDate data);
     List<FrequenciaDiscente> findAllByData(LocalDate data);
+
+    @Query("SELECT COUNT(DISTINCT f.matricula) FROM FrequenciaDiscente f WHERE f.data = :data AND (f.presenca_manha = 'P' OR f.presenca_tarde = 'P')")
+    Long countPresentesByData(@Param("data") LocalDate data);
 }

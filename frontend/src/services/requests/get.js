@@ -216,6 +216,53 @@ const get = {
             return Promise.reject(new Error(errorMessage));
         }
     },
+    async exportarDiscentes(searchTerm = '') {
+        let endpoint = "/discente/export";
+        if (searchTerm) {
+            endpoint += `?search=${encodeURIComponent(searchTerm)}`;
+        }
+        try {
+            const response = await http.get(endpoint, {
+                responseType: 'blob', // Importante: informa ao axios para esperar um arquivo
+            });
+            
+            // Cria um link temporário para iniciar o download
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'discentes.xlsx'); // Nome do arquivo
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+
+        } catch (error) {
+            console.error('Erro ao exportar dados:', error);
+            // Retorna uma promessa rejeitada para o componente poder tratar o erro
+            return Promise.reject(new Error("Falha ao exportar os dados."));
+        }
+    },
+    async dashboardPresentes() {
+        const endpoint = "/dashboard/presentes";
+        try {
+            const response = await http.get(endpoint);
+            return response;
+        } catch (error) {
+            console.error('Erro ao obter presentes do dia:', error.response ? error.response.data : error.message);
+            const errorMessage = error.response?.data || error.message;
+            return Promise.reject(new Error(errorMessage));
+        }
+    },
+    async dashboardRanking() {
+        const endpoint = "/dashboard/ranking";
+        try {
+            const response = await http.get(endpoint);
+            return response;
+        } catch (error) {
+            console.error('Erro ao obter ranking de alunos:', error.response ? error.response.data : error.message);
+            const errorMessage = error.response?.data || error.message;
+            return Promise.reject(new Error(errorMessage));
+        }
+    }
 }
 
 export default get;

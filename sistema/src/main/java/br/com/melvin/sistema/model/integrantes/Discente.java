@@ -158,4 +158,7 @@ public class Discente{
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean ingles;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean teatro;
 }

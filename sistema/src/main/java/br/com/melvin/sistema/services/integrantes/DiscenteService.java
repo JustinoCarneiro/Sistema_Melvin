@@ -11,10 +11,16 @@ import org.springframework.stereotype.Service;
 
 import br.com.melvin.sistema.model.integrantes.Discente;
 import br.com.melvin.sistema.repository.integrantes.DiscenteRepository;
+import br.com.melvin.sistema.services.ExcelExportService;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
+
+
+import java.io.ByteArrayInputStream; 
+import java.io.IOException;          
 
 @Service
 @Transactional
@@ -24,6 +30,9 @@ public class DiscenteService {
 
     @Autowired
     private DiscenteRepository discenteRepository;
+
+    @Autowired
+    private ExcelExportService excelExportService;
 
     // Método para listar todos os discentes
     public List<Discente> listar(){
@@ -176,5 +185,10 @@ public class DiscenteService {
         }
         // Caso contrário, chama o método de busca avançada do repositório
         return discenteRepository.searchByTerm(searchTerm);
+    }
+
+    public ByteArrayInputStream exportarDiscentes(String searchTerm) throws IOException {
+        List<Discente> discentes = searchDiscentes(searchTerm); // Reutiliza a lógica de busca
+        return excelExportService.exportarDiscentesParaExcel(discentes);
     }
 }
