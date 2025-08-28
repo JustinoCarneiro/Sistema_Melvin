@@ -1,8 +1,13 @@
+@import "../../index.scss";
+
 .body {
-    padding: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    width: 100%;
+    height: auto;
+    padding-bottom: 2rem;
+    gap: 2rem; // Adicionado para espaçamento consistente
+    padding: 2rem; // Adicionado para espaçamento geral
 }
 
 .gridContainer {
@@ -12,7 +17,7 @@
 }
 
 .card {
-    background-color: #ffffff;
+    // background-color: #ffffff; // Removido daqui para ser específico
     border-radius: 8px;
     padding: 1.5rem;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -24,11 +29,18 @@
     font-weight: 600;
     font-size: 1.2rem;
     margin-bottom: 1rem;
-    border-bottom: 1px solid #eee;
     padding-bottom: 0.5rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+// Estilos específicos para os cards que devem ser brancos
+.frequenciaCard, .rankingCard {
+    background-color: #ffffff;
+    .cardTitle {
+        border-bottom: 1px solid #eee;
+    }
 }
 
 .frequenciaCard .turnos {
@@ -42,24 +54,38 @@
     font-size: 0.9rem;
 }
 
-.avisoCard .avisoContent {
-    display: flex;
-    gap: 1rem;
-    flex-grow: 1;
+// AQUI ESTÁ A MUDANÇA PRINCIPAL
+.avisoCard {
+    background-color: #7EA629; // Cor de fundo verde do seu tema
+    color: white; // Cor do texto para garantir legibilidade
+
+    .cardTitle {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.5); // Borda mais clara
+    }
+
+    .avisoContent {
+        display: flex;
+        gap: 1rem;
+        flex-grow: 1;
+    }
+
+    .avisoImg {
+        max-width: 120px;
+        max-height: 120px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .avisoTexto {
+        text-align: justify;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        word-wrap: break-word; 
+        word-break: break-word; 
+        overflow-wrap: break-word;
+    }
 }
 
-.avisoCard .avisoImg {
-    max-width: 120px;
-    max-height: 120px;
-    object-fit: cover;
-    border-radius: 4px;
-}
-
-.avisoCard .avisoTexto {
-    text-align: justify;
-    font-size: 0.9rem;
-    line-height: 1.5;
-}
 
 .avisoExtra {
     margin-top: 1rem;
@@ -99,4 +125,46 @@
 
 .error {
     color: #dc3545;
+}
+
+// Media queries do seu arquivo original mantidos
+@media (max-width: $size-i){
+    .linha{
+        flex-direction: column;
+    }
+}
+
+@media (max-width: $size-e){
+    .qtd_alunos{
+        width: 100%;
+        flex-shrink: 1;
+        flex-grow: 1;
+    }
+
+    .turnos{
+        justify-content: space-around;
+    }
+
+    .aviso{
+        flex-direction: column;
+    }
+
+    .imagem{
+        order: 1;
+        align-self: center;
+    }
+
+    .aviso_texto{
+        order: 2;
+    }
+}
+
+@media (max-width: $size-b){
+    .linha{
+        align-items: center;
+    }
+
+    .qtd_alunos{
+        width: 20rem;
+    }
 }
