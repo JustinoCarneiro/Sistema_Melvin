@@ -184,6 +184,23 @@
     display: none;
 }
 
+.linha_voltar {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+}
+
+.voltar {
+    font-size: 2rem;
+    cursor: pointer;
+    color: #333;
+
+    &:hover {
+        color: #007bff;
+    }
+}
+
 @media (max-width: $size-f) {
     .header {
         flex-wrap: wrap;

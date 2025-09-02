@@ -248,7 +248,7 @@ const get = {
             return response;
         } catch (error) {
             console.error('Erro ao obter presentes do dia:', error.response ? error.response.data : error.message);
-            const errorMessage = error.response?.data || error.message;
+            const errorMessage = error.response?.data || "Erro ao buscar presentes.";
             return Promise.reject(new Error(errorMessage));
         }
     },
@@ -259,7 +259,18 @@ const get = {
             return response;
         } catch (error) {
             console.error('Erro ao obter ranking de alunos:', error.response ? error.response.data : error.message);
-            const errorMessage = error.response?.data || error.message;
+            const errorMessage = error.response?.data || "Erro ao buscar ranking.";
+            return Promise.reject(new Error(errorMessage));
+        }
+    },
+    async dashboardAvisos() {
+        const endpoint = "/dashboard/avisos";
+        try {
+            const response = await http.get(endpoint);
+            return response;
+        } catch (error) {
+            console.error('Erro ao obter avisos:', error.response ? error.response.data : error.message);
+            const errorMessage = error.response?.data || "Erro ao buscar avisos.";
             return Promise.reject(new Error(errorMessage));
         }
     }

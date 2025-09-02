@@ -2,10 +2,10 @@ import styles from "./Aviso_forms.module.scss";
 
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDropzone } from 'react-dropzone';
+// O import do 'useDropzone' foi removido
 
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { SiGoogledocs } from "react-icons/si";
+// O import do 'SiGoogledocs' foi removido
 
 import Botao from '../../../components/gerais/Botao';
 import Input from "../../../components/gerais/Input";
@@ -17,8 +17,8 @@ import put from '../../../services/requests/put';
 function AvisoForms(){
     const {id} = useParams();
     const navigate = useNavigate();
-    const [imagem, setImagem] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    // O estado 'imagem' foi removido
 
     const [formDado, setFormDado] = useState({
         titulo: '',
@@ -26,30 +26,19 @@ function AvisoForms(){
         data_inicio: '',
         data_final: '',
         status: ''
-    })
+    });
 
     useEffect(()=>{
         setErrorMessage('');
-
-        if (!id) {
-            return;
-        }
+        if (!id) return;
 
         const fetchAviso = async () => {
             try{
-                
                 const response = await get.aviso();
-                console.log("response get", response);
-                const imagemExistente = await get.imagemPorId(id, "aviso");
-
-                if(imagemExistente && imagemExistente.data){
-                    console.log("Imagem existente", imagemExistente);
-                    setImagem(imagemExistente);
-                }
+                // A busca pela imagem foi removida daqui
 
                 if(response.data && Array.isArray(response.data)){
                     const aviso = response.data.find(avs => avs.id === id);
-                    console.log("response", aviso);
                     if(aviso){
                         setFormDado({
                             titulo: aviso.titulo || '',
@@ -57,22 +46,16 @@ function AvisoForms(){
                             data_inicio: aviso.data_inicio || '',
                             data_final: aviso.data_final || '',
                             status: aviso.status ? 'true' : 'false'
-                        })
+                        });
                     }
-                } else {
-                    console.log('Nenhum aviso encontrado');
                 }
-
             } catch (error) {
                 console.error('Erro ao buscar aviso!', error);
-                if (error.response?.status !== 404) {
-                    setErrorMessage(error.message || 'Não foi possível carregar os dados do aviso.');
-                }
+                setErrorMessage(error.message || 'Não foi possível carregar os dados do aviso.');
             }
         };
 
         fetchAviso();
-
     }, [id]);
 
     const handleChange = (e) => {
@@ -83,17 +66,7 @@ function AvisoForms(){
         }));
     };
 
-    const onDrop = (acceptedFiles) => {
-        console.log('Files dropped:', acceptedFiles);
-        if (acceptedFiles.length > 0) {
-            const file = acceptedFiles[0];
-            setImagem(file);
-        }
-    };
-
-    const { getRootProps, getInputProps } = useDropzone({
-        onDrop
-    });
+    // A função 'onDrop' e o hook 'useDropzone' foram removidos
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -101,27 +74,16 @@ function AvisoForms(){
 
         try{
             let response;
-            let responseImagem;
-
             const aviso = await get.aviso();
 
             if(aviso.data && Array.isArray(aviso.data)){
                 const avisoExistente = aviso.data.find(avs => avs.id ===id);
                 if(avisoExistente){
-                    console.log("Aviso já existe. Atualizando dados...");
                     response = await put.aviso(formDado);
-                    if(imagem instanceof File){
-                        console.log("imagem", imagem);
-                        responseImagem = await put.imagem(response.data.id, "aviso", imagem);
-                    }
+                    // A lógica de atualizar imagem foi removida
                 } else {
-                    console.log("Aviso não existe. Criando novo aviso...");
                     response = await post.aviso(formDado);
-                    console.log("response", response);
-                    if(imagem instanceof File){
-                        console.log("imagem", imagem);
-                        responseImagem = await post.imagem(response.data.id, "aviso", imagem);
-                    }
+                    // A lógica de postar imagem foi removida
                 }
             }
 
@@ -197,22 +159,9 @@ function AvisoForms(){
                                 <option value="false">Inativo</option>
                             </select>
                         </label>
-                        <div className={styles.diario}>
-                            Imagem para aviso:
-                            <div className={styles.container_diario}>
-                                <label className={styles.label_diario}>
-                                    <div {...getRootProps({ className: styles.dropzone })}>
-                                        <input {...getInputProps()} />
-                                        {imagem ? (
-                                            <p className={styles.placeholderdiario}>{imagem.name || imagem.data.fileName}</p>
-                                        ) : (
-                                            <p className={styles.placeholderdiario}>Adicione o arquivo aqui...</p>
-                                        )}
-                                        <SiGoogledocs/>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
+                        
+                        {/* A DIV DE UPLOAD DE IMAGEM FOI REMOVIDA DAQUI */}
+
                     </div>
                 </div>
                 <div className={styles.cadastrar}>

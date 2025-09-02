@@ -1,8 +1,9 @@
 import styles from './Aluno_frequencia.module.scss';
 import React, { useState, useEffect } from 'react';
 import Cookies from "js-cookie";
+import { useNavigate } from 'react-router-dom';
 
-import { IoMdSearch } from "react-icons/io";
+import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 import get from '../../../services/requests/get';
@@ -12,6 +13,7 @@ import put from '../../../services/requests/put';
 import Botao from '../../../components/gerais/Botao';
 
 function Aluno_frequencia(){
+    const navigate = useNavigate();
     const [alunos, setAlunos] = useState([]);
     const [data, setData] = useState('');
     const [sala, setSala] = useState('1');
@@ -300,6 +302,9 @@ function Aluno_frequencia(){
     return(
         <div className={styles.body}>
             <div className={styles.container}>
+                <div className={styles.linha_voltar}>
+                    <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)} />
+                </div>
                 <div className={styles.header}>
                     <h2 className={styles.title}>Frequência de alunos</h2>
                     <div className={styles.container_busca}>

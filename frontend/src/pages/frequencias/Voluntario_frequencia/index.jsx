@@ -1,6 +1,7 @@
 import styles from './Voluntario_frequencia.module.scss';
 import React, { useState, useEffect } from 'react';
-import { IoMdSearch } from "react-icons/io";
+import { useNavigate } from 'react-router-dom'; // 1. Importe useNavigate
+import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 import put from '../../../services/requests/put';
@@ -10,6 +11,7 @@ import get from '../../../services/requests/get';
 import Botao from '../../../components/gerais/Botao';
 
 function Voluntario_frequencia({tipo}){
+    const navigate = useNavigate();
 
     var title;
     if(tipo === "coordenador"){
@@ -216,6 +218,9 @@ function Voluntario_frequencia({tipo}){
     return(
         <div className={styles.body}>
             <div className={styles.container}>
+                <div className={styles.linha_voltar}>
+                    <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)} />
+                </div>
                 <div className={styles.header}>
                     <h2 className={styles.title}>{title}</h2>
                     <div className={styles.container_busca}>

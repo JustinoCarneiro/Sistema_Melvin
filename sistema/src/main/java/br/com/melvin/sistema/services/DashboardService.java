@@ -1,7 +1,9 @@
 package br.com.melvin.sistema.services;
 
 import br.com.melvin.sistema.dto.AlunoRankingDTO;
+import br.com.melvin.sistema.model.Aviso; // 1. Importe a classe Aviso
 import br.com.melvin.sistema.model.Avaliacao;
+import br.com.melvin.sistema.repository.AvisoRepository; // 2. Importe o AvisoRepository
 import br.com.melvin.sistema.repository.AvaliacaoRepository;
 import br.com.melvin.sistema.repository.frequencias.FrequenciaDiscenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +24,19 @@ public class DashboardService {
     @Autowired
     private AvaliacaoRepository avaliacaoRepository;
 
+    // 3. Injete o AvisoRepository
+    @Autowired
+    private AvisoRepository avisoRepository;
+
     public Long getAlunosPresentesHoje() {
         return frequenciaRepository.countPresentesByData(LocalDate.now());
+    }
+
+    // 4. Adicione o novo método para buscar avisos ativos
+    public List<Aviso> getAvisosAtivos() {
+        return avisoRepository.findAll().stream()
+                .filter(Aviso::getStatus) // Filtra para manter apenas os que têm status == true
+                .collect(Collectors.toList());
     }
 
     public List<AlunoRankingDTO> getRankingAlunos(int limit) {

@@ -158,55 +158,9 @@
     flex-direction: row;
 }
 
-.diario {
-    margin-top: 1rem;
-    width: 19rem;
-    font-size: 0.9rem;
-}
-
-.container_diario {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.download {
-    font-size: 1.8rem;
-    cursor: pointer;
-}
-
-.label_diario {
-    display: flex;
-    flex-direction: row;
-    cursor: pointer;
-    background-color: white;
-    border-radius: 7px;
-    border: solid 2px black;
-    padding: 0.5rem;
-    margin-top: 0.3rem;
-    height: 2rem;
-    font-size: 0.7rem;
-    width: 100%;
-}
-
-.dropzone {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.placeholderdiario {
-    display: inline-block;
-    /* ou block, conforme necessário */
-    max-width: 12rem;
-    /* ajuste conforme necessário */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    /* opcional, para alinhar verticalmente */
-}
+// REMOÇÃO DOS ESTILOS DE DIÁRIO/UPLOAD
+// .diario, .container_diario, .download, .label_diario, .dropzone, .placeholderdiario
+// foram removidos daqui.
 
 @media (max-width: $size-h){
     .form{
