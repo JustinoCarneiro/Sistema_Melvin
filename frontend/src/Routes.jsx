@@ -102,6 +102,7 @@ function AppContent() {
                     <Route path="/voluntario/administracao" element={ <Voluntarios tipo="administrador"/> } />
                     <Route path="/voluntario/marketing" element={ <Voluntarios tipo="marketing"/> } />
                     <Route path="/voluntario/zeladoria" element={ <Voluntarios tipo="zelador"/> } />
+                    <Route path="/voluntario/psicologos" element={<Voluntarios tipo="psicologo" />} />
                     <Route path="/embaixadores" element={ <EmbaixadoresApp/> }/>
                     <Route path="/amigosmelvin" element={ <AmigosMelvinApp/> }/>
                     <Route path="/avisos" element={<Avisos/>}/>
@@ -116,6 +117,8 @@ function AppContent() {
                     <Route path="/voluntario/criar/administrador" element={ <VoluntarioForms tipo="administrador"/> } />
                     <Route path="/voluntario/criar/marketing" element={ <VoluntarioForms tipo="marketing"/> } />
                     <Route path="/voluntario/criar/zelador" element={ <VoluntarioForms tipo="zelador"/> } />
+                    {/* ADICIONE A ROTA DE CRIAÇÃO PARA PSICÓLOGO */}
+                    <Route path="/voluntario/criar/psicologo" element={ <VoluntarioForms tipo="psicologo"/> } />
                     <Route path="/avisos/criar" element={<AvisoForms/>}/>
                     <Route path="/cestas/criar" element={<CestasForms/>}/>
 
@@ -130,6 +133,8 @@ function AppContent() {
                     <Route path="/voluntario/administrador/editar/:matricula" element={<VoluntarioForms tipo="administrador"/>} />
                     <Route path="/voluntario/marketing/editar/:matricula" element={<VoluntarioForms tipo="marketing"/>} />
                     <Route path="/voluntario/zelador/editar/:matricula" element={<VoluntarioForms tipo="zelador"/>} />
+                    {/* ADICIONE A ROTA DE EDIÇÃO PARA PSICÓLOGO */}
+                    <Route path="/voluntario/psicologo/editar/:matricula" element={<VoluntarioForms tipo="psicologo"/>} />
                     <Route path="/avisos/editar/:id" element={<AvisoForms/>}/>
                     <Route path="/cestas/editar/:id" element={<CestasForms/>}/>
                     <Route path="/rendimento_aluno/:matricula" element={<Rendimento/>} />

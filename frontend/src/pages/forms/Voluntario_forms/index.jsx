@@ -350,6 +350,7 @@ function Voluntario_forms({tipo}){
                                     <option value="marketing">Marketing</option>
                                     <option value="zelador">Zeladoria</option>
                                     <option value="cozinheiro">Cozinheiro</option>
+                                    <option value="psicologo">Psicólogo</option>
                                 </select>
                             </label>
                             <label className={styles.label_select}>

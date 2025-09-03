@@ -8,7 +8,8 @@ public enum UserRole {
     DIRE("dire"),
     ADM("adm"),
     MARK("mark"),
-    ZELA("zela");
+    ZELA("zela"),
+    PSICO("psico");
 
     private String role;
 

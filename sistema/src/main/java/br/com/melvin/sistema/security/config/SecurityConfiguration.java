@@ -52,6 +52,7 @@ public class SecurityConfiguration {
 
                     .requestMatchers(HttpMethod.GET, "/auth/role_{matricula}").authenticated()
                     .requestMatchers(HttpMethod.GET, "/dashboard/**").authenticated()
+                    .requestMatchers(HttpMethod.PUT, "/discente/{matricula}/avaliacoes").authenticated()
 
                     .requestMatchers(HttpMethod.POST,  "/auth/register", "/auth/alterar_senha/{matricula}/{senha}", "/imagens/**", "/aviso/**").hasRole("ADM")
 

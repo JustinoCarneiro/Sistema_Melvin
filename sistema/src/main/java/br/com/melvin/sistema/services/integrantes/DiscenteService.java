@@ -8,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.com.melvin.sistema.model.integrantes.Discente;
 import br.com.melvin.sistema.repository.integrantes.DiscenteRepository;
 import br.com.melvin.sistema.services.ExcelExportService;
+import br.com.melvin.sistema.dto.DiscenteAvaliacaoDTO;
+import br.com.melvin.sistema.security.model.User;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -190,5 +193,29 @@ public class DiscenteService {
     public ByteArrayInputStream exportarDiscentes(String searchTerm) throws IOException {
         List<Discente> discentes = searchDiscentes(searchTerm); // Reutiliza a lógica de busca
         return excelExportService.exportarDiscentesParaExcel(discentes);
+    }
+
+    public ResponseEntity<?> alterarAvaliacoes(String matricula, DiscenteAvaliacaoDTO data) {
+        Discente discente = discenteRepository.findByMatricula(matricula);
+        if (discente == null) {
+            return new ResponseEntity<>("Discente não encontrado.", HttpStatus.NOT_FOUND);
+        }
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userRole = user.getRole().toString();
+
+        if (userRole.equals("ADM") || userRole.equals("DIRE") || userRole.equals("COOR")) {
+            discente.setAvaliacaoPresenca(data.getAvaliacaoPresenca());
+            discente.setAvaliacaoParticipacao(data.getAvaliacaoParticipacao());
+            discente.setAvaliacaoComportamento(data.getAvaliacaoComportamento());
+            discente.setAvaliacaoRendimento(data.getAvaliacaoRendimento());
+        }
+
+        if (userRole.equals("PSICO")) {
+            discente.setAvaliacaoPsicologico(data.getAvaliacaoPsicologico());
+        }
+
+        discenteRepository.save(discente);
+        return new ResponseEntity<>("Avaliações atualizadas com sucesso.", HttpStatus.OK);
     }
 }

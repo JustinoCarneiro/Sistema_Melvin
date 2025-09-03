@@ -9,6 +9,7 @@ import org.springframework.core.io.InputStreamResource;
 import java.io.ByteArrayInputStream;                  
 import java.io.IOException; 
 
+import br.com.melvin.sistema.dto.DiscenteAvaliacaoDTO;
 import br.com.melvin.sistema.model.integrantes.Discente;
 import br.com.melvin.sistema.services.integrantes.DiscenteService;
 
@@ -67,5 +68,10 @@ public class DiscenteController {
                 .ok()
                 .headers(headers)
                 .body(new InputStreamResource(bais));
+    }
+
+    @PutMapping("/{matricula}/avaliacoes")
+    public ResponseEntity<?> alterarAvaliacoes(@PathVariable String matricula, @RequestBody DiscenteAvaliacaoDTO data) {
+        return service.alterarAvaliacoes(matricula, data);
     }
 }

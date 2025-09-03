@@ -13,6 +13,19 @@ const put = {
         }
     },
 
+    // NOVO MÉTODO PARA ATUALIZAR AS AVALIAÇÕES
+    async discenteAvaliacoes(matricula, dados) {
+        const endpoint = `/discente/${matricula}/avaliacoes`;
+        try {
+            const response = await http.put(endpoint, dados);
+            return response;
+        } catch(error) {
+            console.error('Erro ao salvar avaliações do discente:', error.response ? error.response.data : error.message);
+            const errorMessage = error.response?.data || error.message;
+            return Promise.reject(new Error(errorMessage));
+        }
+    },
+
     async voluntario(dados){
         const endpoint = "/voluntario";
         try{

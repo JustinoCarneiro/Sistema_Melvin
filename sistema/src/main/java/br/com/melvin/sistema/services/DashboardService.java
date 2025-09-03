@@ -1,11 +1,12 @@
 package br.com.melvin.sistema.services;
 
 import br.com.melvin.sistema.dto.AlunoRankingDTO;
-import br.com.melvin.sistema.model.Aviso; // 1. Importe a classe Aviso
-import br.com.melvin.sistema.model.Avaliacao;
-import br.com.melvin.sistema.repository.AvisoRepository; // 2. Importe o AvisoRepository
-import br.com.melvin.sistema.repository.AvaliacaoRepository;
+import br.com.melvin.sistema.model.Aviso;
+import br.com.melvin.sistema.repository.AvisoRepository;
+import br.com.melvin.sistema.model.integrantes.Discente;
 import br.com.melvin.sistema.repository.frequencias.FrequenciaDiscenteRepository;
+import br.com.melvin.sistema.repository.integrantes.DiscenteRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,10 @@ public class DashboardService {
     private FrequenciaDiscenteRepository frequenciaRepository;
 
     @Autowired
-    private AvaliacaoRepository avaliacaoRepository;
-
-    // 3. Injete o AvisoRepository
-    @Autowired
     private AvisoRepository avisoRepository;
+
+    @Autowired
+    private DiscenteRepository discenteRepository;
 
     public Long getAlunosPresentesHoje() {
         return frequenciaRepository.countPresentesByData(LocalDate.now());
@@ -40,24 +40,20 @@ public class DashboardService {
     }
 
     public List<AlunoRankingDTO> getRankingAlunos(int limit) {
-        List<Avaliacao> todasAvaliacoes = avaliacaoRepository.findAll();
+        List<Discente> todosDiscentes = discenteRepository.findAll();
 
-        Map<String, Double> mediaPorAluno = todasAvaliacoes.stream()
-                .collect(Collectors.groupingBy(
-                        avaliacao -> avaliacao.getDiscente().getMatricula(),
-                        Collectors.averagingDouble(Avaliacao::getNota)
-                ));
-
-        return mediaPorAluno.entrySet().stream()
-                .map(entry -> {
-                    String nome = todasAvaliacoes.stream()
-                            .filter(a -> a.getDiscente().getMatricula().equals(entry.getKey()))
-                            .findFirst()
-                            .map(a -> a.getDiscente().getNome())
-                            .orElse("N/A");
-                    return new AlunoRankingDTO(nome, entry.getKey(), entry.getValue());
+        return todosDiscentes.stream()
+                .map(discente -> {
+                    double media = (
+                        (discente.getAvaliacaoPresenca() != null ? discente.getAvaliacaoPresenca() : 0.0) +
+                        (discente.getAvaliacaoParticipacao() != null ? discente.getAvaliacaoParticipacao() : 0.0) +
+                        (discente.getAvaliacaoComportamento() != null ? discente.getAvaliacaoComportamento() : 0.0) +
+                        (discente.getAvaliacaoRendimento() != null ? discente.getAvaliacaoRendimento() : 0.0) +
+                        (discente.getAvaliacaoPsicologico() != null ? discente.getAvaliacaoPsicologico() : 0.0)
+                    ) / 5.0;
+                    return new AlunoRankingDTO(discente.getNome(), discente.getMatricula(), media);
                 })
-                .sorted(Comparator.comparing(AlunoRankingDTO::getMediaGeral).reversed())
+                .sorted(Comparator.comparing(AlunoRankingDTO::getMediaGeral).reversed()) // Ordena pela maior média
                 .limit(limit)
                 .collect(Collectors.toList());
     }

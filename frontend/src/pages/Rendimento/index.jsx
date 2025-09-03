@@ -1,40 +1,73 @@
 import styles from './Rendimento.module.scss';
 import { useParams, useNavigate } from 'react-router-dom';
-import { IoMdArrowRoundBack } from "react-icons/io";
-import { useRendimento } from '../../hooks/useRendimento'; // Importe o novo hook
-import StarRating from '../../components/gerais/StarRating';
+import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 
+import get from '../../services/requests/get';
+import put from '../../services/requests/put'; // Importe o put
+import StarRating from '../../components/gerais/StarRating';
+import Botao from '../../components/gerais/Botao';
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 function Rendimento() {
     const { matricula } = useParams();
     const navigate = useNavigate();
-    const {
-        aluno,
-        frequencias,
-        mesSelecionado,
-        setMesSelecionado,
-        anoSelecionado,
-        setAnoSelecionado,
-        avaliacoes,
-        aulasExtrasMap,
-        loading,
-        loadingFrequencias,
-        error,
-        fetchFrequencias,
-        handleRate
-    } = useRendimento(matricula);
+    const [aluno, setAluno] = useState(null);
+    const [avaliacoes, setAvaliacoes] = useState({});
+    const [userRole, setUserRole] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
 
-    const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    const podeAvaliarGeral = ['ADM', 'DIRE', 'COOR'].includes(userRole);
+    const podeAvaliarPsico = userRole === 'PSICO';
 
-    if (loading) {
-        return <div className={styles.centeredMessage}>Carregando...</div>;
-    }
+    useEffect(() => {
+        setUserRole(Cookies.get('role'));
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const alunoRes = await get.discenteByMatricula(matricula);
+                setAluno(alunoRes.data);
+                setAvaliacoes({
+                    avaliacaoPresenca: alunoRes.data.avaliacaoPresenca,
+                    avaliacaoParticipacao: alunoRes.data.avaliacaoParticipacao,
+                    avaliacaoComportamento: alunoRes.data.avaliacaoComportamento,
+                    avaliacaoRendimento: alunoRes.data.avaliacaoRendimento,
+                    avaliacaoPsicologico: alunoRes.data.avaliacaoPsicologico,
+                });
+            } catch (err) {
+                setError(err.message || 'Erro ao carregar dados.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, [matricula]);
 
-    if (error && !aluno) {
-        return <div className={`${styles.centeredMessage} ${styles.errorMessage}`}>{error}</div>;
-    }
+    const handleRate = (categoria, nota) => {
+        setAvaliacoes(prev => ({ ...prev, [categoria]: nota }));
+    };
 
-    const aulasDoAluno = Object.keys(aulasExtrasMap).filter(aulaKey => aluno && aluno[aulaKey]);
+    const handleSave = async () => {
+        setError('');
+        try {
+            await put.discenteAvaliacoes(matricula, avaliacoes);
+            alert('Avaliações salvas com sucesso!');
+        } catch(err) {
+            setError(err.message || 'Erro ao salvar avaliações.');
+        }
+    };
+
+    if (loading) return <div>Carregando...</div>;
+    if (error) return <div>{error}</div>;
+
+    const categorias = [
+        { id: 'avaliacaoPresenca', nome: 'Presença', editavel: podeAvaliarGeral },
+        { id: 'avaliacaoParticipacao', nome: 'Participação', editavel: podeAvaliarGeral },
+        { id: 'avaliacaoComportamento', nome: 'Comportamento', editavel: podeAvaliarGeral },
+        { id: 'avaliacaoRendimento', nome: 'Rendimento', editavel: podeAvaliarGeral },
+        { id: 'avaliacaoPsicologico', nome: 'Psicológico', editavel: podeAvaliarPsico },
+    ];
 
     return (
         <div className={styles.body}>
@@ -44,72 +77,25 @@ function Rendimento() {
             <div className={styles.header}>
                 <h2>Rendimento do Aluno</h2>
                 <p><strong>Nome:</strong> {aluno?.nome}</p>
-                <p><strong>Matrícula:</strong> {aluno?.matricula}</p>
-            </div>
-            <div className={styles.section}>
-                <h3>Avaliação de Desempenho (Aulas Extras)</h3>
-                <div className={styles.avaliacoesContainer}>
-                    {aulasDoAluno.length > 0 ? (
-                        aulasDoAluno.map(aulaKey => (
-                            <div key={aulaKey} className={styles.aulaItem}>
-                                <h4>{aulasExtrasMap[aulaKey]}</h4>
-                                <StarRating
-                                    initialRating={avaliacoes[aulaKey]?.nota || 0}
-                                    onRate={(nota) => handleRate(aulaKey, nota)}
-                                />
-                            </div>
-                        ))
-                    ) : (
-                        <p>Este aluno não está matriculado em nenhuma aula extra.</p>
-                    )}
-                </div>
             </div>
 
-            {/* Seção de Frequências */}
-            <div className={styles.section}>
-                <h3>Controle de Frequência</h3>
-                <div className={styles.filterContainer}>
-                    <label>
-                        Mês:
-                        <select value={mesSelecionado} onChange={(e) => setMesSelecionado(Number(e.target.value))}>
-                            {meses.map((mes, index) => (
-                                <option key={index} value={index + 1}>{mes}</option>
-                            ))}
-                        </select>
-                    </label>
-                    <label>
-                        Ano:
-                        <input
-                            type="number"
-                            value={anoSelecionado}
-                            onChange={(e) => setAnoSelecionado(e.target.value)}
-                            min="2020"
-                            max={new Date().getFullYear()}
+            <div className={styles.avaliacoesContainer}>
+                {categorias.map(cat => (
+                    <div key={cat.id} className={`${styles.aulaItem} ${!cat.editavel ? styles.disabled : ''}`}>
+                        <h4>{cat.nome}</h4>
+                        <StarRating 
+                            initialRating={avaliacoes[cat.id] || 0}
+                            onRate={(nota) => cat.editavel && handleRate(cat.id, nota)} 
                         />
-                    </label>
-                    <button onClick={fetchFrequencias} disabled={loadingFrequencias}>
-                        {loadingFrequencias ? 'Buscando...' : 'Buscar Frequências'}
-                    </button>
-                </div>
-
-                {error && <p className={styles.errorMessage}>{error}</p>}
-
-                <div className={styles.frequenciasList}>
-                    {frequencias.length > 0 ? (
-                        <ul>
-                            {frequencias.map((freq, index) => (
-                                <li key={index}>
-                                    Data: {new Date(freq.data).toLocaleDateString('pt-BR', {timeZone: 'UTC'})} - 
-                                    Manhã: {freq.presenca_manha ? 'Presente' : 'Ausente'} - 
-                                    Tarde: {freq.presenca_tarde ? 'Presente' : 'Ausente'}
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p>Nenhuma frequência encontrada para o período selecionado.</p>
-                    )}
-                </div>
+                    </div>
+                ))}
             </div>
+            
+            {(podeAvaliarGeral || podeAvaliarPsico) && (
+                 <div className={styles.saveButtonContainer}>
+                    <Botao nome="Salvar Avaliações" onClick={handleSave} corFundo="#F29F05"/>
+                </div>
+            )}
         </div>
     );
 }

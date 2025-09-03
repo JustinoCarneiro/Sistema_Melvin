@@ -161,4 +161,19 @@ public class Discente{
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean teatro;
+
+    @Column(columnDefinition = "numeric(3,1) default 0.0")
+    private Double avaliacaoPresenca;
+
+    @Column(columnDefinition = "numeric(3,1) default 0.0")
+    private Double avaliacaoParticipacao;
+
+    @Column(columnDefinition = "numeric(3,1) default 0.0")
+    private Double avaliacaoComportamento;
+
+    @Column(columnDefinition = "numeric(3,1) default 0.0")
+    private Double avaliacaoRendimento;
+
+    @Column(columnDefinition = "numeric(3,1) default 0.0")
+    private Double avaliacaoPsicologico;
 }
