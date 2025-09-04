@@ -1,17 +1,16 @@
 @import '../../../index.scss';
 
-.body{
+.body {
     display: flex;
     flex-direction: column;
     width: 100vw;
-    height: 100%;
     min-height: calc(100vh - 5rem);
     background-color: #D9D9D9;
     padding-top: 2rem;
     align-items: center;
 }
 
-.container{
+.container {
     display: flex;
     flex-direction: column;
     width: 80vw;
@@ -19,24 +18,30 @@
     flex-grow: 1;
 }
 
-.header{
+/* CABEÇALHO RESPONSIVO (MOBILE-FIRST) */
+.header {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: end;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.title {
+    font-weight: 300;
     width: 100%;
 }
 
-.title{
-    font-weight: 300;
-}
-
-.container_busca{
+.container_busca {
     display: flex;
-    align-items: end;
+    align-items: center;
+    width: 100%;
+    order: 3;
 }
 
-.icon_busca{
+.icon_busca {
     background-color: #044D8C;
     padding: 0.25rem;
     color: white;
@@ -46,58 +51,97 @@
     border: solid 1px black;
     border-right: none;
     cursor: pointer;
+    height: 2.25rem;
+    box-sizing: border-box;
 }
 
-.busca{
-    width: 25rem;
-    height: 1.75rem;
+.busca {
+    flex-grow: 1;
+    width: auto;
+    height: 2.25rem;
     border-top-right-radius: 7px;
     border-bottom-right-radius: 7px;
     border: solid 1px black;
     border-left: none;
     outline: none;
     padding: 0.5rem;
+    box-sizing: border-box;
 }
 
 .botoes {
     display: flex;
-    gap: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+    order: 2;
 }
 
-table {
+/* NOVO ESTILO DA TABELA (PADRÃO VOLUNTARIOS) */
+.table {
     background-color: white;
-    border-collapse: collapse;
-    margin-top: 0.75rem;
-    border: solid 1px black;
-    margin-bottom: 2vh;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    margin-bottom: 3rem;
 }
 
-.table > .thead > tr > th, .table > .tbody > tr > td {
+.table > thead > tr > th,
+.table > tbody > tr > td {
     padding: 0.5rem;
     padding-left: 2rem;
-    border-bottom: solid 1px black; /* Aplicar borda nas células */
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
 }
 
-.table > .thead > tr > th {
-    border-left: none; 
-    border-right: none;
+.table > thead > tr > th:first-child,
+.table > tbody > tr > td:first-child {
+    border-left: 1px solid black;
+}
+
+.table > thead > tr:first-child > th {
+    border-top: 1px solid black;
+}
+
+.table > thead > tr > th {
     text-align: start;
+    font-weight: bold; // Adicionado para destacar o cabeçalho
 }
 
-tbody tr:hover {
+.tbody > .tr_body:hover {
     background-color: #f5f5f5;
 }
 
-.icon_editar{
+/* ESTILOS PARA ÍCONES E LINHAS ESPECIAIS */
+.edicao {
+    padding: 0 !important;
+    margin: 0 !important;
+    text-align: center !important;
+    vertical-align: middle;
+}
+
+.icon_editar {
     font-size: 1.5rem;
     color: #044D8C;
     cursor: pointer;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    margin-left: 0.9rem;
+    margin: 0;
 }
 
-.plus{
+.plus {
     cursor: pointer;
+    border-left: solid 1px black !important;
+    border-right: solid 1px black !important;
+    text-align: center;
+}
+
+.plus:hover {
+    background-color: #f5f5f5;
+}
+
+.plus > td {
+    border-bottom: solid 1px black;
+    border-left: none;
+    border-right: none;
 }
 
 .select_sala {
@@ -118,56 +162,58 @@ tbody tr:hover {
     box-shadow: 0.08rem 0.08rem 0.08rem rgba(0, 0, 0, 0.3);
 }
 
+/* MEDIA QUERIES */
+
+// Ajustes para Desktop
+@media (min-width: 1024px) {
+    .header {
+        flex-wrap: nowrap;
+        align-items: end;
+        justify-content: space-between;
+    }
+
+    .title {
+        width: auto;
+    }
+
+    .container_busca {
+        order: 0;
+        width: 25rem;
+    }
+
+    .botoes {
+        order: 0;
+        width: auto;
+        flex-wrap: nowrap;
+        gap: 1rem;
+    }
+}
+
+// Oculta coluna "Responsável"
 @media (max-width: $size-e) {
     .table > .thead > tr > th:nth-child(3), .table > .tbody > tr > td:nth-child(3) {
         display: none;
     }
 }
 
-@media (max-width: $size-d){
-    .header{
-        flex-wrap: wrap;
-    }
-
-    .container_busca{
-        order: 3;
-        width: 100%;
-        margin-top: 0.5rem;
-    }
-
-    .busca{
-        width: 100%;
-    }
-}
-
-@media (max-width: $size-b){
+// Ajuste de fonte
+@media (max-width: $size-b) {
     .table {
         font-size: 0.8rem;
     }
 
-    .icon_editar{
+    .icon_editar {
         font-size: 1rem;
     }
 }
 
-@media (max-width: $size-a){
+// Ajuste de fonte
+@media (max-width: $size-a) {
     .table {
         font-size: 0.7rem;
     }
 
-    .icon_editar{
+    .icon_editar {
         font-size: 1rem;
-        margin-right: 0.3rem;
-    }
-}
-
-@media (max-width: $size-g){
-    .botoes{
-        order: 2;
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
     }
 }

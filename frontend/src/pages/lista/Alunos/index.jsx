@@ -14,7 +14,6 @@ function Alunos() {
     const navigate = useNavigate();
     const [exporting, setExporting] = useState(false);
 
-    // 2. Use o hook para obter todos os dados e funções de que precisa
     const {
         busca,
         setBusca,
@@ -31,7 +30,6 @@ function Alunos() {
         salasDisponiveis
     } = useAlunos();
 
-    // Funções de navegação permanecem no componente
     const handleEditClick = (matricula) => {
         navigate(`/app/aluno/editar/${matricula}`);
     };
@@ -51,7 +49,6 @@ function Alunos() {
         }
     };
 
-    // Renderização condicional para loading e erro
     if (loading) return <div className={styles.centeredMessage}>Carregando...</div>;
     if (error) return <div className={`${styles.centeredMessage} ${styles.error}`}>{error}</div>;
 
@@ -122,9 +119,10 @@ function Alunos() {
                         </Botao>
                     </div>
                 </div>
+                
                 <table className={styles.table}>
                     <thead className={styles.thead}>
-                        <tr>
+                        <tr className={styles.tr_head}>
                             <th>Matrícula</th>
                             <th>Nome</th>
                             <th>Responsável</th>
@@ -133,7 +131,7 @@ function Alunos() {
                     </thead>
                     <tbody className={styles.tbody}>
                         {alunosFiltrados.map((aluno) => (
-                            <tr key={aluno.matricula}>
+                            <tr key={aluno.matricula} className={styles.tr_body}>
                                 <td>{aluno.matricula}</td>
                                 <td>{aluno.nome}</td>
                                 <td>{aluno.nome_pai || aluno.nome_mae || ''}</td>
