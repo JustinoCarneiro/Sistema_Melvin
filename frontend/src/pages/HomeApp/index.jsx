@@ -3,15 +3,46 @@ import { useDashboard } from '../../hooks/useDashboard';
 import { FaStar, FaArrowUp, FaArrowDown, FaExclamationTriangle } from 'react-icons/fa';
 
 function Home() {
-    const { loading, error, frequenciaPorSala, avisos, rankingMelhores, rankingPiores } = useDashboard();
+    const { 
+        loading, 
+        isRankingLoading,
+        error, 
+        frequenciaPorSala, 
+        avisos, 
+        rankingMelhores, 
+        rankingPiores, 
+        rankingSortBy, 
+        setRankingSortBy
+    } = useDashboard();
+
+    const rankingOptions = [
+        { value: 'media', label: 'Média Geral' },
+        { value: 'presenca', label: 'Presença' },
+        { value: 'participacao', label: 'Participação' },
+        { value: 'comportamento', label: 'Comportamento' },
+        { value: 'rendimento', label: 'Rendimento' },
+        { value: 'psicologico', label: 'Psicológico' },
+    ];
 
     if (loading) {
         return <div className={styles.centeredMessage}>Carregando Dashboard...</div>;
     }
 
-    if (error) {
+    if (error && !frequenciaPorSala.manha) { // Mostra erro se a carga inicial falhar
         return <div className={`${styles.centeredMessage} ${styles.error}`}>{error}</div>;
     }
+
+    // Componente para a lista do ranking para evitar repetição de código
+    const RankingList = ({ alunos }) => (
+        <ul>
+            {alunos.map(aluno => (
+                <li key={aluno.matricula}>
+                    <span>{aluno.nome}</span>
+                    <span className={styles.nota}><FaStar color="#ffc107" /> {(aluno.mediaGeral || 0).toFixed(1)}</span>
+                </li>
+            ))}
+        </ul>
+    );
 
     return (
         <div className={styles.body}>
@@ -41,31 +72,28 @@ function Home() {
 
                 {/* Card de Ranking - Melhores Alunos */}
                 <div className={`${styles.card} ${styles.rankingCard}`}>
-                    <h3 className={styles.cardTitle}><FaArrowUp color="#28a745"/> Melhores Alunos</h3>
-                    <ul>
-                        {rankingMelhores.map(aluno => (
-                            <li key={aluno.matricula}>
-                                <span>{aluno.nome}</span>
-                                <span className={styles.nota}><FaStar color="#ffc107" /> {aluno.mediaGeral.toFixed(1)}</span>
-                            </li>
-                        ))}
-                    </ul>
+                    <div className={styles.rankingHeader}>
+                        <h3 className={styles.cardTitle}><FaArrowUp color="#28a745"/> Melhores Alunos</h3>
+                        <select value={rankingSortBy} onChange={(e) => setRankingSortBy(e.target.value)} className={styles.rankingSelect} disabled={isRankingLoading}>
+                            {rankingOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                        </select>
+                    </div>
+                    {isRankingLoading ? <p className={styles.rankingLoading}>Atualizando...</p> : <RankingList alunos={rankingMelhores} />}
                 </div>
 
                 {/* Card de Ranking - Piores Alunos */}
                 <div className={`${styles.card} ${styles.rankingCard}`}>
-                    <h3 className={styles.cardTitle}><FaArrowDown color="#dc3545"/> Piores Alunos</h3>
-                    <ul>
-                        {rankingPiores.map(aluno => (
-                            <li key={aluno.matricula}>
-                                <span>{aluno.nome}</span>
-                                <span className={styles.nota}><FaStar color="#ffc107" /> {aluno.mediaGeral.toFixed(1)}</span>
-                            </li>
-                        ))}
-                    </ul>
+                    <div className={styles.rankingHeader}>
+                        <h3 className={styles.cardTitle}><FaArrowDown color="#dc3545"/> Piores Alunos</h3>
+                        <select value={rankingSortBy} onChange={(e) => setRankingSortBy(e.target.value)} className={styles.rankingSelect} disabled={isRankingLoading}>
+                            {rankingOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                        </select>
+                    </div>
+                    {isRankingLoading ? <p className={styles.rankingLoading}>Atualizando...</p> : <RankingList alunos={rankingPiores} />}
                 </div>
             </div>
             
+            {/* Bloco Unificado para os Avisos */}
             {avisos.length > 0 && (
                 <div className={`${styles.card} ${styles.avisoCardContainer}`}>
                     <h3 className={styles.cardTitle}>Quadro de Avisos</h3>

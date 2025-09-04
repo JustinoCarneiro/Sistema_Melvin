@@ -43,13 +43,12 @@
     h4 {
         margin-bottom: 0.8rem;
     }
-    // AQUI ESTÁ A ALTERAÇÃO
     p {
         margin: 0.5rem 0;
         font-size: 0.9rem;
-        display: flex; // Transforma a linha em um container flex
-        justify-content: space-between; // Alinha os itens (texto e número) nas extremidades
-        gap: 1rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem; 
     }
     .total {
         margin-top: 1rem;
@@ -59,7 +58,6 @@
     }
 }
 
-// O restante do seu código para avisos e ranking permanece exatamente como você enviou
 .avisoCardContainer {
     background-color: white;
     color: black;
@@ -113,31 +111,70 @@
     overflow-wrap: break-word;
 }
 
-.rankingCard ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
+.rankingCard {
+    .rankingHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+    }
 
-.rankingCard li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
-    border-bottom: 1px solid #f0f0f0;
-    padding-bottom: 0.5rem;
-}
+    .cardTitle {
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
 
-.rankingCard .nota {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-weight: bold;
-    color: #495057;
+    // AQUI ESTÁ A ATUALIZAÇÃO DE ESTILO
+    .rankingSelect {
+        border-radius: 7px;
+        border: solid 2px black;
+        font-family: inherit;
+        height: 2rem;
+        background-color: white;
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: border-color 0.2s;
+
+        &:hover {
+            border-color: #F29F05;
+        }
+
+        &:disabled {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #f0f0f0;
+        padding-bottom: 0.5rem;
+    }
+
+    .nota {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-weight: bold;
+        color: #495057;
+    }
 }
 
 .centeredMessage {

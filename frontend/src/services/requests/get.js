@@ -252,8 +252,8 @@ const get = {
             return Promise.reject(new Error(errorMessage));
         }
     },
-    async dashboardRanking() {
-        const endpoint = "/dashboard/ranking";
+    async dashboardRanking(sortBy = 'media') {
+        const endpoint = `/dashboard/ranking?sortBy=${sortBy}`;
         try {
             const response = await http.get(endpoint);
             return response;

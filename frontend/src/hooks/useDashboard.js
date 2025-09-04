@@ -6,22 +6,26 @@ export function useDashboard() {
     const [rankingMelhores, setRankingMelhores] = useState([]);
     const [rankingPiores, setRankingPiores] = useState([]);
     const [avisos, setAvisos] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [rankingSortBy, setRankingSortBy] = useState('media');
+    
+    const [loading, setLoading] = useState(true); // Loading principal da página
+    const [isRankingLoading, setIsRankingLoading] = useState(false); // 1. NOVO loading para o ranking
     const [error, setError] = useState(null);
 
+    // Efeito para a carga inicial de TUDO
     useEffect(() => {
-        const fetchDashboardData = async () => {
+        const fetchInitialData = async () => {
             setLoading(true);
             setError(null);
             try {
-                // Realiza todas as chamadas de API em paralelo para mais eficiência
                 const [frequenciaRes, avisosRes, rankingRes] = await Promise.all([
                     get.frequenciadiscente(new Date().toISOString().split('T')[0]),
                     get.dashboardAvisos(),
-                    get.dashboardRanking()
+                    get.dashboardRanking(rankingSortBy)
                 ]);
 
-                // 1. Processa dados de Frequência por Sala
+                // ... (Processamento de Frequência, Avisos e Ranking)
+                // (a lógica aqui dentro é a mesma de antes)
                 const freqData = frequenciaRes.data || [];
                 const freqPorSala = { manha: {}, tarde: {} };
                 ['1', '2', '3', '4'].forEach(sala => {
@@ -31,26 +35,52 @@ export function useDashboard() {
                 freqPorSala.manha.total = Object.values(freqPorSala.manha).reduce((a, b) => a + b, 0);
                 freqPorSala.tarde.total = Object.values(freqPorSala.tarde).reduce((a, b) => a + b, 0);
                 setFrequenciaPorSala(freqPorSala);
-
-                // 2. Processa dados de Avisos
                 setAvisos(avisosRes.data || []);
-
-                // 3. Processa dados de Ranking
                 const ranking = rankingRes.data || [];
-                setRankingMelhores(ranking); // O backend já retorna os melhores
-                // Cria uma cópia e inverte para os piores
+                setRankingMelhores(ranking);
                 setRankingPiores([...ranking].sort((a, b) => a.mediaGeral - b.mediaGeral));
 
             } catch (err) {
-                console.error("Erro ao carregar dados do dashboard:", err);
                 setError(err.message || 'Falha ao carregar o dashboard.');
             } finally {
                 setLoading(false);
             }
         };
-
-        fetchDashboardData();
+        fetchInitialData();
     }, []); // Roda apenas uma vez
 
-    return { loading, error, frequenciaPorSala, avisos, rankingMelhores, rankingPiores };
+    // Efeito SEPARADO apenas para ATUALIZAR o ranking
+    useEffect(() => {
+        // Não roda na carga inicial
+        if (loading) return; 
+
+        const fetchRankingData = async () => {
+            setIsRankingLoading(true); // 2. Ativa o loading SÓ do ranking
+            setError(null);
+            try {
+                const rankingRes = await get.dashboardRanking(rankingSortBy);
+                const ranking = rankingRes.data || [];
+                setRankingMelhores(ranking);
+                setRankingPiores([...ranking].sort((a, b) => a.mediaGeral - b.mediaGeral));
+            } catch (err) {
+                setError(err.message || 'Falha ao atualizar ranking.');
+            } finally {
+                setIsRankingLoading(false); // 3. Desativa o loading SÓ do ranking
+            }
+        };
+
+        fetchRankingData();
+    }, [rankingSortBy]); // Roda apenas quando o filtro do ranking muda
+
+    return { 
+        loading, 
+        isRankingLoading,
+        error, 
+        frequenciaPorSala, 
+        avisos, 
+        rankingMelhores, 
+        rankingPiores,
+        rankingSortBy,
+        setRankingSortBy
+    };
 }
