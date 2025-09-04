@@ -84,10 +84,7 @@ function Home() {
                 {/* Card de Ranking - Piores Alunos */}
                 <div className={`${styles.card} ${styles.rankingCard}`}>
                     <div className={styles.rankingHeader}>
-                        <h3 className={styles.cardTitle}><FaArrowDown color="#dc3545"/> Piores Alunos</h3>
-                        <select value={rankingSortBy} onChange={(e) => setRankingSortBy(e.target.value)} className={styles.rankingSelect} disabled={isRankingLoading}>
-                            {rankingOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                        </select>
+                        <h3 className={styles.cardTitle}><FaArrowDown color="#dc3545"/> Alunos a Melhorar</h3>
                     </div>
                     {isRankingLoading ? <p className={styles.rankingLoading}>Atualizando...</p> : <RankingList alunos={rankingPiores} />}
                 </div>
