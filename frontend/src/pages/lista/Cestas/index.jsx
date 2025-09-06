@@ -97,34 +97,36 @@ function Cestas(){
                         )}
                     </div>
                 </div>
-                <table className={styles.table}>
-                    <thead className={styles.thead}>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Responsável</th>
-                            <th>Data</th>
-                            <th className={styles.edicao}>Edição</th>
-                        </tr>
-                    </thead>
-                    <tbody className={styles.tbody}>
-                        {cestasFiltradosBusca
-                            .map((cesta) => (
-                            <React.Fragment key={cesta.id}>
-                                <tr key={cesta.id}>
-                                    <td>{cesta.nome}</td>
-                                    <td>{cesta.responsavel}</td>
-                                    <td>{new Date(cesta.dataEntrega + "T00:00:00").toLocaleDateString('pt-BR')}</td>
-                                    <td className={styles.edicao}>
-                                        <MdOutlineModeEdit 
-                                            className={styles.icon_editar}
-                                            onClick={()=>handleEditClick(cesta.id)}
-                                        />
-                                    </td>
-                                </tr>
-                            </React.Fragment>
-                        ))}
-                    </tbody>
-                </table>
+                <div className={styles.container_table}>
+                    <table className={styles.table}>
+                        <thead className={styles.thead}>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Responsável</th>
+                                <th>Data</th>
+                                <th className={styles.edicao}>Edição</th>
+                            </tr>
+                        </thead>
+                        <tbody className={styles.tbody}>
+                            {cestasFiltradosBusca
+                                .map((cesta) => (
+                                <React.Fragment key={cesta.id}>
+                                    <tr key={cesta.id}>
+                                        <td>{cesta.nome}</td>
+                                        <td>{cesta.responsavel}</td>
+                                        <td>{new Date(cesta.dataEntrega + "T00:00:00").toLocaleDateString('pt-BR')}</td>
+                                        <td className={styles.edicao}>
+                                            <MdOutlineModeEdit 
+                                                className={styles.icon_editar}
+                                                onClick={()=>handleEditClick(cesta.id)}
+                                            />
+                                        </td>
+                                    </tr>
+                                </React.Fragment>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     )

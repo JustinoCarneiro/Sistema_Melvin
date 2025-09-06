@@ -18,11 +18,10 @@
     flex-grow: 1;
 }
 
-/* CABEÇALHO RESPONSIVO (MOBILE-FIRST) */
 .header {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-end;
     width: 100%;
     flex-wrap: wrap;
     gap: 1rem;
@@ -70,13 +69,26 @@
 
 .botoes {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    width: 100%;
-    order: 2;
+    gap: 1rem;
+    width: 100vw;
+    overflow-x: auto;
+
+    > * {
+        flex-shrink: 0; // Impede que os itens (botões, selects) encolham
+    }
+
+    &::-webkit-scrollbar {
+        height: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
 }
 
-/* NOVO ESTILO DA TABELA (PADRÃO VOLUNTARIOS) */
 .table {
     background-color: white;
     border-collapse: separate;
@@ -131,7 +143,7 @@
     cursor: pointer;
     border-left: solid 1px black !important;
     border-right: solid 1px black !important;
-    text-align: center;
+    text-align: left;
 }
 
 .plus:hover {
@@ -189,10 +201,13 @@
     }
 }
 
-// Oculta coluna "Responsável"
 @media (max-width: $size-e) {
     .table > .thead > tr > th:nth-child(3), .table > .tbody > tr > td:nth-child(3) {
         display: none;
+    }
+
+    .botoes{
+        padding-bottom: 1rem;
     }
 }
 
@@ -205,6 +220,10 @@
     .icon_editar {
         font-size: 1rem;
     }
+
+    .botoes{
+        padding-bottom: 1rem;
+    }
 }
 
 // Ajuste de fonte
@@ -215,5 +234,9 @@
 
     .icon_editar {
         font-size: 1rem;
+    }
+
+    .botoes{
+        padding-bottom: 1rem;
     }
 }
