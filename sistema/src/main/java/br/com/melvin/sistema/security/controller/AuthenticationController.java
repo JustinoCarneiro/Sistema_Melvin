@@ -22,8 +22,11 @@ import br.com.melvin.sistema.security.model.ResgisterDTO;
 import br.com.melvin.sistema.security.model.User;
 import br.com.melvin.sistema.security.model.UserRole;
 import br.com.melvin.sistema.security.repository.UserRepository;
+
 import jakarta.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @RestController
@@ -44,14 +47,24 @@ public class AuthenticationController {
     @Autowired
     private Argon2PasswordEncoder passwordEncoder;
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody @Valid AuthenticationDTO dados) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(dados.login(), dados.password());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
+    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
+        logger.info("Tentativa de login para o usuário: {}", data.login());
 
-        var token = tokenService.generateToken((User) auth.getPrincipal());
+        try {
+            var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
+            var auth = this.authenticationManager.authenticate(usernamePassword);
+            var token = tokenService.generateToken((User) auth.getPrincipal());
 
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+            logger.info("Login bem-sucedido para o usuário: {}", data.login());
+            return ResponseEntity.ok(new LoginResponseDTO(token, ((User) auth.getPrincipal()).getRole().toString()));
+
+        } catch (Exception e) {
+            logger.error("Falha na autenticação para o usuário: {}. Erro: {}", data.login(), e.getMessage());
+            return ResponseEntity.status(401).body("Matrícula ou senha inválida."); // Retornar uma resposta de erro clara
+        }
     }
     
     @PostMapping("/register")

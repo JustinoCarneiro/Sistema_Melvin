@@ -46,9 +46,9 @@ function Header(){
     }else if(userRole === "ADM"){
         tipo = "Administração";
         caminho = "/app/adm";
-    } else if(userRole === "PSICO"){ // ADICIONE ESTA CONDIÇÃO
+    } else if(userRole === "PSICO"){
         tipo = "Psicólogo";
-        caminho = "/app/alunos"; // Pode direcionar para a lista de alunos
+        caminho = "/app/psico";
     }
 
     return(

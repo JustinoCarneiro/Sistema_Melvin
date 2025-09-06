@@ -1,6 +1,7 @@
 import styles from './Voluntario_frequencia.module.scss';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. Importe useNavigate
+import { useNavigate } from 'react-router-dom';
+
 import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
@@ -204,7 +205,6 @@ function Voluntario_frequencia({tipo}){
             window.removeEventListener('resize', handleResize);
         };
     }, []);
-
 
     const voluntarioFiltradosBusca = voluntarios.filter((voluntario) => {
         const termoBusca = busca.toLowerCase();

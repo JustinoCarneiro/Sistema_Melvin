@@ -1,63 +1,44 @@
 import styles from './Login.module.scss';
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Adicione useEffect
 import { useNavigate, Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 import auth from '../../services/auth';
-import verificacaoAuth from "../../services/verificacaoAuth";
 
 import logo from '../../docs/Instituto_Melvin.png';
 
 function Login(){
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
-    // Verifica autenticação e redireciona se necessário
-    verificacaoAuth();
+    useEffect(() => {
+        const token = Cookies.get('token');
+        if (token) {
+            const role = Cookies.get('role');
+            navigate(role ? `/app/${role.toLowerCase()}` : '/app');
+        }
+    }, [navigate]);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorMessage('');
         try {
             const response = await auth.authentication({ login, password });
             
             if (response.status === 200) {
-                try{
-                    const responseRole = await auth.receberRole(login);
-                    if (responseRole.status === 200) {
-                        const role = responseRole.data;
-                        
-                        Cookies.set('role', role, { 
-                            sameSite: 'Lax',
-                            secure: false
-                        });
+                const role = response.data.role; // Pega o role diretamente da resposta de login
+                Cookies.set('login', login, { sameSite: 'Lax', secure: false });
 
-                        if (role === 'COOR') {
-                            navigate('/app/coor'); 
-                        } else if (role === 'PROF') {
-                            navigate('/app/prof'); 
-                        } else if (role === 'AUX') {
-                            navigate('/app/aux');
-                        } else if (role === 'COZI') {
-                            navigate('/app/cozi'); 
-                        } else if (role === 'DIRE') {
-                            navigate('/app/dire'); 
-                        } else if (role === 'MARK') {
-                            navigate('/app/mark'); 
-                        } else if (role === 'ADM') {
-                            navigate('/app/adm'); 
-                        } else if (role === 'ZELA') {
-                            navigate('/app/zela'); 
-                        }
-                    }
-                } catch(error){
-                    console.error('3000:Erro ao obter role de usuário:', error.response ? error.response.data : error.message);
-                    return { error: true, message: error.response ? error.response.data : error.message };
-                }
+                // Lógica de redirecionamento simplificada
+                const path = `/app/${role.toLowerCase()}`;
+                navigate(path);
             }
         } catch (error) {
             console.error("3001:Erro ao fazer login", error);
-            alert('Erro ao fazer login');
+            setErrorMessage(error.message || 'Erro ao fazer login');
         }
     };
 
@@ -90,6 +71,7 @@ function Login(){
                         onChange={(e) => setPassword(e.target.value)}
                         className={styles.input}
                     />
+                    {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
                     <button type="submit" className={styles.button}>
                         <p className={styles.texto}>Entrar</p>
                     </button>

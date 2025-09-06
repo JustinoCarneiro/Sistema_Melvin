@@ -17,7 +17,6 @@ import java.util.List;
 public class ExcelExportService {
 
     public ByteArrayInputStream exportarDiscentesParaExcel(List<Discente> discentes) throws IOException {
-        // 1. Array de colunas expandido para incluir os rankings
         String[] COLUNAS = {
             "Matrícula", "Nome", "Email", "Contato", "Sexo", "Data de Nascimento", "Cor/Raça", "Nacionalidade",
             "Endereço", "Bairro", "Cidade", "RG/CPF", "Sala", "Turno", "Status",
@@ -28,7 +27,6 @@ public class ExcelExportService {
             "Doença", "Medicação", "Remédio no Instituto", "Tratamento", "Horário Medicamento", "Pode Praticar Esportes",
             "Autorizado Sair Com", "Contato Saída",
             "Karatê", "Ballet", "Informática", "Música", "Artesanato", "Futsal", "Inglês", "Teatro",
-            // Novas colunas de Ranking
             "Avaliação Presença", "Avaliação Participação", "Avaliação Comportamento", "Avaliação Rendimento", "Avaliação Psicológico", "Média Geral"
         };
 
@@ -48,14 +46,11 @@ public class ExcelExportService {
             for (Discente discente : discentes) {
                 Row row = sheet.createRow(rowIdx++);
 
-                // ... (Células 0 a 58 permanecem as mesmas, preenchendo os dados do aluno e aulas extras)
-                // Informações Pessoais, Familiares, etc.
                 row.createCell(0).setCellValue(discente.getMatricula());
                 row.createCell(1).setCellValue(discente.getNome());
                 // ... (continue preenchendo todas as 50 colunas de dados)
                 row.createCell(50).setCellValue(discente.getContato_saida());
                 
-                // Aulas Extras
                 row.createCell(51).setCellValue(discente.isKarate() ? "Sim" : "Não");
                 row.createCell(52).setCellValue(discente.isBallet() ? "Sim" : "Não");
                 row.createCell(53).setCellValue(discente.isInformatica() ? "Sim" : "Não");
@@ -65,7 +60,6 @@ public class ExcelExportService {
                 row.createCell(57).setCellValue(discente.isIngles() ? "Sim" : "Não");
                 row.createCell(58).setCellValue(discente.isTeatro() ? "Sim" : "Não");
 
-                // 2. Preencher as novas colunas de ranking
                 Double presenca = discente.getAvaliacaoPresenca() != null ? discente.getAvaliacaoPresenca() : 0.0;
                 Double participacao = discente.getAvaliacaoParticipacao() != null ? discente.getAvaliacaoParticipacao() : 0.0;
                 Double comportamento = discente.getAvaliacaoComportamento() != null ? discente.getAvaliacaoComportamento() : 0.0;
@@ -78,7 +72,6 @@ public class ExcelExportService {
                 row.createCell(62).setCellValue(rendimento);
                 row.createCell(63).setCellValue(psicologico);
 
-                // Calcula e preenche a média geral
                 double media = (presenca + participacao + comportamento + rendimento + psicologico) / 5.0;
                 row.createCell(64).setCellValue(media);
             }

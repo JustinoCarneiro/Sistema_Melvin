@@ -14,6 +14,8 @@ function Alunos() {
     const navigate = useNavigate();
     const [exporting, setExporting] = useState(false);
 
+    // --- INÍCIO DAS ALTERAÇÕES ---
+    // Agora pegamos todos os perfis diretamente do hook
     const {
         busca,
         setBusca,
@@ -27,8 +29,13 @@ function Alunos() {
         loading,
         error,
         isAdm,
+        isCoor,
+        isDire,
+        isPsico,
         salasDisponiveis
     } = useAlunos();
+    // --- FIM DAS ALTERAÇÕES ---
+
 
     const handleEditClick = (matricula) => {
         navigate(`/app/aluno/editar/${matricula}`);
@@ -100,23 +107,29 @@ function Alunos() {
                                 </option>
                             ))}
                         </select>
-                        <Botao
-                            nome="Frequências"
-                            corFundo="#7EA629"
-                            corBorda="#58751A"
-                            type="button"
-                            onClick={handleFrequenciasClick}
-                        />
-                        <Botao 
-                            nome={exporting ? "Exportando..." : "Exportar"}
-                            corFundo="#217346"
-                            corBorda="#107C41"
-                            type="button"
-                            onClick={handleExportClick}
-                            disabled={exporting}
-                        >
-                            <FaFileExcel />
-                        </Botao>
+                        
+                        {!isPsico && (
+                            <Botao
+                                nome="Frequências"
+                                corFundo="#7EA629"
+                                corBorda="#58751A"
+                                type="button"
+                                onClick={handleFrequenciasClick}
+                            />
+                        )}
+
+                        {(isAdm || isCoor || isDire) && (
+                            <Botao 
+                                nome={exporting ? "Exportando..." : "Exportar"}
+                                corFundo="#217346"
+                                corBorda="#107C41"
+                                type="button"
+                                onClick={handleExportClick}
+                                disabled={exporting}
+                            >
+                                <FaFileExcel />
+                            </Botao>
+                        )}
                     </div>
                 </div>
                 

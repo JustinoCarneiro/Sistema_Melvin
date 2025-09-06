@@ -166,10 +166,17 @@ function Config(){
                 role = "MARK";
             }else if(funcao === "zelador"){
                 role = "ZELA";
+            } else if(funcao === "psicologo") {
+                role = "PSICO";                 
             }
 
             const login = matricula;
             const password = senhaRegistrar;
+
+            if (!role) {
+                alert(`A função "${funcao}" não tem um perfil de acesso correspondente.`);
+                return;
+            }
 
             console.log("role para registrar", role);
             console.log("role do adm", Cookies.get('role'));
@@ -292,7 +299,6 @@ function Config(){
                 <h4 className={styles.title_h4}>Informações pessoais</h4>
                 <hr className={styles.linha_menor}/>
                 <div className={styles.informacoes}>
-                    <h4>Administrador</h4>
                     <div className={styles.colunas}>
                         <div className={styles.coluna}>
                             {["Nome", "Contato", "Data de nascimento", "Endereço", "Bairro", "Cidade"].map((field, index) => (

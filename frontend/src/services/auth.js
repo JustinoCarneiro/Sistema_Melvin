@@ -5,24 +5,19 @@ const auth = {
     async authentication(data) {
         const endpoint = "/auth/login";
 
-        try{
+        try {
             const response = await http.post(endpoint, data);
-            if (response.data && response.data.token) {
-                Cookies.set('token', response.data.token, { 
-                    expires: 0.5, 
-                    sameSite: 'Lax',
-                    secure: false
-                });
-                Cookies.set('login', data.login, { 
-                    expires: 0.5, 
-                    sameSite: 'Lax',
-                    secure: false
-                });
-            }
+            
+            const { token, role } = response.data;
+            
+            Cookies.set('token', token, { sameSite: 'Lax', secure: false });
+            Cookies.set('role', role, { sameSite: 'Lax', secure: false });
+            
             return response;
-        } catch(error){
-            console.error('1000:Erro ao fazer login:', error.response ? error.response.data : error.message);
-            return { error: true, message: error.response ? (error.response.data || error.response.statusText) : error.message };
+        } catch (error) {
+            console.error('3001:Erro no serviço de autenticação:', error.response ? error.response.data : error.message);
+            const errorMessage = error.response?.data?.message || 'Matrícula ou senha inválida.';
+            return Promise.reject(new Error(errorMessage));
         }
     },
 

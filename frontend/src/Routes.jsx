@@ -91,6 +91,7 @@ function AppContent() {
                     <Route path="/adm" element={<PrivateRoute element={HomeApp} role="ADM" />} />
                     <Route path="/mark" element={<PrivateRoute element={HomeApp} role="MARK" />} />
                     <Route path="/zela" element={<PrivateRoute element={HomeApp} role="ZELA" />} />
+                    <Route path="/psico" element={<PrivateRoute element={HomeApp} role="PSICO" />} />
                     <Route path="/registro" element={ <Registro/> } />
 
                     <Route path="/alunos" element={ <Alunos/> } />

@@ -52,7 +52,7 @@ function NavBar({close}){
                         </Link>
                     </li>
                 )}
-                {(isAdm || isDire || isCoor || isPsico) && ( // 4. Adicione isPsico para ver Voluntários
+                {(isAdm || isDire || isCoor) && (
                     <>
                         <li onClick={handleVol} className={styles.link}> 
                             <PiChalkboardTeacher className={styles.icon}/> 

@@ -11,7 +11,12 @@ export function useAlunos() {
     
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    
+    // --- INÍCIO DAS ALTERAÇÕES ---
     const [isAdm, setIsAdm] = useState(false);
+    const [isCoor, setIsCoor] = useState(false);
+    const [isDire, setIsDire] = useState(false);
+    const [isPsico, setIsPsico] = useState(false);
     const [salasDisponiveis, setSalasDisponiveis] = useState([]);
 
     // Efeito para buscar dados iniciais (permissões e salas)
@@ -19,12 +24,24 @@ export function useAlunos() {
         const carregarDadosIniciais = async () => {
             try {
                 const userRole = Cookies.get('role');
-                const isUserAdm = userRole === 'ADM' || userRole === 'DIRE' || userRole === 'COOR';
-                setIsAdm(isUserAdm);
+                
+                // Define os estados para cada perfil
+                const isUserAdm = userRole === 'ADM';
+                const isUserCoor = userRole === 'COOR';
+                const isUserDire = userRole === 'DIRE';
+                const isUserPsico = userRole === 'PSICO';
 
-                if (isUserAdm) {
+                setIsAdm(isUserAdm);
+                setIsCoor(isUserCoor);
+                setIsDire(isUserDire);
+                setIsPsico(isUserPsico);
+
+                // Lógica de visualização de salas
+                if (isUserAdm || isUserCoor || isUserDire || isUserPsico) {
+                    // Adm, Coor, Dire e Psico veem todas as salas
                     setSalasDisponiveis(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
                 } else {
+                    // Outros perfis (como Professor) veem apenas suas salas
                     const matricula = Cookies.get('login');
                     const dadosVoluntario = await get.voluntarioByMatricula(matricula);
                     const { salaUm, salaDois, aulaExtra } = dadosVoluntario.data;
@@ -41,6 +58,8 @@ export function useAlunos() {
         };
         carregarDadosIniciais();
     }, []);
+    // --- FIM DAS ALTERAÇÕES ---
+
 
     // Efeito para BUSCAR os alunos no backend sempre que 'busca' mudar (com debounce)
     useEffect(() => {
@@ -59,8 +78,6 @@ export function useAlunos() {
         return () => clearTimeout(timer); // Limpa o timer se o usuário digitar novamente
     }, [busca]);
 
-    // A filtragem por busca (nome, matricula, etc) agora é feita no backend.
-    // O useMemo agora aplica apenas os filtros LOCAIS (status, turno, aula).
     const alunosFiltrados = useMemo(() => {
         return alunos.filter((aluno) => {
             const statusCondicao = filtroEspera ? aluno.status === 'espera' : aluno.status === 'true';
@@ -88,7 +105,13 @@ export function useAlunos() {
         alunosFiltrados,
         loading,
         error,
+        // --- INÍCIO DAS ALTERAÇÕES ---
+        // Exporta os novos estados de perfil
         isAdm,
+        isCoor,
+        isDire,
+        isPsico,
+        // --- FIM DAS ALTERAÇÕES ---
         salasDisponiveis
     };
 }

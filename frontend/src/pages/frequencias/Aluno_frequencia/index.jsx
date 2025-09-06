@@ -14,7 +14,8 @@ import Botao from '../../../components/gerais/Botao';
 
 function Aluno_frequencia(){
     const navigate = useNavigate();
-    const [alunos, setAlunos] = useState([]);
+    const [todosOsAlunos, setTodosOsAlunos] = useState([]); // Armazena todos os alunos buscados
+    const [alunos, setAlunos] = useState([]); // Alunos filtrados para exibição
     const [data, setData] = useState('');
     const [sala, setSala] = useState('1');
     const [turno, setTurno] = useState('');
@@ -23,55 +24,18 @@ function Aluno_frequencia(){
     const [expandedRows, setExpandedRows] = useState({});
     const [salasDisponiveis, setSalasDisponiveis] = useState([]);
 
-    
     const getTurnoAtual = () => {
         const now = new Date();
         const hour = now.getHours();
         return hour < 12 ? 'manha' : 'tarde';
     };
 
-    const fetchAlunos = async (selectedSala) => {
+    // --- FUNÇÃO CORRIGIDA ---
+    const fetchAlunos = async () => {
         try {
-            selectedSala = Number(selectedSala);
-
-            let response;
-            let objetoDados = [];
-            if(selectedSala>4){
-                response = await get.discente();
-                switch (selectedSala){
-                    case 5:
-                        objetoDados = response.data.filter(aluno => aluno.ingles === true);
-                        break;
-                    case 6:
-                        objetoDados = response.data.filter(aluno => aluno.karate === true);
-                        break;
-                    case 7:
-                        objetoDados = response.data.filter(aluno => aluno.informatica === true);
-                        break;
-                    case 8:
-                        objetoDados = response.data.filter(aluno => aluno.musica === true);
-                        break;
-                    case 9:
-                        objetoDados = response.data.filter(aluno => aluno.teatro === true);
-                        break;
-                    case 10:
-                        objetoDados = response.data.filter(aluno => aluno.ballet === true);
-                        break;
-                    case 11:
-                        objetoDados = response.data.filter(aluno => aluno.futsal === true);
-                        break;
-                    default:
-                        console.warn("Sala inválida: ", selectedSala);
-                        break;
-                }
-            } else {
-                response = await get.discente(selectedSala);
-                objetoDados = response.data;
-            }
-
-            if (Array.isArray(objetoDados)) {
-                const alunosAtivos = objetoDados.filter(aluno => aluno.status === 'true' && aluno.turno === turno);
-                setAlunos(alunosAtivos);
+            const response = await get.discente(); // Busca todos os discentes de uma vez
+            if (Array.isArray(response.data)) {
+                setTodosOsAlunos(response.data); // Armazena a lista completa
             } else {
                 console.error("5006: Formato inesperado no response:", response);
                 alert('Erro ao obter objeto! Formato inesperado de resposta.');
@@ -81,6 +45,27 @@ function Aluno_frequencia(){
             alert('Erro ao obter objeto!');
         }
     };
+
+    useEffect(() => {
+        const alunosFiltradosPorTurno = todosOsAlunos.filter(aluno => aluno.status === 'true' && aluno.turno === turno);
+
+        const salaNumero = Number(sala);
+        let alunosFiltradosFinal;
+
+        if (salaNumero > 4) {
+            const mapeamentoAulas = {
+                5: 'ingles', 6: 'karate', 7: 'informatica', 8: 'musica',
+                9: 'teatro', 10: 'ballet', 11: 'futsal', 12: 'artesanato'
+            };
+            const aulaKey = mapeamentoAulas[salaNumero];
+            alunosFiltradosFinal = alunosFiltradosPorTurno.filter(aluno => aluno[aulaKey] === true);
+        } else {
+            alunosFiltradosFinal = alunosFiltradosPorTurno.filter(aluno => aluno.sala === salaNumero);
+        }
+
+        setAlunos(alunosFiltradosFinal);
+
+    }, [sala, turno, todosOsAlunos]);
 
     const fetchFrequencias = async (selectedDate) => {
         try {
