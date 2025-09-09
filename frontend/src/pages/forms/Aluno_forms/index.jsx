@@ -2,6 +2,7 @@ import styles from './Aluno_forms.module.scss';
 import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate, useParams } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 import { IoMdArrowRoundBack, IoIosDownload } from "react-icons/io";
 import { SiGoogledocs } from "react-icons/si";
@@ -21,6 +22,7 @@ function Aluno_forms(){
     const navigate = useNavigate();
     const [diario, setDiario] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isPsico, setIsPsico] = useState(false);
 
     const [formDado, setFormDado] = useState({
         matricula: '',
@@ -82,6 +84,11 @@ function Aluno_forms(){
         futsal: false, 
         ingles: false
     });
+
+    useEffect(() => {
+        const userRole = Cookies.get('role');
+        setIsPsico(userRole === 'PSICO');
+    }, []);
 
     useEffect(() => {
         const fetchAluno = async () => {
@@ -296,6 +303,7 @@ function Aluno_forms(){
                             onChange={handleChange}
                             comp="grande"
                             prioridade="true"
+                            disabled={isPsico}
                         />
                         <div className={styles.linha}>
                             <Input
@@ -307,6 +315,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Data de nascimento:"
@@ -317,6 +326,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade="true"
+                                disabled={isPsico}
                             />
                         </div>
                         <Input
@@ -328,6 +338,7 @@ function Aluno_forms(){
                             onChange={handleChange}
                             comp="grande"
                             prioridade="true"
+                            disabled={isPsico}
                         />
                         <div className={styles.linha}>
                             <Input
@@ -339,6 +350,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade="true"
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Cidade:"
@@ -349,6 +361,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade="true"
+                                disabled={isPsico}
                             />
                         </div>
                     </div>
@@ -356,7 +369,7 @@ function Aluno_forms(){
                         <div className={styles.linha}>
                             <label className={styles.label_select}>
                                 <div className={styles.sublabel_select}>Sexo:</div>
-                                <select className={styles.select} name="sexo" value={formDado.sexo} onChange={handleChange}>
+                                <select className={styles.select} name="sexo" value={formDado.sexo} onChange={handleChange} disabled={isPsico}>
                                     <option value="" hidden>Selecione...</option>
                                     <option value="Masculino">Masculino</option>
                                     <option value="Feminino">Feminino</option>
@@ -371,6 +384,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                         <Input
@@ -382,6 +396,7 @@ function Aluno_forms(){
                             onChange={handleChange}
                             comp="pequeno"
                             prioridade=""
+                            disabled={isPsico}
                         />
                         <Input
                             label="N° certidão de nascimento, RG ou CPF:"
@@ -392,6 +407,7 @@ function Aluno_forms(){
                             onChange={handleChange}
                             comp="grande"
                             prioridade=""
+                            disabled={isPsico}
                         />
                         <Input
                             label="Email:"
@@ -402,6 +418,7 @@ function Aluno_forms(){
                             onChange={handleChange}
                             comp="grande"
                             prioridade="false"
+                            disabled={isPsico}
                         />
                     </div>
                 </div>
@@ -411,7 +428,7 @@ function Aluno_forms(){
                         <div className={styles.linha}>
                             <label className={styles.label_select}>
                                 <div className={styles.sublabel_select}>Situação matrícula:<p className={styles.asterisco}>*</p></div>
-                                <select className={styles.select} name="status" value={formDado.status} onChange={handleChange}>
+                                <select className={styles.select} name="status" value={formDado.status} onChange={handleChange} disabled={isPsico}>
                                     <option value="" hidden>Selecione...</option>
                                     <option value="true">Ativa</option>
                                     <option value="false">Inativa</option>
@@ -425,7 +442,7 @@ function Aluno_forms(){
                         <div className={styles.linha}>
                             <label className={styles.label_select}>
                                 <div className={styles.sublabel_select}>Sala:<p className={styles.asterisco}>*</p></div>
-                                <select className={styles.select} name="sala" value={formDado.sala} onChange={handleChange}>
+                                <select className={styles.select} name="sala" value={formDado.sala} onChange={handleChange} disabled={isPsico}>
                                     <option value="" hidden>Selecione...</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -435,7 +452,7 @@ function Aluno_forms(){
                             </label>
                             <label className={styles.label_select}>
                                 <div className={styles.sublabel_select}>Turno no instituto:<p className={styles.asterisco}>*</p></div>
-                                <select className={styles.select} name="turno" value={formDado.turno} onChange={handleChange}>
+                                <select className={styles.select} name="turno" value={formDado.turno} onChange={handleChange} disabled={isPsico}>
                                     <option value="" hidden>Selecione...</option>
                                     <option value="manha">Manhã</option>
                                     <option value="tarde">Tarde</option>
@@ -457,6 +474,7 @@ function Aluno_forms(){
                             onChange={handleChange}
                             comp="grande"
                             prioridade=""
+                            disabled={isPsico}
                         />
                         <div className={styles.linha}>
                             <Input
@@ -468,6 +486,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Contato do trabalho:"
@@ -478,6 +497,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                         <Input
@@ -488,6 +508,7 @@ function Aluno_forms(){
                             value={formDado.local_trabalho_pai}
                             onChange={handleChange}
                             comp="grande"
+                            disabled={isPsico}
                         />
                     </div>
                     <div className={styles.coluna}>
@@ -501,6 +522,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Grau de instrução:"
@@ -511,6 +533,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                         <div className={styles.linha}>
@@ -523,6 +546,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Estado civil:"
@@ -533,6 +557,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                     </div>
@@ -549,6 +574,7 @@ function Aluno_forms(){
                             onChange={handleChange}
                             comp="grande"
                             prioridade=""
+                            disabled={isPsico}
                         />
                         <div className={styles.linha}>
                             <Input
@@ -560,6 +586,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Contato do trabalho:"
@@ -570,6 +597,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                         <Input
@@ -581,6 +609,7 @@ function Aluno_forms(){
                             onChange={handleChange}
                             comp="grande"
                             prioridade=""
+                            disabled={isPsico}
                         />
                     </div>
                     <div className={styles.coluna}>
@@ -594,6 +623,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Grau de instrução:"
@@ -604,6 +634,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                         <div className={styles.linha}>
@@ -616,6 +647,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Estado civil:"
@@ -626,6 +658,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                     </div>
@@ -643,6 +676,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Benefício do governo:"
@@ -653,6 +687,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                         <div className={styles.linha}>
@@ -665,6 +700,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Em caso de outro:"
@@ -675,6 +711,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                         <div className={styles.linha}>
@@ -687,6 +724,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Renda total da família:"
@@ -697,6 +735,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                     </div>
@@ -711,6 +750,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Quantidade:"
@@ -721,6 +761,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                         <label >
@@ -735,6 +776,7 @@ function Aluno_forms(){
                                     onChange={handleChange}
                                     comp="pequeno"
                                     prioridade=""
+                                    disabled={isPsico}
                                 />
                                 <Input
                                     label="Autônomo:"
@@ -745,6 +787,7 @@ function Aluno_forms(){
                                     onChange={handleChange}
                                     comp="pequeno"
                                     prioridade=""
+                                    disabled={isPsico}
                                 />
                             </div>
                         </label>
@@ -758,6 +801,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Gostaria de congregar?"
@@ -768,6 +812,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                     </div>
@@ -784,6 +829,7 @@ function Aluno_forms(){
                             onChange={handleChange}
                             comp="grande"
                             prioridade=""
+                            disabled={isPsico}
                         />
                         <Input
                             label="Precisa tomar remédio no instituto?"
@@ -794,6 +840,7 @@ function Aluno_forms(){
                             onChange={handleChange}
                             comp="grande"
                             prioridade=""
+                            disabled={isPsico}
                         />
                         <div className={styles.linha}>
                             <Input
@@ -805,6 +852,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade="false"
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Pode praticar esportes?"
@@ -815,6 +863,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                         <div className={styles.aulas_extras}>
@@ -828,6 +877,7 @@ function Aluno_forms(){
                                             name="karate"
                                             checked={formDado.karate === true}
                                             onChange={(e) => setFormDado({ ...formDado, karate: e.target.checked })}
+                                            disabled={isPsico}
                                         />
                                     </label>
                                 </div>
@@ -839,6 +889,7 @@ function Aluno_forms(){
                                             name="ballet"
                                             checked={formDado.ballet === true}
                                             onChange={(e) => setFormDado({ ...formDado, ballet: e.target.checked })}
+                                            disabled={isPsico}
                                         />
                                     </label>
                                 </div>
@@ -850,6 +901,7 @@ function Aluno_forms(){
                                             name="informatica"
                                             checked={formDado.informatica === true}
                                             onChange={(e) => setFormDado({ ...formDado, informatica: e.target.checked })}
+                                            disabled={isPsico}
                                         />
                                     </label>
                                 </div>
@@ -861,6 +913,7 @@ function Aluno_forms(){
                                             name="musica"
                                             checked={formDado.musica === true}
                                             onChange={(e) => setFormDado({ ...formDado, musica: e.target.checked })}
+                                            disabled={isPsico}
                                         />
                                     </label>
                                 </div>
@@ -872,6 +925,7 @@ function Aluno_forms(){
                                             name="artesanato"
                                             checked={formDado.artesanato === true}
                                             onChange={(e) => setFormDado({ ...formDado, artesanato: e.target.checked })}
+                                            disabled={isPsico}
                                         />
                                     </label>
                                 </div>
@@ -883,6 +937,7 @@ function Aluno_forms(){
                                             name="futsal"
                                             checked={formDado.futsal === true}
                                             onChange={(e) => setFormDado({ ...formDado, futsal: e.target.checked })}
+                                            disabled={isPsico}
                                         />
                                     </label>
                                 </div>
@@ -894,6 +949,7 @@ function Aluno_forms(){
                                             name="ingles"
                                             checked={formDado.ingles === true}
                                             onChange={(e) => setFormDado({ ...formDado, ingles: e.target.checked })}
+                                            disabled={isPsico}
                                         />
                                     </label>
                                 </div>
@@ -905,7 +961,7 @@ function Aluno_forms(){
                             <div className={styles.container_diario}>
                                 <label className={styles.label_diario}>
                                     <div {...getRootProps({ className: styles.dropzone })}>
-                                        <input {...getInputProps()} />
+                                        <input {...getInputProps()} disabled={isPsico} />
                                         {diario ? (
                                             <p className={styles.placeholderdiario}>{diario.name || diario.data.fileName}</p>
                                         ) : (
@@ -930,6 +986,7 @@ function Aluno_forms(){
                             onChange={handleChange}
                             comp="grande"
                             prioridade=""
+                            disabled={isPsico}
                         />
                         <Input
                             label="Faz algum tipo de tratamento?"
@@ -940,6 +997,7 @@ function Aluno_forms(){
                             onChange={handleChange}
                             comp="grande"
                             prioridade=""
+                            disabled={isPsico}
                         />
                         <div className={styles.linha}>
                             <Input
@@ -951,6 +1009,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                             <Input
                                 label="Contato:"
@@ -961,6 +1020,7 @@ function Aluno_forms(){
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade=""
+                                disabled={isPsico}
                             />
                         </div>
                     </div>
@@ -971,12 +1031,14 @@ function Aluno_forms(){
                             {errorMessage}
                         </p>
                     )}
-                    <Botao
-                        nome="Salvar" 
-                        corFundo="#F29F05" 
-                        corBorda="#8A6F3E" 
-                        type="submit"
-                    />
+                    {!isPsico && (
+                        <Botao
+                            nome="Salvar" 
+                            corFundo="#F29F05" 
+                            corBorda="#8A6F3E" 
+                            type="submit"
+                        />
+                    )}
                 </div>
             </form>
         </div>

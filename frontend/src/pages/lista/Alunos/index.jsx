@@ -14,8 +14,6 @@ function Alunos() {
     const navigate = useNavigate();
     const [exporting, setExporting] = useState(false);
 
-    // --- INÍCIO DAS ALTERAÇÕES ---
-    // Agora pegamos todos os perfis diretamente do hook
     const {
         busca,
         setBusca,
@@ -31,11 +29,9 @@ function Alunos() {
         isAdm,
         isCoor,
         isDire,
-        isPsico,
+        isPsico, // Perfil do psicólogo já vem do hook
         salasDisponiveis
     } = useAlunos();
-    // --- FIM DAS ALTERAÇÕES ---
-
 
     const handleEditClick = (matricula) => {
         navigate(`/app/aluno/editar/${matricula}`);
@@ -75,7 +71,7 @@ function Alunos() {
                         />
                     </div>
                     <div className={styles.botoes}>
-                        {isAdm && (
+                        {(isAdm || isCoor || isDire) && (
                             <>
                                 <select
                                     className={styles.select_sala}
@@ -139,7 +135,10 @@ function Alunos() {
                             <th>Matrícula</th>
                             <th>Nome</th>
                             <th>Responsável</th>
-                            {isAdm && <th className={styles.edicao}>Edição</th>}
+                            {/* --- INÍCIO DA ALTERAÇÃO --- */}
+                            {/* Adicionado isPsico à condição */}
+                            {(isAdm || isCoor || isDire || isPsico) && <th className={styles.edicao}>Edição</th>}
+                            {/* --- FIM DA ALTERAÇÃO --- */}
                         </tr>
                     </thead>
                     <tbody className={styles.tbody}>
@@ -148,7 +147,9 @@ function Alunos() {
                                 <td>{aluno.matricula}</td>
                                 <td>{aluno.nome}</td>
                                 <td>{aluno.nome_pai || aluno.nome_mae || ''}</td>
-                                {isAdm && (
+                                {/* --- INÍCIO DA ALTERAÇÃO --- */}
+                                {/* Adicionado isPsico à condição */}
+                                {(isAdm || isCoor || isDire || isPsico) && (
                                     <td className={styles.edicao}>
                                         <MdOutlineModeEdit
                                             className={styles.icon_editar}
@@ -156,9 +157,10 @@ function Alunos() {
                                         />
                                     </td>
                                 )}
+                                {/* --- FIM DA ALTERAÇÃO --- */}
                             </tr>
                         ))}
-                        {isAdm && (
+                        {(isAdm || isCoor || isDire) && (
                             <tr className={styles.plus} onClick={() => navigate("/app/aluno/criar")}>
                                 <td colSpan="4"><FaPlus className={styles.icon_plus} /></td>
                             </tr>

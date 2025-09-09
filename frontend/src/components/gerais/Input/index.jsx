@@ -1,7 +1,8 @@
 import React from 'react';
 import styles from './Input.module.scss';
 
-function Input({label, placeholder, type, name, value, onChange, comp, prioridade}){
+// 1. Adicione "disabled" na lista de propriedades recebidas
+function Input({label, placeholder, type, name, value, onChange, comp, prioridade, disabled}){
     let comprimentoClass;
 
     if(comp === "grande"){
@@ -22,6 +23,7 @@ function Input({label, placeholder, type, name, value, onChange, comp, prioridad
                 name={name}
                 value={value}
                 onChange={onChange}
+                disabled={disabled}
             />
         </label>
     )
