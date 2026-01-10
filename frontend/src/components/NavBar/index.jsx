@@ -4,8 +4,8 @@ import {IoClose, IoChevronDown, IoChevronUp, IoSettings, IoBasket} from 'react-i
 import { PiStudentBold, PiChalkboardTeacher } from "react-icons/pi";
 import { GoAlertFill } from "react-icons/go";
 import { LuHeartHandshake } from "react-icons/lu";
+import { TbReportAnalytics, TbSocial } from "react-icons/tb";
 import { Link, useNavigate } from 'react-router-dom';
-import { TbSocial } from "react-icons/tb";
 
 import Cookies from "js-cookie";
 
@@ -21,7 +21,7 @@ function NavBar({close}){
     const [isProf, setIsProf] = useState(false);
     const [isAdm, setIsAdm] = useState(false);
     const [isCoor, setIsCoor] = useState(false);
-    const [isPsico, setIsPsico] = useState(false); // 1. Adicione o estado para o psicólogo
+    const [isPsico, setIsPsico] = useState(false);
 
     useEffect(() => {
         const userRole = Cookies.get('role');
@@ -29,7 +29,7 @@ function NavBar({close}){
         setIsDire(userRole === 'DIRE');     
         setIsAdm(userRole === "ADM");
         setIsCoor(userRole === "COOR");
-        setIsPsico(userRole === 'PSICO'); // 2. Verifique o perfil de psicólogo
+        setIsPsico(userRole === 'PSICO');
     }, []);
 
     const handleVol = () =>{
@@ -44,7 +44,7 @@ function NavBar({close}){
         <div className={styles.body}>
             <IoClose className={styles.close} onClick={closeNavBar}/>
             <ul className={styles.nav}>
-                {(isAdm || isProf || isDire || isCoor || isPsico) && ( // 3. Adicione isPsico para ver Alunos
+                {(isAdm || isProf || isDire || isCoor || isPsico) && (
                     <li> 
                         <Link to="/app/alunos" className={styles.link}>
                             <PiStudentBold className={styles.icon}/> 
@@ -52,6 +52,18 @@ function NavBar({close}){
                         </Link>
                     </li>
                 )}
+                
+                {/* --- NOVO BOTÃO DE RELATÓRIOS --- */}
+                {(isAdm || isProf || isDire || isCoor || isPsico) && (
+                    <li> 
+                        <Link to="/app/relatorios" className={styles.link}>
+                            <TbReportAnalytics className={styles.icon}/> 
+                            <p>Relatórios</p>
+                        </Link>
+                    </li>
+                )}
+                {/* ------------------------------- */}
+
                 {(isAdm || isDire || isCoor) && (
                     <>
                         <li onClick={handleVol} className={styles.link}> 

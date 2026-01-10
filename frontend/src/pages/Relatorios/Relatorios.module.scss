@@ -1,0 +1,254 @@
+@import '../../index.scss';
+
+.body {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    background-color: $cor-fundo;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+
+    .topHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    /* --- Novo estilo para o título e badge --- */
+    .titleWrapper {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .title {
+            color: $cor-primaria;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .counterBadge {
+            background-color: #f0f0f0;
+            color: #555;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            border: 1px solid #ddd;
+            white-space: nowrap;
+
+            strong {
+                color: $cor-primaria;
+            }
+        }
+    }
+
+    .toggleContainer {
+        display: flex;
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        padding: 4px;
+        gap: 4px;
+
+        .toggleBtn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            background: transparent;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:hover {
+                color: $cor-primaria;
+                background-color: rgba(255,255,255,0.5);
+            }
+
+            &.active {
+                background-color: white;
+                color: $cor-primaria;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        }
+    }
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.container_busca {
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    flex-grow: 1;
+    min-width: 250px;
+
+    .icon_busca {
+        color: #666;
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+    }
+
+    .busca {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        font-size: 1rem;
+    }
+}
+
+.select_sala {
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    min-width: 120px;
+    
+    &:focus {
+        border-color: $cor-primaria;
+        outline: none;
+    }
+}
+
+.tableResponsive {
+    overflow-x: auto;
+    /* Estilização da scrollbar fina */
+    &::-webkit-scrollbar {
+        height: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 4px;
+    }
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap; // Impede quebra de linha nas datas
+    
+    .thead {
+        background-color: $cor-primaria;
+        color: white;
+        
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+
+            &.thDate {
+                text-align: center;
+                min-width: 60px;
+            }
+        }
+    }
+
+    .tbody {
+        tr {
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+
+            &:hover {
+                background-color: #f9f9f9;
+            }
+
+            td {
+                padding: 1rem;
+                color: #333;
+            }
+
+            .nomeAluno {
+                font-weight: 500;
+                color: $cor-secundaria;
+            }
+
+            .emptyCell {
+                color: #999;
+                font-style: italic;
+                text-align: center;
+            }
+        }
+        
+        .empty {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-style: italic;
+        }
+    }
+}
+
+// Fixar as primeiras colunas na tabela de frequência
+.stickyCol {
+    position: sticky;
+    left: 0;
+    background-color: inherit;
+    z-index: 1;
+    
+    &:first-child {
+        left: 0;
+    }
+    &:nth-child(2) {
+        left: 200px; // Ajuste conforme a largura média do nome
+    }
+}
+
+.thead .stickyCol {
+    background-color: $cor-primaria;
+    z-index: 2;
+}
+
+.tbody .stickyCol {
+    background-color: white; 
+}
+
+.tr_body:hover .stickyCol {
+    background-color: #f9f9f9; 
+}
+
+.loading, .centeredMessage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    font-size: 1.1rem;
+    color: #666;
+    
+    &.error {
+        color: $cor-erro;
+    }
+}

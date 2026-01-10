@@ -37,6 +37,7 @@ import AvisosDesativados from './pages/lista_matriculas_desativadas/AvisosDesati
 import Cestas from './pages/lista/Cestas';
 import CestasForms from './pages/forms/Cestas_forms';
 import Rendimento from './pages/Rendimento';
+import Relatorios from './pages/Relatorios';
 
 function AppRoutes() {
     return (
@@ -139,6 +140,7 @@ function AppContent() {
                     <Route path="/avisos/editar/:id" element={<AvisoForms/>}/>
                     <Route path="/cestas/editar/:id" element={<CestasForms/>}/>
                     <Route path="/rendimento_aluno/:matricula" element={<Rendimento/>} />
+                    <Route path="/relatorios" element={ <Relatorios/> } />
                     
                     <Route path="/frequencias/alunos" element={<Aluno_frequencia />} />
                     <Route path="/voluntario/frequencias/coordenadores" element={<Voluntario_frequencia tipo="coordenador"/>} />

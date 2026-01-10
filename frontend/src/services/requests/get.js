@@ -273,6 +273,33 @@ const get = {
             const errorMessage = error.response?.data || "Erro ao buscar avisos.";
             return Promise.reject(new Error(errorMessage));
         }
+    },
+    async exportarFrequencia(mes, ano, sala, turno, busca) {
+        // Ajuste: O backend espera Mês de 1 a 12, mas o JS usa 0 a 11. Vamos somar 1.
+        const mesBackend = parseInt(mes) + 1;
+        
+        let endpoint = `/frequenciadiscente/export?mes=${mesBackend}&ano=${ano}`;
+        
+        if (sala && sala !== 'todos') endpoint += `&sala=${sala}`;
+        if (turno && turno !== 'todos') endpoint += `&turno=${turno}`;
+        if (busca) endpoint += `&busca=${encodeURIComponent(busca)}`;
+
+        try {
+            const response = await http.get(endpoint, {
+                responseType: 'blob',
+            });
+            
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Frequencia_${mesBackend}_${ano}.xlsx`);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+        } catch (error) {
+            console.error('Erro ao exportar frequência:', error);
+            return Promise.reject(new Error("Falha ao exportar frequência."));
+        }
     }
 }
 

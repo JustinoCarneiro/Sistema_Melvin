@@ -1,16 +1,16 @@
 package br.com.melvin.sistema.services;
 
 import br.com.melvin.sistema.model.integrantes.Discente;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import br.com.melvin.sistema.model.frequencias.FrequenciaDiscente; // Importante
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 @Service
@@ -45,9 +45,6 @@ public class ExcelExportService {
             int rowIdx = 1;
             for (Discente discente : discentes) {
                 Row row = sheet.createRow(rowIdx++);
-
-                // --- INÍCIO DA CORREÇÃO ---
-                // Preenchimento de todas as colunas com os nomes de métodos corretos
                 row.createCell(0).setCellValue(discente.getMatricula());
                 row.createCell(1).setCellValue(discente.getNome());
                 row.createCell(2).setCellValue(discente.getEmail());
@@ -63,54 +60,42 @@ public class ExcelExportService {
                 row.createCell(12).setCellValue(discente.getSala());
                 row.createCell(13).setCellValue(discente.getTurno());
                 row.createCell(14).setCellValue(discente.getStatus());
-
-                // Dados do Pai
                 row.createCell(15).setCellValue(discente.getNome_pai());
                 row.createCell(16).setCellValue(discente.getContato_pai());
                 row.createCell(17).setCellValue(discente.getInstrucao_pai());
                 row.createCell(18).setCellValue(discente.getOcupacao_pai());
                 row.createCell(19).setCellValue(discente.getLocal_trabalho_pai());
                 row.createCell(20).setCellValue(discente.getContato_trabalho_pai());
-                row.createCell(21).setCellValue(discente.getAlfabetizacao_pai()); // Corrigido
+                row.createCell(21).setCellValue(discente.getAlfabetizacao_pai());
                 row.createCell(22).setCellValue(discente.getEstado_civil_pai());
-                
-                // Dados da Mãe
                 row.createCell(23).setCellValue(discente.getNome_mae());
                 row.createCell(24).setCellValue(discente.getContato_mae());
                 row.createCell(25).setCellValue(discente.getInstrucao_mae());
                 row.createCell(26).setCellValue(discente.getOcupacao_mae());
                 row.createCell(27).setCellValue(discente.getLocal_trabalho_mae());
                 row.createCell(28).setCellValue(discente.getContato_trabalho_mae());
-                row.createCell(29).setCellValue(discente.getAlfabetizacao_mae()); // Corrigido
+                row.createCell(29).setCellValue(discente.getAlfabetizacao_mae());
                 row.createCell(30).setCellValue(discente.getEstado_civil_mae());
-
-                // Informações Socioeconômicas
-                row.createCell(31).setCellValue(discente.getQtd_filho()); // Corrigido
+                row.createCell(31).setCellValue(discente.getQtd_filho());
                 row.createCell(32).setCellValue(discente.getBeneficio_governo());
                 row.createCell(33).setCellValue(discente.getMeio_transporte());
                 row.createCell(34).setCellValue(discente.getQtd_transporte());
-                row.createCell(35).setCellValue(discente.getMora_familiar()); // Corrigido
+                row.createCell(35).setCellValue(discente.getMora_familiar());
                 row.createCell(36).setCellValue(discente.getOutro_familiar());
-                row.createCell(37).setCellValue(discente.getTodos_moram_casa()); // Corrigido
+                row.createCell(37).setCellValue(discente.getTodos_moram_casa());
                 row.createCell(38).setCellValue(discente.getRenda_total());
-                row.createCell(39).setCellValue(discente.getClt()); // Corrigido
-                row.createCell(40).setCellValue(discente.getAutonomo()); // Corrigido
-                row.createCell(41).setCellValue(discente.getFamilia_congrega()); // Corrigido
-                row.createCell(42).setCellValue(discente.getGostaria_congregar()); // Corrigido
-
-                // Informações de Saúde
+                row.createCell(39).setCellValue(discente.getClt());
+                row.createCell(40).setCellValue(discente.getAutonomo());
+                row.createCell(41).setCellValue(discente.getFamilia_congrega());
+                row.createCell(42).setCellValue(discente.getGostaria_congregar());
                 row.createCell(43).setCellValue(discente.getDoenca());
                 row.createCell(44).setCellValue(discente.getMedicacao());
-                row.createCell(45).setCellValue(discente.getRemedio_instituto()); // Corrigido
+                row.createCell(45).setCellValue(discente.getRemedio_instituto());
                 row.createCell(46).setCellValue(discente.getTratamento());
                 row.createCell(47).setCellValue(discente.getHorario_medicamento());
-                row.createCell(48).setCellValue(discente.getEsportes()); // Corrigido
-                
-                // Autorização de Saída
-                row.createCell(49).setCellValue(discente.getSaida_aluno()); // Corrigido
+                row.createCell(48).setCellValue(discente.getEsportes());
+                row.createCell(49).setCellValue(discente.getSaida_aluno());
                 row.createCell(50).setCellValue(discente.getContato_saida());
-                
-                // Aulas Extras
                 row.createCell(51).setCellValue(discente.isKarate() ? "Sim" : "Não");
                 row.createCell(52).setCellValue(discente.isBallet() ? "Sim" : "Não");
                 row.createCell(53).setCellValue(discente.isInformatica() ? "Sim" : "Não");
@@ -120,7 +105,6 @@ public class ExcelExportService {
                 row.createCell(57).setCellValue(discente.isIngles() ? "Sim" : "Não");
                 row.createCell(58).setCellValue(discente.isTeatro() ? "Sim" : "Não");
 
-                // Rankings
                 Double presenca = discente.getAvaliacaoPresenca() != null ? discente.getAvaliacaoPresenca() : 0.0;
                 Double participacao = discente.getAvaliacaoParticipacao() != null ? discente.getAvaliacaoParticipacao() : 0.0;
                 Double comportamento = discente.getAvaliacaoComportamento() != null ? discente.getAvaliacaoComportamento() : 0.0;
@@ -135,7 +119,67 @@ public class ExcelExportService {
 
                 double media = (presenca + participacao + comportamento + rendimento + psicologico) / 5.0;
                 row.createCell(64).setCellValue(media);
-                // --- FIM DA CORREÇÃO ---
+            }
+
+            workbook.write(out);
+            return new ByteArrayInputStream(out.toByteArray());
+        }
+    }
+    
+    // MÉTODO NOVO PARA EXPORTAÇÃO DE FREQUÊNCIA
+    public ByteArrayInputStream exportarFrequencia(List<Discente> discentes, List<FrequenciaDiscente> frequencias, int mes, int ano) throws IOException {
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("Frequência " + mes + "-" + ano);
+
+            // Determinar dias do mês
+            YearMonth yearMonth = YearMonth.of(ano, mes);
+            int diasNoMes = yearMonth.lengthOfMonth();
+
+            // --- CABEÇALHO ---
+            Row headerRow = sheet.createRow(0);
+            headerRow.createCell(0).setCellValue("Nome do Aluno");
+            headerRow.createCell(1).setCellValue("Matrícula");
+            headerRow.createCell(2).setCellValue("Turma");
+            headerRow.createCell(3).setCellValue("Turno");
+
+            // Criar colunas para cada dia
+            for (int dia = 1; dia <= diasNoMes; dia++) {
+                headerRow.createCell(3 + dia).setCellValue(dia + "/" + mes);
+            }
+            
+            // --- LINHAS (ALUNOS) ---
+            int rowIdx = 1;
+            for (Discente aluno : discentes) {
+                Row row = sheet.createRow(rowIdx++);
+                row.createCell(0).setCellValue(aluno.getNome());
+                row.createCell(1).setCellValue(aluno.getMatricula());
+                row.createCell(2).setCellValue(aluno.getSala());
+                row.createCell(3).setCellValue(aluno.getTurno());
+
+                // Preencher Presenças
+                for (int dia = 1; dia <= diasNoMes; dia++) {
+                    LocalDate dataAtual = LocalDate.of(ano, mes, dia);
+                    
+                    FrequenciaDiscente registro = frequencias.stream()
+                        .filter(f -> f.getMatricula().equals(aluno.getMatricula()) && f.getData().isEqual(dataAtual))
+                        .findFirst()
+                        .orElse(null);
+
+                    String status = "-";
+                    if (registro != null) {
+                        String turnoAluno = aluno.getTurno() != null ? aluno.getTurno().toLowerCase() : "";
+                        boolean isManha = turnoAluno.contains("manha") || turnoAluno.contains("matutino");
+                        
+                        String valor = isManha ? registro.getPresenca_manha() : registro.getPresenca_tarde();
+                        
+                        if (valor != null) {
+                            if (valor.equalsIgnoreCase("P") || valor.equalsIgnoreCase("TRUE") || valor.equalsIgnoreCase("OBS")) status = "P";
+                            else if (valor.equalsIgnoreCase("F") || valor.equalsIgnoreCase("FALSE")) status = "F";
+                            else if (valor.equalsIgnoreCase("J") || valor.equalsIgnoreCase("FJ") || valor.equalsIgnoreCase("JUSTIFICADA")) status = "FJ";
+                        }
+                    }
+                    row.createCell(3 + dia).setCellValue(status);
+                }
             }
 
             workbook.write(out);
