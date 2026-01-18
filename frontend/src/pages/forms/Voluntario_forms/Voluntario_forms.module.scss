@@ -7,14 +7,14 @@
     justify-content: center;
 }
 
-.form{
+.form {
     display: flex;
     flex-direction: column;
     width: 80vw;
     height: auto;
 }
 
-.linha_voltar{
+.linha_voltar {
     margin-top: 1rem;
     width: 100%;
 }
@@ -25,11 +25,11 @@
     margin-left: -4px;
 }
 
-.title{
+.title {
     margin-top: 4vh;
 }
 
-.subtitle{
+.subtitle {
     margin-top: 0.5vh;
     font-size: 1rem;
 }
@@ -41,32 +41,32 @@
     margin-inline: 5vw;
 }
 
-.coluna{
-    width: 20rem;
+.coluna {
+    width: 22rem; // Aumentado um pouco para caber os novos inputs
 }
 
-.linha{
+.linha {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: end;
 }
 
-.linha > *{
-    width: 9rem;
+.linha > * {
+    width: 10.5rem; // Aumentado de 9rem para 10.5rem para caber "Assistente Social"
 }
 
-.label_qtd_clt_auto{
+.label_qtd_clt_auto {
     padding-top: 1rem;
 }
 
-.cadastrar{
+.cadastrar {
     align-self: end;
     margin-block: 1rem;
     margin-right: 5vw;
 }
 
-.label_select{
+.label_select {
     margin-top: 0.7rem;
     color: black;
     font-family: inherit;
@@ -75,36 +75,36 @@
     font-size: 0.9rem;
 }
 
-.select{
+.select {
     border-radius: 7px;
     border: solid 2px black;
     font-family: inherit;
     height: 2rem;
     background-color: white;
     padding: 0.5rem;
-    font-size: 0.70rem;
+    font-size: 0.8rem; // Fonte levemente maior para leitura
     margin-top: 0.3rem;
-    width: 8rem;
+    width: 100%; // Mudado para 100% para ocupar o espaço do pai (.linha > *)
 }
 
-.sublabel_select{
+.sublabel_select {
     display: flex;
     flex-direction: row;
 }
 
-.asterisco{
+.asterisco {
     color: red;
     font-size: 0.5rem;
     margin-left: 0.2rem;
 }
 
-.turnos{
+.turnos {
     margin-top: 1rem;
     margin-left: 5vw;
     width: 30rem;
 }
 
-.container{
+.container {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
@@ -112,16 +112,16 @@
     gap: 1vw;
 }
 
-.dia{
+.dia {
     width: 5rem;
 }
 
-.label_turnos{
+.label_turnos {
     display: flex;
     flex-direction: row;
 }
 
-.label_select_semana{
+.label_select_semana {
     margin-top: 0.7rem;
     color: black;
     font-family: inherit;
@@ -130,7 +130,7 @@
     font-size: 0.9rem;
 }
 
-.select_semana{
+.select_semana {
     border-radius: 7px;
     border: solid 2px black;
     font-family: inherit;
@@ -139,9 +139,10 @@
     padding: 0.5rem;
     font-size: 0.70rem;
     margin-top: 0.3rem;
+    width: 100%;
 }
 
-.sublabel_select_semana{
+.sublabel_select_semana {
     display: flex;
     flex-direction: row;
 }
@@ -157,8 +158,10 @@
     background-color: #fbecec;
 }
 
-@media (max-width: $size-h){
-    .form{
+// --- RESPONSIVIDADE ---
+
+@media (max-width: $size-h) {
+    .form {
         width: 70vw;
     }
 
@@ -167,27 +170,28 @@
         align-items: center;
     }
 
-    .coluna{
+    .coluna {
         width: 100%;
     }
 
-    .subtitle{
+    .subtitle {
         margin-top: 2vh;
     }
 
-    .turnos{
+    .turnos {
         width: auto;
         margin-inline: 5vw;
     }
 }
 
-@media (max-width: $size-c){
-    .form{
+@media (max-width: $size-c) {
+    .form {
         width: 90vw;
     }
 }
 
-@media (max-width: 100px) {
+// Corrigi o valor de 100px (que é muito pequeno) para 600px para pegar celulares
+@media (max-width: 600px) {
     .voltar {
         margin-top: 4vh;
         margin-left: 7vw;
@@ -213,26 +217,29 @@
     }
 
     .coluna {
-        font-size: 0.5rem;
+        font-size: 0.8rem;
+        width: 100%; // Garante que a coluna ocupe a largura no mobile
     }
 
     .linha {
         width: 100%;
+        flex-wrap: wrap; // Permite quebrar linha em telas muito pequenas
+        gap: 1rem;
     }
 
-    .linha>* {
-        width: auto;
+    .linha > * {
+        width: 100%; // Inputs ocupam largura total no mobile
     }
 
-    .label_select{
+    .label_select {
         font-size: 0.8rem;
     }
 
-    .turnos{
+    .turnos {
         align-self: center;
         margin: 0;
         margin-top: 1rem;
-        width: 20rem;
+        width: 90%; // Ajuste de largura
     }
 
     .sublabel_select_semana {
@@ -243,20 +250,17 @@
         font-size: 0.7rem;
     }
 
-    .container{
+    .container {
         flex-wrap: wrap;
         gap: 1rem;
-        justify-content:flex-start;
+        justify-content: flex-start;
     }
 
-    .cadastrar{
+    .cadastrar {
         display: flex;
         width: 100%;
         align-self: center;
-        justify-content: end;
-        margin: 0;
-        margin-right: 4rem;
-        margin-top: 1rem;
-        margin-bottom: 1rem;
+        justify-content: center; // Centraliza o botão no mobile
+        margin: 1rem 0;
     }
 }

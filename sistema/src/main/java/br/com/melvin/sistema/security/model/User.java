@@ -26,7 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class User implements UserDetails{
+public class User implements UserDetails {
     @Id 
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -42,14 +42,17 @@ public class User implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if     (this.role == UserRole.COOR)     return List.of( new SimpleGrantedAuthority("ROLE_COOR"));
-        else if(this.role == UserRole.PROF)     return List.of(new SimpleGrantedAuthority("ROLE_PROF"));
-        else if(this.role == UserRole.AUX)      return List.of(new SimpleGrantedAuthority("ROLE_AUX")); 
-        else if(this.role == UserRole.COZI)     return List.of(new SimpleGrantedAuthority("ROLE_COZI"));
-        else if(this.role == UserRole.ADM)      return List.of(new SimpleGrantedAuthority("ROLE_ADM"));
-        else if(this.role == UserRole.MARK)     return List.of(new SimpleGrantedAuthority("ROLE_MARK"));
-        else if(this.role == UserRole.ZELA)     return List.of(new SimpleGrantedAuthority("ROLE_ZELA"));
-        else                                    return List.of(new SimpleGrantedAuthority("ROLE_DIRE"));
+        // Mapeamento correto de todos os cargos para as Roles de Segurança
+        if (this.role == UserRole.COOR)      return List.of(new SimpleGrantedAuthority("ROLE_COOR"));
+        else if(this.role == UserRole.PROF)  return List.of(new SimpleGrantedAuthority("ROLE_PROF"));
+        else if(this.role == UserRole.AUX)   return List.of(new SimpleGrantedAuthority("ROLE_AUX")); 
+        else if(this.role == UserRole.COZI)  return List.of(new SimpleGrantedAuthority("ROLE_COZI"));
+        else if(this.role == UserRole.ADM)   return List.of(new SimpleGrantedAuthority("ROLE_ADM"));
+        else if(this.role == UserRole.MARK)  return List.of(new SimpleGrantedAuthority("ROLE_MARK"));
+        else if(this.role == UserRole.ZELA)  return List.of(new SimpleGrantedAuthority("ROLE_ZELA"));
+        else if(this.role == UserRole.PSICO) return List.of(new SimpleGrantedAuthority("ROLE_PSICO")); // Adicionado
+        else if(this.role == UserRole.ASSIST) return List.of(new SimpleGrantedAuthority("ROLE_ASSIST")); // Adicionado (Correção Principal)
+        else                                 return List.of(new SimpleGrantedAuthority("ROLE_DIRE"));
     }
 
     @Override

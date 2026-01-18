@@ -147,7 +147,8 @@ function Config(){
 
             const voluntario = await get.voluntarioByMatricula(matricula);
 
-            let funcao = voluntario.data.funcao;
+            // Garante que a função venha sem espaços extras
+            let funcao = voluntario.data.funcao ? voluntario.data.funcao.trim() : "";
 
             let role;
             if(funcao === "coordenador"){
@@ -168,6 +169,8 @@ function Config(){
                 role = "ZELA";
             } else if(funcao === "psicologo") {
                 role = "PSICO";                 
+            } else if(funcao === "assistente") { // CORREÇÃO: Adicionado Assistente
+                role = "ASSIST";
             }
 
             const login = matricula;
@@ -179,18 +182,22 @@ function Config(){
             }
 
             console.log("role para registrar", role);
-            console.log("role do adm", Cookies.get('role'));
+            
             const response = await auth.registrar({login, password, role});
 
             if (response && response.status === 200) {
-                alert("voluntário registrado com sucesso!");
+                alert("Voluntário registrado com sucesso!");
+                // Limpar campos
+                setMatricula("");
+                setSenhaRegistrar("");
+                setRepetirSenhaRegistrar("");
             } else {
                 alert("Erro ao registrar voluntário.");
                 console.log("status", response.status);
             }
         } catch (error) {
             console.error("Erro ao registrar voluntário:", error);
-            alert("Erro ao registrar voluntário.");
+            alert("Erro ao registrar voluntário. Verifique se a matrícula existe.");
         }
     };
 
@@ -206,6 +213,9 @@ function Config(){
             console.log("response:", response);
             if (response && response.status === 200) {
                 alert("Senha alterada com sucesso!");
+                setNovaSenhaAlterar("");
+                setRepetirSenhaAlterar("");
+                setMatricula("");
             } else {
                 alert("Erro ao alterar a senha.");
             }
@@ -261,30 +271,26 @@ function Config(){
             const frequenciaVoluntarioExistente = await get.frequenciavoluntario(data, matricula);
 
             if (frequenciaVoluntarioExistente && frequenciaVoluntarioExistente.data) {
-                console.log('Tentando fazer PUT...');
                 try {
-                    
                     const response = await put.frequenciavoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });  
-                    console.log('PUT bem-sucedido:', response);
+                    alert("Presença atualizada com sucesso!");
                     return response;
                 } catch (error) {
-                    console.error('5011:Erro capturado no PUT:', error);
+                    console.error('Erro no PUT:', error);
                     throw error;
                 }
             } else {
-                console.log('Tentando fazer POST...');
                 try {
-                    console.log("Teste dados::", matricula, nome, data, justificativa, presenca_manha, presenca_tarde);
                     const response = await post.frequenciavoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });
-                    console.log('POST bem-sucedido:', response);
+                    alert("Presença marcada com sucesso!");
                     return response;
                 } catch (error) {
-                    console.error('5012:Erro capturado no POST:', error);
+                    console.error('Erro no POST:', error);
                     throw error;
                 }
             }
         } catch(error) {
-            console.error('5014:Erro ao marcar presença!', error);
+            console.error('Erro ao marcar presença!', error);
             alert('Erro ao marcar presença!');
         }
     }

@@ -12,7 +12,7 @@ import get from '../../../services/requests/get';
 import put from '../../../services/requests/put';
 import del from '../../../services/requests/delete';
 
-function Voluntario_forms({tipo}){
+function Voluntario_forms(){
     const {matricula} = useParams();
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
@@ -30,7 +30,7 @@ function Voluntario_forms({tipo}){
         bairro: '',
         cidade: '',
         rg: '',
-        funcao: tipo || '',
+        funcao: '', // Removido 'tipo', inicia vazio para obrigar seleção ou carregamento
         aulaExtra: '',
         salaUm: '',
         salaDois:'',
@@ -45,6 +45,9 @@ function Voluntario_forms({tipo}){
     useEffect(() => {
         const fetchVoluntario = async () => {
             setErrorMessage('');
+
+            // Se não tiver matrícula (modo criação), não busca nada
+            if (!matricula) return;
 
             try {
                 const voluntarioExistente = await get.voluntarioByMatricula(matricula);
@@ -64,7 +67,7 @@ function Voluntario_forms({tipo}){
                             bairro: response.data.bairro || '',
                             cidade: response.data.cidade || '',
                             rg: response.data.rg || '',
-                            funcao:  response.data.funcao || tipo || '',
+                            funcao:  response.data.funcao || '', // Removeu dependência de 'tipo'
                             aulaExtra: response.data.aulaExtra || '',
                             salaUm: response.data.salaUm || '',
                             salaDois: response.data.salaDois || '',
@@ -116,11 +119,18 @@ function Voluntario_forms({tipo}){
             case 'diretor':
                 novaRole = 'DIRE';
                 break;
+            case 'psicologo':
+                novaRole = 'PSICO';
+                break;
+            case 'assistente': // NOVO ROLE ADICIONADO
+                novaRole = 'ASSIST';
+                break;
             default:
                 novaRole = '';
         }
     
-        if (novaRole) {
+        // Apenas tenta alterar a role se já existir matrícula (edição)
+        if (novaRole && formDado.matricula) {
             try {
                 await put.alterarRole(formDado.matricula, novaRole);
                 setFormDado(prevData => ({
@@ -143,7 +153,10 @@ function Voluntario_forms({tipo}){
         }));
 
         if (name === 'funcao') {
-            handleRoleChange(value);
+            // Em modo de edição, chama a API de role. Em criação, só atualiza o estado.
+            if(matricula) {
+                handleRoleChange(value);
+            }
         }
     };
 
@@ -159,26 +172,21 @@ function Voluntario_forms({tipo}){
                 const confirmar = window.confirm('Você realmente deseja deletar este registro? Esta ação não pode ser desfeita.');
         
                 if (confirmar) {
-                    // Executar o método de deleção do discente
                     await del.voluntario(matricula);
-    
                     alert('Registro deletado com sucesso!');
-                    navigate(-1);
+                    navigate('/app/voluntarios'); // Redireciona para a lista geral
                     return;
                 } else {
-                    // Se o usuário cancelar a exclusão, apenas retorne
                     return;
                 }
             }
 
-            const voluntarioExistente = await get.voluntarioByMatricula(matricula);
-
-            if (voluntarioExistente && voluntarioExistente.data) {
+            // Verifica se é edição ou criação
+            if (matricula) {
                 console.log("Matrícula já existe. Atualizando dados...");
-                console.log("formDado", formDado);
                 response = await put.voluntario(formDado);
             } else {
-                console.log("Matrícula não existe. Criando novo aluno...");
+                console.log("Criando novo voluntário...");
                 response = await post.voluntario(formDado);
             }
 
@@ -186,7 +194,7 @@ function Voluntario_forms({tipo}){
                 throw new Error(response.error.message);
             }
             alert('Salvo com sucesso!');
-            navigate(-1);
+            navigate('/app/voluntarios'); // Redireciona para a lista geral
         } catch (error) {
             console.error('Erro ao salvar voluntário!', error);
             setErrorMessage(error.message || 'Ocorreu um erro ao salvar. Verifique os dados e tente novamente.');
@@ -351,6 +359,8 @@ function Voluntario_forms({tipo}){
                                     <option value="zelador">Zeladoria</option>
                                     <option value="cozinheiro">Cozinheiro</option>
                                     <option value="psicologo">Psicólogo</option>
+                                    {/* Opção Adicionada */}
+                                    <option value="assistente">Assistente Social</option>
                                 </select>
                             </label>
                             <label className={styles.label_select}>

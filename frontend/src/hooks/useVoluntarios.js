@@ -2,49 +2,24 @@ import { useState, useEffect, useMemo } from 'react';
 import Cookies from "js-cookie";
 import get from '../services/requests/get';
 
-export function useVoluntarios(tipo) {
+export function useVoluntarios() {
     const [voluntarios, setVoluntarios] = useState([]);
     const [busca, setBusca] = useState('');
     const [filtroEspera, setFiltroEspera] = useState(false);
+    
+    // NOVO: Estado para controlar qual função estamos vendo (padrão: todos)
+    const [filtroFuncao, setFiltroFuncao] = useState('todos'); 
+    
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isAdm, setIsAdm] = useState(false);
-    
-    // --- ATUALIZAÇÃO AQUI ---
-    const { title, prox_rota } = useMemo(() => {
-        const titulos = {
-            coordenador: "Coordenadores", 
-            professor: "Professores", 
-            auxiliar: "Auxiliares",
-            cozinheiro: "Cozinheiros", 
-            diretor: "Diretores", 
-            marketing: "Marketing",
-            administrador: "Administradores", 
-            zelador: "Zeladores",
-            psicologo: "Psicólogos",
-            assistente: "Assistentes Sociais"
-        };
-        const rotas = {
-            coordenador: "coordenadores", 
-            professor: "professores", 
-            auxiliar: "auxiliares",
-            cozinheiro: "cozinheiros", 
-            diretor: "diretores", 
-            marketing: "marketing",
-            administrador: "administradores", 
-            zelador: "zeladores",
-            psicologo: "psicologos",
-            assistente: "assistentes"
-        };
-        return { title: titulos[tipo] || "Voluntários", prox_rota: rotas[tipo] || tipo };
-    }, [tipo]);
-    // ------------------------
 
     useEffect(() => {
         setLoading(true);
         const userRole = Cookies.get('role');
         setIsAdm(userRole === "ADM");
 
+        // Busca TODOS os voluntários sem filtro de tipo na API
         get.voluntario()
             .then(response => {
                 setVoluntarios(response.data || []);
@@ -55,9 +30,9 @@ export function useVoluntarios(tipo) {
             .finally(() => setLoading(false));
     }, []);
 
+    // Lógica de busca por nome (Debounce)
     useEffect(() => {
         if (busca === '') {
-            // Recarrega a lista completa se a busca for limpa
             setLoading(true);
             get.voluntario().then(res => setVoluntarios(res.data || [])).finally(() => setLoading(false));
             return;
@@ -77,27 +52,25 @@ export function useVoluntarios(tipo) {
         return () => clearTimeout(timer);
     }, [busca]);
 
+    // Filtragem Inteligente (Função + Status)
     const voluntariosFiltrados = useMemo(() => {
         return voluntarios.filter((voluntario) => {
-            // Verifica se a função no banco bate com o tipo da página
-            if (voluntario.funcao !== tipo) {
+            // 1. Filtro do Dropdown
+            if (filtroFuncao !== 'todos' && voluntario.funcao !== filtroFuncao) {
                 return false;
             }
+            
+            // 2. Filtro de Status (Pendente/Ativo)
             const statusCondicao = filtroEspera ? voluntario.status === 'espera' : voluntario.status === 'true';
             return statusCondicao;
         });
-    }, [voluntarios, filtroEspera, tipo]);
+    }, [voluntarios, filtroEspera, filtroFuncao]);
 
     return {
-        busca,
-        setBusca,
-        filtroEspera,
-        setFiltroEspera,
+        busca, setBusca,
+        filtroEspera, setFiltroEspera,
+        filtroFuncao, setFiltroFuncao, // Exporta o controle do dropdown
         voluntariosFiltrados,
-        loading,
-        error,
-        isAdm,
-        title,
-        prox_rota
+        loading, error, isAdm
     };
 }

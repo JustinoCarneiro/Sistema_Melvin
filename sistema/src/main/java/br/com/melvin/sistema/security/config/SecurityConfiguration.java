@@ -46,34 +46,56 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                    // --- ROTAS PÚBLICAS (Login e leituras abertas) ---
                     .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/frequenciavoluntario/**", "/frequenciadiscente/**", "/imagens/**", "/embaixador/**", "/app/docs/imagens_embaixadores/**", "/app/docs/diarios/**", "/app/docs/imagens_avisos/**", "/aviso").permitAll()
                     .requestMatchers(HttpMethod.POST, "/auth/login", "/frequenciavoluntario/**", "/embaixador/**", "/amigomelvin").permitAll()
                     .requestMatchers(HttpMethod.PUT, "/frequenciavoluntario/**").permitAll()
 
+                    // --- ROTAS AUTENTICADAS GERAIS ---
                     .requestMatchers(HttpMethod.GET, "/auth/role_{matricula}").authenticated()
                     .requestMatchers(HttpMethod.GET, "/dashboard/**").authenticated()
                     .requestMatchers(HttpMethod.PUT, "/discente/{matricula}/avaliacoes").authenticated()
 
+                    // --- ROTAS ADMINISTRATIVAS (Registro de usuários, etc) ---
                     .requestMatchers(HttpMethod.POST,  "/auth/register", "/auth/alterar_senha/{matricula}/{senha}", "/imagens/**", "/aviso/**").hasRole("ADM")
 
+                    // --- CESTAS E IMAGENS ---
                     .requestMatchers(HttpMethod.POST, "/imagens/**", "/cestas").hasAnyRole("ADM", "DIRE")
+                    
+                    // --- VOLUNTÁRIOS (Cadastro restrito a ADM) ---
                     .requestMatchers(HttpMethod.POST, "/voluntario", "/aviso/**").hasRole("ADM")
-                    .requestMatchers(HttpMethod.POST,"/diarios/**", "/discente").hasAnyRole("ADM", "COOR", "DIRE", "ASSIST")
 
-                    .requestMatchers(HttpMethod.GET, "/amigomelvin", "/cestas").hasAnyRole("ADM", "DIRE")
+                    // --- DISCENTES / ALUNOS (Aqui entra o ASSIST) ---
+                    // Matricular Aluno: ADM, COOR, DIRE e agora ASSIST
+                    .requestMatchers(HttpMethod.POST, "/discente").hasAnyRole("ADM", "COOR", "DIRE", "ASSIST")
+                    // Ver Lista de Alunos: PROF, ADM, DIRE, COOR e agora ASSIST (e PSICO se necessário)
+                    .requestMatchers(HttpMethod.GET, "/discente").hasAnyRole("PROF", "ADM", "DIRE", "COOR", "ASSIST", "PSICO")
+                    // Ver Aluno Específico
+                    .requestMatchers(HttpMethod.GET, "/discente/matricula/{matricula}").hasAnyRole("PROF", "ADM", "DIRE", "COOR", "ASSIST", "PSICO")
+                    // Editar Aluno
+                    .requestMatchers(HttpMethod.PUT, "/discente").hasAnyRole("ADM", "COOR", "DIRE", "ASSIST")
+
+                    // --- DIÁRIOS (Mantido restrito) ---
+                    .requestMatchers(HttpMethod.POST,"/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
                     .requestMatchers(HttpMethod.GET, "/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
-                    .requestMatchers(HttpMethod.GET, "/discente").hasAnyRole("PROF", "ADM", "DIRE", "COOR", "ASSIST")
+                    .requestMatchers(HttpMethod.PUT, "/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
+                    .requestMatchers(HttpMethod.DELETE, "/diarios/**").hasAnyRole("ADM", "COOR")
+
+                    // --- LEITURA GERAL (Amigos Melvin, Cestas, Voluntários) ---
+                    .requestMatchers(HttpMethod.GET, "/amigomelvin", "/cestas").hasAnyRole("ADM", "DIRE")
                     .requestMatchers(HttpMethod.GET, "/voluntario").hasAnyRole("ADM", "DIRE", "COOR")
                     .requestMatchers(HttpMethod.GET, "/voluntario/matricula/{matricula}").permitAll()
 
+                    // --- EDIÇÃO GERAL ---
                     .requestMatchers(HttpMethod.PUT, "/amigomelvin", "/embaixador/**", "/imagens/**", "/cestas").hasAnyRole("ADM", "DIRE")
                     .requestMatchers(HttpMethod.PUT, "/voluntario", "/auth/alterar_role/{matricula}/{role}", "/aviso/**").hasRole("ADM")
-                    .requestMatchers(HttpMethod.PUT, "/diarios/**", "/discente").hasAnyRole("ADM", "COOR", "DIRE", "ASSIST")
 
+                    // --- DELEÇÃO ---
                     .requestMatchers(HttpMethod.DELETE, "/voluntario").hasRole("ADM")
                     .requestMatchers(HttpMethod.DELETE, "/cestas").hasAnyRole("ADM", "DIRE")
-                    .requestMatchers(HttpMethod.DELETE, "/diarios/**", "/frequenciavoluntario", "/discente").hasAnyRole("ADM", "COOR")
+                    .requestMatchers(HttpMethod.DELETE, "/frequenciavoluntario", "/discente").hasAnyRole("ADM", "COOR")
                     
+                    // --- FREQUÊNCIA DISCENTE ---
                     .requestMatchers(HttpMethod.POST, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
                     .requestMatchers(HttpMethod.PUT, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
                     .requestMatchers(HttpMethod.DELETE, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
@@ -91,11 +113,11 @@ public class SecurityConfiguration {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        int saltLength = 16; // comprimento do sal em bytes
-        int hashLength = 32; // comprimento do hash em bytes
-        int parallelism = 1; // grau de paralelismo
-        int memory = 65536; // memória utilizada em KiB
-        int iterations = 3; // número de iterações
+        int saltLength = 16; 
+        int hashLength = 32; 
+        int parallelism = 1; 
+        int memory = 65536; 
+        int iterations = 3; 
 
         return new Argon2PasswordEncoder(saltLength, hashLength, parallelism, memory, iterations);
     }

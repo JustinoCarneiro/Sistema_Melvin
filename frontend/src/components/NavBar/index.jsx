@@ -1,22 +1,18 @@
 import styles from './NavBar.module.scss';
 import { useState, useEffect } from 'react';
-import {IoClose, IoChevronDown, IoChevronUp, IoSettings, IoBasket} from 'react-icons/io5';
+import { IoClose, IoSettings, IoBasket } from 'react-icons/io5';
 import { PiStudentBold, PiChalkboardTeacher } from "react-icons/pi";
 import { GoAlertFill } from "react-icons/go";
 import { LuHeartHandshake } from "react-icons/lu";
 import { TbReportAnalytics, TbSocial } from "react-icons/tb";
 import { Link, useNavigate } from 'react-router-dom';
-
 import Cookies from "js-cookie";
-
-import SubNav from '../SubNav';
 
 function NavBar({close}){
     const navigate = useNavigate();
-
     const closeNavBar = () => {close(false)}
 
-    const [subnavvol, setSubNavVol] = useState(false);
+    // Estados de Permissão
     const [isDire, setIsDire] = useState(false);
     const [isProf, setIsProf] = useState(false);
     const [isAdm, setIsAdm] = useState(false);
@@ -34,10 +30,6 @@ function NavBar({close}){
         setIsAssist(userRole === 'ASSIST');
     }, []);
 
-    const handleVol = () =>{
-        setSubNavVol(!subnavvol);
-    }
-
     const handleRouteConfig = () => {
         navigate('/app/config');
     }
@@ -45,7 +37,11 @@ function NavBar({close}){
     return(
         <div className={styles.body}>
             <IoClose className={styles.close} onClick={closeNavBar}/>
+            
             <ul className={styles.nav}>
+                
+                {/* --- ALUNOS --- */}
+                {/* Visível para todos os perfis pedagógicos e administrativos */}
                 {(isAdm || isProf || isDire || isCoor || isPsico || isAssist) && (
                     <li> 
                         <Link to="/app/alunos" className={styles.link}>
@@ -55,6 +51,7 @@ function NavBar({close}){
                     </li>
                 )}
                 
+                {/* --- RELATÓRIOS --- */}
                 {(isAdm || isProf || isDire || isCoor || isPsico || isAssist) && (
                     <li> 
                         <Link to="/app/relatorios" className={styles.link}>
@@ -64,16 +61,18 @@ function NavBar({close}){
                     </li>
                 )}
 
+                {/* --- VOLUNTÁRIOS (Atualizado) --- */}
+                {/* Agora é um link único, sem submenu */}
                 {(isAdm || isDire || isCoor) && (
-                    <>
-                        <li onClick={handleVol} className={styles.link}> 
+                    <li> 
+                        <Link to="/app/voluntarios" className={styles.link}>
                             <PiChalkboardTeacher className={styles.icon}/> 
                             <p>Voluntários</p> 
-                            {subnavvol ? <IoChevronUp className={styles.seta}/> : <IoChevronDown className={styles.seta}/>}
-                        </li>
-                        {subnavvol && <SubNav tipo="voluntários"/>}
-                    </>
+                        </Link>
+                    </li>
                 )}
+
+                {/* --- OUTROS --- */}
                 {(isAdm || isDire) && (
                     <>
                         <li> 
@@ -96,6 +95,7 @@ function NavBar({close}){
                         </li>
                     </>
                 )}
+
                 {isAdm && (
                     <li> 
                         <Link to="/app/avisos" className={styles.link}>
@@ -105,6 +105,7 @@ function NavBar({close}){
                     </li>
                 )}
             </ul>
+
             <IoSettings className={styles.config} onClick={handleRouteConfig}/>
         </div>
     )

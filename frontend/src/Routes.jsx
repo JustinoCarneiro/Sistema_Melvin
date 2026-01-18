@@ -16,9 +16,9 @@ import HomeApp from "./pages/HomeApp";
 import Registro from "./pages/Registro";
 import PrivateRoute from "./services/PrivateRoute";
 import Alunos from "./pages/lista/Alunos";
-import Voluntarios from "./pages/lista/Voluntarios";
+import Voluntarios from "./pages/lista/Voluntarios"; // Componente Unificado
 import AlunoForms from "./pages/forms/Aluno_forms";
-import VoluntarioForms from "./pages/forms/Voluntario_forms";
+import VoluntarioForms from "./pages/forms/Voluntario_forms"; // Componente Unificado
 import Aluno_frequencia from "./pages/frequencias/Aluno_frequencia";
 import Voluntario_frequencia from "./pages/frequencias/Voluntario_frequencia";
 import Config from "./pages/Config";
@@ -94,59 +94,42 @@ function AppContent() {
                     <Route path="/zela" element={<PrivateRoute element={HomeApp} role="ZELA" />} />
                     <Route path="/psico" element={<PrivateRoute element={HomeApp} role="PSICO" />} />
                     <Route path="/assist" element={<PrivateRoute element={HomeApp} role="ASSIST" />} />
+                    
                     <Route path="/registro" element={ <Registro/> } />
 
+                    {/* --- ALUNOS --- */}
                     <Route path="/alunos" element={ <Alunos/> } />
-                    <Route path="/voluntario/coordenadores" element={ <Voluntarios tipo="coordenador"/> } />
-                    <Route path="/voluntario/professores" element={ <Voluntarios tipo="professor"/> } />
-                    <Route path="/voluntario/auxiliares" element={ <Voluntarios tipo="auxiliar"/> } />
-                    <Route path="/voluntario/cozinheiros" element={ <Voluntarios tipo="cozinheiro"/> } />
-                    <Route path="/voluntario/diretoria" element={ <Voluntarios tipo="diretor"/> } />
-                    <Route path="/voluntario/administracao" element={ <Voluntarios tipo="administrador"/> } />
-                    <Route path="/voluntario/marketing" element={ <Voluntarios tipo="marketing"/> } />
-                    <Route path="/voluntario/zeladoria" element={ <Voluntarios tipo="zelador"/> } />
-                    <Route path="/voluntario/psicologos" element={<Voluntarios tipo="psicologo" />} />
-                    <Route path="/voluntario/assistentes" element={<Voluntarios tipo="assistente" />} />
+                    <Route path="/aluno/criar" element={<AlunoForms />} />
+                    <Route path="/aluno/editar/:matricula" element={<AlunoForms/>} />
+
+                    {/* --- VOLUNTÁRIOS (ROTAS UNIFICADAS) --- */}
+                    {/* Lista única com filtro */}
+                    <Route path="/voluntarios" element={ <Voluntarios/> } />
+                    
+                    {/* Formulário único de Criação */}
+                    <Route path="/voluntario/criar" element={ <VoluntarioForms/> } />
+                    
+                    {/* Formulário único de Edição */}
+                    <Route path="/voluntario/editar/:matricula" element={ <VoluntarioForms/> } />
+                    {/* -------------------------------------- */}
 
                     <Route path="/embaixadores" element={ <EmbaixadoresApp/> }/>
                     <Route path="/amigosmelvin" element={ <AmigosMelvinApp/> }/>
                     <Route path="/avisos" element={<Avisos/>}/>
                     <Route path="/cestas" element={<Cestas/>}/>
 
-                    <Route path="/aluno/criar" element={<AlunoForms />} />
-                    <Route path="/voluntario/criar/coordenador" element={<VoluntarioForms tipo="coordenador"/>} />
-                    <Route path="/voluntario/criar/professor" element={<VoluntarioForms tipo="professor"/>} />
-                    <Route path="/voluntario/criar/auxiliar" element={<VoluntarioForms tipo="auxiliar"/>} />
-                    <Route path="/voluntario/criar/cozinheiro" element={<VoluntarioForms tipo="cozinheiro"/>} />
-                    <Route path="/voluntario/criar/diretor" element={ <VoluntarioForms tipo="diretor"/> } />
-                    <Route path="/voluntario/criar/administrador" element={ <VoluntarioForms tipo="administrador"/> } />
-                    <Route path="/voluntario/criar/marketing" element={ <VoluntarioForms tipo="marketing"/> } />
-                    <Route path="/voluntario/criar/zelador" element={ <VoluntarioForms tipo="zelador"/> } />
-                    <Route path="/voluntario/criar/psicologo" element={ <VoluntarioForms tipo="psicologo"/> } />
-                    <Route path="/voluntario/criar/assistente" element={ <VoluntarioForms tipo="assistente"/> } />
-
                     <Route path="/avisos/criar" element={<AvisoForms/>}/>
                     <Route path="/cestas/criar" element={<CestasForms/>}/>
 
                     <Route path="/amigomelvin/editar/:id" element={<AmigoMelvinForms/>} />
                     <Route path="/embaixador/editar/:id" element={<EmbaixadorForms/>} />
-                    <Route path="/aluno/editar/:matricula" element={<AlunoForms/>} />
-                    <Route path="/voluntario/coordenador/editar/:matricula" element={<VoluntarioForms tipo="coordenador"/>} />
-                    <Route path="/voluntario/professor/editar/:matricula" element={<VoluntarioForms tipo="professor"/>} />
-                    <Route path="/voluntario/auxiliar/editar/:matricula" element={<VoluntarioForms tipo="auxiliar"/>} />
-                    <Route path="/voluntario/cozinheiro/editar/:matricula" element={<VoluntarioForms tipo="cozinheiro"/>} />
-                    <Route path="/voluntario/diretor/editar/:matricula" element={<VoluntarioForms tipo="diretor"/>} />
-                    <Route path="/voluntario/administrador/editar/:matricula" element={<VoluntarioForms tipo="administrador"/>} />
-                    <Route path="/voluntario/marketing/editar/:matricula" element={<VoluntarioForms tipo="marketing"/>} />
-                    <Route path="/voluntario/zelador/editar/:matricula" element={<VoluntarioForms tipo="zelador"/>} />
-                    <Route path="/voluntario/psicologo/editar/:matricula" element={<VoluntarioForms tipo="psicologo"/>} />
-                    <Route path="/voluntario/assistente/editar/:matricula" element={<VoluntarioForms tipo="assistente"/>} />
-
+                    
                     <Route path="/avisos/editar/:id" element={<AvisoForms/>}/>
                     <Route path="/cestas/editar/:id" element={<CestasForms/>}/>
                     <Route path="/rendimento_aluno/:matricula" element={<Rendimento/>} />
                     <Route path="/relatorios" element={ <Relatorios/> } />
                     
+                    {/* --- FREQUÊNCIAS (MANTIDAS INDIVIDUAIS POR ENQUANTO) --- */}
                     <Route path="/frequencias/alunos" element={<Aluno_frequencia />} />
                     <Route path="/voluntario/frequencias/coordenadores" element={<Voluntario_frequencia tipo="coordenador"/>} />
                     <Route path="/voluntario/frequencias/professores" element={<Voluntario_frequencia tipo="professor"/>} />
@@ -156,6 +139,8 @@ function AppContent() {
                     <Route path="/voluntario/frequencias/administradores" element={<Voluntario_frequencia tipo="administrador"/>} />
                     <Route path="/voluntario/frequencias/marketing" element={<Voluntario_frequencia tipo="marketing"/>} />
                     <Route path="/voluntario/frequencias/zeladores" element={<Voluntario_frequencia tipo="zelador"/>} />
+                    <Route path="/voluntario/frequencias/psicologos" element={<Voluntario_frequencia tipo="psicologo"/>} />
+                    {/* Frequência do Assistente (para ADM/DIRE controlar) */}
                     <Route path="/voluntario/frequencias/assistentes" element={<Voluntario_frequencia tipo="assistente"/>} />
 
                     <Route path="/config" element={<Config />} />

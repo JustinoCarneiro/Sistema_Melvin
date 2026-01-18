@@ -30,7 +30,7 @@ function Alunos() {
         isCoor,
         isDire,
         isPsico,
-        isAssist, // Perfil do psicólogo já vem do hook
+        isAssist, // Certifique-se de que o hook useAlunos atualizado está retornando isso
         salasDisponiveis
     } = useAlunos();
 
@@ -105,7 +105,8 @@ function Alunos() {
                             ))}
                         </select>
                         
-                        {!isPsico && (
+                        {/* ALTERAÇÃO AQUI: Oculta botão se for Psico OU Assistente */}
+                        {!isPsico && !isAssist && (
                             <Botao
                                 nome="Frequências"
                                 corFundo="#7EA629"
