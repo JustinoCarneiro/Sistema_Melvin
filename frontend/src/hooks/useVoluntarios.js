@@ -10,24 +10,36 @@ export function useVoluntarios(tipo) {
     const [error, setError] = useState(null);
     const [isAdm, setIsAdm] = useState(false);
     
-    // AQUI ESTÁ A CORREÇÃO
+    // --- ATUALIZAÇÃO AQUI ---
     const { title, prox_rota } = useMemo(() => {
         const titulos = {
-            coordenador: "Coordenadores", professor: "Professores", auxiliar: "Auxiliares",
-            cozinheiro: "Cozinheiros", diretor: "Diretores", marketing: "Marketing",
-            administrador: "Administradores", zelador: "Zeladores",
-            psicologo: "Psicólogos" // Adicionado
+            coordenador: "Coordenadores", 
+            professor: "Professores", 
+            auxiliar: "Auxiliares",
+            cozinheiro: "Cozinheiros", 
+            diretor: "Diretores", 
+            marketing: "Marketing",
+            administrador: "Administradores", 
+            zelador: "Zeladores",
+            psicologo: "Psicólogos",
+            assistente: "Assistentes Sociais"
         };
         const rotas = {
-            coordenador: "coordenadores", professor: "professores", auxiliar: "auxiliares",
-            cozinheiro: "cozinheiros", diretor: "diretores", marketing: "marketing",
-            administrador: "administradores", zelador: "zeladores",
-            psicologo: "psicologos" // Adicionado
+            coordenador: "coordenadores", 
+            professor: "professores", 
+            auxiliar: "auxiliares",
+            cozinheiro: "cozinheiros", 
+            diretor: "diretores", 
+            marketing: "marketing",
+            administrador: "administradores", 
+            zelador: "zeladores",
+            psicologo: "psicologos",
+            assistente: "assistentes"
         };
         return { title: titulos[tipo] || "Voluntários", prox_rota: rotas[tipo] || tipo };
     }, [tipo]);
+    // ------------------------
 
-    // O resto do hook permanece o mesmo
     useEffect(() => {
         setLoading(true);
         const userRole = Cookies.get('role');
@@ -67,6 +79,7 @@ export function useVoluntarios(tipo) {
 
     const voluntariosFiltrados = useMemo(() => {
         return voluntarios.filter((voluntario) => {
+            // Verifica se a função no banco bate com o tipo da página
             if (voluntario.funcao !== tipo) {
                 return false;
             }

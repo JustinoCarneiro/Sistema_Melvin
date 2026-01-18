@@ -58,17 +58,17 @@ public class SecurityConfiguration {
 
                     .requestMatchers(HttpMethod.POST, "/imagens/**", "/cestas").hasAnyRole("ADM", "DIRE")
                     .requestMatchers(HttpMethod.POST, "/voluntario", "/aviso/**").hasRole("ADM")
-                    .requestMatchers(HttpMethod.POST,"/diarios/**", "/discente").hasAnyRole("ADM", "COOR", "DIRE")
+                    .requestMatchers(HttpMethod.POST,"/diarios/**", "/discente").hasAnyRole("ADM", "COOR", "DIRE", "ASSIST")
 
                     .requestMatchers(HttpMethod.GET, "/amigomelvin", "/cestas").hasAnyRole("ADM", "DIRE")
                     .requestMatchers(HttpMethod.GET, "/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
-                    .requestMatchers(HttpMethod.GET, "/discente").hasAnyRole("PROF", "ADM", "DIRE", "COOR")
+                    .requestMatchers(HttpMethod.GET, "/discente").hasAnyRole("PROF", "ADM", "DIRE", "COOR", "ASSIST")
                     .requestMatchers(HttpMethod.GET, "/voluntario").hasAnyRole("ADM", "DIRE", "COOR")
                     .requestMatchers(HttpMethod.GET, "/voluntario/matricula/{matricula}").permitAll()
 
                     .requestMatchers(HttpMethod.PUT, "/amigomelvin", "/embaixador/**", "/imagens/**", "/cestas").hasAnyRole("ADM", "DIRE")
                     .requestMatchers(HttpMethod.PUT, "/voluntario", "/auth/alterar_role/{matricula}/{role}", "/aviso/**").hasRole("ADM")
-                    .requestMatchers(HttpMethod.PUT, "/diarios/**", "/discente").hasAnyRole("ADM", "COOR", "DIRE")
+                    .requestMatchers(HttpMethod.PUT, "/diarios/**", "/discente").hasAnyRole("ADM", "COOR", "DIRE", "ASSIST")
 
                     .requestMatchers(HttpMethod.DELETE, "/voluntario").hasRole("ADM")
                     .requestMatchers(HttpMethod.DELETE, "/cestas").hasAnyRole("ADM", "DIRE")

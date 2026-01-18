@@ -93,6 +93,7 @@ function AppContent() {
                     <Route path="/mark" element={<PrivateRoute element={HomeApp} role="MARK" />} />
                     <Route path="/zela" element={<PrivateRoute element={HomeApp} role="ZELA" />} />
                     <Route path="/psico" element={<PrivateRoute element={HomeApp} role="PSICO" />} />
+                    <Route path="/assist" element={<PrivateRoute element={HomeApp} role="ASSIST" />} />
                     <Route path="/registro" element={ <Registro/> } />
 
                     <Route path="/alunos" element={ <Alunos/> } />
@@ -105,6 +106,8 @@ function AppContent() {
                     <Route path="/voluntario/marketing" element={ <Voluntarios tipo="marketing"/> } />
                     <Route path="/voluntario/zeladoria" element={ <Voluntarios tipo="zelador"/> } />
                     <Route path="/voluntario/psicologos" element={<Voluntarios tipo="psicologo" />} />
+                    <Route path="/voluntario/assistentes" element={<Voluntarios tipo="assistente" />} />
+
                     <Route path="/embaixadores" element={ <EmbaixadoresApp/> }/>
                     <Route path="/amigosmelvin" element={ <AmigosMelvinApp/> }/>
                     <Route path="/avisos" element={<Avisos/>}/>
@@ -119,8 +122,9 @@ function AppContent() {
                     <Route path="/voluntario/criar/administrador" element={ <VoluntarioForms tipo="administrador"/> } />
                     <Route path="/voluntario/criar/marketing" element={ <VoluntarioForms tipo="marketing"/> } />
                     <Route path="/voluntario/criar/zelador" element={ <VoluntarioForms tipo="zelador"/> } />
-                    {/* ADICIONE A ROTA DE CRIAÇÃO PARA PSICÓLOGO */}
                     <Route path="/voluntario/criar/psicologo" element={ <VoluntarioForms tipo="psicologo"/> } />
+                    <Route path="/voluntario/criar/assistente" element={ <VoluntarioForms tipo="assistente"/> } />
+
                     <Route path="/avisos/criar" element={<AvisoForms/>}/>
                     <Route path="/cestas/criar" element={<CestasForms/>}/>
 
@@ -135,8 +139,9 @@ function AppContent() {
                     <Route path="/voluntario/administrador/editar/:matricula" element={<VoluntarioForms tipo="administrador"/>} />
                     <Route path="/voluntario/marketing/editar/:matricula" element={<VoluntarioForms tipo="marketing"/>} />
                     <Route path="/voluntario/zelador/editar/:matricula" element={<VoluntarioForms tipo="zelador"/>} />
-                    {/* ADICIONE A ROTA DE EDIÇÃO PARA PSICÓLOGO */}
                     <Route path="/voluntario/psicologo/editar/:matricula" element={<VoluntarioForms tipo="psicologo"/>} />
+                    <Route path="/voluntario/assistente/editar/:matricula" element={<VoluntarioForms tipo="assistente"/>} />
+
                     <Route path="/avisos/editar/:id" element={<AvisoForms/>}/>
                     <Route path="/cestas/editar/:id" element={<CestasForms/>}/>
                     <Route path="/rendimento_aluno/:matricula" element={<Rendimento/>} />
@@ -151,6 +156,7 @@ function AppContent() {
                     <Route path="/voluntario/frequencias/administradores" element={<Voluntario_frequencia tipo="administrador"/>} />
                     <Route path="/voluntario/frequencias/marketing" element={<Voluntario_frequencia tipo="marketing"/>} />
                     <Route path="/voluntario/frequencias/zeladores" element={<Voluntario_frequencia tipo="zelador"/>} />
+                    <Route path="/voluntario/frequencias/assistentes" element={<Voluntario_frequencia tipo="assistente"/>} />
 
                     <Route path="/config" element={<Config />} />
                     <Route path="/config/matriculasdesativadas/alunos" element={<AlunosDesativados/>} />

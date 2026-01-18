@@ -22,6 +22,7 @@ function NavBar({close}){
     const [isAdm, setIsAdm] = useState(false);
     const [isCoor, setIsCoor] = useState(false);
     const [isPsico, setIsPsico] = useState(false);
+    const [isAssist, setIsAssist] = useState(false);
 
     useEffect(() => {
         const userRole = Cookies.get('role');
@@ -30,6 +31,7 @@ function NavBar({close}){
         setIsAdm(userRole === "ADM");
         setIsCoor(userRole === "COOR");
         setIsPsico(userRole === 'PSICO');
+        setIsAssist(userRole === 'ASSIST');
     }, []);
 
     const handleVol = () =>{
@@ -44,7 +46,7 @@ function NavBar({close}){
         <div className={styles.body}>
             <IoClose className={styles.close} onClick={closeNavBar}/>
             <ul className={styles.nav}>
-                {(isAdm || isProf || isDire || isCoor || isPsico) && (
+                {(isAdm || isProf || isDire || isCoor || isPsico || isAssist) && (
                     <li> 
                         <Link to="/app/alunos" className={styles.link}>
                             <PiStudentBold className={styles.icon}/> 
@@ -53,8 +55,7 @@ function NavBar({close}){
                     </li>
                 )}
                 
-                {/* --- NOVO BOTÃO DE RELATÓRIOS --- */}
-                {(isAdm || isProf || isDire || isCoor || isPsico) && (
+                {(isAdm || isProf || isDire || isCoor || isPsico || isAssist) && (
                     <li> 
                         <Link to="/app/relatorios" className={styles.link}>
                             <TbReportAnalytics className={styles.icon}/> 
@@ -62,7 +63,6 @@ function NavBar({close}){
                         </Link>
                     </li>
                 )}
-                {/* ------------------------------- */}
 
                 {(isAdm || isDire || isCoor) && (
                     <>

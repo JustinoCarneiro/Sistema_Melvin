@@ -17,6 +17,7 @@ export function useAlunos() {
     const [isCoor, setIsCoor] = useState(false);
     const [isDire, setIsDire] = useState(false);
     const [isPsico, setIsPsico] = useState(false);
+    const [isAssist, setIsAssist] = useState(false);
     const [salasDisponiveis, setSalasDisponiveis] = useState([]);
 
     // Efeito para buscar dados iniciais (permissões e salas)
@@ -30,14 +31,16 @@ export function useAlunos() {
                 const isUserCoor = userRole === 'COOR';
                 const isUserDire = userRole === 'DIRE';
                 const isUserPsico = userRole === 'PSICO';
+                const isUserAssist = userRole === 'ASSIST';
 
                 setIsAdm(isUserAdm);
                 setIsCoor(isUserCoor);
                 setIsDire(isUserDire);
                 setIsPsico(isUserPsico);
+                setIsAssist(isUserAssist);
 
                 // Lógica de visualização de salas
-                if (isUserAdm || isUserCoor || isUserDire || isUserPsico) {
+                if (isUserAdm || isUserCoor || isUserDire || isUserPsico || isAssist) {
                     // Adm, Coor, Dire e Psico veem todas as salas
                     setSalasDisponiveis(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
                 } else {
@@ -105,13 +108,11 @@ export function useAlunos() {
         alunosFiltrados,
         loading,
         error,
-        // --- INÍCIO DAS ALTERAÇÕES ---
-        // Exporta os novos estados de perfil
         isAdm,
         isCoor,
         isDire,
         isPsico,
-        // --- FIM DAS ALTERAÇÕES ---
+        isAssist,
         salasDisponiveis
     };
 }

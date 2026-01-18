@@ -29,7 +29,8 @@ function Alunos() {
         isAdm,
         isCoor,
         isDire,
-        isPsico, // Perfil do psicólogo já vem do hook
+        isPsico,
+        isAssist, // Perfil do psicólogo já vem do hook
         salasDisponiveis
     } = useAlunos();
 
@@ -71,7 +72,7 @@ function Alunos() {
                         />
                     </div>
                     <div className={styles.botoes}>
-                        {(isAdm || isCoor || isDire) && (
+                        {(isAdm || isCoor || isDire || isAssist || isPsico) && (
                             <>
                                 <select
                                     className={styles.select_sala}
@@ -114,7 +115,7 @@ function Alunos() {
                             />
                         )}
 
-                        {(isAdm || isCoor || isDire) && (
+                        {(isAdm || isCoor || isDire || isAssist) && (
                             <Botao 
                                 nome={exporting ? "Exportando..." : "Exportar"}
                                 corFundo="#217346"
@@ -135,10 +136,7 @@ function Alunos() {
                             <th>Matrícula</th>
                             <th>Nome</th>
                             <th>Responsável</th>
-                            {/* --- INÍCIO DA ALTERAÇÃO --- */}
-                            {/* Adicionado isPsico à condição */}
-                            {(isAdm || isCoor || isDire || isPsico) && <th className={styles.edicao}>Edição</th>}
-                            {/* --- FIM DA ALTERAÇÃO --- */}
+                            {(isAdm || isCoor || isDire || isPsico || isAssist) && <th className={styles.edicao}>Edição</th>}
                         </tr>
                     </thead>
                     <tbody className={styles.tbody}>
@@ -147,9 +145,7 @@ function Alunos() {
                                 <td>{aluno.matricula}</td>
                                 <td>{aluno.nome}</td>
                                 <td>{aluno.nome_pai || aluno.nome_mae || ''}</td>
-                                {/* --- INÍCIO DA ALTERAÇÃO --- */}
-                                {/* Adicionado isPsico à condição */}
-                                {(isAdm || isCoor || isDire || isPsico) && (
+                                {(isAdm || isCoor || isDire || isPsico || isAssist) && (
                                     <td className={styles.edicao}>
                                         <MdOutlineModeEdit
                                             className={styles.icon_editar}
@@ -157,10 +153,9 @@ function Alunos() {
                                         />
                                     </td>
                                 )}
-                                {/* --- FIM DA ALTERAÇÃO --- */}
                             </tr>
                         ))}
-                        {(isAdm || isCoor || isDire) && (
+                        {(isAdm || isCoor || isDire || isAssist) && (
                             <tr className={styles.plus} onClick={() => navigate("/app/aluno/criar")}>
                                 <td colSpan="4"><FaPlus className={styles.icon_plus} /></td>
                             </tr>

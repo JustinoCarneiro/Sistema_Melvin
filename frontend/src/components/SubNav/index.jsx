@@ -35,6 +35,7 @@ function SubNav({ tipo }) {
                                 <li><Link to="/app/voluntario/marketing" className={styles.link}>Marketing</Link></li>
                                 <li><Link to="/app/voluntario/zeladoria" className={styles.link}>Zeladoria</Link></li>
                                 <li><Link to="/app/voluntario/psicologos" className={styles.link}>Psicólogos</Link></li>
+                                <li><Link to="/app/voluntario/assistentes" className={styles.link}>Assistentes Sociais</Link></li>
                             </>
                         )}
                     </ul>
