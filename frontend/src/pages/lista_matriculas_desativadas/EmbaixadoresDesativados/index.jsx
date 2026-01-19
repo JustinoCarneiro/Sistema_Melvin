@@ -3,31 +3,40 @@ import styles from "./EmbaixadoresDesativados.module.scss";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import { IoMdSearch,IoMdArrowRoundBack} from "react-icons/io";
+import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
 
 import get from "../../../services/requests/get";
 
-function EmbaixadoresApp(){
+function EmbaixadoresDesativados(){
     const [busca, setBusca] = useState('');
     const [embaixadores, setEmbaixadores] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     const fetchEmbaixadores = async () => {
+        setLoading(true);
         try {
             const response = await get.embaixadores();
             const dados = response.data;
 
             if (Array.isArray(dados)) {
-                const embaixadoresDesativos = dados.filter(embaixador => embaixador.status === false);
+                // Filtra status false (booleano ou string 'false')
+                const embaixadoresDesativos = dados.filter(embaixador => 
+                    embaixador.status === false || String(embaixador.status) === 'false'
+                );
                 setEmbaixadores(embaixadoresDesativos);
             } else {
-                console.error("6003: Formato inesperado no response:", response);
+                console.error("6003: Formato inesperado:", response);
+                setError("Erro ao carregar dados.");
             }
 
         } catch (error) {
-            console.error("6003: Erro ao obter embaixadores!", error);
-            alert('Erro ao obter embaixadores!');
+            console.error("6003: Erro na requisição:", error);
+            setError("Não foi possível buscar a lista de embaixadores.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -55,57 +64,75 @@ function EmbaixadoresApp(){
 
     return(
         <div className={styles.body}>
-            <div className={styles.linha_voltar}>
-                <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
-            </div>
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <h2 className={styles.title}>Embaixadores desativados</h2>
-                    <div className={styles.container_busca}>
-                        <IoMdSearch className={styles.icon_busca}/>
-                        <input 
-                            className={styles.busca} 
-                            type='text'
-                            placeholder='Buscar'
-                            name='busca'
-                            value={busca}
-                            onChange={handleBuscaChange}
-                        />
+                    <div className={styles.titleGroup}>
+                        <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
+                        <h2 className={styles.title}>Embaixadores Desativados</h2>
+                    </div>
+                    
+                    <div className={styles.filters}>
+                        <div className={styles.container_busca}>
+                            <IoMdSearch className={styles.icon_busca}/>
+                            <input 
+                                className={styles.busca} 
+                                type='text'
+                                placeholder='Buscar por nome, insta ou email...'
+                                name='busca'
+                                value={busca}
+                                onChange={handleBuscaChange}
+                            />
+                        </div>
                     </div>
                 </div>
-                <table className={styles.table}>
-                    <thead className={styles.thead}>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Instagram</th>
-                            <th>Contato</th>
-                            <th>Email</th>
-                            <th className={styles.edicao}>Edição</th>
-                        </tr>
-                    </thead>
-                    <tbody className={styles.tbody}>
-                        {embaixadoresFiltradosBusca
-                            .map((embaixador) => (
-                            <React.Fragment key={embaixador.id}>
-                                <tr key={embaixador.id}>
-                                    <td>{embaixador.nome}</td>
-                                    <td>{embaixador.instagram}</td>
-                                    <td>{embaixador.contato}</td>
-                                    <td>{embaixador.email}</td>
-                                    <td className={styles.edicao}>
-                                        <MdOutlineModeEdit 
-                                            className={styles.icon_editar}
-                                            onClick={()=>handleEditClick(embaixador.id)}
-                                        />
-                                    </td>
+
+                {error && <div style={{color: '#C70039', textAlign: 'center', padding: '0.5rem'}}>{error}</div>}
+
+                <div className={styles.tableResponsive}>
+                    <table className={styles.table}>
+                        <thead className={styles.thead}>
+                            <tr className={styles.tr_head}>
+                                <th>Nome</th>
+                                <th>Instagram</th>
+                                <th>Contato</th>
+                                <th>Email</th>
+                                <th className={styles.edicao}>Edição</th>
+                            </tr>
+                        </thead>
+                        <tbody className={styles.tbody}>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan="5" className={styles.empty}>Carregando...</td>
                                 </tr>
-                            </React.Fragment>
-                        ))}
-                    </tbody>
-                </table>
+                            ) : (
+                                embaixadoresFiltradosBusca.length > 0 ? (
+                                    embaixadoresFiltradosBusca.map((embaixador) => (
+                                        <tr key={embaixador.id} className={styles.tr_body}>
+                                            <td data-label="Nome">{embaixador.nome}</td>
+                                            <td data-label="Instagram">{embaixador.instagram}</td>
+                                            <td data-label="Contato">{embaixador.contato}</td>
+                                            <td data-label="Email">{embaixador.email}</td>
+                                            <td className={styles.edicao} data-label="Ações">
+                                                <MdOutlineModeEdit 
+                                                    className={styles.icon_editar}
+                                                    onClick={()=>handleEditClick(embaixador.id)}
+                                                    title="Editar Embaixador"
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" className={styles.empty}>Nenhum embaixador desativado encontrado.</td>
+                                    </tr>
+                                )
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     )
 }
 
-export default EmbaixadoresApp;
+export default EmbaixadoresDesativados;

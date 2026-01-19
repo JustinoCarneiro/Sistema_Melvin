@@ -10,25 +10,32 @@ import get from '../../../services/requests/get';
 function AlunosDesativados(){
     const [busca, setBusca] = useState('');
     const [alunos, setAlunos] = useState([]);
+    const [loading, setLoading] = useState(true); // Novo estado
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchAlunos = async () => {
+            setLoading(true);
             try {
                 const response = await get.discente();
                 const objetoDados = response.data;
 
                 if (Array.isArray(objetoDados)) {
-                    const alunosAtivos = objetoDados.filter(aluno => aluno.status === 'false');
-                    setAlunos(alunosAtivos);
+                    // Filtra apenas os desativados (status string 'false' ou booleano false)
+                    const alunosDesativados = objetoDados.filter(aluno => 
+                        String(aluno.status) === 'false'
+                    );
+                    setAlunos(alunosDesativados);
                 } else {
-                    console.error("5003:Formato inesperado no response:", response);
-                    alert('Erro ao obter objeto! Formato inesperado de resposta.');
+                    console.error("5003:Formato inesperado:", response);
+                    setError("Erro ao carregar dados.");
                 }
-                
             } catch (error) {
-                console.error("5004:Erro ao obter objeto!", error);
-                alert('Erro ao obter objeto!');
+                console.error("5004:Erro na requisição:", error);
+                setError("Não foi possível buscar os alunos.");
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -55,49 +62,70 @@ function AlunosDesativados(){
 
     return(
         <div className={styles.body}>
-            <div className={styles.linha_voltar}>
-                <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
-            </div>
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <h2 className={styles.title}>Alunos desativados</h2>
-                    <div className={styles.container_busca}>
-                        <IoMdSearch className={styles.icon_busca}/>
-                        <input 
-                            className={styles.busca} 
-                            type='text'
-                            placeholder='Buscar'
-                            name='busca'
-                            value={busca}
-                            onChange={handleBuscaChange}
-                        />
+                    <div className={styles.titleGroup}>
+                        <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
+                        <h2 className={styles.title}>Alunos Desativados</h2>
+                    </div>
+                    
+                    <div className={styles.filters}>
+                        <div className={styles.container_busca}>
+                            <IoMdSearch className={styles.icon_busca}/>
+                            <input 
+                                className={styles.busca} 
+                                type='text'
+                                placeholder='Buscar por nome ou matrícula...'
+                                name='busca'
+                                value={busca}
+                                onChange={handleBuscaChange}
+                            />
+                        </div>
                     </div>
                 </div>
-                <table className={styles.table}>
-                    <thead className={styles.thead}>
-                        <tr>
-                            <th>Matrícula</th>
-                            <th>Nome</th>
-                            <th>Responsável</th>
-                            <th className={styles.edicao}>Edição</th>
-                        </tr>
-                    </thead>
-                    <tbody className={styles.tbody}>
-                        {alunosFiltrados.map((aluno) => (
-                            <tr key={aluno.matricula}>
-                                <td>{aluno.matricula}</td>
-                                <td>{aluno.nome}</td>
-                                <td>{aluno.nome_pai || aluno.nome_mae || ''}</td>
-                                <td className={styles.edicao}>
-                                    <MdOutlineModeEdit 
-                                        className={styles.icon_editar}
-                                        onClick={()=>handleEditClick(aluno.matricula)}
-                                    />
-                                </td>
+
+                {error && <div style={{color: '#C70039', textAlign: 'center', padding: '0.5rem'}}>{error}</div>}
+
+                <div className={styles.tableResponsive}>
+                    <table className={styles.table}>
+                        <thead className={styles.thead}>
+                            <tr className={styles.tr_head}>
+                                <th>Matrícula</th>
+                                <th>Nome</th>
+                                <th>Responsável</th>
+                                <th className={styles.edicao}>Edição</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className={styles.tbody}>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan="4" className={styles.empty}>Carregando...</td>
+                                </tr>
+                            ) : (
+                                alunosFiltrados.length > 0 ? (
+                                    alunosFiltrados.map((aluno) => (
+                                        <tr key={aluno.matricula} className={styles.tr_body}>
+                                            <td data-label="Matrícula">{aluno.matricula}</td>
+                                            <td data-label="Nome">{aluno.nome}</td>
+                                            <td data-label="Responsável">{aluno.nome_pai || aluno.nome_mae || '-'}</td>
+                                            <td className={styles.edicao} data-label="Ações">
+                                                <MdOutlineModeEdit 
+                                                    className={styles.icon_editar}
+                                                    onClick={()=>handleEditClick(aluno.matricula)}
+                                                    title="Editar Aluno"
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="4" className={styles.empty}>Nenhum aluno desativado encontrado.</td>
+                                    </tr>
+                                )
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     )

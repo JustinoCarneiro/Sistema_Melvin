@@ -10,53 +10,42 @@ import get from '../../../services/requests/get';
 function VoluntariosDesativados(){
     const [busca, setBusca] = useState('');
     const [voluntarios, setVoluntarios] = useState([]);
-    const [funcao, setFuncao] = useState('');
+    const [funcao, setFuncao] = useState('todos'); // Padrão 'todos'
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchVoluntarios = async () => {
+            setLoading(true);
             try {
                 const response = await get.voluntario();
                 const objetoDados = response.data;
 
                 if (Array.isArray(objetoDados)) {
-                    const voluntariosAtivos = objetoDados.filter(voluntario => voluntario.status === 'false');
-                    setVoluntarios(voluntariosAtivos);
+                    // Filtra status false (string ou bool)
+                    const voluntariosDesativados = objetoDados.filter(voluntario => 
+                        String(voluntario.status) === 'false' || voluntario.status === false
+                    );
+                    setVoluntarios(voluntariosDesativados);
                 } else {
-                    console.error("5015:Formato inesperado no response:", response);
-                    alert('Erro ao obter objeto! Formato inesperado de resposta.');
+                    console.error("5015:Formato inesperado:", response);
+                    setError("Erro ao carregar dados.");
                 }
             } catch (error) {
-                console.error("5016:Erro ao obter objeto!", error);
-                alert('Erro ao obter objeto!');
+                console.error("5016:Erro na requisição:", error);
+                setError("Não foi possível buscar os voluntários.");
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchVoluntarios();
     }, []);
 
-    let title;
-
-    if(funcao === "coordenador"){
-        title = "Coordenadores";
-    } else if(funcao === "professor"){
-        title = "Professores";
-    } else if(funcao === "auxiliar"){
-        title = "Auxiliares";
-    } else if(funcao === "cozinheiro"){
-        title = "Cozinheiros";
-    } else if(funcao === "diretor"){
-        title = "Diretores";
-    } else if(funcao === "administrador"){
-        title = "Administradores";
-    } else if(funcao === "marketing"){
-        title = "Marketing";
-    } else if(funcao === "zelador"){
-        title = "Zeladores";
-    }
-
     const handleEditClick = (matricula) => {
-        navigate(`/app/voluntario/${funcao}/editar/${matricula}`);
+        // Redireciona para a edição geral, ou específica se necessário
+        navigate(`/app/voluntario/editar/${matricula}`);
     };
 
     const handleBuscaChange = (e) => {
@@ -67,73 +56,106 @@ function VoluntariosDesativados(){
         setFuncao(e.target.value);
     };
 
-    const voluntariosFiltradosBusca = voluntarios.filter((voluntario) => {
+    // Formata o nome da função para exibição (Primeira letra maiúscula)
+    const formatFuncao = (func) => {
+        if(!func) return '-';
+        return func.charAt(0).toUpperCase() + func.slice(1);
+    }
+
+    const voluntariosFiltrados = voluntarios.filter((voluntario) => {
         const termoBusca = busca.toLowerCase();
-        return (
+        const matchBusca = (
             voluntario.matricula.toString().includes(termoBusca) ||
             voluntario.nome.toLowerCase().includes(termoBusca)   ||
             (voluntario.email || '').toLowerCase().includes(termoBusca)
         );
+
+        const matchFuncao = funcao === 'todos' || voluntario.funcao === funcao;
+
+        return matchBusca && matchFuncao;
     });
 
     return(
         <div className={styles.body}>
-            <div className={styles.linha_voltar}>
-                <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
-            </div>
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <h2 className={styles.title}>{title}</h2>
-                    <div className={styles.container_busca}>
-                        <IoMdSearch className={styles.icon_busca}/>
-                        <input 
-                            className={styles.busca} 
-                            type='text'
-                            placeholder='Buscar'
-                            name='busca'
-                            value={busca}
-                            onChange={handleBuscaChange}
-                        />
+                    <div className={styles.titleGroup}>
+                        <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
+                        <h2 className={styles.title}>Voluntários Desativados</h2>
                     </div>
-                    <select className={styles.select_funcao} value={funcao} onChange={handleFuncaoChange}>
-                        <option value="" hidden>Selecione...</option>
-                        <option value="coordenador">Coordenação</option>
-                        <option value="professor">Docência</option>
-                        <option value="auxiliar">Auxílio</option>
-                        <option value="cozinheiro">Cozinha</option>
-                        <option value="diretor">Diretoria</option>
-                        <option value="marketing">Marketing</option>
-                        <option value="zelador">Zeladoria</option>
-                        <option value="administrador">Administração</option>
-                    </select>
+                    
+                    <div className={styles.filters}>
+                        <div className={styles.container_busca}>
+                            <IoMdSearch className={styles.icon_busca}/>
+                            <input 
+                                className={styles.busca} 
+                                type='text'
+                                placeholder='Buscar por nome ou matrícula...'
+                                name='busca'
+                                value={busca}
+                                onChange={handleBuscaChange}
+                            />
+                        </div>
+                        <select className={styles.select_sala} value={funcao} onChange={handleFuncaoChange}>
+                            <option value="todos">Todas Funções</option>
+                            <option value="coordenador">Coordenação</option>
+                            <option value="professor">Docência</option>
+                            <option value="auxiliar">Auxílio</option>
+                            <option value="cozinheiro">Cozinha</option>
+                            <option value="diretor">Diretoria</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="zelador">Zeladoria</option>
+                            <option value="administrador">Administração</option>
+                            <option value="psicologo">Psicologia</option>
+                            <option value="assistente">Assistência Social</option>
+                        </select>
+                    </div>
                 </div>
-                <table className={styles.table}>
-                    <thead className={styles.thead}>
-                        <tr>
-                            <th>Matrícula</th>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th className={styles.edicao}>Edição</th>
-                        </tr>
-                    </thead>
-                    <tbody className={styles.tbody}>
-                        {voluntariosFiltradosBusca
-                            .filter(voluntario => voluntario.funcao === funcao)
-                            .map((voluntario) => (
-                            <tr key={voluntario.matricula}>
-                                <td>{voluntario.matricula}</td>
-                                <td>{voluntario.nome}</td>
-                                <td>{voluntario.email}</td>
-                                <td className={styles.edicao}>
-                                    <MdOutlineModeEdit 
-                                        className={styles.icon_editar}
-                                        onClick={()=>handleEditClick(voluntario.matricula)}
-                                    />
-                                </td>
+
+                {error && <div style={{color: '#C70039', textAlign: 'center', padding: '0.5rem'}}>{error}</div>}
+
+                <div className={styles.tableResponsive}>
+                    <table className={styles.table}>
+                        <thead className={styles.thead}>
+                            <tr className={styles.tr_head}>
+                                <th>Matrícula</th>
+                                <th>Nome</th>
+                                <th>Função</th>
+                                <th>Email</th>
+                                <th className={styles.edicao}>Edição</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className={styles.tbody}>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan="5" className={styles.empty}>Carregando...</td>
+                                </tr>
+                            ) : (
+                                voluntariosFiltrados.length > 0 ? (
+                                    voluntariosFiltrados.map((voluntario) => (
+                                        <tr key={voluntario.matricula} className={styles.tr_body}>
+                                            <td data-label="Matrícula">{voluntario.matricula}</td>
+                                            <td data-label="Nome">{voluntario.nome}</td>
+                                            <td data-label="Função">{formatFuncao(voluntario.funcao)}</td>
+                                            <td data-label="Email">{voluntario.email}</td>
+                                            <td className={styles.edicao} data-label="Ações">
+                                                <MdOutlineModeEdit 
+                                                    className={styles.icon_editar}
+                                                    onClick={()=>handleEditClick(voluntario.matricula)}
+                                                    title="Editar Voluntário"
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" className={styles.empty}>Nenhum voluntário desativado encontrado.</td>
+                                    </tr>
+                                )
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     )

@@ -36,7 +36,6 @@
         gap: 1rem;
     }
 
-    /* --- Novo estilo para o título e badge --- */
     .titleWrapper {
         display: flex;
         align-items: center;
@@ -146,7 +145,7 @@
 
 .tableResponsive {
     overflow-x: auto;
-    /* Estilização da scrollbar fina */
+    
     &::-webkit-scrollbar {
         height: 8px;
     }
@@ -158,8 +157,9 @@
 
 .table {
     width: 100%;
-    border-collapse: collapse;
-    white-space: nowrap; // Impede quebra de linha nas datas
+    border-collapse: separate; // Necessário para sticky headers funcionarem bem
+    border-spacing: 0;
+    white-space: nowrap;
     
     .thead {
         background-color: $cor-primaria;
@@ -169,17 +169,18 @@
             padding: 1rem;
             text-align: left;
             font-weight: 600;
+            border-bottom: 1px solid #ddd; // Borda visual para o header
 
             &.thDate {
                 text-align: center;
                 min-width: 60px;
+                border-left: 1px solid rgba(255,255,255,0.2); // Separador sutil entre datas
             }
         }
     }
 
     .tbody {
         tr {
-            border-bottom: 1px solid #eee;
             transition: background-color 0.2s;
 
             &:hover {
@@ -189,6 +190,7 @@
             td {
                 padding: 1rem;
                 color: #333;
+                border-bottom: 1px solid #eee;
             }
 
             .nomeAluno {
@@ -212,30 +214,47 @@
     }
 }
 
-// Fixar as primeiras colunas na tabela de frequência
+// --- CORREÇÃO DO BUG DAS COLUNAS FIXAS ---
 .stickyCol {
     position: sticky;
     left: 0;
-    background-color: inherit;
-    z-index: 1;
+    z-index: 5; // Garante que fique acima do conteúdo que rola
     
+    // Configuração RÍGIDA da primeira coluna (Nome)
     &:first-child {
         left: 0;
+        width: 250px;      // Largura fixa
+        min-width: 250px;  // Impede diminuir
+        max-width: 250px;  // Impede aumentar
+        border-right: 1px solid #e0e0e0; // Divisão visual
     }
+    
+    // Configuração RÍGIDA da segunda coluna (Matrícula)
     &:nth-child(2) {
-        left: 200px; // Ajuste conforme a largura média do nome
+        left: 250px;       // O deslocamento DEVE ser igual à largura da 1ª coluna
+        width: 120px;
+        min-width: 120px;
+        max-width: 120px;
+        
+        // Sombra lateral para indicar que o conteúdo "entra" ali
+        box-shadow: 4px 0 5px -2px rgba(0,0,0,0.1); 
+        clip-path: inset(0px -15px 0px 0px); // Permite ver a sombra na direita
     }
 }
 
+// O Header fixo deve estar acima do Corpo fixo
 .thead .stickyCol {
     background-color: $cor-primaria;
-    z-index: 2;
+    z-index: 10; 
+    color: white;
 }
 
+// O Corpo fixo deve ter fundo branco (não transparente) para cobrir o scroll
 .tbody .stickyCol {
     background-color: white; 
 }
 
+// Quando passar o mouse na linha, a parte fixa também muda de cor
 .tr_body:hover .stickyCol {
     background-color: #f9f9f9; 
 }

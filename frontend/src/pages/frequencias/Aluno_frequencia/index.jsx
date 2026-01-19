@@ -4,7 +4,6 @@ import Cookies from "js-cookie";
 import { useNavigate } from 'react-router-dom';
 
 import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 import get from '../../../services/requests/get';
 import post from '../../../services/requests/post';
@@ -14,15 +13,15 @@ import Botao from '../../../components/gerais/Botao';
 
 function Aluno_frequencia(){
     const navigate = useNavigate();
-    const [todosOsAlunos, setTodosOsAlunos] = useState([]); // Armazena todos os alunos buscados
-    const [alunos, setAlunos] = useState([]); // Alunos filtrados para exibição
+    const [todosOsAlunos, setTodosOsAlunos] = useState([]); 
+    const [alunos, setAlunos] = useState([]); 
     const [data, setData] = useState('');
     const [sala, setSala] = useState('1');
     const [turno, setTurno] = useState('');
     const [presencas, setPresencas] = useState({});
     const [busca, setBusca] = useState('');
-    const [expandedRows, setExpandedRows] = useState({});
     const [salasDisponiveis, setSalasDisponiveis] = useState([]);
+    const [loading, setLoading] = useState(false); // Loading state
 
     const getTurnoAtual = () => {
         const now = new Date();
@@ -30,19 +29,19 @@ function Aluno_frequencia(){
         return hour < 12 ? 'manha' : 'tarde';
     };
 
-    // --- FUNÇÃO CORRIGIDA ---
     const fetchAlunos = async () => {
+        setLoading(true);
         try {
-            const response = await get.discente(); // Busca todos os discentes de uma vez
+            const response = await get.discente(); 
             if (Array.isArray(response.data)) {
-                setTodosOsAlunos(response.data); // Armazena a lista completa
+                setTodosOsAlunos(response.data); 
             } else {
-                console.error("5006: Formato inesperado no response:", response);
-                alert('Erro ao obter objeto! Formato inesperado de resposta.');
+                console.error("5006: Formato inesperado:", response);
             }
         } catch (error) {
-            console.error("5007: Erro ao obter objeto!", error);
-            alert('Erro ao obter objeto!');
+            console.error("5007: Erro ao buscar alunos!", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -70,24 +69,19 @@ function Aluno_frequencia(){
     const fetchFrequencias = async (selectedDate) => {
         try {
             const response = await get.frequenciadiscente(selectedDate);
-
             const presencaObj = {};
 
             response.data.forEach(frequencia => {
-
                 const chave = `${frequencia.matricula}-${frequencia.sala}`;
-                
                 presencaObj[chave] = {
                     presenca_manha: frequencia.presenca_manha,
                     presenca_tarde: frequencia.presenca_tarde,
                     justificativa: frequencia.justificativa
                 };
             });
-
             setPresencas(presencaObj);
         } catch (error) {
             console.error("Erro ao obter frequências!", error);
-            alert('Erro ao obter frequências!');
         }
     };
 
@@ -116,7 +110,6 @@ function Aluno_frequencia(){
         setTurno(getTurnoAtual());
 
         const fetch = async () => {
-
             let role = Cookies.get('role');
             let matricula = Cookies.get('login');
 
@@ -125,11 +118,9 @@ function Aluno_frequencia(){
                     const dadosVoluntario = await get.voluntarioByMatricula(matricula);
                     const { salaUm, salaDois, aulaExtra} = dadosVoluntario.data;
 
-                    // Definir as salas que o professor ou auxiliar pode ver
                     const salas = [];
                     if (salaUm) salas.push(salaUm);
                     if (salaDois) salas.push(salaDois);
-
                     if (aulaExtra) salas.push(aulaExtra.toString());
                     
                     setSalasDisponiveis(salas);
@@ -138,7 +129,6 @@ function Aluno_frequencia(){
                     console.error("Erro ao buscar dados do voluntário:", error);
                 }
             } else {
-                // Caso não seja professor ou auxiliar, mostrar todas as salas
                 setSalasDisponiveis(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
             }
         };
@@ -148,64 +138,28 @@ function Aluno_frequencia(){
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
-            const promises = alunos
-                .map(async (aluno) => {
+            const promises = alunos.map(async (aluno) => {
                 const { matricula, nome } = aluno;
                 const key = `${matricula}-${sala}`;
                 const presenca_manha = presencas[key]?.presenca_manha || '';
                 const presenca_tarde = presencas[key]?.presenca_tarde || '';
                 const justificativa = presencas[key]?.justificativa || '';
 
-                console.log(`Enviando dados para matrícula ${matricula}:`, {
-                    matricula,
-                    nome,
-                    sala,
-                    data,
-                    justificativa,
-                    presenca_manha,
-                    presenca_tarde
-                });
-
-                console.log("dados:", data, matricula);
                 const frequenciaDiscenteExistente = await get.frequenciadiscente(data, matricula);
-                console.log("frequencia existente:", frequenciaDiscenteExistente.data);
 
                 if (frequenciaDiscenteExistente && frequenciaDiscenteExistente.data) {
-                    console.log('Tentando fazer PUT...');
-                    try {
-                        const response = await put.frequenciadiscente({ matricula, nome, sala, data, justificativa, presenca_manha, presenca_tarde });  
-                        console.log('PUT bem-sucedido:', response);
-                        return response;
-                    } catch (error) {
-                        console.error('5014:Erro capturado no PUT:', error);
-                        throw error;
-                    }
+                    return await put.frequenciadiscente({ matricula, nome, sala, data, justificativa, presenca_manha, presenca_tarde });
                 } else {
-                    console.log('Tentando fazer POST...');
-                    try {
-                        const response = await post.frequenciadiscente({ matricula, nome, sala, data, justificativa, presenca_manha, presenca_tarde });
-                        console.log('POST bem-sucedido:', response);
-                        return response;
-                    } catch (error) {
-                        console.error('5015:Erro capturado no POST:', error);
-                        throw error;
-                    }
+                    return await post.frequenciadiscente({ matricula, nome, sala, data, justificativa, presenca_manha, presenca_tarde });
                 }
             });
 
-            const responses = await Promise.all(promises);
-            responses.forEach(response => {
-                if (response.error) {
-                    throw new Error(response.error.message);
-                }
-            });
-
+            await Promise.all(promises);
             await fetchFrequencias(data);
-            alert('Salvação realizada com sucesso!');
+            alert('Chamada salva com sucesso!');
         } catch (error) {
-            console.error('5009:Erro ao atualizar!', error);
+            console.error('Erro ao atualizar!', error);
             alert('Erro ao salvar!');
         }
     };
@@ -217,9 +171,6 @@ function Aluno_frequencia(){
     const handlePresenceChange = (matricula, periodo) => (e) => {
         const { value } = e.target;
         const key = `${matricula}-${sala}`;
-
-        console.log("Sala:", sala);  
-        console.log("Presença atual:", presencas[`${matricula}-${sala}`]);
         
         setPresencas((prev) => ({
             ...prev,
@@ -229,10 +180,6 @@ function Aluno_frequencia(){
             }
         }));
     };
-
-    useEffect(() => {
-        console.log("Estado de presenças atualizado:", presencas);
-    }, [presencas]);
 
     const handleJustificativaChange = (matricula) => (e) => {
         const { value } = e.target;
@@ -251,27 +198,6 @@ function Aluno_frequencia(){
         setBusca(e.target.value);
     };
 
-    const handleToggleRow = (matricula) => {
-        setExpandedRows(prevState => ({
-            ...prevState,
-            [matricula]: !prevState[matricula]
-        }));
-    };
-
-    const handleResize = () => {
-        const sizeE = 880;
-        if (window.innerWidth > sizeE) {
-            setExpandedRows({});
-        }
-    };
-
-    useEffect(() => {
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
     const alunosFiltrados = alunos.filter((aluno) => {
         const termoBusca = busca.toLowerCase();
         return (
@@ -287,138 +213,129 @@ function Aluno_frequencia(){
     return(
         <div className={styles.body}>
             <div className={styles.container}>
-                <div className={styles.linha_voltar}>
-                    <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)} />
-                </div>
                 <div className={styles.header}>
-                    <h2 className={styles.title}>Frequência de alunos</h2>
-                    <div className={styles.container_busca}>
-                        <IoMdSearch className={styles.icon_busca}/>
-                        <input
-                            className={styles.busca} 
-                            type='text'
-                            placeholder='Buscar'
-                            name='busca'
-                            value={busca}
-                            onChange={handleBuscaChange}
-                        />
+                    <div className={styles.titleGroup}>
+                        <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)} />
+                        <h2 className={styles.title}>Frequência de Alunos</h2>
                     </div>
-                    <div className={styles.botoes}>
-                        <select
-                            className={styles.select_turno} 
-                            value={turno} 
-                            onChange={handleChange(setTurno)}
-                        >
-                            <option value="" hidden></option>
-                            <option value="manha">Manhã</option>
-                            <option value="tarde">Tarde</option>
-                        </select>
-                        <select 
-                            className={styles.select_sala} 
-                            value={sala} 
-                            onChange={(e) => setSala(e.target.value)}
-                        >
-                            {salasDisponiveis.map((sala) => (
-                                <option key={sala} value={sala}>
-                                    {sala <= 4 ? `Sala ${sala}` : (
-                                        sala === '5' ? 'Inglês' :
-                                        sala === '6' ? 'Karatê' :
-                                        sala === '7' ? 'Informática' :
-                                        sala === '8' ? 'Música' :
-                                        sala === '9' ? 'Teatro' :
-                                        sala === '10' ? 'Ballet' :
-                                        sala === '11' ? 'Futsal' : 
-                                        sala === '12' ? 'Artesanato' : `Sala ${sala}`
-                                    )}
-                                </option>
-                            ))}
-                        </select>
-                        <input 
-                            className={styles.input_data}
-                            type="date"
-                            placeholder=''
-                            name="data"
-                            value={data}
-                            onChange={handleChange(setData)}
-                            autoFocus
-                        />
+                    
+                    <div className={styles.filters}>
+                        <div className={styles.container_busca}>
+                            <IoMdSearch className={styles.icon_busca}/>
+                            <input
+                                className={styles.busca} 
+                                type='text'
+                                placeholder='Buscar aluno...'
+                                name='busca'
+                                value={busca}
+                                onChange={handleBuscaChange}
+                            />
+                        </div>
+                        <div className={styles.controls}>
+                            <select
+                                className={styles.select_modern} 
+                                value={turno} 
+                                onChange={handleChange(setTurno)}
+                            >
+                                <option value="manha">Manhã</option>
+                                <option value="tarde">Tarde</option>
+                            </select>
+                            <select 
+                                className={styles.select_modern} 
+                                value={sala} 
+                                onChange={(e) => setSala(e.target.value)}
+                            >
+                                {salasDisponiveis.map((sala) => (
+                                    <option key={sala} value={sala}>
+                                        {sala <= 4 ? `Sala ${sala}` : (
+                                            sala === '5' ? 'Inglês' :
+                                            sala === '6' ? 'Karatê' :
+                                            sala === '7' ? 'Informática' :
+                                            sala === '8' ? 'Música' :
+                                            sala === '9' ? 'Teatro' :
+                                            sala === '10' ? 'Ballet' :
+                                            sala === '11' ? 'Futsal' : 
+                                            sala === '12' ? 'Artesanato' : `Sala ${sala}`
+                                        )}
+                                    </option>
+                                ))}
+                            </select>
+                            <input 
+                                className={styles.input_data}
+                                type="date"
+                                name="data"
+                                value={data}
+                                onChange={handleChange(setData)}
+                            />
+                        </div>
                     </div>
                 </div>
+
                 <form onSubmit={handleSubmit} className={styles.form}>
-                    <table className={styles.table}>
-                        <thead className={styles.thead}>
-                            <tr>
-                                <th>Matrícula</th>
-                                <th>Nome</th>
-                                <th className={styles.th_presenca}>
-                                    <div className={styles.ctn_presenca}>
-                                        <p className={styles.p}>Presença</p>
-                                    </div>
-                                </th>
-                                <th className={styles.coluna_justificativa_th}>Justificativa</th>
-                            </tr>
-                        </thead>
-                        <tbody className={styles.tbody}>
-                            {alunosFiltrados.map((aluno) => (
-                                <React.Fragment key={aluno.matricula}>
-                                    <tr key={aluno.matricula}>
-                                        <td>{aluno.matricula}</td>
-                                        <td>{aluno.nome}</td>
-                                        <td className={styles.td_presenca}>
-                                            <div className={styles.select_turnos}>
-                                                <select
-                                                    className={styles.select_presenca}
-                                                    value={turno === 'manha' 
-                                                        ? presencas[`${aluno.matricula}-${sala}`]?.presenca_manha || '' 
-                                                        : presencas[`${aluno.matricula}-${sala}`]?.presenca_tarde || ''
-                                                    }
-                                                    onChange={handlePresenceChange(aluno.matricula, turno === 'manha' ? 'presenca_manha' : 'presenca_tarde')}
-                                                >
-                                                    <option value="" hidden></option>
-                                                    <option value="P">P</option>
-                                                    <option value="F">F</option>
-                                                    <option value="FJ">FJ</option>
-                                                </select>
-                                            </div>
-                                        </td>
-                                        <td className={styles.toggleButton} onClick={() => handleToggleRow(aluno.matricula)}>
-                                            {expandedRows[aluno.matricula] ? <FaChevronUp /> : <FaChevronDown />}
-                                        </td>
-                                        <td className={styles.coluna_justificativa_td}>
-                                            <input
-                                                className={styles.input_justificativa}
-                                                type="text"
-                                                name="justificativa"
-                                                value={presencas[`${aluno.matricula}-${sala}`]?.justificativa || ''}
-                                                onChange={handleJustificativaChange(aluno.matricula)}
-                                            />
-                                        </td>
-                                    </tr>
-                                    {expandedRows[aluno.matricula] && (
-                                        <tr className={styles.expanded} key={`${aluno.matricula}-expanded`}>
-                                            <td colSpan="4" className={styles.justificativa_td}>
-                                                <input 
-                                                    className={styles.input_justificativa}
-                                                    type="text"
-                                                    name="justificativa"
-                                                    value={presencas[`${aluno.matricula}-${sala}`]?.justificativa || ''} 
-                                                    onChange={handleJustificativaChange(aluno.matricula)} 
-                                                />
-                                            </td>
-                                        </tr>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                        </tbody>
-                    </table>
-                    <div className={styles.container_botao}>
-                        <Botao
-                            nome="Salvar"
-                            corFundo="#F29F05"
-                            corBorda="#8A6F3E"
-                            type="submit"
-                        />
+                    <div className={styles.tableResponsive}>
+                        <table className={styles.table}>
+                            <thead className={styles.thead}>
+                                <tr className={styles.tr_head}>
+                                    <th>Matrícula</th>
+                                    <th>Nome</th>
+                                    <th className={styles.th_center}>Presença</th>
+                                    <th>Justificativa</th>
+                                </tr>
+                            </thead>
+                            <tbody className={styles.tbody}>
+                                {loading ? (
+                                    <tr><td colSpan="4" className={styles.empty}>Carregando...</td></tr>
+                                ) : (
+                                    alunosFiltrados.length > 0 ? (
+                                        alunosFiltrados.map((aluno) => (
+                                            <tr key={aluno.matricula} className={styles.tr_body}>
+                                                <td data-label="Matrícula">{aluno.matricula}</td>
+                                                <td data-label="Nome">{aluno.nome}</td>
+                                                <td data-label="Presença" className={styles.td_center}>
+                                                    <select
+                                                        className={styles.select_presenca}
+                                                        value={turno === 'manha' 
+                                                            ? presencas[`${aluno.matricula}-${sala}`]?.presenca_manha || '' 
+                                                            : presencas[`${aluno.matricula}-${sala}`]?.presenca_tarde || ''
+                                                        }
+                                                        onChange={handlePresenceChange(aluno.matricula, turno === 'manha' ? 'presenca_manha' : 'presenca_tarde')}
+                                                    >
+                                                        <option value="">-</option>
+                                                        <option value="P">P</option>
+                                                        <option value="F">F</option>
+                                                        <option value="FJ">FJ</option>
+                                                    </select>
+                                                </td>
+                                                <td data-label="Justificativa">
+                                                    <input
+                                                        className={styles.input_justificativa}
+                                                        type="text"
+                                                        placeholder="Opcional..."
+                                                        name="justificativa"
+                                                        value={presencas[`${aluno.matricula}-${sala}`]?.justificativa || ''}
+                                                        onChange={handleJustificativaChange(aluno.matricula)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr><td colSpan="4" className={styles.empty}>Nenhum aluno encontrado nesta sala/turno.</td></tr>
+                                    )
+                                )}
+                            </tbody>
+                        </table>
                     </div>
+                    
+                    {!loading && alunosFiltrados.length > 0 && (
+                        <div className={styles.footerActions}>
+                            <Botao
+                                nome="Salvar Chamada"
+                                corFundo="#F29F05"
+                                corBorda="#8A6F3E"
+                                type="submit"
+                            />
+                        </div>
+                    )}
                 </form>
             </div>
         </div>

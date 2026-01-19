@@ -1,242 +1,346 @@
 @import '../../../index.scss';
 
 .body {
+    width: 100%;
+    min-height: 100vh;
     display: flex;
-    flex-direction: column;
-    width: 100vw;
-    min-height: calc(100vh - 5rem);
-    background-color: #D9D9D9;
-    padding-top: 2rem;
-    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: $cor-fundo;
 }
 
 .container {
+    width: 100%;
+    max-width: 1200px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    width: 80vw;
-    height: auto;
-    flex-grow: 1;
+    gap: 1.5rem;
 }
 
 .header {
     display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    width: 100%;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 0.75rem;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+
+    .title {
+        color: $cor-primaria;
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin: 0;
+    }
 }
 
-.title {
-    font-weight: 300;
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
     width: 100%;
 }
 
 .container_busca {
     display: flex;
     align-items: center;
-    width: 100%;
-    order: 3;
-}
-
-.icon_busca {
-    background-color: #044D8C;
-    padding: 0.25rem;
-    color: white;
-    font-size: 1.75rem;
-    border-top-left-radius: 7px;
-    border-bottom-left-radius: 7px;
-    border: solid 1px black;
-    border-right: none;
-    cursor: pointer;
-    height: 2.25rem;
-    box-sizing: border-box;
-}
-
-.busca {
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
     flex-grow: 1;
-    width: auto;
-    height: 2.25rem;
-    border-top-right-radius: 7px;
-    border-bottom-right-radius: 7px;
-    border: solid 1px black;
-    border-left: none;
-    outline: none;
-    padding: 0.5rem;
-    box-sizing: border-box;
+    min-width: 250px;
+
+    .icon_busca {
+        color: #666;
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+    }
+
+    .busca {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        font-size: 1rem;
+        color: #333;
+        
+        &::placeholder {
+            color: #999;
+        }
+    }
 }
 
 .botoes {
     display: flex;
+    align-items: center;
     gap: 1rem;
-    width: 100vw;
-    overflow-x: auto;
+    flex-wrap: wrap;
+    
+    .select_sala {
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        background-color: white;
+        font-size: 0.95rem;
+        color: #555;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.2s;
+        min-width: 120px;
 
-    > * {
-        flex-shrink: 0; // Impede que os itens (botões, selects) encolham
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.7rem top 50%;
+        background-size: 0.65rem auto;
+        padding-right: 2rem; 
+
+        &:focus {
+            border-color: $cor-primaria;
+            box-shadow: 0 0 0 2px rgba($cor-primaria, 0.1);
+        }
+
+        &:hover {
+            border-color: #bbb;
+        }
     }
+}
 
+.tableResponsive {
+    width: 100%;
+    // No Desktop, rolagem normal se precisar
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    
     &::-webkit-scrollbar {
         height: 8px;
     }
     &::-webkit-scrollbar-thumb {
-        background: #888;
+        background-color: #ccc;
         border-radius: 4px;
-    }
-    &::-webkit-scrollbar-thumb:hover {
-        background: #555;
     }
 }
 
 .table {
-    background-color: white;
-    border-collapse: separate;
-    border-spacing: 0;
     width: 100%;
-    margin-bottom: 3rem;
-}
+    border-collapse: separate; 
+    border-spacing: 0;
+    white-space: nowrap;
+    border-bottom: 1px solid black; 
 
-.table > thead > tr > th,
-.table > tbody > tr > td {
-    padding: 0.5rem;
-    padding-left: 2rem;
-    border-bottom: 1px solid black;
-    border-right: 1px solid black;
-}
+    .thead {
+        background-color: $cor-primaria;
+        color: white;
+        
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            
+            &.edicao {
+                text-align: center;
+                width: 80px;
+            }
+        }
+    }
 
-.table > thead > tr > th:first-child,
-.table > tbody > tr > td:first-child {
-    border-left: 1px solid black;
-}
+    .tbody {
+        tr {
+            transition: background-color 0.2s;
 
-.table > thead > tr:first-child > th {
-    border-top: 1px solid black;
-}
+            &:hover {
+                background-color: #f8f9fa;
+            }
 
-.table > thead > tr > th {
-    text-align: start;
-    font-weight: bold; // Adicionado para destacar o cabeçalho
-}
+            td {
+                padding: 1rem;
+                color: #333;
+                font-size: 0.95rem;
+                border-bottom: 1px solid #eee; 
+            }
 
-.tbody > .tr_body:hover {
-    background-color: #f5f5f5;
-}
+            td:nth-child(2) { 
+                font-weight: 500;
+                color: $cor-secundaria;
+            }
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
 
-/* ESTILOS PARA ÍCONES E LINHAS ESPECIAIS */
-.edicao {
-    padding: 0 !important;
-    margin: 0 !important;
-    text-align: center !important;
-    vertical-align: middle;
+        .plus {
+            cursor: pointer;
+            background-color: rgba($cor-primaria, 0.05);
+            
+            &:hover {
+                background-color: rgba($cor-primaria, 0.1);
+            }
+
+            td {
+                text-align: center;
+                color: $cor-primaria;
+                padding: 0.8rem;
+                border-bottom: none;
+            }
+
+            .icon_plus {
+                font-size: 1.2rem;
+            }
+        }
+    }
 }
 
 .icon_editar {
-    font-size: 1.5rem;
-    color: #044D8C;
+    font-size: 1.3rem;
+    color: #666;
     cursor: pointer;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    margin: 0;
+    transition: color 0.2s;
+    display: block;
+    margin: 0 auto;
+
+    &:hover {
+        color: $cor-primaria;
+    }
 }
 
-.plus {
-    cursor: pointer;
-    border-left: solid 1px black !important;
-    border-right: solid 1px black !important;
-    text-align: left;
-}
+/* --- MEDIA QUERIES --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
 
-.plus:hover {
-    background-color: #f5f5f5;
-}
-
-.plus > td {
-    border-bottom: solid 1px black;
-    border-left: none;
-    border-right: none;
-}
-
-.select_sala {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background: none;
-    border-radius: 7px;
-    border: solid 2px;
-    padding: 0.5rem;
-    color: white;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    text-align: center;
-    background-color: #044D8C;
-    border-color: #043560;
-    box-shadow: 0.08rem 0.08rem 0.08rem rgba(0, 0, 0, 0.3);
-}
-
-/* MEDIA QUERIES */
-
-// Ajustes para Desktop
-@media (min-width: 1024px) {
     .header {
-        flex-wrap: nowrap;
-        align-items: end;
-        justify-content: space-between;
+        gap: 1rem;
     }
-
-    .title {
-        width: auto;
-    }
-
-    .container_busca {
-        order: 0;
-        width: 25rem;
+    
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
     }
 
     .botoes {
-        order: 0;
-        width: auto;
-        flex-wrap: nowrap;
-        gap: 1rem;
+        justify-content: space-between;
+        width: 100%;
+        
+        .select_sala {
+            flex-grow: 1;
+        }
     }
-}
 
-@media (max-width: $size-e) {
-    .table > .thead > tr > th:nth-child(3), .table > .tbody > tr > td:nth-child(3) {
+    /* --- ESTILO CARD VIEW (A mágica acontece aqui) --- */
+    .tableResponsive {
+        overflow: visible; // Remove rolagem horizontal
+    }
+    
+    .table {
+        border: none;
+    }
+
+    // Esconde o cabeçalho
+    .thead {
         display: none;
     }
 
-    .botoes{
-        padding-bottom: 1rem;
-    }
-}
-
-// Ajuste de fonte
-@media (max-width: $size-b) {
-    .table {
-        font-size: 0.8rem;
+    .table, .tbody, .tr_body, td {
+        display: block;
+        width: 100%;
     }
 
-    .icon_editar {
-        font-size: 1rem;
+    .tr_body {
+        margin-bottom: 1.5rem; // Espaço entre os cartões
+        background-color: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        padding: 0;
+
+        &:hover {
+            background-color: white;
+            transform: translateY(-2px); // Pequeno efeito de elevação
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        }
+
+        td {
+            display: flex;
+            justify-content: space-between; // Label na esquerda, Valor na direita
+            align-items: center;
+            text-align: right;
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            
+            // O Label vem do atributo data-label
+            &::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: 700;
+                color: $cor-primaria;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                letter-spacing: 0.5px;
+            }
+
+            &:last-child {
+                border-bottom: none;
+            }
+            
+            // Tratamento especial para o nome (destaque)
+            &:nth-child(2) {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #333;
+                background-color: #fafafa; // Cabeçalho do card
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+                border-bottom: 1px solid #e0e0e0;
+                
+                // Oculta o label "NOME" para ficar mais limpo, se preferir
+                // &::before { display: none; } 
+                // justify-content: center;
+            }
+
+            // Tratamento para o botão de ação
+            &.edicao {
+                justify-content: center;
+                background-color: #f9f9f9;
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+                padding: 0.8rem;
+                
+                &::before { display: none; } // Não precisa de label "AÇÕES"
+            }
+        }
     }
 
-    .botoes{
-        padding-bottom: 1rem;
-    }
-}
+    // Ajuste do botão Adicionar (+) no mobile
+    .tbody .plus {
+        display: block;
+        border: 2px dashed rgba($cor-primaria, 0.3) !important;
+        border-radius: 12px;
+        margin-top: 1rem;
+        background-color: transparent;
+        
+        &:hover {
+            background-color: rgba($cor-primaria, 0.05);
+        }
 
-// Ajuste de fonte
-@media (max-width: $size-a) {
-    .table {
-        font-size: 0.7rem;
-    }
-
-    .icon_editar {
-        font-size: 1rem;
-    }
-
-    .botoes{
-        padding-bottom: 1rem;
+        td {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            color: $cor-primaria;
+            font-weight: 600;
+            border: none;
+        }
     }
 }

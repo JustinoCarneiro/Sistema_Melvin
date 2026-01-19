@@ -1,358 +1,280 @@
 @import '../../../index.scss';
 
 .body {
+    width: 100%;
+    min-height: 100vh;
     display: flex;
-    flex-direction: column;
-    width: 100vw;
-    height: 100%;
-    min-height: calc(100vh - 5rem);
-    background-color: #D9D9D9;
-    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: $cor-fundo;
 }
 
 .container {
+    width: 100%;
+    max-width: 1200px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    margin-top: 2rem;
-    width: 80vw;
-    height: auto;
-    gap: 1rem;
-    flex-grow: 1;
+    gap: 1.5rem;
 }
 
 .header {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: end;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+
+    .titleGroup {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .voltar {
+        font-size: 1.8rem;
+        color: #666;
+        cursor: pointer;
+        transition: color 0.2s;
+        &:hover { color: $cor-primaria; }
+    }
+
+    .title {
+        color: $cor-primaria;
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin: 0;
+    }
 }
 
-.title {
-    font-size: 1.3rem;
-    font-weight: 300;
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    justify-content: space-between;
 }
 
 .container_busca {
     display: flex;
-    align-items: end;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    flex-grow: 1;
+    min-width: 200px;
+
+    .icon_busca {
+        color: #666;
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+    }
+
+    .busca {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        font-size: 1rem;
+        color: #333;
+        &::placeholder { color: #999; }
+    }
 }
 
-.icon_busca {
-    background-color: #044D8C;
-    padding: 0.25rem;
-    color: white;
-    font-size: 1.75rem;
-    border-top-left-radius: 7px;
-    border-bottom-left-radius: 7px;
-    border: solid 1px black;
-    border-right: none;
-    cursor: pointer;
-}
-
-.busca {
-    width: 25rem;
-    height: 1.75rem;
-    border-top-right-radius: 7px;
-    border-bottom-right-radius: 7px;
-    border: solid 1px black;
-    border-left: none;
-    outline: none;
-    padding: 0.5rem;
-}
-
-.botoes {
+.controls {
     display: flex;
     gap: 1rem;
-}
-
-.select_sala {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background: none;
-    border-radius: 7px;
-    border: solid 2px;
-    padding: 0.5rem;
-    color: white;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    text-align: center;
-    background-color: #044D8C;
-    border-color: #043560;
-    box-shadow: 0.08rem 0.08rem 0.08rem rgba(0, 0, 0, 0.3);
-}
-
-.select_turno{
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background: none;
-    border-radius: 7px;
-    border: solid 2px;
-    padding: 0.5rem;
-    color: white;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    background-color: #7EA629;
-    border-color: #58751A;
-    box-shadow: 0.08rem 0.08rem 0.08rem rgba(0, 0, 0, 0.3);
-    text-align: center;
-}
-
-.input_data {
-    all: unset;
-    border-radius: 7px;
-    border: solid 2px;
-    padding: 0.5rem;
-    color: white;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    background-color: #F29F05;
-    border-color: #8A6F3E;
-    box-shadow: 0.08rem 0.08rem 0.08rem rgba(0, 0, 0, 0.3);
+    flex-wrap: wrap;
+    
+    .select_modern, .input_data {
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        background-color: white;
+        font-size: 0.95rem;
+        color: #555;
+        cursor: pointer;
+        outline: none;
+        
+        &:focus { border-color: $cor-primaria; }
+    }
 }
 
 .form {
-    height: auto;
     display: flex;
     flex-direction: column;
+}
+
+.tableResponsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .table {
     width: 100%;
-    margin: 0;
+    border-collapse: separate; 
+    border-spacing: 0;
+
+    .thead {
+        background-color: $cor-primaria;
+        color: white;
+        
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            
+            &.th_center { text-align: center; }
+        }
+    }
+
+    .tbody {
+        tr {
+            transition: background-color 0.2s;
+            &:hover { background-color: #f8f9fa; }
+
+            td {
+                padding: 0.8rem 1rem;
+                color: #333;
+                font-size: 0.95rem;
+                border-bottom: 1px solid #eee;
+                vertical-align: middle;
+            }
+            
+            .td_center { text-align: center; }
+        }
+        
+        tr:last-child td { border-bottom: none; }
+
+        .empty {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+            font-style: italic;
+        }
+    }
 }
 
-.thead > tr > th {
-    padding-left: 2vw;
-    text-align: start;
-    margin: 0;
-    height: 100%;
-    border: none;
-}
-
-.tbody > tr {
-    height: 100%;
-}
-
-.tbody > tr > td {
-    padding-left: 2vw;
-    padding-block: 1vw;
-    margin: 0;
-    border: none;
-    border-top: solid 1px black;
-}
-
-.table > .thead > tr > th:nth-child(3),
-.table > .tbody > tr > td:nth-child(3) {
-    padding: 0;
-}
-
-.tbody tr:hover {
-    background-color: #f5f5f5;
-}
-
-.th_presenca {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.th_presenca > .ctn_presenca {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    margin-top: 1vh;
-    margin-bottom: 1vh;
-}
-
-.th_presenca > .ctn_presenca > .th_turnos {
-    display: flex;
-    justify-content: space-between;
-    width: 5vw;
-    padding-right: 4px;
-    margin-top: 0.5rem;
-}
-
-.table > .tbody > tr > .td_presenca {
-    display: table-cell;
-    border: none;
-    border-top: solid 1px black;
-    height: 100%;
-}
-
-.select_turnos {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 5.7vw;
-    margin: 0 auto;
-}
-
+// Inputs dentro da tabela
 .select_presenca {
-    -webkit-appearance: none;
-    /* Remove a seta no Chrome, Safari e Opera */
-    -moz-appearance: none;
-    /* Remove a seta no Firefox */
-    appearance: none;
-    /* Remove a seta em navegadores compatíveis com a especificação */
-    background: none;
-    /* Remove qualquer fundo padrão */
+    padding: 0.4rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
     background-color: white;
-    /* Define a cor de fundo */
-    border: solid 2px black;
-    cursor: pointer;
-    width: 1.4rem;
-    height: 1.4rem;
-    text-align: center;
     font-size: 1rem;
-    font-weight: 500;
+    width: 60px;
+    text-align: center;
+    cursor: pointer;
+    
+    &:focus { border-color: $cor-primaria; }
 }
 
 .input_justificativa {
-    all: unset;
-    border: solid 2px black;
-    width: 20vw;
+    width: 100%;
     padding: 0.5rem;
-    font-size: 0.75rem;
-    border-radius: 7px;
-    background-color: #EFEFEF;
-    box-shadow: 0.08rem 0.08rem 0.08rem rgba(0, 0, 0, 0.3);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 0.9rem;
+    
+    &:focus { border-color: $cor-primaria; outline: none; }
 }
 
-.container_botao {
+.footerActions {
     display: flex;
     justify-content: flex-end;
-    margin-top: 1rem;
-    margin-bottom: 2rem;
+    margin-top: 2rem;
 }
 
-.toggleButton {
-    display: none;
-}
-
-.justificativa_td{
-    padding-inline: 0.5rem !important;
-    padding-block: 0.5rem !important;
-
-}
-
-.linha_voltar {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 1rem;
-}
-
-.voltar {
-    font-size: 2rem;
-    cursor: pointer;
-    color: #333;
-
-    &:hover {
-        color: #007bff;
-    }
-}
-
-@media (max-width: $size-f) {
-    .header {
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        align-items: center;
-    }
-
-    .botoes{
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-
+/* --- MEDIA QUERIES (Mobile Card View) --- */
+@media (max-width: 768px) {
     .container {
-        width: 90vw;
+        padding: 1rem;
     }
 
-    .container_busca {
-        order: 3;
-        width: 100%;
-        margin-top: 0.5rem;
-    }
-
-    .busca {
-        width: 100%;
-    }
-}
-
-@media (max-width: $size-e){
-    .table > .thead > tr > th:nth-child(4),
-    .table > .tbody > tr > td:nth-child(4) {
-        display: table-cell !important;
-        padding: 0 !important;
-        text-align: center;
-    }
-
-    .table > .thead > tr > th:nth-child(5),
-    .table > .tbody > tr > td:nth-child(5) {
-        display: none;
-    }
-
-    .input_justificativa {
-        box-sizing: border-box;
-        width: 100%;
-        height: 2.3rem;
-        padding: 0.4rem;
-        font-size: 1rem;
-    }
-
-    .th_presenca > .ctn_presenca > .th_turnos{
-        width: 2.6rem;
-    }
-
-    .select_turnos{
-        width: 3rem;
-    }
-}
-
-@media (max-width: $size-g){
-    .header {
+    .filters, .controls {
         flex-direction: column;
-        align-items: start;
+        align-items: stretch;
+        
+        .select_modern, .input_data { width: 100%; }
     }
 
-    .botoes{
-        order: 2;
-        margin-top: 0.5rem;
-        margin-bottom: 0.5rem;
+    /* --- TABELA VIRA CARDS --- */
+    .tableResponsive { overflow: visible; }
+    .table { border: none; }
+    .thead { display: none; }
+
+    .table, .tbody, .tr_body, td {
+        display: block;
         width: 100%;
-        display: flex;
-        justify-content: space-between;
     }
 
-    .icon_busca {
-        font-size: 1.6rem;
-    }
+    .tr_body {
+        margin-bottom: 1.5rem;
+        background-color: white;
+        
+        // ESTILO CARD COM BORDA
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        padding: 0;
+        overflow: hidden;
 
-    .busca {
-        height: 1.6rem;
-        width: calc(100vw - 1.4rem);
-        font-size: 0.7rem;
-    }
+        td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: right;
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            
+            &::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: 700;
+                color: $cor-primaria;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                margin-right: 1rem;
+            }
 
-    .table{
-        font-size: 0.8rem;
-    }
+            &:last-child { border-bottom: none; }
+            
+            // Header do Card (Nome do Aluno)
+            &:nth-child(2) {
+                background-color: #fafafa;
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #333;
+                border-bottom: 1px solid #e0e0e0;
+                justify-content: space-between; // Label na esq, nome na dir
+            }
 
-    .table > .thead > tr > th:nth-child(4){
-        display: none !important;
+            // Presença e Justificativa ocupando mais espaço
+            .select_presenca { width: 100px; }
+            .input_justificativa { 
+                width: 100%; 
+                margin-top: 0.5rem; 
+            }
+            
+            // Ajuste para input justificativa ficar abaixo do label no mobile se precisar
+            &[data-label="Justificativa"] {
+                flex-direction: column;
+                align-items: flex-start;
+                &::before { margin-bottom: 0.5rem; }
+            }
+        }
     }
-
-    .table > .tbody > tr > td:nth-child(4){
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
-    }
-
-    .tbody>tr>td {
-        padding-block: 4vw;
+    
+    .footerActions {
+        justify-content: center;
+        button { width: 100%; }
     }
 }

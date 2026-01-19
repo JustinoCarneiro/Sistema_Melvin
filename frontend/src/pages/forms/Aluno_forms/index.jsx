@@ -7,7 +7,6 @@ import Cookies from 'js-cookie';
 import { IoMdArrowRoundBack, IoIosDownload } from "react-icons/io";
 import { SiGoogledocs } from "react-icons/si";
 
- 
 import Botao from '../../../components/gerais/Botao';
 import Input from '../../../components/gerais/Input';
 
@@ -16,7 +15,6 @@ import get from '../../../services/requests/get';
 import put from '../../../services/requests/put';
 import del from '../../../services/requests/delete';
 
-
 function Aluno_forms(){
     const {matricula} = useParams();
     const navigate = useNavigate();
@@ -24,65 +22,15 @@ function Aluno_forms(){
     const [errorMessage, setErrorMessage] = useState('');
     const [isPsico, setIsPsico] = useState(false);
 
+    // Estado completo com TODOS os campos originais
     const [formDado, setFormDado] = useState({
-        matricula: '',
-        nome: '',
-        email: '',
-        contato: '',
-        sexo: '',
-        data: '',
-        cor: '',
-        nacionalidade: '',
-        endereco: '',
-        bairro: '',
-        cidade: '',
-        rg: '',
-        sala: '',
-        turno: '',
-        nome_pai: '',
-        contato_pai: '',
-        instrucao_pai: '',
-        ocupacao_pai: '',
-        local_trabalho_pai: '',
-        contato_trabalho_pai: '',
-        alfabetizacao_pai: '',
-        estado_civil_pai: '',
-        nome_mae: '',
-        contato_mae: '',
-        instrucao_mae: '',
-        ocupacao_mae: '',
-        local_trabalho_mae: '',
-        contato_trabalho_mae: '',
-        alfabetizacao_mae: '',
-        estado_civil_mae: '',
-        qtd_filho: '',
-        beneficio_governo: '',
-        meio_transporte: '',
-        qtd_transporte: '',
-        mora_familiar: '',
-        outro_familiar: '',
-        todos_moram_casa: '',
-        renda_total: '',
-        clt: '',
-        autonomo: '',
-        familia_congrega: '',
-        gostaria_congregar: '',
-        doenca: '',
-        medicacao: '',
-        remedio_instituto: '',
-        tratamento: '',
-        horario_medicamento: '',
-        esportes: '',
-        saida_aluno: '',
-        contato_saida: '',
-        status: '',
-        karate: false, 
-        ballet: false,
-        informatica: false,
-        musica: false,
-        artesanato: false,
-        futsal: false, 
-        ingles: false
+        matricula: '', nome: '', email: '', contato: '', sexo: '', data: '', cor: '', nacionalidade: '', 
+        endereco: '', bairro: '', cidade: '', rg: '', sala: '', turno: '', 
+        nome_pai: '', contato_pai: '', instrucao_pai: '', ocupacao_pai: '', local_trabalho_pai: '', contato_trabalho_pai: '', alfabetizacao_pai: '', estado_civil_pai: '', 
+        nome_mae: '', contato_mae: '', instrucao_mae: '', ocupacao_mae: '', local_trabalho_mae: '', contato_trabalho_mae: '', alfabetizacao_mae: '', estado_civil_mae: '', 
+        qtd_filho: '', beneficio_governo: '', meio_transporte: '', qtd_transporte: '', mora_familiar: '', outro_familiar: '', todos_moram_casa: '', renda_total: '', clt: '', autonomo: '', familia_congrega: '', gostaria_congregar: '', 
+        doenca: '', medicacao: '', remedio_instituto: '', tratamento: '', horario_medicamento: '', esportes: '', saida_aluno: '', contato_saida: '', status: '',
+        karate: false, ballet: false, informatica: false, musica: false, artesanato: false, futsal: false, ingles: false
     });
 
     useEffect(() => {
@@ -93,108 +41,38 @@ function Aluno_forms(){
     useEffect(() => {
         const fetchAluno = async () => {
             setErrorMessage(''); 
+            if(!matricula) return;
+
             try {
                 const diarioExistente = await get.diarioByMatricula(matricula);
-
                 if(diarioExistente && diarioExistente.data != ""){
-                    console.log("Diario existente", diarioExistente);
                     setDiario(diarioExistente);
                 }
 
                 const response = await get.discenteByMatricula(matricula);
-                console.log("reponse:", response);
                 if(response.data){
-                    setFormDado({
-                        matricula: response.data.matricula || '',
-                        nome: response.data.nome || '',
-                        email: response.data.email || '',
-                        contato: response.data.contato || '',
-                        sexo: response.data.sexo || '',
-                        data: response.data.data || '',
-                        cor: response.data.cor || '',
-                        nacionalidade: response.data.nacionalidade || '',
-                        endereco: response.data.endereco || '',
-                        bairro: response.data.bairro || '',
-                        cidade: response.data.cidade || '',
-                        rg: response.data.rg || '',
-                        sala: response.data.sala || '',
-                        turno: response.data.turno || '',
-                        nome_pai: response.data.nome_pai || '',
-                        contato_pai: response.data.contato_pai || '',
-                        instrucao_pai: response.data.instrucao_pai || '',
-                        ocupacao_pai: response.data.ocupacao_pai || '',
-                        local_trabalho_pai: response.data.local_trabalho_pai || '',
-                        contato_trabalho_pai: response.data.contato_trabalho_pai || '',
-                        alfabetizacao_pai: response.data.alfabetizacao_pai || '',
-                        estado_civil_pai: response.data.estado_civil_pai || '',
-                        nome_mae: response.data.nome_mae || '',
-                        contato_mae: response.data.contato_mae || '',
-                        instrucao_mae: response.data.instrucao_mae || '',
-                        ocupacao_mae: response.data.ocupacao_mae || '',
-                        local_trabalho_mae: response.data.local_trabalho_mae || '',
-                        contato_trabalho_mae: response.data.contato_trabalho_mae || '',
-                        alfabetizacao_mae: response.data.alfabetizacao_mae || '',
-                        estado_civil_mae: response.data.estado_civil_mae || '',
-                        qtd_filho: response.data.qtd_filho || '',
-                        beneficio_governo: response.data.beneficio_governo || '',
-                        meio_transporte: response.data.meio_transporte || '',
-                        qtd_transporte: response.data.qtd_transporte || '',
-                        mora_familiar: response.data.mora_familiar || '',
-                        outro_familiar: response.data.outro_familiar || '',
-                        todos_moram_casa: response.data.todos_moram_casa || '',
-                        renda_total: response.data.renda_total || '',
-                        clt: response.data.clt || '',
-                        autonomo: response.data.autonomo || '',
-                        familia_congrega: response.data.familia_congrega || '',
-                        gostaria_congregar: response.data.gostaria_congregar || '',
-                        doenca: response.data.doenca || '',
-                        medicacao: response.data.medicacao || '',
-                        remedio_instituto: response.data.remedio_instituto || '',
-                        tratamento: response.data.tratamento || '',
-                        horario_medicamento: response.data.horario_medicamento || '',
-                        esportes: response.data.esportes || '',
-                        saida_aluno: response.data.saida_aluno || '',
-                        contato_saida: response.data.contato_saida || '',
-                        status: response.data.status || '',
-                        karate: response.data.karate || false,
-                        ballet: response.data.ballet || false,
-                        informatica: response.data.informatica || false,
-                        musica: response.data.musica || false,
-                        artesanato: response.data.artesanato || false,
-                        futsal: response.data.futsal || false,
-                        ingles: response.data.ingles || false
-                    });
-                } else {
-                    console.log('Aluno não encontrado');
+                    setFormDado(prev => ({ ...prev, ...response.data }));
                 }
             } catch (error) {
-                console.error('5002:Erro ao obter dados do aluno!', error);
-                setErrorMessage(error.message || 'Não foi possível carregar os dados do aluno.');
+                console.error('Erro ao obter dados:', error);
+                setErrorMessage('Não foi possível carregar os dados do aluno.');
             }
         };
-    
         fetchAluno();
     }, [matricula]);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        setFormDado(prevState => ({
-            ...prevState,
-            [name]: value,
-        }));
+        setFormDado(prevState => ({ ...prevState, [name]: value }));
     };
 
     const onDrop = (acceptedFiles) => {
-        console.log('Files dropped:', acceptedFiles);
         if (acceptedFiles.length > 0) {
-            const file = acceptedFiles[0];
-            setDiario(file);
+            setDiario(acceptedFiles[0]);
         }
     };
 
-    const { getRootProps, getInputProps } = useDropzone({
-        onDrop
-    });
+    const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -202,232 +80,115 @@ function Aluno_forms(){
 
         try {
             let response;
-            let responseDiario;
-
             if (formDado.status === 'deletar') {
-                const confirmar = window.confirm('Você realmente deseja deletar este registro? Esta ação não pode ser desfeita.');
-        
-                if (confirmar) {
-                    // Executar o método de deleção do discente
+                if (window.confirm('Deseja realmente deletar este aluno?')) {
                     await del.discente(matricula);
-                    
-                    // Tentar deletar o diário, mas sem impedir a exclusão do discente se o diário não existir
-                    try {
-                        await del.diario(matricula);
-                    } catch (error) {
-                        console.warn(`Diário não encontrado para a matrícula: ${matricula}. Prosseguindo com a exclusão do discente.`);
-                    }
-    
-                    alert('Registro deletado com sucesso!');
+                    try { await del.diario(matricula); } catch (e) { console.warn("Diário não encontrado"); }
+                    alert('Registro deletado!');
                     navigate(-1);
                     return;
-                } else {
-                    // Se o usuário cancelar a exclusão, apenas retorne
-                    return;
-                }
+                } else { return; }
             }
 
-            const alunoExistente = await get.discenteByMatricula(matricula);
-
-            if (alunoExistente && alunoExistente.data) {
-                console.log("Matrícula já existe. Atualizando dados...");
+            if (matricula) {
                 response = await put.discente(formDado);
-
-                if (diario && diario instanceof File) {
-                    responseDiario = await put.atualizarDiario({ matricula: response.data.matricula, file: diario });
+                if (diario instanceof File) {
+                    await put.atualizarDiario({ matricula: response.data.matricula, file: diario });
                 }
             } else {
-                console.log("Matrícula não existe. Criando novo aluno...");
                 response = await post.discente(formDado);
-
-                if(diario && diario instanceof File){
-                    responseDiario = await post.uploadDiario({ matricula: response.data.matricula, file: diario });
+                if (diario instanceof File) {
+                    await post.uploadDiario({ matricula: response.data.matricula, file: diario });
                 }
             }
 
-            if (response.error) {
-                throw new Error(response.error.message);
-            }
+            if (response.error) throw new Error(response.error.message);
             alert('Salvo com sucesso!');
             navigate(-1);
         } catch (error) {
-            console.error('5001:Erro ao salvar!', error);
-            setErrorMessage(error.message || 'Ocorreu um erro ao salvar. Verifique os dados e tente novamente.');
+            setErrorMessage(error.message || 'Erro ao salvar.');
         }
     };
 
     const handleDownload = async(e) => {
         e.preventDefault();
-        setErrorMessage('');
-
         try{
             if (diario) {
-                console.log("Diario", diario);
                 const filename = diario.data.fileName || diario.name
                 await get.downloadFile(matricula, filename);
             }
         }catch(error){
-            console.error('5001:Erro ao baixar arquivo!', error);
-            setErrorMessage(error.message || 'Não foi possível baixar o arquivo.');
+            alert('Erro ao baixar arquivo.');
         }
-    };
-
-    const handleRedimentoClick = () => {
-        navigate(`/app/rendimento_aluno/${matricula}`);
     };
 
     return(
         <div className={styles.body}>
-            <form className={styles.form} onSubmit={handleSubmit}>
-                <div className={styles.botao}>
-                    <Botao 
-                        nome="Rendimento" 
-                        corFundo="#7EA629" 
-                        corBorda="#58751A" 
-                        type="button"
-                        onClick={handleRedimentoClick}
-                    />
-                </div>
-                <div className={styles.linha_voltar}>
+            <div className={styles.container}>
+                {/* --- HEADER --- */}
+                <div className={styles.headerForm}>
                     <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
-                </div>
-                <h2 className={styles.title}>INFORMAÇÕES PESSOAIS DO ALUNO</h2>
-                <div className={styles.informacoes}>
-                    <div className={styles.coluna}>
-                        <Input
-                            label="Nome:"
-                            type="text"
-                            placeholder="Nome completo"
-                            name="nome"
-                            value={formDado.nome}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade="true"
-                            disabled={isPsico}
-                        />
-                        <div className={styles.linha}>
-                            <Input
-                                label="Contato:"
-                                type="tel"
-                                placeholder="(DDD) 9XXXX-XXXX"
-                                name="contato"
-                                value={formDado.contato}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Data de nascimento:"
-                                type="date"
-                                placeholder="DD/MM/AAAA"
-                                name="data"
-                                value={formDado.data}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade="true"
-                                disabled={isPsico}
+                    <h2 className={styles.titlePage}>{matricula ? "Editar Aluno" : "Novo Aluno"}</h2>
+                    
+                    {matricula && (
+                        <div className={styles.headerButton}>
+                            <Botao 
+                                nome="Rendimento" 
+                                corFundo="#7EA629" 
+                                corBorda="#58751A" 
+                                type="button"
+                                onClick={() => navigate(`/app/rendimento_aluno/${matricula}`)}
                             />
                         </div>
-                        <Input
-                            label="Endereço:"
-                            type="text"
-                            placeholder=""
-                            name="endereco"
-                            value={formDado.endereco}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade="true"
-                            disabled={isPsico}
-                        />
-                        <div className={styles.linha}>
-                            <Input
-                                label="Bairro:"
-                                type="text"
-                                placeholder=""
-                                name="bairro"
-                                value={formDado.bairro}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade="true"
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Cidade:"
-                                type="text"
-                                placeholder=""
-                                name="cidade"
-                                value={formDado.cidade}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade="true"
-                                disabled={isPsico}
-                            />
+                    )}
+                </div>
+
+                <form className={styles.form} onSubmit={handleSubmit}>
+                    
+                    {/* --- 1. INFORMAÇÕES PESSOAIS --- */}
+                    <h3 className={styles.sectionTitle}>Informações Pessoais</h3>
+                    <div className={styles.gridContainer}>
+                        <div className={styles.coluna}>
+                            <Input label="Nome Completo:" name="nome" value={formDado.nome} onChange={handleChange} comp="grande" prioridade="true" disabled={isPsico} />
+                            
+                            <div className={styles.linhaDupla}>
+                                <Input label="Contato:" name="contato" value={formDado.contato} onChange={handleChange} comp="pequeno" disabled={isPsico} placeholder="(00) 00000-0000" />
+                                <Input label="Data de Nasc.:" type="date" name="data" value={formDado.data} onChange={handleChange} comp="pequeno" prioridade="true" disabled={isPsico} />
+                            </div>
+                            
+                            <Input label="Endereço:" name="endereco" value={formDado.endereco} onChange={handleChange} comp="grande" prioridade="true" disabled={isPsico} />
+                            
+                            <div className={styles.linhaDupla}>
+                                <Input label="Bairro:" name="bairro" value={formDado.bairro} onChange={handleChange} comp="pequeno" prioridade="true" disabled={isPsico} />
+                                <Input label="Cidade:" name="cidade" value={formDado.cidade} onChange={handleChange} comp="pequeno" prioridade="true" disabled={isPsico} />
+                            </div>
+                        </div>
+
+                        <div className={styles.coluna}>
+                            <div className={styles.linhaDupla}>
+                                <div className={styles.inputGroup}>
+                                    <label>Sexo:</label>
+                                    <select className={styles.select} name="sexo" value={formDado.sexo} onChange={handleChange} disabled={isPsico}>
+                                        <option value="" hidden>Selecione...</option>
+                                        <option value="Masculino">Masculino</option>
+                                        <option value="Feminino">Feminino</option>
+                                    </select>
+                                </div>
+                                <Input label="Nacionalidade:" name="nacionalidade" value={formDado.nacionalidade} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+
+                            <Input label="Cor/Raça:" name="cor" value={formDado.cor} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            <Input label="RG ou CPF:" name="rg" value={formDado.rg} onChange={handleChange} comp="grande" disabled={isPsico} />
+                            <Input label="Email:" type="email" name="email" value={formDado.email} onChange={handleChange} comp="grande" prioridade="false" disabled={isPsico} />
                         </div>
                     </div>
-                    <div className={styles.coluna}>
-                        <div className={styles.linha}>
-                            <label className={styles.label_select}>
-                                <div className={styles.sublabel_select}>Sexo:</div>
-                                <select className={styles.select} name="sexo" value={formDado.sexo} onChange={handleChange} disabled={isPsico}>
-                                    <option value="" hidden>Selecione...</option>
-                                    <option value="Masculino">Masculino</option>
-                                    <option value="Feminino">Feminino</option>
-                                </select>
-                            </label>
-                            <Input
-                                label="Nacionalidade:"
-                                type="text"
-                                placeholder=""
-                                name="nacionalidade"
-                                value={formDado.nacionalidade}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                        </div>
-                        <Input
-                            label="Cor/Raça:"
-                            type="text"
-                            placeholder=""
-                            name="cor"
-                            value={formDado.cor}
-                            onChange={handleChange}
-                            comp="pequeno"
-                            prioridade=""
-                            disabled={isPsico}
-                        />
-                        <Input
-                            label="N° certidão de nascimento, RG ou CPF:"
-                            type="text"
-                            placeholder=""
-                            name="rg"
-                            value={formDado.rg}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade=""
-                            disabled={isPsico}
-                        />
-                        <Input
-                            label="Email:"
-                            type="email"
-                            placeholder=""
-                            name="email"
-                            value={formDado.email}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade="false"
-                            disabled={isPsico}
-                        />
-                    </div>
-                </div>
-                <h2 className={styles.title}>INFORMAÇÕES INSTITUCIONAIS</h2>
-                <div className={styles.informacoes}>
-                    <div className={styles.coluna}>
-                        <div className={styles.linha}>
-                            <label className={styles.label_select}>
-                                <div className={styles.sublabel_select}>Situação matrícula:<p className={styles.asterisco}>*</p></div>
+
+                    {/* --- 2. INFORMAÇÕES INSTITUCIONAIS --- */}
+                    <h3 className={styles.sectionTitle}>Informações Institucionais</h3>
+                    <div className={styles.gridContainer}>
+                        <div className={styles.coluna}>
+                            <div className={styles.inputGroup}>
+                                <label>Situação Matrícula: <span className={styles.required}>*</span></label>
                                 <select className={styles.select} name="status" value={formDado.status} onChange={handleChange} disabled={isPsico}>
                                     <option value="" hidden>Selecione...</option>
                                     <option value="true">Ativa</option>
@@ -435,614 +196,198 @@ function Aluno_forms(){
                                     <option value="deletar">Deletar</option>
                                     <option value="espera">Em espera...</option>
                                 </select>
-                            </label>
-                        </div>
-                    </div>
-                    <div className={styles.coluna}>
-                        <div className={styles.linha}>
-                            <label className={styles.label_select}>
-                                <div className={styles.sublabel_select}>Sala:<p className={styles.asterisco}>*</p></div>
-                                <select className={styles.select} name="sala" value={formDado.sala} onChange={handleChange} disabled={isPsico}>
-                                    <option value="" hidden>Selecione...</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                </select>
-                            </label>
-                            <label className={styles.label_select}>
-                                <div className={styles.sublabel_select}>Turno no instituto:<p className={styles.asterisco}>*</p></div>
-                                <select className={styles.select} name="turno" value={formDado.turno} onChange={handleChange} disabled={isPsico}>
-                                    <option value="" hidden>Selecione...</option>
-                                    <option value="manha">Manhã</option>
-                                    <option value="tarde">Tarde</option>
-                                </select>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <h2 className={styles.title}>INFORMAÇÕES FAMILIARES</h2>
-                <h3 className={styles.subtitle}>PAI:</h3>
-                <div className={styles.informacoes}>
-                    <div className={styles.coluna}>
-                        <Input
-                            label="Nome do pai:"
-                            type="text"
-                            placeholder=""
-                            name="nome_pai"
-                            value={formDado.nome_pai}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade=""
-                            disabled={isPsico}
-                        />
-                        <div className={styles.linha}>
-                            <Input
-                                label="Ocupação:"
-                                type="text"
-                                placeholder=""
-                                name="ocupacao_pai"
-                                value={formDado.ocupacao_pai}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Contato do trabalho:"
-                                type="tel"
-                                placeholder="(DDD) 9XXXX-XXXX"
-                                name="contato_trabalho_pai"
-                                value={formDado.contato_trabalho_pai}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                        </div>
-                        <Input
-                            label="Local do trabalho:"
-                            type="text"
-                            placeholder=""
-                            name="local_trabalho_pai"
-                            value={formDado.local_trabalho_pai}
-                            onChange={handleChange}
-                            comp="grande"
-                            disabled={isPsico}
-                        />
-                    </div>
-                    <div className={styles.coluna}>
-                        <div className={styles.linha}>
-                            <Input
-                                label="Contato:"
-                                type="tel"
-                                placeholder="(DDD) 9XXXX-XXXX"
-                                name="contato_pai"
-                                value={formDado.contato_pai}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Grau de instrução:"
-                                type="text"
-                                placeholder=""
-                                name="instrucao_pai"
-                                value={formDado.instrucao_pai}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                        </div>
-                        <div className={styles.linha}>
-                            <Input
-                                label="Alfabetização:"
-                                type="text"
-                                placeholder=""
-                                name="alfabetizacao_pai"
-                                value={formDado.alfabetizacao_pai}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Estado civil:"
-                                type="text"
-                                placeholder=""
-                                name="estado_civil_pai"
-                                value={formDado.estado_civil_pai}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <h3 className={styles.subtitle}>MÃE:</h3>
-                <div className={styles.informacoes}>
-                    <div className={styles.coluna}>
-                        <Input
-                            label="Nome da mãe:"
-                            type="text"
-                            placeholder=""
-                            name="nome_mae"
-                            value={formDado.nome_mae}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade=""
-                            disabled={isPsico}
-                        />
-                        <div className={styles.linha}>
-                            <Input
-                                label="Ocupação:"
-                                type="text"
-                                placeholder=""
-                                name="ocupacao_mae"
-                                value={formDado.ocupacao_mae}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Contato do trabalho:"
-                                type="tel"
-                                placeholder="(DDD) 9XXXX-XXXX"
-                                name="contato_trabalho_mae"
-                                value={formDado.contato_trabalho_mae}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                        </div>
-                        <Input
-                            label="Local do trabalho:"
-                            type="text"
-                            placeholder=""
-                            name="local_trabalho_mae"
-                            value={formDado.local_trabalho_mae}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade=""
-                            disabled={isPsico}
-                        />
-                    </div>
-                    <div className={styles.coluna}>
-                        <div className={styles.linha}>
-                            <Input
-                                label="Contato:"
-                                type="tel"
-                                placeholder="(DDD) 9XXXX-XXXX"
-                                name="contato_mae"
-                                value={formDado.contato_mae}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Grau de instrução:"
-                                type="text"
-                                placeholder=""
-                                name="instrucao_mae"
-                                value={formDado.instrucao_mae}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                        </div>
-                        <div className={styles.linha}>
-                            <Input
-                                label="Alfabetização:"
-                                type="text"
-                                placeholder=""
-                                name="alfabetizacao_mae"
-                                value={formDado.alfabetizacao_mae}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Estado civil:"
-                                type="text"
-                                placeholder=""
-                                name="estado_civil_mae"
-                                value={formDado.estado_civil_mae}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <h3 className={styles.subtitle}>FAMÍLIA:</h3>
-                <div className={styles.informacoes}>
-                    <div className={styles.coluna}>
-                        <div className={styles.linha}>
-                            <Input
-                                label="Quantos filhos além do aluno:"
-                                type="text"
-                                placeholder=""
-                                name="qtd_filho"
-                                value={formDado.qtd_filho}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Benefício do governo:"
-                                type="text"
-                                placeholder=""
-                                name="beneficio_governo"
-                                value={formDado.beneficio_governo}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                        </div>
-                        <div className={styles.linha}>
-                            <Input
-                                label="O aluno mora atualmente com qual familiar?"
-                                type="text"
-                                placeholder=""
-                                name="mora_familiar"
-                                value={formDado.mora_familiar}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Em caso de outro:"
-                                type="text"
-                                placeholder=""
-                                name="outro_familiar"
-                                value={formDado.outro_familiar}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                        </div>
-                        <div className={styles.linha}>
-                            <Input
-                                label="Todos moram na mesma residência?"
-                                type="text"
-                                placeholder=""
-                                name="todos_moram_casa"
-                                value={formDado.todos_moram_casa}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Renda total da família:"
-                                type="text"
-                                placeholder=""
-                                name="renda_total"
-                                value={formDado.renda_total}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                        </div>
-                    </div>
-                    <div className={styles.coluna}>
-                        <div className={styles.linha}>
-                            <Input
-                                label="Meio de transporte da família:"
-                                type="text"
-                                placeholder=""
-                                name="meio_transporte"
-                                value={formDado.meio_transporte}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Quantidade:"
-                                type="text"
-                                placeholder=""
-                                name="qtd_transporte"
-                                value={formDado.qtd_transporte}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                        </div>
-                        <label >
-                            <p className={styles.label_qtd_clt_auto}>Quantas pessoas trabalham na casa?</p>
-                            <div className={styles.linha}>
-                                <Input
-                                    label="Carteira assinada:"
-                                    type="text"
-                                    placeholder=""
-                                    name="clt"
-                                    value={formDado.clt}
-                                    onChange={handleChange}
-                                    comp="pequeno"
-                                    prioridade=""
-                                    disabled={isPsico}
-                                />
-                                <Input
-                                    label="Autônomo:"
-                                    type="text"
-                                    placeholder=""
-                                    name="autonomo"
-                                    value={formDado.autonomo}
-                                    onChange={handleChange}
-                                    comp="pequeno"
-                                    prioridade=""
-                                    disabled={isPsico}
-                                />
                             </div>
-                        </label>
-                        <div className={styles.linha}>
-                            <Input
-                                label="Família congrega em alguma igreja?"
-                                type="text"
-                                placeholder=""
-                                name="familia_congrega"
-                                value={formDado.familia_congrega}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Gostaria de congregar?"
-                                type="text"
-                                placeholder=""
-                                name="gostaria_congregar"
-                                value={formDado.gostaria_congregar}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
+                        </div>
+                        <div className={styles.coluna}>
+                            <div className={styles.linhaDupla}>
+                                <div className={styles.inputGroup}>
+                                    <label>Sala: <span className={styles.required}>*</span></label>
+                                    <select className={styles.select} name="sala" value={formDado.sala} onChange={handleChange} disabled={isPsico}>
+                                        <option value="" hidden>...</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <label>Turno: <span className={styles.required}>*</span></label>
+                                    <select className={styles.select} name="turno" value={formDado.turno} onChange={handleChange} disabled={isPsico}>
+                                        <option value="" hidden>...</option>
+                                        <option value="manha">Manhã</option>
+                                        <option value="tarde">Tarde</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <h2 className={styles.title}>OUTRAS INFORMAÇÕES</h2>
-                <div className={styles.informacoes}>
-                    <div className={styles.coluna}>
-                        <Input
-                            label="Aluno possui alguma doença?"
-                            type="text"
-                            placeholder=""
-                            name="doenca"
-                            value={formDado.doenca}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade=""
-                            disabled={isPsico}
-                        />
-                        <Input
-                            label="Precisa tomar remédio no instituto?"
-                            type="text"
-                            placeholder=""
-                            name="remedio_instituto"
-                            value={formDado.remedio_instituto}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade=""
-                            disabled={isPsico}
-                        />
-                        <div className={styles.linha}>
-                            <Input
-                                label="Horário do medicamento:"
-                                type="time"
-                                placeholder=""
-                                name="horario_medicamento"
-                                value={formDado.horario_medicamento}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade="false"
-                                disabled={isPsico}
-                            />
-                            <Input
-                                label="Pode praticar esportes?"
-                                type="text"
-                                placeholder=""
-                                name="esportes"
-                                value={formDado.esportes}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
+
+                    {/* --- 3. INFORMAÇÕES FAMILIARES --- */}
+                    <h3 className={styles.sectionTitle}>Informações Familiares</h3>
+                    
+                    {/* PAI */}
+                    <h4 className={styles.subSectionTitle}>Pai</h4>
+                    <div className={styles.gridContainer}>
+                        <div className={styles.coluna}>
+                            <Input label="Nome do Pai:" name="nome_pai" value={formDado.nome_pai} onChange={handleChange} comp="grande" disabled={isPsico} />
+                            <div className={styles.linhaDupla}>
+                                <Input label="Ocupação:" name="ocupacao_pai" value={formDado.ocupacao_pai} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Contato Trab.:" name="contato_trabalho_pai" value={formDado.contato_trabalho_pai} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+                            <Input label="Local Trabalho:" name="local_trabalho_pai" value={formDado.local_trabalho_pai} onChange={handleChange} comp="grande" disabled={isPsico} />
                         </div>
-                        <div className={styles.aulas_extras}>
-                            <div className={styles.label_aulas}>Aulas extras:</div>
-                            <div className={styles.container}>
-                                <div className={styles.aula}>
-                                    <label className={styles.label_select_aula}>
-                                        <div className={styles.sublabel_select_aula}>Karatê:</div>
-                                        <input
-                                            type="checkbox"
-                                            name="karate"
-                                            checked={formDado.karate === true}
-                                            onChange={(e) => setFormDado({ ...formDado, karate: e.target.checked })}
-                                            disabled={isPsico}
-                                        />
-                                    </label>
+                        <div className={styles.coluna}>
+                            <div className={styles.linhaDupla}>
+                                <Input label="Contato Pessoal:" name="contato_pai" value={formDado.contato_pai} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Instrução:" name="instrucao_pai" value={formDado.instrucao_pai} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+                            <div className={styles.linhaDupla}>
+                                <Input label="Alfabetização:" name="alfabetizacao_pai" value={formDado.alfabetizacao_pai} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Estado Civil:" name="estado_civil_pai" value={formDado.estado_civil_pai} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* MÃE */}
+                    <h4 className={styles.subSectionTitle}>Mãe</h4>
+                    <div className={styles.gridContainer}>
+                        <div className={styles.coluna}>
+                            <Input label="Nome da Mãe:" name="nome_mae" value={formDado.nome_mae} onChange={handleChange} comp="grande" disabled={isPsico} />
+                            <div className={styles.linhaDupla}>
+                                <Input label="Ocupação:" name="ocupacao_mae" value={formDado.ocupacao_mae} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Contato Trab.:" name="contato_trabalho_mae" value={formDado.contato_trabalho_mae} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+                            <Input label="Local Trabalho:" name="local_trabalho_mae" value={formDado.local_trabalho_mae} onChange={handleChange} comp="grande" disabled={isPsico} />
+                        </div>
+                        <div className={styles.coluna}>
+                            <div className={styles.linhaDupla}>
+                                <Input label="Contato Pessoal:" name="contato_mae" value={formDado.contato_mae} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Instrução:" name="instrucao_mae" value={formDado.instrucao_mae} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+                            <div className={styles.linhaDupla}>
+                                <Input label="Alfabetização:" name="alfabetizacao_mae" value={formDado.alfabetizacao_mae} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Estado Civil:" name="estado_civil_mae" value={formDado.estado_civil_mae} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* CONTEXTO FAMILIAR */}
+                    <h4 className={styles.subSectionTitle}>Contexto Familiar</h4>
+                    <div className={styles.gridContainer}>
+                        <div className={styles.coluna}>
+                            <div className={styles.linhaDupla}>
+                                <Input label="Qtd. Filhos:" name="qtd_filho" value={formDado.qtd_filho} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Benefício Gov.:" name="beneficio_governo" value={formDado.beneficio_governo} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+                            <div className={styles.linhaDupla}>
+                                <Input label="Mora com:" name="mora_familiar" value={formDado.mora_familiar} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Outro familiar:" name="outro_familiar" value={formDado.outro_familiar} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+                            <div className={styles.linhaDupla}>
+                                <Input label="Todos moram juntos?" name="todos_moram_casa" value={formDado.todos_moram_casa} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Renda Total:" name="renda_total" value={formDado.renda_total} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+                        </div>
+                        <div className={styles.coluna}>
+                            <div className={styles.linhaDupla}>
+                                <Input label="Transporte Família:" name="meio_transporte" value={formDado.meio_transporte} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Qtd. Transporte:" name="qtd_transporte" value={formDado.qtd_transporte} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+                            
+                            <div className={styles.inputGroup}>
+                                <label>Trabalho (Qtd. Pessoas):</label>
+                                <div className={styles.linhaDupla}>
+                                    <Input label="CLT:" name="clt" value={formDado.clt} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                    <Input label="Autônomo:" name="autonomo" value={formDado.autonomo} onChange={handleChange} comp="pequeno" disabled={isPsico} />
                                 </div>
-                                <div className={styles.aula}>
-                                    <label className={styles.label_select_aula}>
-                                        <div className={styles.sublabel_select_aula}>Ballet:</div>
-                                        <input
-                                            type="checkbox"
-                                            name="ballet"
-                                            checked={formDado.ballet === true}
-                                            onChange={(e) => setFormDado({ ...formDado, ballet: e.target.checked })}
-                                            disabled={isPsico}
-                                        />
-                                    </label>
+                            </div>
+                            
+                            <div className={styles.linhaDupla}>
+                                <Input label="Família Congrega?" name="familia_congrega" value={formDado.familia_congrega} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Gostaria de Congregar?" name="gostaria_congregar" value={formDado.gostaria_congregar} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* --- 4. OUTRAS INFORMAÇÕES (SAÚDE/AULAS) --- */}
+                    <h3 className={styles.sectionTitle}>Outras Informações & Saúde</h3>
+                    <div className={styles.gridContainer}>
+                        <div className={styles.coluna}>
+                            <Input label="Doença:" name="doenca" value={formDado.doenca} onChange={handleChange} comp="grande" disabled={isPsico} />
+                            <Input label="Remédio no Instituto:" name="remedio_instituto" value={formDado.remedio_instituto} onChange={handleChange} comp="grande" disabled={isPsico} />
+                            
+                            <div className={styles.linhaDupla}>
+                                <Input label="Horário Medicamento:" type="time" name="horario_medicamento" value={formDado.horario_medicamento} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Pratica Esportes?" name="esportes" value={formDado.esportes} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                            </div>
+
+                            {/* CHECKBOXES DE AULAS EXTRAS */}
+                            <div className={styles.checkboxGroup}>
+                                <p>Aulas Extras:</p>
+                                <div className={styles.checkboxGrid}>
+                                    {['karate', 'ballet', 'informatica', 'musica', 'artesanato', 'futsal', 'ingles'].map(aula => (
+                                        <label key={aula} className={styles.checkboxLabel}>
+                                            <input
+                                                type="checkbox"
+                                                name={aula}
+                                                checked={formDado[aula] === true}
+                                                onChange={(e) => setFormDado({ ...formDado, [aula]: e.target.checked })}
+                                                disabled={isPsico}
+                                            />
+                                            {aula.charAt(0).toUpperCase() + aula.slice(1)}
+                                        </label>
+                                    ))}
                                 </div>
-                                <div className={styles.aula}>
-                                    <label className={styles.label_select_aula}>
-                                        <div className={styles.sublabel_select_aula}>Informática:</div>
-                                        <input
-                                            type="checkbox"
-                                            name="informatica"
-                                            checked={formDado.informatica === true}
-                                            onChange={(e) => setFormDado({ ...formDado, informatica: e.target.checked })}
-                                            disabled={isPsico}
-                                        />
-                                    </label>
-                                </div>
-                                <div className={styles.aula}>
-                                    <label className={styles.label_select_aula}>
-                                        <div className={styles.sublabel_select_aula}>Música:</div>
-                                        <input
-                                            type="checkbox"
-                                            name="musica"
-                                            checked={formDado.musica === true}
-                                            onChange={(e) => setFormDado({ ...formDado, musica: e.target.checked })}
-                                            disabled={isPsico}
-                                        />
-                                    </label>
-                                </div>
-                                <div className={styles.aula}>
-                                    <label className={styles.label_select_aula}>
-                                        <div className={styles.sublabel_select_aula}>Artesanato:</div>
-                                        <input
-                                            type="checkbox"
-                                            name="artesanato"
-                                            checked={formDado.artesanato === true}
-                                            onChange={(e) => setFormDado({ ...formDado, artesanato: e.target.checked })}
-                                            disabled={isPsico}
-                                        />
-                                    </label>
-                                </div>
-                                <div className={styles.aula}>
-                                    <label className={styles.label_select_aula}>
-                                        <div className={styles.sublabel_select_aula}>Futsal:</div>
-                                        <input
-                                            type="checkbox"
-                                            name="futsal"
-                                            checked={formDado.futsal === true}
-                                            onChange={(e) => setFormDado({ ...formDado, futsal: e.target.checked })}
-                                            disabled={isPsico}
-                                        />
-                                    </label>
-                                </div>
-                                <div className={styles.aula}>
-                                    <label className={styles.label_select_aula}>
-                                        <div className={styles.sublabel_select_aula}>Inglês:</div>
-                                        <input
-                                            type="checkbox"
-                                            name="ingles"
-                                            checked={formDado.ingles === true}
-                                            onChange={(e) => setFormDado({ ...formDado, ingles: e.target.checked })}
-                                            disabled={isPsico}
-                                        />
-                                    </label>
+                            </div>
+
+                            {/* UPLOAD DIÁRIO */}
+                            <div className={styles.uploadArea}>
+                                <label>Diário de Acompanhamento:</label>
+                                <div className={styles.dropzoneWrapper}>
+                                    <div {...getRootProps({ className: styles.dropzone })}>
+                                        <input {...getInputProps()} disabled={isPsico} />
+                                        <span className={styles.filename}>
+                                            {diario ? (diario.name || diario.data?.fileName) : "Clique ou arraste o arquivo..."}
+                                        </span>
+                                        <SiGoogledocs className={styles.iconDoc}/>
+                                    </div>
+                                    {diario && (
+                                        <button type="button" className={styles.btnDownload} onClick={handleDownload} title="Baixar Diário">
+                                            <IoIosDownload />
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>
 
-                        <div className={styles.diario}>
-                            Diário de acompanhamento:
-                            <div className={styles.container_diario}>
-                                <label className={styles.label_diario}>
-                                    <div {...getRootProps({ className: styles.dropzone })}>
-                                        <input {...getInputProps()} disabled={isPsico} />
-                                        {diario ? (
-                                            <p className={styles.placeholderdiario}>{diario.name || diario.data.fileName}</p>
-                                        ) : (
-                                            <p className={styles.placeholderdiario}>Adicione o arquivo aqui...</p>
-                                        )}
-                                        <SiGoogledocs/>
-                                    </div>
-                                </label>
-                                {diario &&(
-                                    <IoIosDownload className={styles.download} onClick={handleDownload}/>
-                                )}
+                        <div className={styles.coluna}>
+                            <Input label="Medicação:" name="medicacao" value={formDado.medicacao} onChange={handleChange} comp="grande" disabled={isPsico} />
+                            <Input label="Tratamento:" name="tratamento" value={formDado.tratamento} onChange={handleChange} comp="grande" disabled={isPsico} />
+                            
+                            <div className={styles.linhaDupla}>
+                                <Input label="Saída do Aluno:" name="saida_aluno" value={formDado.saida_aluno} onChange={handleChange} comp="pequeno" disabled={isPsico} />
+                                <Input label="Contato Saída:" name="contato_saida" value={formDado.contato_saida} onChange={handleChange} comp="pequeno" disabled={isPsico} />
                             </div>
                         </div>
                     </div>
-                    <div className={styles.coluna}>
-                        <Input
-                            label="Toma alguma medicação?"
-                            type="text"
-                            placeholder=""
-                            name="medicacao"
-                            value={formDado.medicacao}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade=""
-                            disabled={isPsico}
-                        />
-                        <Input
-                            label="Faz algum tipo de tratamento?"
-                            type="text"
-                            placeholder=""
-                            name="tratamento"
-                            value={formDado.tratamento}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade=""
-                            disabled={isPsico}
-                        />
-                        <div className={styles.linha}>
-                            <Input
-                                label="Saída do aluno:"
-                                type="text"
-                                placeholder=""
-                                name="saida_aluno"
-                                value={formDado.saida_aluno}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
+
+                    {/* --- BOTÕES DE AÇÃO --- */}
+                    <div className={styles.footerActions}>
+                        {errorMessage && <div className={styles.errorMsg}>{errorMessage}</div>}
+                        
+                        {!isPsico && (
+                            <Botao
+                                nome="Salvar Dados" 
+                                corFundo="#F29F05" 
+                                corBorda="#8A6F3E" 
+                                type="submit"
                             />
-                            <Input
-                                label="Contato:"
-                                type="text"
-                                placeholder=""
-                                name="contato_saida"
-                                value={formDado.contato_saida}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                                disabled={isPsico}
-                            />
-                        </div>
+                        )}
                     </div>
-                </div>
-                <div className={styles.cadastrar}>
-                    {errorMessage && (
-                        <p className={styles.errorMessage}>
-                            {errorMessage}
-                        </p>
-                    )}
-                    {!isPsico && (
-                        <Botao
-                            nome="Salvar" 
-                            corFundo="#F29F05" 
-                            corBorda="#8A6F3E" 
-                            type="submit"
-                        />
-                    )}
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    )
+    );
 }
 
 export default Aluno_forms;

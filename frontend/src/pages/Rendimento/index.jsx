@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 
 import get from '../../services/requests/get';
-import put from '../../services/requests/put'; // Importe o put
+import put from '../../services/requests/put';
 import StarRating from '../../components/gerais/StarRating';
 import Botao from '../../components/gerais/Botao';
 import { IoMdArrowRoundBack } from "react-icons/io";
@@ -53,49 +53,67 @@ function Rendimento() {
         try {
             await put.discenteAvaliacoes(matricula, avaliacoes);
             alert('Avaliações salvas com sucesso!');
+            navigate(-1);
         } catch(err) {
             setError(err.message || 'Erro ao salvar avaliações.');
         }
     };
 
-    if (loading) return <div>Carregando...</div>;
-    if (error) return <div>{error}</div>;
-
+    if (loading) return <div className={styles.loading}>Carregando...</div>;
+    
+    // Categorias de avaliação
     const categorias = [
         { id: 'avaliacaoPresenca', nome: 'Presença', editavel: podeAvaliarGeral },
         { id: 'avaliacaoParticipacao', nome: 'Participação', editavel: podeAvaliarGeral },
         { id: 'avaliacaoComportamento', nome: 'Comportamento', editavel: podeAvaliarGeral },
-        { id: 'avaliacaoRendimento', nome: 'Rendimento', editavel: podeAvaliarGeral },
-        { id: 'avaliacaoPsicologico', nome: 'Psicológico', editavel: podeAvaliarPsico },
+        { id: 'avaliacaoRendimento', nome: 'Rendimento Escolar', editavel: podeAvaliarGeral },
+        { id: 'avaliacaoPsicologico', nome: 'Avaliação Psicológica', editavel: podeAvaliarPsico },
     ];
 
     return (
         <div className={styles.body}>
-            <div className={styles.linha_voltar}>
-                <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)} />
-            </div>
-            <div className={styles.header}>
-                <h2>Rendimento do Aluno</h2>
-                <p><strong>Nome:</strong> {aluno?.nome}</p>
-            </div>
+            <div className={styles.container}>
+                {/* --- HEADER --- */}
+                <div className={styles.headerForm}>
+                    <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)} />
+                    <div className={styles.headerText}>
+                        <h2 className={styles.titlePage}>Rendimento</h2>
+                        {aluno && <p className={styles.studentName}>{aluno.nome}</p>}
+                    </div>
+                </div>
 
-            <div className={styles.avaliacoesContainer}>
-                {categorias.map(cat => (
-                    <div key={cat.id} className={`${styles.aulaItem} ${!cat.editavel ? styles.disabled : ''}`}>
-                        <h4>{cat.nome}</h4>
-                        <StarRating 
-                            initialRating={avaliacoes[cat.id] || 0}
-                            onRate={(nota) => cat.editavel && handleRate(cat.id, nota)} 
+                {error && <div className={styles.errorMsg}>{error}</div>}
+
+                {/* --- GRID DE AVALIAÇÕES --- */}
+                <div className={styles.avaliacoesContainer}>
+                    {categorias.map(cat => (
+                        <div key={cat.id} className={`${styles.aulaItem} ${!cat.editavel ? styles.disabled : ''}`}>
+                            <div className={styles.cardHeader}>
+                                <h4>{cat.nome}</h4>
+                                {!cat.editavel && <span className={styles.badge}>Apenas Leitura</span>}
+                            </div>
+                            <div className={styles.starWrapper}>
+                                <StarRating 
+                                    initialRating={avaliacoes[cat.id] || 0}
+                                    onRate={(nota) => cat.editavel && handleRate(cat.id, nota)} 
+                                />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                
+                {/* --- FOOTER --- */}
+                {(podeAvaliarGeral || podeAvaliarPsico) && (
+                     <div className={styles.footerActions}>
+                        <Botao 
+                            nome="Salvar Avaliações" 
+                            onClick={handleSave} 
+                            corFundo="#F29F05" 
+                            corBorda="#8A6F3E"
                         />
                     </div>
-                ))}
+                )}
             </div>
-            
-            {(podeAvaliarGeral || podeAvaliarPsico) && (
-                 <div className={styles.saveButtonContainer}>
-                    <Botao nome="Salvar Avaliações" onClick={handleSave} corFundo="#F29F05"/>
-                </div>
-            )}
         </div>
     );
 }

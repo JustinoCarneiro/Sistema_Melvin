@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 import put from '../../../services/requests/put';
 import post from '../../../services/requests/post';
@@ -13,50 +12,50 @@ import Botao from '../../../components/gerais/Botao';
 
 function Voluntario_frequencia({tipo}){
     const navigate = useNavigate();
-
-    var title;
-    if(tipo === "coordenador"){
-        title = "Frequência coordenadores";
-    } else if(tipo === "professor"){
-        title = "Frequência professores";
-    } else if(tipo === "auxiliar"){
-        title = "Frequência auxiliares";
-    } else if(tipo === "cozinheiro"){
-        title = "Frequência cozinheiros";
-    } else if(tipo === "administrador"){
-        title = "Frequência administradores";
-    } else if(tipo === "marketing"){
-        title = "Frequência marketing";
-    } else if(tipo === "zelador"){
-        title = "Frequência zeladores";
-    } else if(tipo === "diretor"){
-        title = "Frequência diretores";
-    }
+    
+    // Título dinâmico
+    const getTitle = () => {
+        const titles = {
+            coordenador: "Frequência Coordenadores",
+            professor: "Frequência Professores",
+            auxiliar: "Frequência Auxiliares",
+            cozinheiro: "Frequência Cozinheiros",
+            administrador: "Frequência Administradores",
+            marketing: "Frequência Marketing",
+            zelador: "Frequência Zeladores",
+            diretor: "Frequência Diretores",
+            psicologo: "Frequência Psicólogos",
+            assistente: "Frequência Assistentes"
+        };
+        return titles[tipo] || "Frequência Voluntários";
+    };
 
     const [data, setData] = useState('');
     const [voluntarios, setVoluntarios] = useState([]);
     const [presencas, setPresencas] = useState({});
     const [busca, setBusca] = useState('');
-    const [expandedRows, setExpandedRows] = useState({});
-
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const fetchVoluntarios = async () => {
+            setLoading(true);
             try {
                 const response = await get.voluntario();
                 const objetoDados = response.data;
 
                 if (Array.isArray(objetoDados)) {
-                    const voluntariosAtivos = objetoDados.filter(voluntario => voluntario.status === 'true');
+                    // Filtra apenas ativos
+                    const voluntariosAtivos = objetoDados.filter(voluntario => 
+                        voluntario.status === true || String(voluntario.status) === 'true'
+                    );
                     setVoluntarios(voluntariosAtivos);
                 } else {
-                    console.error("5003:Formato inesperado no response:", response);
-                    alert('Erro ao obter objeto! Formato inesperado de resposta.');
+                    console.error("5003: Formato inesperado:", response);
                 }
-                
             } catch (error) {
-                console.error("5004:Erro ao obter objeto!", error);
-                alert('Erro ao obter objeto!');
+                console.error("5004: Erro ao obter voluntários!", error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -65,10 +64,7 @@ function Voluntario_frequencia({tipo}){
 
     const fetchFrequencias = async (selectedDate) => {
         try {
-            console.log("data selecionada:", selectedDate);
             const response = await get.frequenciavoluntario(selectedDate);
-            console.log("Response frequencias:", response);
-
             const presencaObj = {};
 
             response.data.forEach(frequencia => {
@@ -81,7 +77,6 @@ function Voluntario_frequencia({tipo}){
             setPresencas(presencaObj);
         } catch (error) {
             console.error("Erro ao obter frequências!", error);
-            alert('Erro ao obter frequências!');
         }
     };
 
@@ -118,40 +113,18 @@ function Voluntario_frequencia({tipo}){
                 const frequenciaVoluntarioExistente = await get.frequenciavoluntario(data, matricula);
 
                 if (frequenciaVoluntarioExistente && frequenciaVoluntarioExistente.data) {
-                    console.log('Tentando fazer PUT...');
-                    try {
-                        const response = await put.frequenciavoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });  
-                        console.log('PUT bem-sucedido:', response);
-                        return response;
-                    } catch (error) {
-                        console.error('5011:Erro capturado no PUT:', error);
-                        throw error;
-                    }
+                    return await put.frequenciavoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });  
                 } else {
-                    console.log('Tentando fazer POST...');
-                    try {
-                        const response = await post.frequenciavoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });
-                        console.log('POST bem-sucedido:', response);
-                        return response;
-                    } catch (error) {
-                        console.error('5012:Erro capturado no POST:', error);
-                        throw error;
-                    }
+                    return await post.frequenciavoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });
                 }
             });
 
-            const responses = await Promise.all(promises);
-            responses.forEach(response => {
-                if (response.error) {
-                    throw new Error(response.error.message);
-                }
-            });
-
+            await Promise.all(promises);
             await fetchFrequencias(data);
-            alert('Atualização realizada com sucesso!');
+            alert('Frequência salva com sucesso!');
         } catch (error) {
-            console.error('5013:Erro ao atualizar!', error);
-            alert('Erro ao atualizar!');
+            console.error('5013: Erro ao atualizar!', error);
+            alert('Erro ao salvar!');
         }
     };
 
@@ -185,27 +158,6 @@ function Voluntario_frequencia({tipo}){
         setBusca(e.target.value);
     };
 
-    const handleToggleRow = (matricula) => {
-        setExpandedRows(prevState => ({
-            ...prevState,
-            [matricula]: !prevState[matricula]
-        }));
-    };
-
-    const handleResize = () => {
-        const sizeE = 880;
-        if (window.innerWidth > sizeE) {
-            setExpandedRows({});
-        }
-    };
-
-    useEffect(() => {
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
     const voluntarioFiltradosBusca = voluntarios.filter((voluntario) => {
         const termoBusca = busca.toLowerCase();
         return (
@@ -218,118 +170,115 @@ function Voluntario_frequencia({tipo}){
     return(
         <div className={styles.body}>
             <div className={styles.container}>
-                <div className={styles.linha_voltar}>
-                    <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)} />
-                </div>
                 <div className={styles.header}>
-                    <h2 className={styles.title}>{title}</h2>
-                    <div className={styles.container_busca}>
-                        <IoMdSearch className={styles.icon_busca}/>
-                        <input 
-                            className={styles.busca} 
-                            type='text'
-                            placeholder='Buscar'
-                            name='busca'
-                            onChange={handleBuscaChange}
-                        />
+                    <div className={styles.titleGroup}>
+                        <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)} />
+                        <h2 className={styles.title}>{getTitle()}</h2>
                     </div>
-                    <input 
-                        className={styles.input_data}
-                        type="date"
-                        placeholder=''
-                        name="data"
-                        value={data}
-                        onChange={handleChange(setData)}
-                    />
+                    
+                    <div className={styles.filters}>
+                        <div className={styles.container_busca}>
+                            <IoMdSearch className={styles.icon_busca}/>
+                            <input 
+                                className={styles.busca} 
+                                type='text'
+                                placeholder='Buscar voluntário...'
+                                name='busca'
+                                onChange={handleBuscaChange}
+                            />
+                        </div>
+                        <div className={styles.controls}>
+                            <input 
+                                className={styles.input_data}
+                                type="date"
+                                name="data"
+                                value={data}
+                                onChange={handleChange(setData)}
+                            />
+                        </div>
+                    </div>
                 </div>
+
                 <form onSubmit={handleSubmit} className={styles.form}>
-                    <table className={styles.table}>
-                        <thead className={styles.thead}>
-                            <tr>
-                                <th>Matrícula</th>
-                                <th>Nome</th>
-                                <th className={styles.th_presenca}>
-                                    <div className={styles.ctn_presenca}>
-                                        <p className={styles.p}>Presença</p>
-                                        <div className={styles.th_turnos}>
-                                            <p>M</p>
-                                            <p>T</p>
-                                        </div>
-                                    </div>
-                                </th>
-                                <th className={styles.coluna_justificativa_th}>Justificativa</th>
-                            </tr>
-                        </thead>
-                        <tbody className={styles.tbody}>
-                            {voluntarioFiltradosBusca
-                                .filter(voluntario => voluntario.funcao === tipo) 
-                                .map((voluntario) => (
-                                <React.Fragment key={voluntario.matricula}>
-                                    <tr key={voluntario.matricula}>
-                                        <td>{voluntario.matricula}</td>
-                                        <td>{voluntario.nome}</td>
-                                        <td className={styles.td_presenca}>
-                                            <div className={styles.select_turnos}>
-                                                <select className={styles.select_presenca}
-                                                    value={presencas[voluntario.matricula]?.presenca_manha || ''}
-                                                    onChange={handlePresenceChange(voluntario.matricula, 'presenca_manha')}
-                                                >
-                                                    <option value="" hidden></option>
-                                                    <option value="P">P</option>
-                                                    <option value="F">F</option>
-                                                    <option value="FJ">FJ</option>
-                                                    <option value="X">X</option>
-                                                </select>
-                                                <select className={styles.select_presenca}
-                                                    value={presencas[voluntario.matricula]?.presenca_tarde || ''}
-                                                    onChange={handlePresenceChange(voluntario.matricula, 'presenca_tarde')}
-                                                >
-                                                    <option value="" hidden></option>
-                                                    <option value="P">P</option>
-                                                    <option value="F">F</option>
-                                                    <option value="FJ">FJ</option>
-                                                    <option value="X">X</option>
-                                                </select>
-                                            </div>
-                                        </td>
-                                        <td className={styles.toggleButton} onClick={() => handleToggleRow(voluntario.matricula)}>
-                                            {expandedRows[voluntario.matricula] ? <FaChevronUp /> : <FaChevronDown />}
-                                        </td>
-                                        <td className={styles.coluna_justificativa_td}>
-                                            <input
-                                                className={styles.input_justificativa}
-                                                type="text"
-                                                name="justificativa"
-                                                value={presencas[voluntario.matricula]?.justificativa || ''}
-                                                onChange={handleJustificativaChange(voluntario.matricula)}
-                                            />
-                                        </td>
-                                    </tr>
-                                    {expandedRows[voluntario.matricula] && (
-                                        <tr className={styles.expanded} key={`${voluntario.matricula}-expanded`}>
-                                            <td colSpan="4" className={styles.justificativa_td}>
-                                                <input
-                                                    className={styles.input_justificativa}
-                                                    type="text"
-                                                    name="justificativa"
-                                                    value={presencas[voluntario.matricula]?.justificativa || ''}
-                                                    onChange={handleJustificativaChange(voluntario.matricula)}
-                                                />
-                                            </td>
-                                        </tr>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                        </tbody>
-                    </table>
-                    <div className={styles.container_botao}>
-                        <Botao
-                            nome="Salvar"
-                            corFundo="#F29F05"
-                            corBorda="#8A6F3E"
-                            type="submit"
-                        />
+                    <div className={styles.tableResponsive}>
+                        <table className={styles.table}>
+                            <thead className={styles.thead}>
+                                <tr className={styles.tr_head}>
+                                    <th>Matrícula</th>
+                                    <th>Nome</th>
+                                    <th className={styles.th_center}>Presença (M / T)</th>
+                                    <th>Justificativa</th>
+                                </tr>
+                            </thead>
+                            <tbody className={styles.tbody}>
+                                {loading ? (
+                                    <tr><td colSpan="4" className={styles.empty}>Carregando...</td></tr>
+                                ) : (
+                                    voluntarioFiltradosBusca.length > 0 ? (
+                                        voluntarioFiltradosBusca
+                                            .filter(voluntario => voluntario.funcao === tipo) 
+                                            .map((voluntario) => (
+                                            <tr key={voluntario.matricula} className={styles.tr_body}>
+                                                <td data-label="Matrícula">{voluntario.matricula}</td>
+                                                <td data-label="Nome">{voluntario.nome}</td>
+                                                <td data-label="Presença" className={styles.td_presenca}>
+                                                    <div className={styles.select_turnos}>
+                                                        {/* Manhã */}
+                                                        <select className={styles.select_presenca}
+                                                            value={presencas[voluntario.matricula]?.presenca_manha || ''}
+                                                            onChange={handlePresenceChange(voluntario.matricula, 'presenca_manha')}
+                                                            title="Manhã"
+                                                        >
+                                                            <option value="">-</option>
+                                                            <option value="P">P</option>
+                                                            <option value="F">F</option>
+                                                            <option value="FJ">FJ</option>
+                                                            <option value="X">X</option>
+                                                        </select>
+                                                        {/* Tarde */}
+                                                        <select className={styles.select_presenca}
+                                                            value={presencas[voluntario.matricula]?.presenca_tarde || ''}
+                                                            onChange={handlePresenceChange(voluntario.matricula, 'presenca_tarde')}
+                                                            title="Tarde"
+                                                        >
+                                                            <option value="">-</option>
+                                                            <option value="P">P</option>
+                                                            <option value="F">F</option>
+                                                            <option value="FJ">FJ</option>
+                                                            <option value="X">X</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td data-label="Justificativa">
+                                                    <input
+                                                        className={styles.input_justificativa}
+                                                        type="text"
+                                                        placeholder="Opcional..."
+                                                        name="justificativa"
+                                                        value={presencas[voluntario.matricula]?.justificativa || ''}
+                                                        onChange={handleJustificativaChange(voluntario.matricula)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr><td colSpan="4" className={styles.empty}>Nenhum voluntário encontrado.</td></tr>
+                                    )
+                                )}
+                            </tbody>
+                        </table>
                     </div>
+                    
+                    {!loading && voluntarioFiltradosBusca.length > 0 && (
+                        <div className={styles.footerActions}>
+                            <Botao
+                                nome="Salvar Chamada"
+                                corFundo="#F29F05"
+                                corBorda="#8A6F3E"
+                                type="submit"
+                            />
+                        </div>
+                    )}
                 </form>
             </div>
         </div>

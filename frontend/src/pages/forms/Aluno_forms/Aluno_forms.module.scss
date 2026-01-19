@@ -1,246 +1,314 @@
-@import "../../../index.scss";
+@import '../../../index.scss';
 
 .body {
-    display: flex;
     width: 100%;
-    height: auto;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background-color: $cor-fundo;
+}
+
+.container {
+    width: 100%;
+    max-width: 1000px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* --- HEADER --- */
+.headerForm {
+    display: flex;
     align-items: center;
-    flex-direction: column;
-}
-
-.form{
-    display: flex;
-    flex-direction: column;
-    width: 80vw;
-    height: auto;
-}
-
-.botao{
-    align-self: flex-start;
-    margin-top: 1rem;
-}
-
-.linha_voltar{
-    margin-top: 1rem;
-    width: 100%;
-}
-
-.voltar {
-    font-size: 2rem;
-    cursor: pointer;
-    margin-left: -4px;
-}
-
-.title {
-    margin-top: 4vh;
-}
-
-.subtitle {
-    margin-top: 0.5vh;
-    font-size: 1rem;
-}
-
-.informacoes {
-    display: flex;
-    flex-direction: row;
     justify-content: space-between;
-    margin-inline: 5vw;
+    flex-wrap: wrap; // Permite quebra no mobile
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+    width: 100%;
+    gap: 1rem;
+
+    .voltar {
+        font-size: 1.8rem;
+        color: #666;
+        cursor: pointer;
+        transition: color 0.2s;
+        margin-right: 0.5rem;
+        flex-shrink: 0;
+        
+        &:hover { color: $cor-primaria; }
+    }
+
+    .titlePage {
+        color: $cor-primaria;
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.2;
+        margin-right: auto; // Empurra o botão para a direita no Desktop
+    }
+    
+    // Container do botão para garantir largura correta no mobile
+    .headerButton {
+        display: flex;
+        align-items: center;
+    }
+}
+
+/* --- ESTRUTURA FORM --- */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.sectionTitle {
+    color: $cor-secundaria;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-left: 5px solid $cor-primaria;
+    padding-left: 1rem;
+    margin-bottom: 0.5rem;
+    margin-top: 1rem;
+    background-color: #fafafa;
+    padding-block: 0.5rem;
+    border-radius: 0 4px 4px 0;
+}
+
+.subSectionTitle {
+    color: #666;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
 }
 
 .coluna {
-    width: 20rem;
-}
-
-.linha {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: end;
-}
-
-.linha>* {
-    width: 9rem;
-}
-
-.label_qtd_clt_auto {
-    padding-top: 1rem;
-}
-
-.cadastrar {
-    align-self: end;
-    margin-block: 1rem;
-    margin-right: 5vw;
-}
-
-.label_select {
-    margin-top: 0.7rem;
-    color: black;
-    font-family: inherit;
     display: flex;
     flex-direction: column;
-    font-size: 0.9rem;
-}
-
-.select {
-    border-radius: 7px;
-    border: solid 2px black;
-    font-family: inherit;
-    height: 2rem;
-    background-color: white;
-    padding: 0.5rem;
-    font-size: 0.70rem;
-    margin-top: 0.3rem;
-    width: 8rem;
-}
-
-.sublabel_select {
-    display: flex;
-    flex-direction: row;
-}
-
-.asterisco {
-    color: red;
-    font-size: 0.5rem;
-    margin-left: 0.2rem;
-}
-
-.diario {
-    margin-top: 1rem;
-    width: 19rem;
-    font-size: 0.9rem;
-}
-
-.container_diario {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     gap: 1rem;
 }
 
-.download {
-    font-size: 1.8rem;
-    cursor: pointer;
+.linhaDupla {
+    display: flex;
+    gap: 1rem;
+    
+    > * {
+        flex: 1;
+    }
 }
 
-.label_diario {
+/* --- INPUTS & SELECTS --- */
+.inputGroup {
     display: flex;
-    flex-direction: row;
-    background-color: white;
-    border-radius: 7px;
-    border: solid 2px black;
-    padding: 0.5rem;
-    margin-top: 0.3rem;
-    height: 2rem;
-    font-size: 0.7rem;
-    width: 100%;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    label {
+        font-size: 0.9rem;
+        color: #555;
+        font-weight: 500;
+    }
+
+    .select {
+        padding: 0.6rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background-color: #fff;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border 0.2s;
+        width: 100%;
+
+        &:focus {
+            border-color: $cor-primaria;
+            box-shadow: 0 0 0 2px rgba($cor-primaria, 0.1);
+        }
+    }
+}
+
+.required {
+    color: red;
+}
+
+/* --- CHECKBOXES (Aulas) --- */
+.checkboxGroup {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    
+    p {
+        margin: 0 0 0.8rem 0;
+        font-weight: 600;
+        color: #444;
+    }
+
+    .checkboxGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 0.8rem;
+    }
+
+    .checkboxLabel {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: #555;
+        cursor: pointer;
+        
+        input {
+            accent-color: $cor-primaria;
+            width: 16px;
+            height: 16px;
+        }
+    }
+}
+
+/* --- UPLOAD AREA --- */
+.uploadArea {
+    margin-top: 1rem;
+    
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #555;
+    }
+}
+
+.dropzoneWrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .dropzone {
+    flex-grow: 1;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
     display: flex;
     justify-content: space-between;
-    width: 100%;
+    align-items: center;
+    background-color: #fafafa;
     cursor: pointer;
-}
+    transition: all 0.2s;
+    min-height: 3rem;
 
-.placeholderdiario {
-    display: inline-block;
-    /* ou block, conforme necessário */
-    max-width: 12rem;
-    /* ajuste conforme necessário */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    /* opcional, para alinhar verticalmente */
-}
-
-.aulas_extras{
-    margin-top: 1rem;
-    width: 19rem;
-}
-
-.container{
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 1vw;
-}
-
-.aula{
-    width: 7rem;
-}
-
-.label_aulas{
-    display: flex;
-    flex-direction: row;
-}
-
-.label_select_aula{
-    margin-top: 0.7rem;
-    color: black;
-    font-family: inherit;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    font-size: 0.9rem;
-    cursor: pointer;
-}
-
-.select_aula{
-    border-radius: 7px;
-    border: solid 2px black;
-    font-family: inherit;
-    height: 2rem;
-    background-color: white;
-    padding: 0.5rem;
-    font-size: 0.70rem;
-    margin-top: 0.3rem;
-}
-
-.sublabel_select_aula{
-    display: flex;
-    flex-direction: row;
-}
-
-.errorMessage {
-    color: #e74c3c;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #e74c3c;
-    border-radius: 5px;
-    background-color: #fbecec;
-}
-
-@media (max-width: $size-h){
-    .form{
-        width: 70vw;
+    &:hover {
+        border-color: $cor-primaria;
+        background-color: #f0f8f0;
     }
 
-    .informacoes {
+    .filename {
+        font-size: 0.9rem;
+        color: #666;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 180px;
+    }
+
+    .iconDoc {
+        color: #4285F4;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+    }
+}
+
+.btnDownload {
+    background-color: #eee;
+    border: none;
+    border-radius: 8px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.4rem;
+    color: #333;
+    transition: all 0.2s;
+    flex-shrink: 0;
+
+    &:hover {
+        background-color: $cor-primaria;
+        color: white;
+    }
+}
+
+/* --- FOOTER --- */
+.footerActions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.errorMsg {
+    color: #C70039;
+    background-color: #ffe6e6;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    text-align: center;
+    width: 100%;
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem;
+    }
+
+    .gridContainer {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .linhaDupla {
         flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .headerForm {
+        // Alinhamento padrão flex (row wrap)
         align-items: center;
     }
 
-    .coluna{
+    .titlePage {
+        font-size: 1.4rem;
+        margin-right: auto;
+    }
+
+    // O botão (último filho do header) cai para baixo e ocupa 100%
+    .headerButton {
         width: 100%;
-    }
-
-    .subtitle{
-        margin-top: 2vh;
-    }
-
-    .aulas_extras{
-        width: auto;
-        margin-inline: 5vw;
-    }
-}
-
-@media (max-width: $size-c){
-    .form{
-        width: 90vw;
+        margin-top: 0.5rem;
+        
+        button {
+            width: 100%; // Força o componente Botao a expandir
+            justify-content: center;
+        }
     }
 }

@@ -1,26 +1,18 @@
 import styles from "./Config.module.scss";
 import React, { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaCheck } from "react-icons/fa";
+import { FaUserCog, FaCalendarCheck, FaTools } from "react-icons/fa";
 import Cookies from "js-cookie";
 
 import get from "../../services/requests/get";
 import put from "../../services/requests/put";
 import post from "../../services/requests/post";
-import auth from "../../services/auth";
 
-import Input from "../../components/gerais/Input";
 import Botao from "../../components/gerais/Botao";
 import Deslogar from "../../components/Deslogar";
 
 function Config(){
     const [userData, setUserData] = useState(null);
-    const [matricula, setMatricula] = useState('');
-    const [novaSenhaAlterar, setNovaSenhaAlterar] = useState("");
-    const [repetirSenhaAlterar, setRepetirSenhaAlterar] = useState("");
-    const [senhaRegistrar, setSenhaRegistrar] = useState("");
-    const [repetirSenhaRegistrar, setRepetirSenhaRegistrar] = useState("");
-    const [divAtiva, setDivAtiva] = useState('');
     const [isAdm, setIsAdm] = useState(false);
     const [data, setData] = useState('');
     const [frequencia, setFrequencia] = useState({
@@ -45,11 +37,11 @@ function Config(){
     useEffect(() => {
         const fetchFrequencia = async () => {
             try {
-                let matricula = Cookies.get('login');
+                let matriculaCookie = Cookies.get('login');
+                if(!matriculaCookie) return;
 
-                const response = await get.frequenciavoluntario(data, matricula);
+                const response = await get.frequenciavoluntario(data, matriculaCookie);
                 if (response.data) {
-
                     setFrequencia({
                         presenca_manha: response.data.presenca_manha || '',
                         presenca_tarde: response.data.presenca_tarde || '',
@@ -60,35 +52,26 @@ function Config(){
                 console.error('Erro ao capturar dados da frequência:', error);
             }
         };
-
-        fetchFrequencia();
+        if(data) fetchFrequencia();
     }, [data]);
     
 
     useEffect(() => {
         async function fetchUserData() {
-
             const login = Cookies.get('login');
-
-            if (!login) {
-                console.error("Login não encontrado no cookie");
-                return;
-            }
+            if (!login) return;
 
             try {
                 const response = await get.voluntarioByMatricula(login);
                 if (response.status === 200) {
                     setUserData(response.data);
                     const userRole = Cookies.get('role');
-
                     setIsAdm(userRole === 'ADM'); 
-
                 }
             } catch (error) {
                 console.error("Erro ao buscar dados do usuário:", error);
             }
         }
-
         fetchUserData();
     }, []);
 
@@ -98,452 +81,175 @@ function Config(){
     };
 
     if (!userData) {
-        return (
-            <div>
-                <div>Carregando...</div>
-                <div className={styles.botao}>
-                    <Deslogar/>
-                </div>
-            </div>
-        );
+        return <div className={styles.loading}>Carregando perfil...</div>;
     }
 
     const weekDays = ["segunda", "terca", "quarta", "quinta", "sexta"];
     const dayLabels = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"];
 
     const renderCheckboxes = (day) => {
-        const availability = userData[day];
-
+        const availability = userData[day] || "";
         const morningChecked = availability.includes("manha") || availability.includes("integral");
         const afternoonChecked = availability.includes("tarde") || availability.includes("integral");
 
         return (
-            <>
-                <label className={styles.label}>
-                    Manhã
-                    <div className={styles.checkbox} type="checkbox">
-                        {morningChecked && <FaCheck className={styles.check} />}
-                    </div>
-                </label>
-                <label className={styles.label}>
-                    Tarde
-                    <div className={styles.checkbox} type="checkbox">
-                        {afternoonChecked && <FaCheck className={styles.check} />}
-                    </div>
-                </label>
-            </>
+            <div className={styles.dayChecks}>
+                <div className={`${styles.checkItem} ${morningChecked ? styles.active : ''}`}>
+                    <span>M</span>
+                </div>
+                <div className={`${styles.checkItem} ${afternoonChecked ? styles.active : ''}`}>
+                    <span>T</span>
+                </div>
+            </div>
         );
-    };
-
-    const handleRegistrar = async (e) => {
-        e.preventDefault();
-        if (senhaRegistrar !== repetirSenhaRegistrar) {
-            alert("As senhas não coincidem!");
-            return;
-        }
-
-        try {
-            console.log("Matricula:", matricula, "Nova senha:", senhaRegistrar);
-
-            const voluntario = await get.voluntarioByMatricula(matricula);
-
-            // Garante que a função venha sem espaços extras
-            let funcao = voluntario.data.funcao ? voluntario.data.funcao.trim() : "";
-
-            let role;
-            if(funcao === "coordenador"){
-                role = "COOR";
-            }else if(funcao === "professor"){
-                role = "PROF";
-            }else if(funcao === "auxiliar"){
-                role = "AUX";
-            }else if(funcao === "cozinheiro"){
-                role = "COZI";
-            }else if(funcao === "diretor"){
-                role = "DIRE";
-            }else if(funcao === "administrador"){
-                role = "ADM";
-            }else if(funcao === "marketing"){
-                role = "MARK";
-            }else if(funcao === "zelador"){
-                role = "ZELA";
-            } else if(funcao === "psicologo") {
-                role = "PSICO";                 
-            } else if(funcao === "assistente") { // CORREÇÃO: Adicionado Assistente
-                role = "ASSIST";
-            }
-
-            const login = matricula;
-            const password = senhaRegistrar;
-
-            if (!role) {
-                alert(`A função "${funcao}" não tem um perfil de acesso correspondente.`);
-                return;
-            }
-
-            console.log("role para registrar", role);
-            
-            const response = await auth.registrar({login, password, role});
-
-            if (response && response.status === 200) {
-                alert("Voluntário registrado com sucesso!");
-                // Limpar campos
-                setMatricula("");
-                setSenhaRegistrar("");
-                setRepetirSenhaRegistrar("");
-            } else {
-                alert("Erro ao registrar voluntário.");
-                console.log("status", response.status);
-            }
-        } catch (error) {
-            console.error("Erro ao registrar voluntário:", error);
-            alert("Erro ao registrar voluntário. Verifique se a matrícula existe.");
-        }
-    };
-
-    const handleAlterarSenha = async (e) => {
-        e.preventDefault();
-        if (novaSenhaAlterar !== repetirSenhaAlterar) {
-            alert("As senhas não coincidem!");
-            return;
-        }
-
-        try {
-            const response = await put.alterarsenha(matricula, novaSenhaAlterar);
-            console.log("response:", response);
-            if (response && response.status === 200) {
-                alert("Senha alterada com sucesso!");
-                setNovaSenhaAlterar("");
-                setRepetirSenhaAlterar("");
-                setMatricula("");
-            } else {
-                alert("Erro ao alterar a senha.");
-            }
-        } catch (error) {
-            console.error("Erro ao alterar a senha:", error);
-            alert("Erro ao alterar a senha.");
-        }
-    };
-
-    const handleNavigateAlunos = () => {
-        navigate('/app/config/matriculasdesativadas/alunos');
-    };
-
-    const handleNavigateVoluntarios = () => {
-        navigate('/app/config/matriculasdesativadas/voluntarios');
-    };
-
-    const handleNavigateEmbaixadores = () => {
-        navigate('/app/config/embaixadoresdesativados');
-    }
-
-    const handleNavigateAmigosMelvin = () => {
-        navigate('/app/config/amigosmelvindesativados');
-    }
-
-    const handleNavigateAvisos = () => {
-        navigate('/app/config/avisosdesativados');
-    }
-
-    const fields = {
-        "Nome": "nome",
-        "Contato": "contato",
-        "Data de nascimento": "data",
-        "Endereço": "endereco",
-        "Bairro": "bairro",
-        "Cidade": "cidade",
-        "Email": "email",
-        "Sexo": "sexo",
-        "Cor/Raça": "cor",
-        "RG/CPF": "rg",
-        "Matrícula": "matricula"
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try{
-            const matricula = userData.matricula;
-            const nome = userData.nome;
-            const presenca_manha = frequencia.presenca_manha;
-            const presenca_tarde = frequencia.presenca_tarde;
-            const justificativa = frequencia.justificativa;
+            const payload = {
+                matricula: userData.matricula,
+                nome: userData.nome,
+                data,
+                presenca_manha: frequencia.presenca_manha,
+                presenca_tarde: frequencia.presenca_tarde,
+                justificativa: frequencia.justificativa
+            };
 
-            const frequenciaVoluntarioExistente = await get.frequenciavoluntario(data, matricula);
+            const check = await get.frequenciavoluntario(data, userData.matricula);
 
-            if (frequenciaVoluntarioExistente && frequenciaVoluntarioExistente.data) {
-                try {
-                    const response = await put.frequenciavoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });  
-                    alert("Presença atualizada com sucesso!");
-                    return response;
-                } catch (error) {
-                    console.error('Erro no PUT:', error);
-                    throw error;
-                }
+            if (check && check.data) {
+                await put.frequenciavoluntario(payload);  
+                alert("Presença atualizada!");
             } else {
-                try {
-                    const response = await post.frequenciavoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });
-                    alert("Presença marcada com sucesso!");
-                    return response;
-                } catch (error) {
-                    console.error('Erro no POST:', error);
-                    throw error;
-                }
+                await post.frequenciavoluntario(payload);
+                alert("Presença marcada!");
             }
         } catch(error) {
-            console.error('Erro ao marcar presença!', error);
             alert('Erro ao marcar presença!');
         }
     }
 
+    // Helper para exibir dados
+    const InfoRow = ({ label, value }) => (
+        <div className={styles.infoRow}>
+            <span className={styles.infoLabel}>{label}:</span>
+            <span className={styles.infoValue}>{value || '-'}</span>
+        </div>
+    );
+
     return(
         <div className={styles.body}>
-            <div className={styles.linha_vertical}></div>
-            <div className={styles.container}>
-                <h1 className={styles.title}>Configuração</h1>
-                <hr className={styles.linha_menor}/>
-                <h3 className={styles.subtitle}>Perfil</h3>
-                <h4 className={styles.title_h4}>Informações pessoais</h4>
-                <hr className={styles.linha_menor}/>
-                <div className={styles.informacoes}>
-                    <div className={styles.colunas}>
-                        <div className={styles.coluna}>
-                            {["Nome", "Contato", "Data de nascimento", "Endereço", "Bairro", "Cidade"].map((field, index) => (
-                                <div className={styles.linha} key={index}>
-                                    <div className={styles.campo}>{field}</div>
-                                    <div className={styles.conteudo}>{userData[fields[field]] || ''}</div>
-                                </div>
-                            ))}
-                        </div>
-                        <div className={styles.coluna}>
-                            {["Email", "Sexo", "Cor/Raça", "RG/CPF"].map((field, index) => (
-                                <div className={styles.linha} key={index}>
-                                    <div className={styles.campo}>{field}</div>
-                                    <div className={styles.conteudo}>{userData[fields[field]] || ''}</div>
-                                </div>
-                            ))}
-                        </div>
+            <div className={styles.mainContent}>
+                <h1 className={styles.pageTitle}>Configurações</h1>
+
+                {/* --- CARD 1: PERFIL --- */}
+                <section className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <FaUserCog className={styles.icon}/>
+                        <h3>Meu Perfil</h3>
                     </div>
-                </div>
-                <div className={styles.informacoes}>
-                    <h4 className={styles.title_h4}>Institucional</h4>
-                    <div className={styles.colunas}>
+                    
+                    <div className={styles.gridProfile}>
                         <div className={styles.coluna}>
-                            {["Matrícula", "Contato"].map((field, index) => (
-                                <div className={styles.linha} key={index}>
-                                    <div className={styles.campo}>{field}</div>
-                                    <div className={styles.conteudo}>{userData[fields[field]] || ''}</div>
-                                </div>
-                            ))}
+                            <h4 className={styles.subTitle}>Pessoal</h4>
+                            <InfoRow label="Nome" value={userData.nome} />
+                            <InfoRow label="Contato" value={userData.contato} />
+                            <InfoRow label="Nascimento" value={userData.data} />
+                            <InfoRow label="Email" value={userData.email} />
+                            <InfoRow label="Endereço" value={`${userData.endereco || ''}, ${userData.bairro || ''}`} />
                         </div>
                         <div className={styles.coluna}>
-                            <div className={styles.linha}>
-                                <div className={styles.campo}>Função</div>
-                                <div className={styles.conteudo}>{userData.funcao}</div>
+                            <h4 className={styles.subTitle}>Institucional</h4>
+                            <InfoRow label="Matrícula" value={userData.matricula} />
+                            <InfoRow label="Função" value={userData.funcao} />
+                            <InfoRow label="CPF/RG" value={userData.rg} />
+                            
+                            <div className={styles.weekSchedule}>
+                                <p className={styles.scheduleTitle}>Dias de Voluntariado:</p>
+                                <div className={styles.daysGrid}>
+                                    {weekDays.map((day, index) => (
+                                        <div key={day} className={styles.dayContainer}>
+                                            <span className={styles.dayLabel}>{dayLabels[index]}</span>
+                                            {renderCheckboxes(day)}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className={styles.semanal}>
-                        <div className={styles.title_semana}>Dias semanais de voluntariado</div>
-                        <div className={styles.semana}>
-                            {weekDays.map((day, index) => (
-                                <div className={styles.coluna_semana} key={index}>
-                                    <div className={styles.title_coluna_semana}>{dayLabels[index]}</div>
-                                    {renderCheckboxes(day)}
-                                </div>
-                            ))}
-                        </div>
+                </section>
+
+                {/* --- CARD 2: AUTO FREQUÊNCIA --- */}
+                <section className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <FaCalendarCheck className={styles.icon}/>
+                        <h3>Auto Frequência</h3>
                     </div>
-                </div>
+                    
+                    <form onSubmit={handleSubmit} className={styles.formFrequencia}>
+                        <div className={styles.frequenciaGrid}>
+                            <div className={styles.inputGroup}>
+                                <label>Manhã:</label>
+                                <select className={styles.select} name="presenca_manha" value={frequencia.presenca_manha} onChange={handleChange}>
+                                    <option value="" hidden>Selecione...</option>
+                                    <option value="P">Presente</option>
+                                    <option value="F">Falta</option>
+                                    <option value="FJ">Justificada</option>
+                                    <option value="X">N/A</option>
+                                </select>
+                            </div>
+                            <div className={styles.inputGroup}>
+                                <label>Tarde:</label>
+                                <select className={styles.select} name="presenca_tarde" value={frequencia.presenca_tarde} onChange={handleChange}>
+                                    <option value="" hidden>Selecione...</option>
+                                    <option value="P">Presente</option>
+                                    <option value="F">Falta</option>
+                                    <option value="FJ">Justificada</option>
+                                    <option value="X">N/A</option>
+                                </select>
+                            </div>
+                            <div className={styles.inputGroup} style={{flexGrow: 2}}>
+                                <label>Justificativa:</label>
+                                <input
+                                    className={styles.input}
+                                    type="text"
+                                    name="justificativa"
+                                    placeholder="Opcional..."
+                                    value={frequencia.justificativa}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+                        <div className={styles.actionRight}>
+                            <Botao nome="Confirmar Presença" corFundo="#044D8C" corBorda="#043560" type="submit" comp="pequeno"/>
+                        </div>
+                    </form>
+                </section>
+
+                {/* --- CARD 3: ADMINISTRAÇÃO (Só para ADMs) --- */}
                 {isAdm && (
-                    <>
-                        <hr className={styles.linha_maior}/>
-                        <h3 className={styles.subtitle}>Autenticação</h3>
-                        <h4 className={styles.title_h4}>Informações sobre autenticação de voluntário</h4>
-                        <hr className={styles.linha_menor}/>
-                        <div className={styles.informacoes}>
-                            <div className={styles.autenticacao}>
-                                <button onClick={() => setDivAtiva('registrar')}>Registrar voluntário</button>
-                                <div className={styles.linha_auth}></div>
-                                <button onClick={() => setDivAtiva('alterar_senha')}>Alterar senha de voluntário</button>
+                    <section className={`${styles.card} ${styles.cardAdmin}`}>
+                        <div className={styles.cardHeader}>
+                            <FaTools className={styles.icon}/>
+                            <h3>Administração</h3>
+                        </div>
+
+                        {/* Atalhos de Gestão */}
+                        <div className={styles.shortcutsSection}>
+                            <h4>Gestão de Desativados & Solicitações</h4>
+                            <div className={styles.shortcutsGrid}>
+                                <Botao nome="Alunos Desativados" corFundo="#7EA629" corBorda="#58751A" onClick={() => navigate('/app/config/matriculasdesativadas/alunos')} />
+                                <Botao nome="Voluntários Desativados" corFundo="#7EA629" corBorda="#58751A" onClick={() => navigate('/app/config/matriculasdesativadas/voluntarios')} />
+                                <Botao nome="Embaixadores" corFundo="#f29f05" corBorda="#8A6F3E" onClick={() => navigate('/app/config/embaixadoresdesativados')} />
+                                <Botao nome="Amigos Melvin" corFundo="#f29f05" corBorda="#8A6F3E" onClick={() => navigate('/app/config/amigosmelvindesativados')} />
+                                <Botao nome="Avisos" corFundo="#C60108" corBorda="#602929" onClick={() => navigate('/app/config/avisosdesativados')} />
                             </div>
-                            {divAtiva === 'registrar' && 
-                                <div id="registrar">
-                                    <form onSubmit={handleRegistrar} className={styles.forms_senha}>
-                                        <Input 
-                                            label="Matrícula"
-                                            placeholder=""
-                                            type="text"
-                                            name="matricula"
-                                            value={matricula}
-                                            onChange={(e) => setMatricula(e.target.value)}
-                                            comp="10rem"
-                                            prioridade="false"
-                                        />
-                                        <Input 
-                                            label="Senha"
-                                            placeholder=""
-                                            type="password"
-                                            name="senhaRegistrar"
-                                            value={senhaRegistrar}
-                                            onChange={(e) => setSenhaRegistrar(e.target.value)}
-                                            comp="10rem"
-                                            prioridade="false"
-                                        />
-                                        <Input 
-                                            label="Repita a senha"
-                                            placeholder=""
-                                            type="password"
-                                            name="repetirSenhaRegistrar"
-                                            value={repetirSenhaRegistrar}
-                                            onChange={(e) => setRepetirSenhaRegistrar(e.target.value)}
-                                            comp="10rem"
-                                            prioridade="false"
-                                        />
-                                        <Botao 
-                                            nome="Registrar"
-                                            corFundo="#F29F05" 
-                                            corBorda="#8A6F3E"
-                                            comp="8rem"
-                                            type="submit"
-                                        />
-                                    </form>
-                                </div>
-                            }
-                            {divAtiva === 'alterar_senha' &&
-                                <div id="alterar_senha">
-                                    <form onSubmit={handleAlterarSenha} className={styles.forms_senha}>
-                                        <Input 
-                                            label="Matrícula"
-                                            placeholder=""
-                                            type="text"
-                                            name="matricula"
-                                            value={matricula}
-                                            onChange={(e) => setMatricula(e.target.value)}
-                                            comp="10rem"
-                                            prioridade="false"
-                                        />
-                                        <Input 
-                                            label="Nova senha"
-                                            placeholder=""
-                                            type="password"
-                                            name="novaSenha"
-                                            value={novaSenhaAlterar}
-                                            onChange={(e) => setNovaSenhaAlterar(e.target.value)}
-                                            comp="10rem"
-                                            prioridade="false"
-                                        />
-                                        <Input 
-                                            label="Repita a senha"
-                                            placeholder=""
-                                            type="password"
-                                            name="repetirSenha"
-                                            value={repetirSenhaAlterar}
-                                            onChange={(e) => setRepetirSenhaAlterar(e.target.value)}
-                                            comp="10rem"
-                                            prioridade="false"
-                                        />
-                                        <Botao 
-                                            nome="Alterar senha"
-                                            corFundo="#F29F05" 
-                                            corBorda="#8A6F3E"
-                                            comp="8rem"
-                                            type="submit"
-                                        />
-                                    </form>
-                                </div>
-                            }   
                         </div>
-                        <hr className={styles.linha_maior}/>
-                        <h3 className={styles.subtitle}>Pessoas desativadas</h3>
-                        <h4 className={styles.title_h4}>Click no botão abaixo para acessar matrículas desativadas</h4>
-                        <hr className={styles.linha_menor}/>
-                        <div className={styles.botao}>
-                            <Botao
-                                nome="Alunos"
-                                corFundo="#7EA629" 
-                                corBorda="#58751A"
-                                onClick={handleNavigateAlunos}
-                            />
-                            <Botao
-                                nome="Voluntários"
-                                corFundo="#044D8C" 
-                                corBorda="#043560"
-                                onClick={handleNavigateVoluntarios}
-                            />
-                        </div>
-                        <hr className={styles.linha_maior}/>
-                        <h3 className={styles.subtitle}>Solicitações</h3>
-                        <h4 className={styles.title_h4}>Click no botão abaixo para acessar as solicitações</h4>
-                        <hr className={styles.linha_menor}/>
-                        <div className={styles.botao}>
-                            <Botao
-                                nome="Embaixadores"
-                                corFundo="#f29f05" 
-                                corBorda="#8A6F3E"
-                                onClick={handleNavigateEmbaixadores}
-                            />
-                            <Botao
-                                nome="Amigos Melvin"
-                                corFundo="#044D8C" 
-                                corBorda="#043560"
-                                onClick={handleNavigateAmigosMelvin}
-                            />
-                        </div>
-                        <hr className={styles.linha_maior}/>
-                        <h3 className={styles.subtitle}>Avisos desativados</h3>
-                        <hr className={styles.linha_menor}/>
-                        <div className={styles.botao}>
-                            <Botao
-                                nome="Avisos"
-                                corFundo="#f29f05" 
-                                corBorda="#8A6F3E"
-                                onClick={handleNavigateAvisos}
-                            />
-                        </div>
-                    </>
+                    </section>
                 )}
-                <hr className={styles.linha_maior}/>
-                <h3 className={styles.subtitle}>Auto frequência</h3>
-                <hr className={styles.linha_menor}/>
-                <form onSubmit={handleSubmit} className={styles.form}>
-                    <label className={styles.label_select}>
-                        <div className={styles.sublabel_select}>Presença manhã:</div>
-                        <select className={styles.select} name="presenca_manha" value={frequencia ? frequencia.presenca_manha : ''} onChange={handleChange}>
-                            <option value="" hidden>Selecione...</option>
-                            <option value="P">Presente</option>
-                            <option value="F">Falta</option>
-                            <option value="FJ">Falta Justificada</option>
-                            <option value="X">Nenhuma</option>
-                        </select>
-                    </label>
-                    <label className={styles.label_select}>
-                        <div className={styles.sublabel_select}>Presença tarde:</div>
-                        <select className={styles.select} name="presenca_tarde" value={frequencia ? frequencia.presenca_tarde : ''} onChange={handleChange}>
-                            <option value="" hidden>Selecione...</option>
-                            <option value="P">Presente</option>
-                            <option value="F">Falta</option>
-                            <option value="FJ">Falta Justificada</option>
-                            <option value="X">Nenhuma</option>
-                        </select>
-                    </label>
-                    <input
-                        className={styles.input_justificativa}
-                        type="text"
-                        name="justificativa"
-                        value={frequencia ? frequencia.justificativa : ''}
-                        onChange={handleChange}
-                    />
-                    <div className={styles.botao_form}>
-                        <Botao
-                            nome="Marcar presença"
-                            corFundo="#044D8C" 
-                            corBorda="#043560"
-                            type="submit"
-                        />
-                    </div>
-                </form>
-                <hr className={styles.linha_maior}/>
-                <div className={styles.botao}>
+
+                <div className={styles.logoutSection}>
                     <Deslogar/>
                 </div>
             </div>

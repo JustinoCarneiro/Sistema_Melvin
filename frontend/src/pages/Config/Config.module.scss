@@ -1,261 +1,242 @@
 @import "../../index.scss";
 
-.body{
+.body {
+    width: 100%;
+    min-height: 100vh;
     display: flex;
+    justify-content: center;
+    padding: 2rem;
+    background-color: $cor-fundo;
 }
 
-.linha_vertical{
-    width: 1px;
-    height: 100%;
-    margin-left: 4rem;
-    background-color: black;
-    flex-shrink: 0;
-}
-
-.container{
-    width: 70vw;
-    margin-left: 2rem;
-    margin-top: 2rem;
-    margin-right: 5rem;
-    flex: 1;
-}
-
-.title{
-    font-weight: 300;
-}
-
-.subtitle{
-    font-weight: 500;
-}
-
-.title_h4{
-    font-weight: 200;
-    margin-bottom: 1rem;
-}
-
-.informacoes{
-    background-color: #ECECEC;
-    border-radius: 7px;
-    padding-left: 1.5rem;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    padding-right: 1.5rem;
-    margin-bottom: 1rem;
-}
-
-.informacoes_autenticacao{
-    background-color: #ECECEC;
-    border-radius: 7px;
-    padding-left: 1.5rem;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    padding-right: 1.5rem;
-    margin-bottom: 1rem;
-    display: flex;
-}
-
-.colunas{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    gap: 2rem;
-}
-
-.coluna{
+.mainContent {
+    width: 100%;
+    max-width: 1000px;
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
-    width: 30rem;
-}
-
-.linha{
-    display: flex;
     gap: 2rem;
+}
+
+.pageTitle {
+    color: $cor-primaria;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+/* --- CARDS PADRÃO --- */
+.card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    border: 1px solid #e0e0e0;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+    
+    .icon {
+        font-size: 1.5rem;
+        color: $cor-primaria;
+    }
+
+    h3 {
+        font-size: 1.4rem;
+        color: #333;
+        margin: 0;
+    }
+}
+
+/* --- PERFIL --- */
+.gridProfile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+}
+
+.subTitle {
+    color: $cor-secundaria;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.infoRow {
+    display: flex;
     justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed #eee;
+    
+    .infoLabel {
+        font-weight: 600;
+        color: #666;
+    }
+    
+    .infoValue {
+        color: #333;
+        text-align: right;
+    }
 }
 
-.campo{
-    width: 8rem;
-    color: #656565;
-    font-weight: 300;
-    font-size: 0.9rem;
+/* --- DIAS DA SEMANA (BADGES) --- */
+.weekSchedule {
+    margin-top: 1.5rem;
 }
 
-.conteudo{
-    width: 20rem;
+.scheduleTitle {
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 0.5rem;
 }
 
-.semanal{
-    margin-top: 2rem;
+.daysGrid {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
-.semana{
+.dayContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.dayLabel {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.dayChecks {
+    display: flex;
+    gap: 2px;
+}
+
+.checkItem {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background-color: #eee;
+    color: #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    
+    &.active {
+        background-color: $cor-primaria;
+        color: white;
+    }
+}
+
+/* --- AUTO FREQUÊNCIA --- */
+.formFrequencia {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.frequenciaGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 150px;
+
+    label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #555;
+    }
+
+    .select, .input {
+        padding: 0.6rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background-color: #fff;
+        outline: none;
+        
+        &:focus { border-color: $cor-primaria; }
+    }
+}
+
+.actionRight {
+    align-self: flex-end;
+}
+
+/* --- ADMIN SECTION --- */
+.cardAdmin {
+    border-top: 4px solid $cor-primaria;
+}
+
+.shortcutsSection {
+    h4 {
+        color: #555;
+        margin-bottom: 1rem;
+    }
+}
+
+.shortcutsGrid {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
 }
 
-.title_semana{
-    font-weight: 300;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-
-.coluna_semana{
-    display: flex;
-    flex-direction: column;
-    margin-top: 0.2rem;
-    gap: 0.25rem;
-}
-
-.title_coluna_semana{
-    font-weight: 300;
-    font-size: 0.75rem;
-}
-
-.label{
-    display: flex;
-    justify-content: space-between;
-    gap: 0.5rem;
-    font-size: 0.7rem;
-    font-weight: 200;
-    align-items: center;
-}
-
-.checkbox{
-    all: unset;
-    width: 1rem;
-    height: 1rem;
-    border: solid 1px black;
-    border-radius: 4px;
+/* --- LOGOUT --- */
+.logoutSection {
     display: flex;
     justify-content: center;
-    align-items: center;
+    margin-top: 1rem;
 }
 
-.check{
-    font-size: 0.5rem;
-}
-
-.forms_senha{
-    display: flex;
-    flex-direction: column;
-    width: 10.7rem;
-    gap: 0.5rem;
-    margin-left: 1rem;
-}
-
-.linha_menor{
-    height: 1px;
-    color: black;
-    margin-bottom: 1rem;
-    margin-top: 0.5rem;
-    width: 15rem;
-}
-
-.linha_maior{
-    height: 1px;
-    color: black;
-    margin-bottom: 1rem;
-    margin-top: 0.5rem;
-}
-
-.autenticacao{
-    display: flex;
-}
-
-.autenticacao > button{
-    all: unset;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
-    cursor: pointer;
-}
-
-.autenticacao > button:hover{
-    background-color: #cacaca;
-}
-
-.linha_auth{
-    background-color: black;
-    width: 1px;
-}
-
-.botao{
-    padding-bottom: 2rem;
-    display: flex;
-    gap: 1rem;
-}
-
-.form{
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.select{
-    border-radius: 7px;
-    border: solid 2px black;
-    font-family: inherit;
-    height: 2rem;
-    background-color: white;
-    padding: 0.5rem;
-    font-size: 0.70rem;
-    margin-top: 0.3rem;
-}
-
-.input_justificativa{
-    border-radius: 7px;
-    border: solid 2px black;
-    font-family: inherit;
-    max-width: 25rem;
-    height: 2rem;
-    background-color: white;
-    padding: 0.5rem;
-    font-size: 0.70rem;
-    margin-top: 0.3rem;
-}
-
-@media (max-width: $size-i){
-    .coluna{
-        width: 100%;
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 768px) {
+    .body {
+        padding: 1rem;
     }
 
-    .colunas{
+    .gridProfile {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .frequenciaGrid {
         flex-direction: column;
         gap: 1rem;
     }
 
-    .campo{
-        width: 8rem;
-        min-width: 8rem;
-        white-space: nowrap;
-    }
-}
-
-@media (max-width: $size-d){
-    .linha{
-        gap: 1vw;
+    .actionRight {
+        width: 100%;
+        button { width: 100%; }
     }
 
-    .semana{
-        gap: 2rem;
-    }
-
-    .linha_vertical{
-        margin-left: 2rem;
-    }
-}
-
-@media (max-width: $size-b){
-    .conteudo{
-        font-size: 0.7rem;
-    }
-
-    .autenticacao{
-        font-size: 0.7rem;
+    .shortcutsGrid {
+        flex-direction: column;
+        button { width: 100%; }
     }
 }

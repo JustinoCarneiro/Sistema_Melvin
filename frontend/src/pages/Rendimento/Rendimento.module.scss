@@ -1,82 +1,197 @@
+@import '../../index.scss';
+
 .body {
-    padding: 2rem;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background-color: $cor-fundo;
+}
+
+.container {
+    width: 100%;
     max-width: 900px;
-    margin: auto;
-    font-family: sans-serif;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
-.header {
-    border-bottom: 2px solid #eee;
-    padding-bottom: 1rem;
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+/* --- HEADER --- */
+.headerForm {
+    display: flex;
+    align-items: center;
     margin-bottom: 2rem;
-    text-align: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+    width: 100%;
 
-    h2 {
-        margin-bottom: 0.5rem;
+    .voltar {
+        font-size: 1.8rem;
+        color: #666;
+        cursor: pointer;
+        transition: color 0.2s;
+        margin-right: 1rem;
+        flex-shrink: 0;
+        
+        &:hover { color: $cor-primaria; }
     }
-    p {
-        margin: 0.2rem 0;
-        color: #6c757d;
+
+    .headerText {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .titlePage {
+        color: $cor-primaria;
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .studentName {
+        font-size: 1rem;
+        color: #666;
+        margin: 0;
     }
 }
 
+/* --- GRID DE AVALIAÇÕES --- */
 .avaliacoesContainer {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); // Cards responsivos
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .aulaItem {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
+    justify-content: space-between;
+    gap: 1rem;
     padding: 1.5rem;
-    background-color: #ffffff;
-    border-radius: 8px;
-    border: 1px solid #dee2e6;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    transition: transform 0.2s, box-shadow 0.2s;
 
-    h4 {
-        margin: 0;
-        font-weight: 600;
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        border-color: $cor-primaria;
+    }
+
+    .cardHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        h4 {
+            margin: 0;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+    }
+
+    .starWrapper {
+        display: flex;
+        justify-content: center;
+        padding-top: 0.5rem;
     }
 }
 
-// ESTILO PARA CATEGORIAS NÃO EDITÁVEIS
+/* --- ESTILO DESABILITADO (Visualmente distinto) --- */
 .disabled {
-    opacity: 0.6;
-    background-color: #f8f9fa;
+    background-color: #f9f9f9;
+    opacity: 0.8;
+    border-style: dashed;
     cursor: not-allowed;
 
-    // Desativa o ponteiro do mouse nas estrelas
-    > div { // O seletor direto para o container de estrelas
+    &:hover {
+        transform: none;
+        box-shadow: none;
+        border-color: #e0e0e0;
+    }
+
+    h4 {
+        color: #888;
+    }
+
+    // Desativa clique nas estrelas
+    .starWrapper {
         pointer-events: none;
+        filter: grayscale(100%);
+        opacity: 0.6;
     }
 }
 
-.saveButtonContainer {
+.badge {
+    background-color: #eee;
+    color: #666;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* --- FOOTER --- */
+.footerActions {
     display: flex;
-    justify-content: flex-end;
-    margin-top: 2rem;
-    padding-top: 1.5rem;
+    justify-content: flex-end; // Botão à direita
+    margin-top: 1rem;
+    padding-top: 2rem;
     border-top: 1px solid #eee;
 }
 
-.linha_voltar {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
+.errorMsg {
+    color: #C70039;
+    background-color: #ffe6e6;
+    padding: 0.8rem;
+    border-radius: 6px;
+    text-align: center;
     margin-bottom: 1rem;
 }
 
-.voltar {
-    font-size: 2rem;
-    cursor: pointer;
-    color: #333;
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 600px) {
+    .container {
+        padding: 1.5rem;
+    }
 
-    &:hover {
-        color: #007bff;
+    .headerForm {
+        align-items: flex-start;
+        
+        .voltar {
+            margin-top: 0.3rem; // Alinha com a primeira linha do texto
+        }
+    }
+
+    .avaliacoesContainer {
+        grid-template-columns: 1fr; // 1 Coluna no mobile
+    }
+
+    .footerActions {
+        justify-content: center;
+        
+        button {
+            width: 100%; // Botão full width
+        }
     }
 }

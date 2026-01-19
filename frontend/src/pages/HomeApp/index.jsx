@@ -1,6 +1,6 @@
 import styles from './HomeApp.module.scss';
 import { useDashboard } from '../../hooks/useDashboard';
-import { FaStar, FaArrowUp, FaArrowDown, FaExclamationTriangle } from 'react-icons/fa';
+import { FaStar, FaArrowUp, FaArrowDown, FaBullhorn, FaCalendarAlt } from 'react-icons/fa';
 
 function Home() {
     const { 
@@ -24,84 +24,131 @@ function Home() {
         { value: 'psicologico', label: 'Psicológico' },
     ];
 
-    if (loading) {
-        return <div className={styles.centeredMessage}>Carregando Dashboard...</div>;
+    if (loading) return <div className={styles.loadingContainer}>Carregando Dashboard...</div>;
+
+    if (error && !frequenciaPorSala.manha) {
+        return <div className={styles.errorContainer}>{error}</div>;
     }
 
-    if (error && !frequenciaPorSala.manha) { // Mostra erro se a carga inicial falhar
-        return <div className={`${styles.centeredMessage} ${styles.error}`}>{error}</div>;
-    }
-
-    // Componente para a lista do ranking para evitar repetição de código
-    const RankingList = ({ alunos }) => (
-        <ul>
-            {alunos.map(aluno => (
-                <li key={aluno.matricula}>
-                    <span>{aluno.nome}</span>
-                    <span className={styles.nota}><FaStar color="#ffc107" /> {(aluno.mediaGeral || 0).toFixed(1)}</span>
+    const RankingList = ({ alunos, type }) => (
+        <ul className={styles.rankingList}>
+            {alunos.length > 0 ? alunos.map((aluno, index) => (
+                <li key={aluno.matricula} className={styles.rankingItem}>
+                    <div className={styles.rankPosition}>{index + 1}º</div>
+                    <div className={styles.studentInfo}>
+                        <span className={styles.studentName}>{aluno.nome}</span>
+                        <span className={styles.studentMatricula}>#{aluno.matricula}</span>
+                    </div>
+                    <div className={`${styles.scoreBadge} ${type === 'bad' ? styles.badScore : ''}`}>
+                        <FaStar className={styles.starIcon} /> 
+                        {(aluno.mediaGeral || 0).toFixed(1)}
+                    </div>
                 </li>
-            ))}
+            )) : (
+                <li className={styles.emptyList}>Nenhum aluno encontrado.</li>
+            )}
         </ul>
     );
 
     return (
         <div className={styles.body}>
-            <div className={styles.gridContainer}>
-                {/* Card de Frequência */}
-                <div className={`${styles.card} ${styles.frequenciaCard}`}>
-                    <h3 className={styles.cardTitle}>Frequência do Dia</h3>
-                    <div className={styles.turnos}>
-                        <div className={styles.turno}>
-                            <h4>Manhã</h4>
-                            <p>Sala 1: <strong>{frequenciaPorSala.manha?.[1] ?? 0}</strong></p>
-                            <p>Sala 2: <strong>{frequenciaPorSala.manha?.[2] ?? 0}</strong></p>
-                            <p>Sala 3: <strong>{frequenciaPorSala.manha?.[3] ?? 0}</strong></p>
-                            <p>Sala 4: <strong>{frequenciaPorSala.manha?.[4] ?? 0}</strong></p>
-                            <p className={styles.total}>Total: <strong>{frequenciaPorSala.manha?.total ?? 0}</strong></p>
+            <div className={styles.pageHeader}>
+                <h1 className={styles.pageTitle}>Dashboard</h1>
+                <p className={styles.pageSubtitle}>Visão geral do instituto</p>
+            </div>
+
+            <div className={styles.dashboardGrid}>
+                {/* --- CARD DE FREQUÊNCIA --- */}
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <h3><FaCalendarAlt /> Frequência do Dia</h3>
+                    </div>
+                    <div className={styles.frequencyContainer}>
+                        {/* Manhã */}
+                        <div className={styles.turnSection}>
+                            <h4 className={styles.turnTitle}>Manhã</h4>
+                            <div className={styles.roomGrid}>
+                                {[1, 2, 3, 4].map(sala => (
+                                    <div key={`m-${sala}`} className={styles.roomItem}>
+                                        <span>Sala {sala}</span>
+                                        <strong>{frequenciaPorSala.manha?.[sala] ?? 0}</strong>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className={styles.totalRow}>
+                                <span>Total Manhã</span>
+                                <span className={styles.totalValue}>{frequenciaPorSala.manha?.total ?? 0}</span>
+                            </div>
                         </div>
-                        <div className={styles.turno}>
-                            <h4>Tarde</h4>
-                            <p>Sala 1: <strong>{frequenciaPorSala.tarde?.[1] ?? 0}</strong></p>
-                            <p>Sala 2: <strong>{frequenciaPorSala.tarde?.[2] ?? 0}</strong></p>
-                            <p>Sala 3: <strong>{frequenciaPorSala.tarde?.[3] ?? 0}</strong></p>
-                            <p>Sala 4: <strong>{frequenciaPorSala.tarde?.[4] ?? 0}</strong></p>
-                            <p className={styles.total}>Total: <strong>{frequenciaPorSala.tarde?.total ?? 0}</strong></p>
+                        
+                        <div className={styles.divider}></div>
+
+                        {/* Tarde */}
+                        <div className={styles.turnSection}>
+                            <h4 className={styles.turnTitle}>Tarde</h4>
+                            <div className={styles.roomGrid}>
+                                {[1, 2, 3, 4].map(sala => (
+                                    <div key={`t-${sala}`} className={styles.roomItem}>
+                                        <span>Sala {sala}</span>
+                                        <strong>{frequenciaPorSala.tarde?.[sala] ?? 0}</strong>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className={styles.totalRow}>
+                                <span>Total Tarde</span>
+                                <span className={styles.totalValue}>{frequenciaPorSala.tarde?.total ?? 0}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Card de Ranking - Melhores Alunos */}
-                <div className={`${styles.card} ${styles.rankingCard}`}>
-                    <div className={styles.rankingHeader}>
-                        <h3 className={styles.cardTitle}><FaArrowUp color="#28a745"/> Melhores Alunos</h3>
-                        <select value={rankingSortBy} onChange={(e) => setRankingSortBy(e.target.value)} className={styles.rankingSelect} disabled={isRankingLoading}>
+                {/* --- RANKING: MELHORES --- */}
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <div className={styles.headerTitleGroup}>
+                            <FaArrowUp color="#28a745"/>
+                            <h3>Destaques</h3>
+                        </div>
+                        <select 
+                            value={rankingSortBy} 
+                            onChange={(e) => setRankingSortBy(e.target.value)} 
+                            className={styles.selectFilter} 
+                            disabled={isRankingLoading}
+                        >
                             {rankingOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                         </select>
                     </div>
-                    {isRankingLoading ? <p className={styles.rankingLoading}>Atualizando...</p> : <RankingList alunos={rankingMelhores} />}
+                    <div className={styles.listContainer}>
+                        {isRankingLoading ? <p className={styles.updating}>Atualizando...</p> : <RankingList alunos={rankingMelhores} type="good" />}
+                    </div>
                 </div>
 
-                {/* Card de Ranking - Piores Alunos */}
-                <div className={`${styles.card} ${styles.rankingCard}`}>
-                    <div className={styles.rankingHeader}>
-                        <h3 className={styles.cardTitle}><FaArrowDown color="#dc3545"/> Alunos a Melhorar</h3>
+                {/* --- RANKING: PIORES --- */}
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <div className={styles.headerTitleGroup}>
+                            <FaArrowDown color="#dc3545"/>
+                            <h3>Atenção Necessária</h3>
+                        </div>
                     </div>
-                    {isRankingLoading ? <p className={styles.rankingLoading}>Atualizando...</p> : <RankingList alunos={rankingPiores} />}
+                    <div className={styles.listContainer}>
+                        {isRankingLoading ? <p className={styles.updating}>Atualizando...</p> : <RankingList alunos={rankingPiores} type="bad" />}
+                    </div>
                 </div>
             </div>
             
-            {/* Bloco Unificado para os Avisos */}
+            {/* --- AVISOS --- */}
             {avisos.length > 0 && (
-                <div className={`${styles.card} ${styles.avisoCardContainer}`}>
-                    <h3 className={styles.cardTitle}>Quadro de Avisos</h3>
-                    <div className={styles.avisosList}>
+                <div className={styles.avisosSection}>
+                    <h3 className={styles.sectionTitle}><FaBullhorn /> Quadro de Avisos</h3>
+                    <div className={styles.avisosGrid}>
                         {avisos.map(aviso => (
-                            <div key={aviso.id} className={styles.avisoItem}>
-                                <FaExclamationTriangle className={styles.avisoIcon} />
-                                <div className={styles.avisoTextoContainer}>
-                                    <h4 className={styles.avisoTitle}>{aviso.titulo}</h4>
-                                    <p className={styles.avisoTexto}>{aviso.corpo}</p>
+                            <div key={aviso.id} className={styles.avisoCard}>
+                                <div className={styles.avisoHeader}>
+                                    <h4>{aviso.titulo}</h4>
+                                    {aviso.data_inicio && <span className={styles.avisoDate}>{aviso.data_inicio}</span>}
                                 </div>
+                                <p>{aviso.corpo}</p>
                             </div>
                         ))}
                     </div>

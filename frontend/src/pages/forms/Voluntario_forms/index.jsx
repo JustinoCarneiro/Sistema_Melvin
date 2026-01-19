@@ -1,9 +1,9 @@
 import styles from './Voluntario_forms.module.scss';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import Cookies from "js-cookie";
 
 import { IoMdArrowRoundBack } from "react-icons/io";
- 
 import Botao from '../../../components/gerais/Botao';
 import Input from '../../../components/gerais/Input';
 
@@ -11,155 +11,93 @@ import post from '../../../services/requests/post';
 import get from '../../../services/requests/get';
 import put from '../../../services/requests/put';
 import del from '../../../services/requests/delete';
+import auth from '../../../services/auth';
 
 function Voluntario_forms(){
     const {matricula} = useParams();
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
+    const [isAdm, setIsAdm] = useState(false);
+
+    // Estados para senha
+    const [senhaAcesso, setSenhaAcesso] = useState('');
+    const [confirmarSenha, setConfirmarSenha] = useState('');
 
     const [formDado, setFormDado] = useState({
-        matricula: '',
-        nome: '',
-        email: '',
-        contato: '',
-        sexo: '',
-        data: '',
-        cor: '',
-        nacionalidade: '',
-        endereco: '',
-        bairro: '',
-        cidade: '',
-        rg: '',
-        funcao: '', // Removido 'tipo', inicia vazio para obrigar seleção ou carregamento
-        aulaExtra: '',
-        salaUm: '',
-        salaDois:'',
-        segunda: '',
-        terca: '',
-        quarta: '',
-        quinta: '',
-        sexta: '',
-        status: ''
-    })
+        matricula: '', nome: '', email: '', contato: '', sexo: '', data: '', cor: '', nacionalidade: '', endereco: '', bairro: '', cidade: '', rg: '', funcao: '', aulaExtra: '', salaUm: '', salaDois:'', segunda: '', terca: '', quarta: '', quinta: '', sexta: '', status: ''
+    });
     
     useEffect(() => {
+        const userRole = Cookies.get('role');
+        setIsAdm(userRole === 'ADM');
+
         const fetchVoluntario = async () => {
             setErrorMessage('');
-
-            // Se não tiver matrícula (modo criação), não busca nada
             if (!matricula) return;
 
             try {
-                const voluntarioExistente = await get.voluntarioByMatricula(matricula);
-                if (voluntarioExistente) {
-                    const response = await get.voluntarioByMatricula(matricula);
-                    if(response.data){
-                        setFormDado({
-                            matricula: response.data.matricula || '',
-                            nome: response.data.nome || '',
-                            email: response.data.email || '',
-                            contato: response.data.contato || '',
-                            sexo: response.data.sexo || '',
-                            data: response.data.data || '',
-                            cor: response.data.cor || '',
-                            nacionalidade: response.data.nacionalidade || '',
-                            endereco: response.data.endereco || '',
-                            bairro: response.data.bairro || '',
-                            cidade: response.data.cidade || '',
-                            rg: response.data.rg || '',
-                            funcao:  response.data.funcao || '', // Removeu dependência de 'tipo'
-                            aulaExtra: response.data.aulaExtra || '',
-                            salaUm: response.data.salaUm || '',
-                            salaDois: response.data.salaDois || '',
-                            segunda: response.data.segunda || '',
-                            terca: response.data.terca || '',
-                            quarta: response.data.quarta || '',
-                            quinta: response.data.quinta || '',
-                            sexta: response.data.sexta || '',
-                            status: response.data.status || '',
-                        })
-                    }
-                } else {
-                    console.log('Voluntario não encontrado');
+                const response = await get.voluntarioByMatricula(matricula);
+                if(response.data){
+                    setFormDado(prev => ({ ...prev, ...response.data }));
                 }
             } catch (error) {
                 console.error('Erro ao buscar voluntário!', error);
-                setErrorMessage(error.message || 'Não foi possível carregar os dados do voluntário.');
+                setErrorMessage('Não foi possível carregar os dados do voluntário.');
             }
         };
-    
         fetchVoluntario();
     }, [matricula]);
 
+    const getRoleFromFuncao = (funcao) => {
+        const f = funcao ? funcao.trim().toLowerCase() : "";
+        const roles = {
+            'coordenador': 'COOR', 'professor': 'PROF', 'auxiliar': 'AUX', 'cozinheiro': 'COZI',
+            'administrador': 'ADM', 'marketing': 'MARK', 'zelador': 'ZELA', 'diretor': 'DIRE',
+            'psicologo': 'PSICO', 'assistente': 'ASSIST'
+        };
+        return roles[f] || null;
+    };
+
     const handleRoleChange = async novaFuncao => {
-        let novaRole = '';
-    
-        switch (novaFuncao) {
-            case 'coordenador':
-                novaRole = 'COOR';
-                break;
-            case 'professor':
-                novaRole = 'PROF';
-                break;
-            case 'auxiliar':
-                novaRole = 'AUX';
-                break;
-            case 'cozinheiro':
-                novaRole = 'COZI';
-                break;
-            case 'administrador':
-                novaRole = 'ADM';
-                break;
-            case 'marketing':
-                novaRole = 'MARK';
-                break;
-            case 'zelador':
-                novaRole = 'ZELA';
-                break;
-            case 'diretor':
-                novaRole = 'DIRE';
-                break;
-            case 'psicologo':
-                novaRole = 'PSICO';
-                break;
-            case 'assistente': // NOVO ROLE ADICIONADO
-                novaRole = 'ASSIST';
-                break;
-            default:
-                novaRole = '';
-        }
-    
-        // Apenas tenta alterar a role se já existir matrícula (edição)
+        const novaRole = getRoleFromFuncao(novaFuncao);
         if (novaRole && formDado.matricula) {
             try {
                 await put.alterarRole(formDado.matricula, novaRole);
-                setFormDado(prevData => ({
-                    ...prevData,
-                    funcao: novaFuncao,
-                }));
-            } catch (error) {
-                console.error('Erro ao alterar função do voluntário!', error);
-                alert('Erro ao alterar função do voluntário!');
-            }
+                setFormDado(prev => ({ ...prev, funcao: novaFuncao }));
+            } catch (error) { console.error(error); }
         }
     };
 
-
-    const handleChange = async (e) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormDado((prevData) => ({
-            ...prevData,
-            [name]: value
-        }));
-
-        if (name === 'funcao') {
-            // Em modo de edição, chama a API de role. Em criação, só atualiza o estado.
-            if(matricula) {
-                handleRoleChange(value);
-            }
-        }
+        setFormDado(prev => ({ ...prev, [name]: value }));
+        if (name === 'funcao' && matricula) handleRoleChange(value);
     };
 
+    const handleCriarAcesso = async () => {
+        if (!senhaAcesso || senhaAcesso !== confirmarSenha) return alert("As senhas não coincidem!");
+        const role = getRoleFromFuncao(formDado.funcao);
+        if (!role) return alert(`A função "${formDado.funcao}" não tem perfil de acesso.`);
+
+        try {
+            const response = await auth.registrar({ login: formDado.matricula, password: senhaAcesso, role: role });
+            if (response?.status === 200) {
+                alert("Acesso criado!");
+                setSenhaAcesso(''); setConfirmarSenha('');
+            }
+        } catch (error) { alert("Erro ao criar acesso. Usuário já existe?"); }
+    };
+
+    const handleRedefinirSenha = async () => {
+        if (!senhaAcesso || senhaAcesso !== confirmarSenha) return alert("As senhas não coincidem!");
+        try {
+            const response = await put.alterarsenha(formDado.matricula, senhaAcesso);
+            if (response?.status === 200) {
+                alert("Senha redefinida!");
+                setSenhaAcesso(''); setConfirmarSenha('');
+            }
+        } catch (error) { alert("Erro ao redefinir senha."); }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -167,173 +105,91 @@ function Voluntario_forms(){
 
         try {
             let response;
-
             if (formDado.status === 'deletar') {
-                const confirmar = window.confirm('Você realmente deseja deletar este registro? Esta ação não pode ser desfeita.');
-        
-                if (confirmar) {
+                if(window.confirm('Deseja realmente deletar este voluntário?')) {
                     await del.voluntario(matricula);
-                    alert('Registro deletado com sucesso!');
-                    navigate('/app/voluntarios'); // Redireciona para a lista geral
+                    alert('Deletado com sucesso!');
+                    navigate('/app/voluntarios');
                     return;
-                } else {
-                    return;
-                }
+                } else return;
             }
 
-            // Verifica se é edição ou criação
             if (matricula) {
-                console.log("Matrícula já existe. Atualizando dados...");
                 response = await put.voluntario(formDado);
             } else {
-                console.log("Criando novo voluntário...");
                 response = await post.voluntario(formDado);
             }
 
-            if (response.error) {
-                throw new Error(response.error.message);
-            }
+            if (response.error) throw new Error(response.error.message);
             alert('Salvo com sucesso!');
-            navigate('/app/voluntarios'); // Redireciona para a lista geral
+            
+            if (!matricula && response.data?.matricula) {
+                 navigate(`/app/voluntario/editar/${response.data.matricula}`);
+            } else {
+                 navigate('/app/voluntarios');
+            }
         } catch (error) {
-            console.error('Erro ao salvar voluntário!', error);
-            setErrorMessage(error.message || 'Ocorreu um erro ao salvar. Verifique os dados e tente novamente.');
+            setErrorMessage(error.message || 'Erro ao salvar.');
         }
     };
     
     return(
         <div className={styles.body}>
-            <form className={styles.form} onSubmit={handleSubmit}>
-                <div className={styles.linha_voltar}>
-                    <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
+            <div className={styles.container}>
+                {/* --- HEADER --- */}
+                <div className={styles.headerForm}>
+                    <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate('/app/voluntarios')}/>
+                    <h2 className={styles.titlePage}>
+                        {matricula ? `Editar Voluntário (${matricula})` : "Novo Voluntário"}
+                    </h2>
                 </div>
-                <h2 className={styles.title}>INFORMAÇÕES PESSOAIS DO VOLUNTÁRIO</h2>
-                <div className={styles.informacoes}>
-                    <div className={styles.coluna}>
-                        <Input
-                            label="Nome:"
-                            type="text"
-                            placeholder="Nome completo"
-                            name="nome"
-                            value={formDado.nome}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade="true"
-                        />
-                        <div className={styles.linha}>
-                            <Input
-                                label="Contato:"
-                                type="tel"
-                                placeholder="(DDD) 9XXXX-XXXX"
-                                name="contato"
-                                value={formDado.contato}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade="true"
-                            />
-                            <Input
-                                label="Data de nascimento:"
-                                type="date"
-                                placeholder="DD/MM/AAAA"
-                                name="data"
-                                value={formDado.data}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade="true"
-                            />
+
+                <form className={styles.form} onSubmit={handleSubmit}>
+                    
+                    {/* --- PESSOAL --- */}
+                    <h3 className={styles.sectionTitle}>Informações Pessoais</h3>
+                    <div className={styles.gridContainer}>
+                        <div className={styles.coluna}>
+                            <Input label="Nome Completo:" name="nome" value={formDado.nome} onChange={handleChange} comp="grande" prioridade="true" />
+                            
+                            <div className={styles.linhaDupla}>
+                                <Input label="Contato:" name="contato" value={formDado.contato} onChange={handleChange} comp="pequeno" placeholder="(00) 00000-0000" />
+                                <Input label="Data Nasc.:" type="date" name="data" value={formDado.data} onChange={handleChange} comp="pequeno" />
+                            </div>
+                            
+                            <Input label="Endereço:" name="endereco" value={formDado.endereco} onChange={handleChange} comp="grande" />
+                            
+                            <div className={styles.linhaDupla}>
+                                <Input label="Bairro:" name="bairro" value={formDado.bairro} onChange={handleChange} comp="pequeno" />
+                                <Input label="Cidade:" name="cidade" value={formDado.cidade} onChange={handleChange} comp="pequeno" />
+                            </div>
                         </div>
-                        <Input
-                            label="Endereço:"
-                            type="text"
-                            placeholder=""
-                            name="endereco"
-                            value={formDado.endereco}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade="true"
-                        />
-                        <div className={styles.linha}>
-                            <Input
-                                label="Bairro:"
-                                type="text"
-                                placeholder=""
-                                name="bairro"
-                                value={formDado.bairro}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade="true"
-                            />
-                            <Input
-                                label="Cidade:"
-                                type="text"
-                                placeholder=""
-                                name="cidade"
-                                value={formDado.cidade}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade="true"
-                            />
+
+                        <div className={styles.coluna}>
+                            <div className={styles.linhaDupla}>
+                                <div className={styles.inputGroup}>
+                                    <label>Sexo:</label>
+                                    <select className={styles.select} name="sexo" value={formDado.sexo} onChange={handleChange}>
+                                        <option value="" hidden>...</option>
+                                        <option value="Masculino">Masculino</option>
+                                        <option value="Feminino">Feminino</option>
+                                    </select>
+                                </div>
+                                <Input label="Nacionalidade:" name="nacionalidade" value={formDado.nacionalidade} onChange={handleChange} comp="pequeno" />
+                            </div>
+
+                            <Input label="Cor/Raça:" name="cor" value={formDado.cor} onChange={handleChange} comp="pequeno" />
+                            <Input label="RG ou CPF:" name="rg" value={formDado.rg} onChange={handleChange} comp="grande" />
+                            <Input label="Email:" type="email" name="email" value={formDado.email} onChange={handleChange} comp="grande" prioridade="false" />
                         </div>
                     </div>
-                    <div className={styles.coluna}>
-                        <div className={styles.linha}>
-                            <label className={styles.label_select}>
-                                <div className={styles.sublabel_select}>Sexo:</div>
-                                <select className={styles.select} name="sexo" value={formDado.sexo} onChange={handleChange}>
-                                    <option value="" hidden>Selecione...</option>
-                                    <option value="Masculino">Masculino</option>
-                                    <option value="Feminino">Feminino</option>
-                                </select>
-                            </label>
-                            <Input
-                                label="Nacionalidade:"
-                                type="text"
-                                placeholder=""
-                                name="nacionalidade"
-                                value={formDado.nacionalidade}
-                                onChange={handleChange}
-                                comp="pequeno"
-                                prioridade=""
-                            />
-                        </div>
-                        <Input
-                            label="Cor/Raça:"
-                            type="text"
-                            placeholder=""
-                            name="cor"
-                            value={formDado.cor}
-                            onChange={handleChange}
-                            comp="pequeno"
-                            prioridade=""
-                        />
-                        <Input
-                            label="RG ou CPF:"
-                            type="text"
-                            placeholder=""
-                            name="rg"
-                            value={formDado.rg}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade="true"
-                        />
-                        <Input
-                            label="Email:"
-                            type="email"
-                            placeholder=""
-                            name="email"
-                            value={formDado.email}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade="false"
-                        />
-                    </div>
-                </div>
-                <h2 className={styles.title}>INFORMAÇÕES INSTITUCIONAIS</h2>
-                <div className={styles.informacoes}>
-                    <div className={styles.coluna}>
-                        <div className={styles.linha}>
-                            <label className={styles.label_select}>
-                                <div className={styles.sublabel_select}>Situação matrícula:<p className={styles.asterisco}>*</p></div>
+
+                    {/* --- INSTITUCIONAL --- */}
+                    <h3 className={styles.sectionTitle}>Informações Institucionais</h3>
+                    <div className={styles.gridContainer}>
+                        <div className={styles.coluna}>
+                            <div className={styles.inputGroup}>
+                                <label>Situação: <span className={styles.required}>*</span></label>
                                 <select className={styles.select} name="status" value={formDado.status} onChange={handleChange}>
                                     <option value="" hidden>Selecione...</option>
                                     <option value="true">Ativo</option>
@@ -341,13 +197,10 @@ function Voluntario_forms(){
                                     <option value="deletar">Deletar</option>
                                     <option value="espera">Em espera...</option>
                                 </select>
-                            </label>
-                        </div>
-                    </div>
-                    <div className={styles.coluna}>
-                        <div className={styles.linha}>
-                            <label className={styles.label_select}>
-                                <div className={styles.sublabel_select}>Função:<p className={styles.asterisco}>*</p></div>
+                            </div>
+                            
+                            <div className={styles.inputGroup}>
+                                <label>Função: <span className={styles.required}>*</span></label>
                                 <select className={styles.select} name="funcao" value={formDado.funcao} onChange={handleChange}>
                                     <option value="" hidden>Selecione...</option>
                                     <option value="diretor">Diretoria</option>
@@ -359,14 +212,15 @@ function Voluntario_forms(){
                                     <option value="zelador">Zeladoria</option>
                                     <option value="cozinheiro">Cozinheiro</option>
                                     <option value="psicologo">Psicólogo</option>
-                                    {/* Opção Adicionada */}
                                     <option value="assistente">Assistente Social</option>
                                 </select>
-                            </label>
-                            <label className={styles.label_select}>
-                                <div className={styles.sublabel_select}>Aula extra:</div>
+                            </div>
+                        </div>
+
+                        <div className={styles.coluna}>
+                            <div className={styles.inputGroup}>
+                                <label>Aula Extra (Professores):</label>
                                 <select className={styles.select} name="aulaExtra" value={formDado.aulaExtra} onChange={handleChange}>
-                                    <option value="" hidden>Selecione...</option>
                                     <option value="">Nenhuma</option>
                                     <option value="5">Inglês</option>
                                     <option value="6">Karatê</option>
@@ -377,110 +231,77 @@ function Voluntario_forms(){
                                     <option value="11">Futsal</option>
                                     <option value="12">Artesanato</option>
                                 </select>
-                            </label>
-                        </div>
-                        <div className={styles.linha}>
-                            <label className={styles.label_select}>
-                                <div className={styles.sublabel_select}>Primeira sala:</div>
-                                <select className={styles.select} name="salaUm" value={formDado.salaUm} onChange={handleChange}>
-                                    <option value="" hidden>Selecione...</option>
-                                    <option value="">Nenhuma</option>
-                                    <option value="1">Sala 1</option>
-                                    <option value="2">Sala 2</option>
-                                    <option value="3">Sala 3</option>
-                                    <option value="4">Sala 4</option>
-                                </select>
-                            </label>
-                            <label className={styles.label_select}>
-                                <div className={styles.sublabel_select}>Segunda sala:</div>
-                                <select className={styles.select} name="salaDois" value={formDado.salaDois} onChange={handleChange}>
-                                    <option value="" hidden>Selecione...</option>
-                                    <option value="">Nenhuma</option>
-                                    <option value="1">Sala 1</option>
-                                    <option value="2">Sala 2</option>
-                                    <option value="3">Sala 3</option>
-                                    <option value="4">Sala 4</option>
-                                </select>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div className={styles.turnos}>
-                    <div className={styles.label_turnos}>Dias semanais de volutariado:</div>
-                    <div className={styles.container}>
-                        <div className={styles.dia}>
-                            <label className={styles.label_select_semana}>
-                                <div className={styles.sublabel_select_semana}>Segunda:</div>
-                                <select className={styles.select_semana} name="segunda" value={formDado.segunda} onChange={handleChange}>
-                                    <option value="" hidden>Selecione...</option>
-                                    <option value="integral">Integral</option>
-                                    <option value="manha">Manhã</option>
-                                    <option value="tarde">Tarde</option>
-                                    <option value="nenhum">Nenhum</option>
-                                </select>
-                            </label>
-                        </div>
-                        <div className={styles.dia}>
-                            <label className={styles.label_select_semana}>
-                                <div className={styles.sublabel_select_semana}>Terça:</div>
-                                <select className={styles.select_semana} name="terca" value={formDado.terca} onChange={handleChange}>
-                                    <option value="" hidden>Selecione...</option>
-                                    <option value="integral">Integral</option>
-                                    <option value="manha">Manhã</option>
-                                    <option value="tarde">Tarde</option>
-                                    <option value="nenhum">Nenhum</option>
-                                </select>
-                            </label>
-                        </div>
-                        <div className={styles.dia}>
-                            <label className={styles.label_select_semana}>
-                                <div className={styles.sublabel_select_semana}>Quarta:</div>
-                                <select className={styles.select_semana} name="quarta" value={formDado.quarta} onChange={handleChange}>
-                                    <option value="" hidden>Selecione...</option>
-                                    <option value="integral">Integral</option>
-                                    <option value="manha">Manhã</option>
-                                    <option value="tarde">Tarde</option>
-                                    <option value="nenhum">Nenhum</option>
-                                </select>
-                            </label>
-                        </div>
-                        <div className={styles.dia}>
-                            <label className={styles.label_select_semana}>
-                                <div className={styles.sublabel_select_semana}>Quinta:</div>
-                                <select className={styles.select_semana} name="quinta" value={formDado.quinta} onChange={handleChange}>
-                                    <option value="" hidden>Selecione...</option>
-                                    <option value="integral">Integral</option>
-                                    <option value="manha">Manhã</option>
-                                    <option value="tarde">Tarde</option>
-                                    <option value="nenhum">Nenhum</option>
-                                </select>
-                            </label>
-                        </div>
-                        <div className={styles.dia}>
-                            <label className={styles.label_select_semana}>
-                                <div className={styles.sublabel_select_semana}>Sexta:</div>
-                                <select className={styles.select_semana} name="sexta" value={formDado.sexta} onChange={handleChange}>
-                                    <option value="" hidden>Selecione...</option>
-                                    <option value="integral">Integral</option>
-                                    <option value="manha">Manhã</option>
-                                    <option value="tarde">Tarde</option>
-                                    <option value="nenhum">Nenhum</option>
-                                </select>
-                            </label>
+                            </div>
+
+                            <div className={styles.linhaDupla}>
+                                <div className={styles.inputGroup}>
+                                    <label>Sala 1:</label>
+                                    <select className={styles.select} name="salaUm" value={formDado.salaUm} onChange={handleChange}>
+                                        <option value="">Nenhuma</option>
+                                        <option value="1">Sala 1</option>
+                                        <option value="2">Sala 2</option>
+                                        <option value="3">Sala 3</option>
+                                        <option value="4">Sala 4</option>
+                                    </select>
+                                </div>
+                                <div className={styles.inputGroup}>
+                                    <label>Sala 2:</label>
+                                    <select className={styles.select} name="salaDois" value={formDado.salaDois} onChange={handleChange}>
+                                        <option value="">Nenhuma</option>
+                                        <option value="1">Sala 1</option>
+                                        <option value="2">Sala 2</option>
+                                        <option value="3">Sala 3</option>
+                                        <option value="4">Sala 4</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className={styles.cadastrar}>
-                {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
-                    <Botao 
-                        nome="Salvar" 
-                        corFundo="#F29F05" 
-                        corBorda="#8A6F3E" 
-                        comp="pequeno"
-                        type="submit"
-                    />
-                </div>
-            </form>
+
+                    {/* --- DIAS DE VOLUNTARIADO --- */}
+                    <h3 className={styles.sectionTitle}>Dias de Voluntariado</h3>
+                    <div className={styles.turnosContainer}>
+                        {['segunda', 'terca', 'quarta', 'quinta', 'sexta'].map(dia => (
+                            <div key={dia} className={styles.inputGroup}>
+                                <label style={{textTransform: 'capitalize'}}>{dia}:</label>
+                                <select className={styles.select} name={dia} value={formDado[dia]} onChange={handleChange}>
+                                    <option value="" hidden>...</option>
+                                    <option value="integral">Integral</option>
+                                    <option value="manha">Manhã</option>
+                                    <option value="tarde">Tarde</option>
+                                    <option value="nenhum">Nenhum</option>
+                                </select>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* --- LOGIN (ADM ONLY) --- */}
+                    {isAdm && matricula && (
+                        <div className={styles.loginSection}>
+                            <h3 className={styles.loginTitle}>Acesso ao Sistema</h3>
+                            <p className={styles.loginDesc}>
+                                Crie ou redefina a senha para o usuário <strong>{matricula}</strong>.
+                            </p>
+                            
+                            <div className={styles.gridContainer}>
+                                <Input label="Nova Senha:" type="password" name="senhaAcesso" value={senhaAcesso} onChange={(e) => setSenhaAcesso(e.target.value)} comp="grande" />
+                                <Input label="Confirmar Senha:" type="password" name="confirmarSenha" value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)} comp="grande" />
+                            </div>
+                            
+                            <div className={styles.loginButtons}>
+                                <Botao nome="Criar Acesso" corFundo="#044D8C" corBorda="#043560" type="button" onClick={handleCriarAcesso} />
+                                <Botao nome="Redefinir Senha" corFundo="#F29F05" corBorda="#8A6F3E" type="button" onClick={handleRedefinirSenha} />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- FOOTER --- */}
+                    <div className={styles.footerActions}>
+                        {errorMessage && <div className={styles.errorMsg}>{errorMessage}</div>}
+                        <Botao nome="Salvar Dados" corFundo="#7EA629" corBorda="#58751A" type="submit" />
+                    </div>
+                </form>
+            </div>
         </div>
     )
 }

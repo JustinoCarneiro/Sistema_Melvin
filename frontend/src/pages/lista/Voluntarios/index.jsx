@@ -9,30 +9,25 @@ import { IoMdSearch } from "react-icons/io";
 import Botao from '../../../components/gerais/Botao';
 
 function Voluntarios() {
-    // Removemos a prop 'tipo', pois agora a página controla isso internamente
     const navigate = useNavigate();
 
     const {
         busca, setBusca,
         filtroEspera, setFiltroEspera,
-        filtroFuncao, setFiltroFuncao, // Pegamos os novos controles do hook
+        filtroFuncao, setFiltroFuncao,
         voluntariosFiltrados,
         loading, error, isAdm
     } = useVoluntarios();
 
     const handleEditClick = (matricula) => {
-        // Redireciona para a rota genérica de edição
         navigate(`/app/voluntario/editar/${matricula}`);
     };
 
     const handleCreateClick = () => {
-        // Redireciona para a rota genérica de criação
         navigate(`/app/voluntario/criar`);
     };
 
-    // Função inteligente para decidir para onde o botão "Frequências" vai
     const handleFrequenciasClick = () => {
-        // Mapeia o valor do select (singular) para a rota (plural)
         const rotas = {
             coordenador: "coordenadores",
             professor: "professores",
@@ -47,13 +42,11 @@ function Voluntarios() {
         };
 
         const rotaDestino = rotas[filtroFuncao];
-        
         if (rotaDestino) {
             navigate(`/app/voluntario/frequencias/${rotaDestino}`);
         }
     };
     
-    // Formata o texto da função para a tabela (ex: "assistente" -> "Assistente Social")
     const formatFuncao = (funcao) => {
         if (!funcao) return '-';
         if (funcao === 'assistente') return 'Assistente Social';
@@ -68,10 +61,10 @@ function Voluntarios() {
             <div className={styles.container}>
                 <div className={styles.header}>
                     <h2 className={styles.title}>
-                        {filtroEspera ? "Aprovações Pendentes" : "Voluntários e Equipe"}
+                        {filtroEspera ? "Aprovações Pendentes" : "Voluntários"}
                     </h2>
                     
-                    <div className={styles.controls}>
+                    <div className={styles.filters}>
                         <div className={styles.container_busca}>
                             <IoMdSearch className={styles.icon_busca} />
                             <input
@@ -83,45 +76,43 @@ function Voluntarios() {
                             />
                         </div>
 
-                        {/* Dropdown de Filtro de Função */}
-                        <select 
-                            className={styles.selectFilter}
-                            value={filtroFuncao}
-                            onChange={(e) => setFiltroFuncao(e.target.value)}
-                        >
-                            <option value="todos">Todos</option>
-                            <option value="professor">Professores</option>
-                            <option value="coordenador">Coordenadores</option>
-                            <option value="auxiliar">Auxiliares</option>
-                            <option value="diretor">Diretoria</option>
-                            <option value="administrador">Administração</option>
-                            <option value="marketing">Marketing</option>
-                            <option value="cozinheiro">Cozinha</option>
-                            <option value="zelador">Zeladoria</option>
-                            <option value="psicologo">Psicólogos</option>
-                            <option value="assistente">Assistentes Sociais</option>
-                        </select>
-                    </div>
+                        <div className={styles.botoes}>
+                            <select 
+                                className={styles.select_sala}
+                                value={filtroFuncao}
+                                onChange={(e) => setFiltroFuncao(e.target.value)}
+                            >
+                                <option value="todos">Todas Funções</option>
+                                <option value="professor">Professores</option>
+                                <option value="coordenador">Coordenadores</option>
+                                <option value="auxiliar">Auxiliares</option>
+                                <option value="diretor">Diretoria</option>
+                                <option value="administrador">Administração</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="cozinheiro">Cozinha</option>
+                                <option value="zelador">Zeladoria</option>
+                                <option value="psicologo">Psicólogos</option>
+                                <option value="assistente">Assistentes Sociais</option>
+                            </select>
 
-                    <div className={styles.botoes}>
-                        <Botao
-                            nome={filtroEspera ? "Mostrar Ativos" : "Em espera"}
-                            corFundo="#F29F05"
-                            corBorda="#8A6F3E"
-                            type="button"
-                            onClick={() => setFiltroEspera(!filtroEspera)}
-                        />
-                        
-                        {/* Botão Frequências: Só aparece se selecionar um cargo específico e não estiver vendo pendentes */}
-                        {!filtroEspera && filtroFuncao !== 'todos' && (
                             <Botao
-                                nome="Frequências"
-                                corFundo="#7EA629"
-                                corBorda="#58751A"
+                                nome={filtroEspera ? "Mostrar Ativos" : "Em espera"}
+                                corFundo="#F29F05"
+                                corBorda="#8A6F3E"
                                 type="button"
-                                onClick={handleFrequenciasClick}
+                                onClick={() => setFiltroEspera(!filtroEspera)}
                             />
-                        )}
+                            
+                            {!filtroEspera && filtroFuncao !== 'todos' && (
+                                <Botao
+                                    nome="Frequências"
+                                    corFundo="#7EA629"
+                                    corBorda="#58751A"
+                                    type="button"
+                                    onClick={handleFrequenciasClick}
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -131,7 +122,7 @@ function Voluntarios() {
                             <tr className={styles.tr_head}>
                                 <th>Matrícula</th>
                                 <th>Nome</th>
-                                <th>Função</th> {/* Nova Coluna */}
+                                <th>Função</th>
                                 <th>Email</th>
                                 {isAdm && <th className={styles.edicao}>Edição</th>}
                             </tr>
@@ -140,12 +131,12 @@ function Voluntarios() {
                             {voluntariosFiltrados.length > 0 ? (
                                 voluntariosFiltrados.map((voluntario) => (
                                     <tr key={voluntario.matricula} className={styles.tr_body}>
-                                        <td>{voluntario.matricula}</td>
-                                        <td className={styles.nomeAluno}>{voluntario.nome}</td> {/* Ajuste classe se necessário */}
-                                        <td>{formatFuncao(voluntario.funcao)}</td>
-                                        <td>{voluntario.email}</td>
+                                        <td data-label="Matrícula">{voluntario.matricula}</td>
+                                        <td data-label="Nome">{voluntario.nome}</td>
+                                        <td data-label="Função">{formatFuncao(voluntario.funcao)}</td>
+                                        <td data-label="Email">{voluntario.email}</td>
                                         {isAdm && (
-                                            <td className={styles.edicao}>
+                                            <td className={styles.edicao} data-label="Ações">
                                                 <MdOutlineModeEdit
                                                     className={styles.icon_editar}
                                                     onClick={() => handleEditClick(voluntario.matricula)}
@@ -158,10 +149,9 @@ function Voluntarios() {
                                 <tr><td colSpan="5" className={styles.empty}>Nenhum voluntário encontrado.</td></tr>
                             )}
                             
-                            {/* Botão Novo Genérico */}
-                            {isAdm && !filtroEspera && (
+                            {!loading && isAdm && !filtroEspera && (
                                 <tr className={styles.plus} onClick={handleCreateClick}>
-                                    <td colSpan="5"><FaPlus className={styles.icon_plus} /></td>
+                                    <td colSpan="5"><FaPlus className={styles.icon_plus} /> Adicionar novo integrante</td>
                                 </tr>
                             )}
                         </tbody>

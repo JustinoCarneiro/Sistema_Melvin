@@ -36,23 +36,25 @@ function CestasForms(){
 
                 if(response.data && Array.isArray(response.data)){
                     const cesta = response.data.find(cst => cst.id === id);
-                    console.log("reponse:", cesta);
                     if(cesta){
+                        // Ajuste para garantir que o input date receba YYYY-MM-DD
+                        let dataFormatada = cesta.dataEntrega || '';
+                        if(dataFormatada.includes('T')) {
+                            dataFormatada = dataFormatada.split('T')[0];
+                        }
+
                         setFormDado({
                             nome: cesta.nome || '',
                             contato: cesta.contato || '',
-                            dataEntrega: cesta.dataEntrega || '',
+                            dataEntrega: dataFormatada,
                             responsavel: cesta.responsavel || '',
                             lider_celula: cesta.lider_celula || '',
                             rede: cesta.rede || ''
                         })
                     }
-                } else {
-                    console.log('Nenhuma cesta encontrado');
                 }
-
             }catch(error){
-                console.error('5008:Erro ao obter dados da cesta!', error);
+                console.error('Erro ao obter dados da cesta!', error);
                 setErrorMessage(error.message || 'Não foi possível carregar os dados da cesta.');
             }
         };
@@ -77,17 +79,11 @@ function CestasForms(){
         try{
             let response;
 
-            const cesta = await get.cestas();
-            if(cesta.data && Array.isArray(cesta.data)){
-                const cestaExistente = cesta.data.find(cst => cst.id === id);
-
-                if(cestaExistente){
-                    console.log("Cesta já existe. Atualizando dados...");
-                    response = await put.cestas(formDado);
-                } else {
-                    console.log("Cesta não existe. Criando novo embaixador...");
-                    response = await post.cestas(formDado);
-                }
+            // Se tem ID, é edição (PUT), senão é criação (POST)
+            if(id){
+                response = await put.cestas({ ...formDado, id }); // Passa ID para garantir update
+            } else {
+                response = await post.cestas(formDado);
             }
 
             if (response.error) {
@@ -108,7 +104,9 @@ function CestasForms(){
         const confirmDelete = window.confirm('Tem certeza que deseja deletar esta cesta?');
         if (confirmDelete) {
             try {
-                const response = await del.cestas(formDado);
+                // Passa o ID se necessário ou o objeto formDado completo dependendo da API
+                const response = await del.cestas(id || formDado); 
+                
                 if (response.error) {
                     throw new Error(response.error.message);
                 }
@@ -123,98 +121,112 @@ function CestasForms(){
 
     return(
         <div className={styles.body}>
-            <form className={styles.form} onSubmit={handleSubmit}>
-                <div className={styles.linha_voltar}>
+            <div className={styles.container}>
+                {/* --- HEADER --- */}
+                <div className={styles.headerForm}>
                     <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
+                    <h2 className={styles.titlePage}>
+                        {id ? "Editar Cesta Básica" : "Nova Cesta Básica"}
+                    </h2>
                 </div>
-                <h2 className={styles.title}>INFORMAÇÕES DA CESTA</h2>
-                <div className={styles.informacoes}>
-                    <div className={styles.coluna}>
-                        <Input
-                            label="Nome:"
-                            type="text"
-                            placeholder="Nome completo"
-                            name="nome"
-                            value={formDado.nome}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade="true"
-                        />
-                        <Input
-                            label="Contato:"
-                            type="tel"
-                            placeholder="(DDD) 9XXXX-XXXX"
-                            name="contato"
-                            value={formDado.contato}
-                            onChange={handleChange}
-                            comp="pequeno"
-                            prioridade="false"
-                        />
-                    </div>
-                    <div className={styles.coluna}>
-                        <div className={styles.linha}>
+
+                <form className={styles.form} onSubmit={handleSubmit}>
+                    
+                    {/* --- CAMPOS --- */}
+                    <div className={styles.gridContainer}>
+                        <div className={styles.coluna}>
                             <Input
-                                label="Líder de célula:"
+                                label="Nome do Beneficiário:"
                                 type="text"
-                                name="lider_celula"
-                                value={formDado.lider_celula}
+                                name="nome"
+                                value={formDado.nome}
                                 onChange={handleChange}
-                                comp="pequeno"
-                                prioridade="false"
+                                comp="grande"
+                                prioridade="true"
                             />
                             <Input
-                                label="Rede:"
-                                type="text"
-                                name="rede"
-                                value={formDado.rede}
+                                label="Contato:"
+                                type="tel"
+                                placeholder="(DDD) 9XXXX-XXXX"
+                                name="contato"
+                                value={formDado.contato}
                                 onChange={handleChange}
                                 comp="pequeno"
                                 prioridade="false"
                             />
                         </div>
-                        <Input
-                            label="Data da entrega:"
-                            type="date"
-                            name="dataEntrega"
-                            value={formDado.dataEntrega}
-                            onChange={handleChange}
-                            comp="pequeno"
-                            prioridade="true"
-                        />
-                        <Input
-                            label="Responsável pela entrega:"
-                            type="text"
-                            name="responsavel"
-                            value={formDado.responsavel}
-                            onChange={handleChange}
-                            comp="grande"
-                            prioridade="true"
-                        />
+
+                        <div className={styles.coluna}>
+                            <div className={styles.linhaDupla}>
+                                <Input
+                                    label="Líder de Célula:"
+                                    type="text"
+                                    name="lider_celula"
+                                    value={formDado.lider_celula}
+                                    onChange={handleChange}
+                                    comp="pequeno"
+                                    prioridade="false"
+                                />
+                                <Input
+                                    label="Rede:"
+                                    type="text"
+                                    name="rede"
+                                    value={formDado.rede}
+                                    onChange={handleChange}
+                                    comp="pequeno"
+                                    prioridade="false"
+                                />
+                            </div>
+                            
+                            <div className={styles.linhaDupla}>
+                                <Input
+                                    label="Data da Entrega:"
+                                    type="date"
+                                    name="dataEntrega"
+                                    value={formDado.dataEntrega}
+                                    onChange={handleChange}
+                                    comp="pequeno"
+                                    prioridade="true"
+                                />
+                                <Input
+                                    label="Responsável Entrega:"
+                                    type="text"
+                                    name="responsavel"
+                                    value={formDado.responsavel}
+                                    onChange={handleChange}
+                                    comp="pequeno"
+                                    prioridade="true"
+                                />
+                            </div>
+                        </div>
                     </div>
-                </div>
-                {errorMessage && (
-                    <div className={styles.errorContainer}>
-                        <p className={styles.errorMessage}>{errorMessage}</p>
+
+                    {/* --- FOOTER (BOTÕES) --- */}
+                    <div className={styles.footerActions}>
+                        {errorMessage && <div className={styles.errorMsg}>{errorMessage}</div>}
+                        
+                        <div className={styles.buttonsWrapper}>
+                            {/* Botão Deletar (Só aparece se estiver editando) */}
+                            {id && (
+                                <Botao 
+                                    nome="Deletar" 
+                                    corFundo="#C60108" 
+                                    corBorda="#602929" 
+                                    type="button"
+                                    onClick={handleDelete}
+                                />
+                            )}
+                            
+                            <Botao 
+                                nome="Salvar Dados" 
+                                corFundo="#F29F05" 
+                                corBorda="#8A6F3E" 
+                                type="submit"
+                            />
+                        </div>
                     </div>
-                )}
-                <div className={styles.cadastrar}>
-                    <Botao 
-                        nome="Deletar" 
-                        corFundo="#C60108" 
-                        corBorda="#602929" 
-                        comp="pequeno"
-                        type="button"
-                        onClick={handleDelete}
-                    />
-                    <Botao 
-                        nome="Salvar" 
-                        corFundo="#F29F05" 
-                        corBorda="#8A6F3E" 
-                        comp="pequeno"
-                        type="submit"
-                    />
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     )
 }

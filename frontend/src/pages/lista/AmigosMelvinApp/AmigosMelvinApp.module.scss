@@ -1,132 +1,270 @@
 @import '../../../index.scss';
 
-.body{
+.body {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    background-color: $cor-fundo;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    width: 100vw;
-    min-height: calc(100vh - 5rem);
-    background-color: #D9D9D9;
-    padding-top: 2rem;
+    gap: 1.5rem;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+
+    .title {
+        color: $cor-primaria;
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin: 0;
+    }
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    gap: 1rem;
+    width: 100%;
 }
 
-.container{
+.container_busca {
     display: flex;
-    flex-direction: column;
-    width: 80vw;
-    height: auto;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    flex-grow: 1;
+    min-width: 250px;
+
+    .icon_busca {
+        color: #666;
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+    }
+
+    .busca {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        font-size: 1rem;
+        color: #333;
+        
+        &::placeholder {
+            color: #999;
+        }
+    }
 }
 
-.header{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: end;
-}
-
-.title{
-    font-weight: 300;
-}
-
-.container_busca{
-    display: flex;
-    align-items: end;
-}
-
-.icon_busca{
-    background-color: #044D8C;
-    padding: 0.25rem;
-    color: white;
-    font-size: 1.75rem;
-    border-top-left-radius: 7px;
-    border-bottom-left-radius: 7px;
-    border: solid 1px black;
-    border-right: none;
-    cursor: pointer;
-}
-
-.busca{
-    width: 25rem;
-    height: 1.75rem;
-    border-top-right-radius: 7px;
-    border-bottom-right-radius: 7px;
-    border: solid 1px black;
-    border-left: none;
-    outline: none;
-    padding: 0.5rem;
+.tableResponsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    
+    &::-webkit-scrollbar {
+        height: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 4px;
+    }
 }
 
 .table {
-    background-color: white;
-    border-collapse: collapse;
-    margin-top: 0.75rem;
-    border: solid 1px black;
-    margin-bottom: 3rem;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    white-space: nowrap;
+    border-bottom: 1px solid black; // Borda apenas no Desktop
+
+    .thead {
+        background-color: $cor-primaria;
+        color: white;
+        
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            
+            &.edicao {
+                text-align: center;
+                width: 80px;
+            }
+        }
+    }
+
+    .tbody {
+        tr {
+            transition: background-color 0.2s;
+
+            &:hover {
+                background-color: #f8f9fa;
+            }
+
+            td {
+                padding: 1rem;
+                color: #333;
+                font-size: 0.95rem;
+                border-bottom: 1px solid #eee;
+            }
+            
+            // Destaque para o nome (1ª coluna)
+            td:first-child { 
+                font-weight: 500;
+                color: $cor-secundaria;
+            }
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+            font-style: italic;
+        }
+    }
 }
 
-.table > .thead > tr > th, .table > .tbody > tr > td {
-    padding: 0.5rem;
-    padding-left: 2rem;
-    border-bottom: solid 1px black; /* Aplicar borda nas células */
-}
-
-.table > .thead > tr > th {
-    border-left: none; 
-    border-right: none;
-    text-align: start;
-}
-
-tbody tr:hover {
-    background-color: #f5f5f5;
-}
-
-.icon_editar{
-    font-size: 1.5rem;
-    color: #044D8C;
+.icon_editar {
+    font-size: 1.3rem;
+    color: #666;
     cursor: pointer;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    margin-left: 0.9rem;
+    transition: color 0.2s;
+    display: block;
+    margin: 0 auto;
+
+    &:hover {
+        color: $cor-primaria;
+    }
 }
 
-@media (max-width: $size-e) {
-    .table > .thead > tr > th:nth-child(3), .table > .tbody > tr > td:nth-child(3) {
+/* --- MEDIA QUERIES E CARD VIEW --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+        // Background cinza no mobile para destacar os cards brancos
+        background-color: $cor-fundo; 
+        box-shadow: none;
+    }
+
+    .header {
+        gap: 1rem;
+        background-color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 1rem;
+    }
+    
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* --- TRANSFORMAÇÃO EM CARDS --- */
+    .tableResponsive {
+        overflow: visible; 
+    }
+    
+    .table {
+        border: none;
+    }
+
+    .thead {
         display: none;
     }
-}
 
-@media (max-width: $size-d){
-    .header{
-        flex-wrap: wrap;
-    }
-
-    .container_busca{
-        order: 3;
-        width: 100%;
-        margin-top: 0.5rem;
-    }
-
-    .busca{
+    .table, .tbody, .tr_body, td {
+        display: block;
         width: 100%;
     }
-}
 
-@media (max-width: $size-b){
-    .table {
-        font-size: 0.8rem;
-    }
+    .tr_body {
+        margin-bottom: 1.5rem; 
+        background-color: white;
+        
+        // COM BORDA (Conforme solicitado)
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        padding: 0;
 
-    .icon_editar{
-        font-size: 1rem;
-    }
-}
+        &:hover {
+            background-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        }
 
-@media (max-width: $size-a){
-    .table {
-        font-size: 0.7rem;
-    }
+        td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: right;
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            
+            &::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: 700;
+                color: $cor-primaria;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                letter-spacing: 0.5px;
+            }
 
-    .icon_editar{
-        font-size: 1rem;
-        margin-right: 0.3rem;
+            &:last-child {
+                border-bottom: none;
+            }
+            
+            // Header do Card (Nome - 1ª Coluna)
+            &:first-child {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #333;
+                background-color: #fafafa;
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+                border-bottom: 1px solid #e0e0e0;
+                
+                // Opção: Centralizar ou manter label
+                // justify-content: center;
+                // &::before { display: none; } 
+            }
+
+            // Ações
+            &.edicao {
+                justify-content: center;
+                background-color: #f9f9f9;
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+                padding: 0.8rem;
+                
+                &::before { display: none; }
+            }
+        }
     }
 }
