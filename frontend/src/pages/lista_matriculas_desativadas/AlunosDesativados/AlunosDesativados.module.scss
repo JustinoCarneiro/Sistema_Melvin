@@ -107,8 +107,9 @@
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0;
-    white-space: nowrap;
-    border-bottom: 1px solid black; // Borda preta no Desktop
+    // white-space: nowrap; // REMOVIDO PARA EVITAR OVERFLOW
+    border-bottom: 1px solid black; 
+    table-layout: fixed; // ADICIONADO: Força respeito à largura
 
     .thead {
         background-color: $cor-primaria;
@@ -142,6 +143,10 @@
                 color: #333;
                 font-size: 0.95rem;
                 border-bottom: 1px solid #eee; 
+
+                // CORREÇÃO: Quebra de texto
+                word-wrap: break-word;
+                overflow-wrap: anywhere;
             }
 
             // Destaque Nome (2ª Coluna)
@@ -233,6 +238,10 @@
             text-align: right;
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
+
+            // CORREÇÃO MOBILE
+            white-space: normal;
+            word-break: break-word;
             
             &::before {
                 content: attr(data-label);

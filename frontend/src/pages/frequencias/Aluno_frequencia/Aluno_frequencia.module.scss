@@ -113,12 +113,22 @@
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    
+    &::-webkit-scrollbar {
+        height: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 4px;
+    }
 }
 
 .table {
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0;
+    // white-space: nowrap; // REMOVIDO PARA EVITAR OVERFLOW
+    table-layout: fixed; // ADICIONADO: Essencial para tabelas com inputs
 
     .thead {
         background-color: $cor-primaria;
@@ -146,6 +156,10 @@
                 font-size: 0.95rem;
                 border-bottom: 1px solid #eee;
                 vertical-align: middle;
+
+                // CORREÇÃO: Quebra de texto
+                word-wrap: break-word;
+                overflow-wrap: anywhere;
             }
             
             .td_center { text-align: center; }
@@ -183,6 +197,9 @@
     border-radius: 4px;
     background-color: #fff;
     font-size: 0.9rem;
+    
+    // Evita que o input estoure a largura da célula
+    box-sizing: border-box; 
     
     &:focus { border-color: $cor-primaria; outline: none; }
 }
@@ -225,7 +242,7 @@
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         padding: 0;
-        overflow: hidden;
+        // overflow: hidden; // Comentado para permitir sombras ou tooltips se houver
 
         td {
             display: flex;
@@ -234,6 +251,10 @@
             text-align: right;
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
+
+            // CORREÇÃO MOBILE
+            white-space: normal;
+            word-break: break-word;
             
             &::before {
                 content: attr(data-label);
@@ -264,10 +285,12 @@
                 margin-top: 0.5rem; 
             }
             
-            // Ajuste para input justificativa ficar abaixo do label no mobile se precisar
+            // Ajuste para input justificativa ficar abaixo do label no mobile
             &[data-label="Justificativa"] {
                 flex-direction: column;
                 align-items: flex-start;
+                text-align: left; // Garante alinhamento do input
+                
                 &::before { margin-bottom: 0.5rem; }
             }
         }

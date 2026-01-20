@@ -91,8 +91,9 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    white-space: nowrap;
-    border-bottom: 1px solid black; // Borda apenas no Desktop
+    // white-space: nowrap; // REMOVIDO PARA EVITAR OVERFLOW
+    border-bottom: 1px solid black; 
+    table-layout: fixed; // ADICIONADO: Força respeito à largura do container
 
     .thead {
         background-color: $cor-primaria;
@@ -126,6 +127,10 @@
                 color: #333;
                 font-size: 0.95rem;
                 border-bottom: 1px solid #eee;
+
+                // CORREÇÃO: Quebra de texto
+                word-wrap: break-word;
+                overflow-wrap: anywhere;
             }
             
             // Destaque para o nome (1ª coluna)
@@ -165,7 +170,6 @@
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
-        // Background cinza no mobile para destacar os cards brancos
         background-color: $cor-fundo; 
         box-shadow: none;
     }
@@ -205,8 +209,6 @@
     .tr_body {
         margin-bottom: 1.5rem; 
         background-color: white;
-        
-        // COM BORDA (Conforme solicitado)
         border: 1px solid #e0e0e0;
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
@@ -225,6 +227,10 @@
             text-align: right;
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
+
+            // CORREÇÃO MOBILE
+            white-space: normal;
+            word-break: break-word;
             
             &::before {
                 content: attr(data-label);
@@ -249,10 +255,6 @@
                 border-top-left-radius: 12px;
                 border-top-right-radius: 12px;
                 border-bottom: 1px solid #e0e0e0;
-                
-                // Opção: Centralizar ou manter label
-                // justify-content: center;
-                // &::before { display: none; } 
             }
 
             // Ações

@@ -91,8 +91,9 @@
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0;
-    white-space: nowrap;
-    border-bottom: 1px solid black; // Borda preta no Desktop
+    // white-space: nowrap; // REMOVIDO PARA EVITAR OVERFLOW
+    border-bottom: 1px solid black; 
+    table-layout: fixed; // ADICIONADO: Força respeito à largura
 
     .thead {
         background-color: $cor-primaria;
@@ -126,6 +127,10 @@
                 color: #333;
                 font-size: 0.95rem;
                 border-bottom: 1px solid #eee; 
+
+                // CORREÇÃO: Quebra de texto
+                word-wrap: break-word;
+                overflow-wrap: anywhere;
             }
 
             // Destaque para o Título (1ª Coluna)
@@ -196,7 +201,7 @@
         align-items: stretch;
     }
 
-    /* --- ESTILO CARD VIEW (Com Bordas) --- */
+    /* --- ESTILO CARD VIEW --- */
     .tableResponsive {
         overflow: visible; 
     }
@@ -218,11 +223,10 @@
         margin-bottom: 1.5rem; 
         background-color: white;
         
-        // ESTILO DO ALUNO (Com Borda)
+        // ESTILO DO CARD
         border: 1px solid #e0e0e0;
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        
         padding: 0;
 
         &:hover {
@@ -239,7 +243,11 @@
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
             
-            // Labels (ex: Data de Início)
+            // CORREÇÃO MOBILE
+            white-space: normal;
+            word-break: break-word;
+
+            // Labels
             &::before {
                 content: attr(data-label);
                 float: left;
@@ -254,7 +262,7 @@
                 border-bottom: none;
             }
             
-            // Header do Card (Título do Aviso) - 1ª Coluna
+            // Header do Card (Título)
             &:first-child {
                 font-size: 1.1rem;
                 font-weight: 600;
@@ -263,9 +271,6 @@
                 border-top-left-radius: 12px;
                 border-top-right-radius: 12px;
                 border-bottom: 1px solid #e0e0e0;
-                
-                // justify-content: center;
-                // &::before { display: none; } 
             }
 
             // Rodapé do Card (Edição)

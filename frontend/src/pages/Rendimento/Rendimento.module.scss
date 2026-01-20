@@ -53,6 +53,8 @@
     .headerText {
         display: flex;
         flex-direction: column;
+        // Permite que o texto quebre dentro do flex container
+        min-width: 0; 
     }
 
     .titlePage {
@@ -61,12 +63,18 @@
         font-weight: 700;
         margin: 0;
         line-height: 1.2;
+        
+        // CORREÇÃO: Quebra de texto
+        word-break: break-word;
     }
 
     .studentName {
         font-size: 1rem;
         color: #666;
         margin: 0;
+        
+        // CORREÇÃO: Quebra de nome longo
+        word-break: break-word;
     }
 }
 
@@ -90,6 +98,10 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.03);
     transition: transform 0.2s, box-shadow 0.2s;
 
+    // CORREÇÃO GERAL DO CARD
+    overflow-wrap: break-word;
+    word-break: break-word;
+
     &:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 10px rgba(0,0,0,0.08);
@@ -99,13 +111,15 @@
     .cardHeader {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start; // Alinha no topo caso o texto quebre
+        gap: 0.5rem;
         
         h4 {
             margin: 0;
             font-weight: 600;
             color: #333;
             font-size: 1.1rem;
+            line-height: 1.4; // Melhora leitura se quebrar linha
         }
     }
 
@@ -149,6 +163,8 @@
     border-radius: 4px;
     text-transform: uppercase;
     font-weight: bold;
+    white-space: nowrap; // Badge geralmente deve ficar em uma linha
+    flex-shrink: 0; // Impede que o badge seja esmagado
 }
 
 /* --- FOOTER --- */

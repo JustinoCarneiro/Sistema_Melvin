@@ -22,6 +22,10 @@
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
+    
+    // CORREÇÃO: Evita que títulos longos vazem
+    overflow-wrap: break-word; 
+    word-break: break-word;
 }
 
 .loading {
@@ -43,6 +47,9 @@
     flex-direction: column;
     gap: 1.5rem;
     border: 1px solid #e0e0e0;
+    
+    // Garante que nada dentro do card vaze a borda arredondada
+    overflow: hidden; 
 }
 
 .cardHeader {
@@ -55,12 +62,17 @@
     .icon {
         font-size: 1.5rem;
         color: $cor-primaria;
+        flex-shrink: 0; // Ícone não esmaga
     }
 
     h3 {
         font-size: 1.4rem;
         color: #333;
         margin: 0;
+        
+        // CORREÇÃO: Títulos longos
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 }
 
@@ -82,17 +94,26 @@
 .infoRow {
     display: flex;
     justify-content: space-between;
-    padding: 0.5rem 0;
+    align-items: flex-start; // Alinha no topo caso quebre linha
+    padding: 0.8rem 0;
     border-bottom: 1px dashed #eee;
+    gap: 1rem; // Espaço mínimo entre label e valor
     
     .infoLabel {
         font-weight: 600;
         color: #666;
+        flex-shrink: 0; // Garante que o label não suma
+        white-space: nowrap; // Label em uma linha (opcional, pode remover se preferir)
     }
     
     .infoValue {
         color: #333;
         text-align: right;
+        
+        // CORREÇÃO CRÍTICA: Para e-mails e endereços longos
+        word-break: break-word;
+        overflow-wrap: anywhere;
+        max-width: 60%; // Limita a largura para não colar no label
     }
 }
 
@@ -180,6 +201,8 @@
         border-radius: 6px;
         background-color: #fff;
         outline: none;
+        width: 100%; // Garante que o input preencha o grupo
+        box-sizing: border-box; // Evita overflow com padding
         
         &:focus { border-color: $cor-primaria; }
     }
@@ -223,6 +246,13 @@
     .gridProfile {
         grid-template-columns: 1fr;
         gap: 2rem;
+    }
+
+    // Ajuste fino para labels e valores no mobile
+    .infoRow {
+        .infoValue {
+            max-width: 100%; // No mobile pode ocupar mais espaço se o label for pequeno
+        }
     }
 
     .frequenciaGrid {

@@ -145,6 +145,7 @@
 
 .tableResponsive {
     overflow-x: auto;
+    width: 100%;
     
     &::-webkit-scrollbar {
         height: 8px;
@@ -157,9 +158,10 @@
 
 .table {
     width: 100%;
-    border-collapse: separate; // Necessário para sticky headers funcionarem bem
+    border-collapse: separate; // Necessário para sticky headers
     border-spacing: 0;
-    white-space: nowrap;
+    // white-space: nowrap; // REMOVIDO PARA EVITAR OVERFLOW
+    table-layout: fixed; // ADICIONADO: Mantém as larguras fixas estáveis
     
     .thead {
         background-color: $cor-primaria;
@@ -169,12 +171,12 @@
             padding: 1rem;
             text-align: left;
             font-weight: 600;
-            border-bottom: 1px solid #ddd; // Borda visual para o header
+            border-bottom: 1px solid #ddd; 
 
             &.thDate {
                 text-align: center;
                 min-width: 60px;
-                border-left: 1px solid rgba(255,255,255,0.2); // Separador sutil entre datas
+                border-left: 1px solid rgba(255,255,255,0.2); 
             }
         }
     }
@@ -191,6 +193,10 @@
                 padding: 1rem;
                 color: #333;
                 border-bottom: 1px solid #eee;
+
+                // CORREÇÃO: Quebra de texto
+                word-wrap: break-word;
+                overflow-wrap: anywhere;
             }
 
             .nomeAluno {
@@ -214,31 +220,29 @@
     }
 }
 
-// --- CORREÇÃO DO BUG DAS COLUNAS FIXAS ---
+// --- CORREÇÃO DO BUG DAS COLUNAS FIXAS (DESKTOP) ---
 .stickyCol {
     position: sticky;
     left: 0;
-    z-index: 5; // Garante que fique acima do conteúdo que rola
+    z-index: 5; 
     
     // Configuração RÍGIDA da primeira coluna (Nome)
     &:first-child {
         left: 0;
-        width: 250px;      // Largura fixa
-        min-width: 250px;  // Impede diminuir
-        max-width: 250px;  // Impede aumentar
-        border-right: 1px solid #e0e0e0; // Divisão visual
+        width: 250px;      
+        min-width: 250px;  
+        max-width: 250px;  
+        border-right: 1px solid #e0e0e0;
     }
     
     // Configuração RÍGIDA da segunda coluna (Matrícula)
     &:nth-child(2) {
-        left: 250px;       // O deslocamento DEVE ser igual à largura da 1ª coluna
+        left: 250px;       
         width: 120px;
         min-width: 120px;
         max-width: 120px;
-        
-        // Sombra lateral para indicar que o conteúdo "entra" ali
         box-shadow: 4px 0 5px -2px rgba(0,0,0,0.1); 
-        clip-path: inset(0px -15px 0px 0px); // Permite ver a sombra na direita
+        clip-path: inset(0px -15px 0px 0px); 
     }
 }
 
@@ -249,12 +253,12 @@
     color: white;
 }
 
-// O Corpo fixo deve ter fundo branco (não transparente) para cobrir o scroll
+// O Corpo fixo deve ter fundo branco
 .tbody .stickyCol {
     background-color: white; 
 }
 
-// Quando passar o mouse na linha, a parte fixa também muda de cor
+// Quando passar o mouse na linha
 .tr_body:hover .stickyCol {
     background-color: #f9f9f9; 
 }
@@ -269,5 +273,102 @@
     
     &.error {
         color: $cor-erro;
+    }
+}
+
+/* --- MEDIA QUERIES (Mobile Card View) --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .header .topHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .select_sala { width: 100%; }
+
+    /* --- TABELA VIRA CARDS --- */
+    .tableResponsive { overflow: visible; }
+    .table { border: none; }
+    .thead { display: none; }
+
+    .table, .tbody, .tr_body, td {
+        display: block;
+        width: 100%;
+    }
+
+    .tr_body {
+        margin-bottom: 1.5rem;
+        background-color: white;
+        
+        // ESTILO CARD
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        padding: 0;
+
+        &:hover {
+            background-color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            
+            // Reseta cor de fundo do sticky no hover do card
+            .stickyCol { background-color: transparent; }
+        }
+
+        td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: right;
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+
+            // CORREÇÃO MOBILE
+            white-space: normal;
+            word-break: break-word;
+
+            // Reseta propriedades sticky no mobile para não quebrar o card
+            &.stickyCol {
+                position: static !important;
+                width: 100% !important;
+                min-width: auto !important;
+                max-width: none !important;
+                box-shadow: none !important;
+                border-right: none !important;
+                clip-path: none !important;
+                background-color: transparent !important;
+            }
+            
+            &::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: 700;
+                color: $cor-primaria;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                margin-right: 1rem;
+            }
+
+            &:last-child { border-bottom: none; }
+            
+            // Header do Card (Nome do Aluno - 1ª Coluna)
+            &:first-child {
+                background-color: #fafafa;
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #333;
+                border-bottom: 1px solid #e0e0e0;
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+            }
+        }
     }
 }
