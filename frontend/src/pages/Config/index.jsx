@@ -232,18 +232,42 @@ function Config(){
                     <section className={`${styles.card} ${styles.cardAdmin}`}>
                         <div className={styles.cardHeader}>
                             <FaTools className={styles.icon}/>
-                            <h3>Administração</h3>
+                            <h3>Administração (Arquivo Morto)</h3>
                         </div>
 
                         {/* Atalhos de Gestão */}
                         <div className={styles.shortcutsSection}>
-                            <h4>Gestão de Desativados & Solicitações</h4>
                             <div className={styles.shortcutsGrid}>
-                                <Botao nome="Alunos Desativados" corFundo="#7EA629" corBorda="#58751A" onClick={() => navigate('/app/config/matriculasdesativadas/alunos')} />
-                                <Botao nome="Voluntários Desativados" corFundo="#7EA629" corBorda="#58751A" onClick={() => navigate('/app/config/matriculasdesativadas/voluntarios')} />
-                                <Botao nome="Embaixadores" corFundo="#f29f05" corBorda="#8A6F3E" onClick={() => navigate('/app/config/embaixadoresdesativados')} />
-                                <Botao nome="Amigos Melvin" corFundo="#f29f05" corBorda="#8A6F3E" onClick={() => navigate('/app/config/amigosmelvindesativados')} />
-                                <Botao nome="Avisos" corFundo="#C60108" corBorda="#602929" onClick={() => navigate('/app/config/avisosdesativados')} />
+                                <Botao 
+                                    nome="Alunos Desativados" 
+                                    corFundo="#7EA629" 
+                                    corBorda="#58751A" 
+                                    onClick={() => navigate('/app/config/matriculasdesativadas/alunos')} 
+                                />
+                                <Botao 
+                                    nome="Voluntários Desativados" 
+                                    corFundo="#7EA629" 
+                                    corBorda="#58751A" 
+                                    onClick={() => navigate('/app/config/matriculasdesativadas/voluntarios')} 
+                                />
+                                <Botao 
+                                    nome="Embaixadores" 
+                                    corFundo="#f29f05" 
+                                    corBorda="#8A6F3E" 
+                                    onClick={() => navigate('/app/config/embaixadoresdesativados')} 
+                                />
+                                <Botao 
+                                    nome="Amigos Melvin" 
+                                    corFundo="#f29f05" 
+                                    corBorda="#8A6F3E" 
+                                    onClick={() => navigate('/app/config/amigosmelvindesativados')} 
+                                />
+                                <Botao 
+                                    nome="Avisos" 
+                                    corFundo="#C60108" 
+                                    corBorda="#602929" 
+                                    onClick={() => navigate('/app/config/avisosdesativados')} 
+                                />
                             </div>
                         </div>
                     </section>

@@ -28,12 +28,32 @@
     padding-bottom: 1rem;
     border-bottom: 1px solid #eee;
 
+    // --- BLOCO ATUALIZADO (Título + Botão Voltar) ---
+    .titleGroup {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
     .title {
         color: $cor-primaria;
         font-size: 1.8rem;
         font-weight: bold;
         margin: 0;
     }
+
+    .voltar {
+        font-size: 2.5rem; // Aumentado para ficar visível
+        color: #555;
+        cursor: pointer;
+        transition: all 0.2s; // Transição suave para cor e movimento
+        
+        &:hover { 
+            color: $cor-primaria;
+            transform: translateX(-3px); // A ANIMAÇÃO DA SETA
+        }
+    }
+    // --------------------------------------------------
 }
 
 .filters {
@@ -89,11 +109,10 @@
 
 .table {
     width: 100%;
-    border-collapse: separate;
+    border-collapse: separate; 
     border-spacing: 0;
-    // white-space: nowrap; // REMOVIDO PARA EVITAR OVERFLOW
     border-bottom: 1px solid black; 
-    table-layout: fixed; // ADICIONADO: Força respeito à largura do container
+    table-layout: fixed; // Mantém a tabela estável
 
     .thead {
         background-color: $cor-primaria;
@@ -126,14 +145,14 @@
                 padding: 1rem;
                 color: #333;
                 font-size: 0.95rem;
-                border-bottom: 1px solid #eee;
+                border-bottom: 1px solid #eee; 
 
-                // CORREÇÃO: Quebra de texto
+                // QUEBRA DE TEXTO (Importante para emails)
                 word-wrap: break-word;
                 overflow-wrap: anywhere;
             }
-            
-            // Destaque para o nome (1ª coluna)
+
+            // Destaque para o Nome (1ª Coluna)
             td:first-child { 
                 font-weight: 500;
                 color: $cor-secundaria;
@@ -166,21 +185,14 @@
     }
 }
 
-/* --- MEDIA QUERIES E CARD VIEW --- */
+/* --- MEDIA QUERIES (Mobile Card View) --- */
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
-        background-color: $cor-fundo; 
-        box-shadow: none;
     }
 
     .header {
         gap: 1rem;
-        background-color: white;
-        padding: 1rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        margin-bottom: 1rem;
     }
     
     .filters {
@@ -188,7 +200,7 @@
         align-items: stretch;
     }
 
-    /* --- TRANSFORMAÇÃO EM CARDS --- */
+    /* --- ESTILO CARD VIEW --- */
     .tableResponsive {
         overflow: visible; 
     }
@@ -209,6 +221,8 @@
     .tr_body {
         margin-bottom: 1.5rem; 
         background-color: white;
+        
+        // ESTILO COM BORDA
         border: 1px solid #e0e0e0;
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
@@ -223,15 +237,18 @@
         td {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            // Alinhamento ao topo para suportar quebra de linha
+            align-items: flex-start;
             text-align: right;
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
 
-            // CORREÇÃO MOBILE
+            // Conteúdo quebra normalmente
             white-space: normal;
             word-break: break-word;
+            overflow-wrap: anywhere; 
             
+            // Rótulo (Label)
             &::before {
                 content: attr(data-label);
                 float: left;
@@ -240,13 +257,18 @@
                 text-transform: uppercase;
                 font-size: 0.75rem;
                 letter-spacing: 0.5px;
+                margin-right: 1rem;
+                flex-shrink: 0;
+                
+                // Rótulo nunca quebra
+                white-space: nowrap; 
             }
 
             &:last-child {
                 border-bottom: none;
             }
             
-            // Header do Card (Nome - 1ª Coluna)
+            // Header do Card (Nome)
             &:first-child {
                 font-size: 1.1rem;
                 font-weight: 600;
@@ -255,11 +277,13 @@
                 border-top-left-radius: 12px;
                 border-top-right-radius: 12px;
                 border-bottom: 1px solid #e0e0e0;
+                // Mantemos flex-start para segurança em nomes longos
             }
 
-            // Ações
+            // Rodapé do Card (Edição)
             &.edicao {
                 justify-content: center;
+                align-items: center; 
                 background-color: #f9f9f9;
                 border-bottom-left-radius: 12px;
                 border-bottom-right-radius: 12px;

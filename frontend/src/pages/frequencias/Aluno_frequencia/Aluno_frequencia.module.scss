@@ -28,18 +28,24 @@
     padding-bottom: 1rem;
     border-bottom: 1px solid #eee;
 
+    // Agrupamento para alinhar Seta + Título
     .titleGroup {
         display: flex;
         align-items: center;
         gap: 1rem;
     }
 
+    // BOTÃO VOLTAR (Atualizado com Animação)
     .voltar {
-        font-size: 1.8rem;
-        color: #666;
+        font-size: 2.5rem; // Aumentado
+        color: #555;
         cursor: pointer;
-        transition: color 0.2s;
-        &:hover { color: $cor-primaria; }
+        transition: all 0.2s;
+        
+        &:hover { 
+            color: $cor-primaria; 
+            transform: translateX(-3px); // Efeito de recuo
+        }
     }
 
     .title {
@@ -99,6 +105,7 @@
         color: #555;
         cursor: pointer;
         outline: none;
+        transition: border-color 0.2s;
         
         &:focus { border-color: $cor-primaria; }
     }
@@ -127,8 +134,8 @@
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0;
-    // white-space: nowrap; // REMOVIDO PARA EVITAR OVERFLOW
-    table-layout: fixed; // ADICIONADO: Essencial para tabelas com inputs
+    border-bottom: 1px solid black; 
+    table-layout: fixed; // Essencial para tabelas com inputs
 
     .thead {
         background-color: $cor-primaria;
@@ -242,12 +249,11 @@
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         padding: 0;
-        // overflow: hidden; // Comentado para permitir sombras ou tooltips se houver
 
         td {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: center; // Centraliza verticalmente (bom para inputs pequenos)
             text-align: right;
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
@@ -264,6 +270,10 @@
                 text-transform: uppercase;
                 font-size: 0.75rem;
                 margin-right: 1rem;
+                flex-shrink: 0;
+
+                // PROTEÇÃO: Rótulo nunca quebra
+                white-space: nowrap; 
             }
 
             &:last-child { border-bottom: none; }
@@ -275,7 +285,12 @@
                 font-weight: 600;
                 color: #333;
                 border-bottom: 1px solid #e0e0e0;
-                justify-content: space-between; // Label na esq, nome na dir
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+                
+                // Em frequência, geralmente o nome vem depois da matrícula. 
+                // Se for longo, flex-start ajuda, mas center fica bonito no card header.
+                // align-items: center; 
             }
 
             // Presença e Justificativa ocupando mais espaço

@@ -34,6 +34,16 @@
         font-weight: bold;
         margin: 0;
     }
+
+    // Botão Voltar (Adicionado)
+    .voltar {
+        font-size: 1.8rem;
+        color: #666;
+        cursor: pointer;
+        transition: color 0.2s;
+        
+        &:hover { color: $cor-primaria; }
+    }
 }
 
 .filters {
@@ -91,9 +101,8 @@
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0;
-    // white-space: nowrap; // REMOVIDO PARA EVITAR OVERFLOW
     border-bottom: 1px solid black; 
-    table-layout: fixed; // ADICIONADO: Força respeito à largura
+    table-layout: fixed; // Estabilidade no Desktop
 
     .thead {
         background-color: $cor-primaria;
@@ -128,12 +137,12 @@
                 font-size: 0.95rem;
                 border-bottom: 1px solid #eee; 
 
-                // CORREÇÃO: Quebra de texto
+                // Quebra de texto Desktop (Emails/Instagram)
                 word-wrap: break-word;
                 overflow-wrap: anywhere;
             }
 
-            // Destaque para o Nome (1ª Coluna)
+            // Destaque Nome (1ª Coluna)
             td:first-child { 
                 font-weight: 500;
                 color: $cor-secundaria;
@@ -166,7 +175,7 @@
     }
 }
 
-/* --- MEDIA QUERIES (Card View) --- */
+/* --- MEDIA QUERIES (Mobile Card View) --- */
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
@@ -181,7 +190,7 @@
         align-items: stretch;
     }
 
-    /* --- ESTILO CARD VIEW (Com Bordas) --- */
+    /* --- ESTILO CARD VIEW --- */
     .tableResponsive {
         overflow: visible; 
     }
@@ -218,15 +227,17 @@
         td {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            // Alinha o topo (Label x Valor)
+            align-items: flex-start;
             text-align: right;
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
-            
-            // CORREÇÃO MOBILE
+
+            // CORREÇÃO MOBILE (Valor pode quebrar)
             white-space: normal;
             word-break: break-word;
-
+            overflow-wrap: anywhere;
+            
             &::before {
                 content: attr(data-label);
                 float: left;
@@ -235,6 +246,11 @@
                 text-transform: uppercase;
                 font-size: 0.75rem;
                 letter-spacing: 0.5px;
+                margin-right: 1rem; // Espaço entre Label e Valor
+                flex-shrink: 0;
+                
+                // CORREÇÃO: Rótulo (Label) nunca quebra
+                white-space: nowrap;
             }
 
             &:last-child {
@@ -250,14 +266,13 @@
                 border-top-left-radius: 12px;
                 border-top-right-radius: 12px;
                 border-bottom: 1px solid #e0e0e0;
-                
-                // justify-content: center;
-                // &::before { display: none; } 
+                // align-items: center; 
             }
 
             // Rodapé do Card (Edição)
             &.edicao {
                 justify-content: center;
+                align-items: center;
                 background-color: #f9f9f9;
                 border-bottom-left-radius: 12px;
                 border-bottom-right-radius: 12px;

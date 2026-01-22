@@ -1,15 +1,15 @@
 import styles from "./AmigosMelvinApp.module.scss";
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { IoMdSearch } from "react-icons/io";
+import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
 import get from "../../../services/requests/get";
 
-function AmigosMelvinApp(){
+function AmigosMelvinApp({ modoDesativados = false }){
     const [busca, setBusca] = useState('');
     const [amigosmelvin, setAmigosMelvin] = useState([]);
-    const [loading, setLoading] = useState(true); // Adicionado estado de loading
-    const [error, setError] = useState(null); // Adicionado estado de erro
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     const fetchAmigosmelvin = async () => {
@@ -19,8 +19,11 @@ function AmigosMelvinApp(){
             const dados = response.data;
 
             if(Array.isArray(dados)){
-                const amigosmelvinAtivos = dados.filter(amigomelvin => amigomelvin.status === true);
-                setAmigosMelvin(amigosmelvinAtivos);
+                // Filtra com base na prop: se modoDesativados for true, busca status 'false', senão 'true'
+                const listaFiltrada = dados.filter(amigomelvin => 
+                    String(amigomelvin.status) === (modoDesativados ? 'false' : 'true')
+                );
+                setAmigosMelvin(listaFiltrada);
             } else {
                 console.error("6002:Formato inesperado no response:", response);
                 setError("Erro ao carregar dados.");
@@ -35,7 +38,7 @@ function AmigosMelvinApp(){
 
     useEffect(() => {
         fetchAmigosmelvin();
-    }, []);
+    }, [modoDesativados]); // Recarrega se o modo mudar
 
     const handleBuscaChange = (e) => {
         setBusca(e.target.value);
@@ -54,11 +57,25 @@ function AmigosMelvinApp(){
         navigate(`/app/amigomelvin/editar/${id}`);
     };
 
+    // Define o título com base no modo
+    const tituloPagina = modoDesativados ? "Amigos Desativados" : "Amigos do Melvin";
+
     return(
         <div className={styles.body}>
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <h2 className={styles.title}>Amigos do Melvin</h2>
+                    {/* Grupo de Título com botão de voltar condicional */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        {modoDesativados && (
+                            <IoMdArrowRoundBack 
+                                className={styles.voltar} 
+                                onClick={() => navigate(-1)} 
+                                title="Voltar"
+                                style={{ fontSize: '1.8rem', cursor: 'pointer', color: '#666' }}
+                            />
+                        )}
+                        <h2 className={styles.title}>{tituloPagina}</h2>
+                    </div>
                     
                     <div className={styles.filters}>
                         <div className={styles.container_busca}>
@@ -110,7 +127,9 @@ function AmigosMelvinApp(){
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="4" className={styles.empty}>Nenhum registro encontrado.</td>
+                                        <td colSpan="4" className={styles.empty}>
+                                            {modoDesativados ? "Nenhum amigo desativado encontrado." : "Nenhum registro encontrado."}
+                                        </td>
                                     </tr>
                                 )
                             )}

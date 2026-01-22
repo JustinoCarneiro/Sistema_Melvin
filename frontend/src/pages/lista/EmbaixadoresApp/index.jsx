@@ -3,12 +3,12 @@ import styles from "./EmbaixadoresApp.module.scss";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import { IoMdSearch } from "react-icons/io";
+import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
 
 import get from "../../../services/requests/get";
 
-function EmbaixadoresApp(){
+function EmbaixadoresApp({ modoDesativados = false }){
     const [busca, setBusca] = useState('');
     const [embaixadores, setEmbaixadores] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -17,13 +17,17 @@ function EmbaixadoresApp(){
 
     const fetchEmbaixadores = async () => {
         setLoading(true);
+        setError(null);
         try{
             const response = await get.embaixadores();
             const dados = response.data;
 
             if(Array.isArray(dados)){
-                const embaixadoresAtivos = dados.filter(embaixador => embaixador.status === true);
-                setEmbaixadores(embaixadoresAtivos);
+                // Filtra baseado no modo (Ativos vs Desativados)
+                const embaixadoresFiltrados = dados.filter(embaixador => 
+                    String(embaixador.status) === (modoDesativados ? 'false' : 'true')
+                );
+                setEmbaixadores(embaixadoresFiltrados);
             }else{
                 console.error("6002:Formato inesperado no response:", response);
                 setError("Erro ao carregar dados.");
@@ -39,7 +43,7 @@ function EmbaixadoresApp(){
 
     useEffect(() => {
         fetchEmbaixadores();
-    }, []);
+    }, [modoDesativados]); // Recarrega se o modo mudar
 
     const handleBuscaChange = (e) => {
         setBusca(e.target.value);
@@ -59,11 +63,26 @@ function EmbaixadoresApp(){
         navigate(`/app/embaixador/editar/${id}`);
     };
 
+    // Título dinâmico
+    const tituloPagina = modoDesativados ? "Embaixadores Desativados" : "Embaixadores";
+
     return(
         <div className={styles.body}>
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <h2 className={styles.title}>Embaixadores</h2>
+                    {/* Grupo de Título e Botão Voltar */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        {modoDesativados && (
+                            <IoMdArrowRoundBack 
+                                className={styles.voltar} 
+                                onClick={() => navigate(-1)} 
+                                title="Voltar"
+                                style={{ fontSize: '1.8rem', cursor: 'pointer', color: '#666' }}
+                            />
+                        )}
+                        <h2 className={styles.title}>{tituloPagina}</h2>
+                    </div>
+
                     <div className={styles.filters}>
                         <div className={styles.container_busca}>
                             <IoMdSearch className={styles.icon_busca}/>
@@ -116,7 +135,9 @@ function EmbaixadoresApp(){
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="5" className={styles.empty}>Nenhum embaixador encontrado.</td>
+                                        <td colSpan="5" className={styles.empty}>
+                                            {modoDesativados ? "Nenhum embaixador desativado encontrado." : "Nenhum embaixador encontrado."}
+                                        </td>
                                     </tr>
                                 )
                             )}

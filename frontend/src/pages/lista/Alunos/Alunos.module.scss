@@ -28,6 +28,26 @@
     padding-bottom: 1rem;
     border-bottom: 1px solid #eee;
 
+    /* --- ADICIONADO PARA O BOTÃO DE VOLTAR --- */
+    .titleGroup {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .voltar {
+        font-size: 2.5rem; // AUMENTADO (era padrão ~1rem)
+        color: #555;
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &:hover {
+            color: $cor-primaria;
+            transform: translateX(-3px); // Pequena animação ao passar o mouse
+        }
+    }
+    /* ----------------------------------------- */
+
     .title {
         color: $cor-primaria;
         font-size: 1.8rem;
@@ -113,7 +133,6 @@
 
 .tableResponsive {
     width: 100%;
-    // No Desktop, rolagem normal se precisar
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     
@@ -130,9 +149,9 @@
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0;
-    // white-space: nowrap; // REMOVIDO PARA EVITAR OVERFLOW
+    // white-space: nowrap; // REMOVIDO
     border-bottom: 1px solid black; 
-    table-layout: fixed; // ADICIONADO: Força a tabela a respeitar a largura
+    table-layout: fixed; // ADICIONADO: Estabilidade no Desktop
 
     .thead {
         background-color: $cor-primaria;
@@ -167,7 +186,7 @@
                 font-size: 0.95rem;
                 border-bottom: 1px solid #eee; 
 
-                // CORREÇÃO: Quebra de texto
+                // CORREÇÃO: Quebra de texto no Desktop
                 word-wrap: break-word;
                 overflow-wrap: anywhere;
             }
@@ -241,9 +260,9 @@
         }
     }
 
-    /* --- ESTILO CARD VIEW (A mágica acontece aqui) --- */
+    /* --- ESTILO CARD VIEW --- */
     .tableResponsive {
-        overflow: visible; // Remove rolagem horizontal
+        overflow: visible; 
     }
     
     .table {
@@ -261,7 +280,7 @@
     }
 
     .tr_body {
-        margin-bottom: 1.5rem; // Espaço entre os cartões
+        margin-bottom: 1.5rem; 
         background-color: white;
         border: 1px solid #e0e0e0;
         border-radius: 12px;
@@ -270,31 +289,37 @@
 
         &:hover {
             background-color: white;
-            transform: translateY(-2px); // Pequeno efeito de elevação
+            transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(0,0,0,0.08);
         }
 
         td {
             display: flex;
-            justify-content: space-between; // Label na esquerda, Valor na direita
-            align-items: center;
+            justify-content: space-between; 
+            // CORREÇÃO VISUAL: Alinha ao topo para quando o texto quebrar
+            align-items: flex-start; 
             text-align: right;
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
 
-            // CORREÇÃO MOBILE
+            // CORREÇÃO MOBILE (Conteúdo)
             white-space: normal;
             word-break: break-word;
             
             // O Label vem do atributo data-label
             &::before {
                 content: attr(data-label);
-                float: left;
+                float: left; // Compatibilidade
                 font-weight: 700;
                 color: $cor-primaria;
                 text-transform: uppercase;
                 font-size: 0.75rem;
                 letter-spacing: 0.5px;
+                margin-right: 1rem; // Garante espaçamento do texto
+                flex-shrink: 0;     // Garante que o label não encolha
+                
+                // CORREÇÃO CRÍTICA: Impede que o RÓTULO quebre linha
+                white-space: nowrap; 
             }
 
             &:last-child {
@@ -311,9 +336,8 @@
                 border-top-right-radius: 12px;
                 border-bottom: 1px solid #e0e0e0;
                 
-                // Oculta o label "NOME" para ficar mais limpo, se preferir
-                // &::before { display: none; } 
-                // justify-content: center;
+                // AJUSTE: Removemos align-items: center para respeitar o flex-start global
+                // assim o alinhamento fica correto em nomes longos.
             }
 
             // Tratamento para o botão de ação
@@ -323,8 +347,9 @@
                 border-bottom-left-radius: 12px;
                 border-bottom-right-radius: 12px;
                 padding: 0.8rem;
+                align-items: center; // Centraliza o ícone
                 
-                &::before { display: none; } // Não precisa de label "AÇÕES"
+                &::before { display: none; } 
             }
         }
     }

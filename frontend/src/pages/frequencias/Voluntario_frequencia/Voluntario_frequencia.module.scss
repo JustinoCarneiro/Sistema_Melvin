@@ -34,12 +34,17 @@
         gap: 1rem;
     }
 
+    // BOTÃO VOLTAR (Com Animação e Tamanho Ajustado)
     .voltar {
-        font-size: 1.8rem;
-        color: #666;
+        font-size: 2.5rem; // Aumentado
+        color: #555;
         cursor: pointer;
-        transition: color 0.2s;
-        &:hover { color: $cor-primaria; }
+        transition: all 0.2s;
+        
+        &:hover { 
+            color: $cor-primaria; 
+            transform: translateX(-3px); // Efeito de recuo
+        }
     }
 
     .title {
@@ -99,6 +104,7 @@
         color: #555;
         cursor: pointer;
         outline: none;
+        transition: border-color 0.2s;
         
         &:focus { border-color: $cor-primaria; }
     }
@@ -120,7 +126,7 @@
     border-collapse: separate; 
     border-spacing: 0;
     border-bottom: 1px solid black; 
-    table-layout: fixed; // ADICIONADO: Essencial para tabelas com inputs
+    table-layout: fixed; // Essencial para tabelas com inputs
 
     .thead {
         background-color: $cor-primaria;
@@ -170,7 +176,7 @@
 .select_turnos {
     display: flex;
     gap: 0.5rem;
-    justify-content: center;
+    justify-content: center; // Centraliza no desktop
 }
 
 .select_presenca {
@@ -238,12 +244,11 @@
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         padding: 0;
-        // overflow: hidden; // Permite sombras/tooltips
 
         td {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: center; // Centraliza verticalmente inputs pequenos
             text-align: right;
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
@@ -260,6 +265,10 @@
                 text-transform: uppercase;
                 font-size: 0.75rem;
                 margin-right: 1rem;
+                flex-shrink: 0;
+
+                // PROTEÇÃO: Rótulo nunca quebra
+                white-space: nowrap; 
             }
 
             &:last-child { border-bottom: none; }
@@ -271,12 +280,18 @@
                 font-weight: 600;
                 color: #333;
                 border-bottom: 1px solid #e0e0e0;
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
                 justify-content: space-between; 
             }
 
             // Centraliza selects de presença no card
             &.td_presenca {
                 justify-content: space-between; // Label na esq, selects na dir
+                
+                .select_turnos {
+                    justify-content: flex-end; // Garante que fiquem à direita no mobile
+                }
             }
 
             .input_justificativa { 

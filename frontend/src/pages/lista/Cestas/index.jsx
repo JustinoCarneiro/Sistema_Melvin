@@ -3,27 +3,34 @@ import styles from './Cestas.module.scss';
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import { IoMdSearch } from "react-icons/io";
+import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
+import { FaPlus } from "react-icons/fa6"; // Importando ícone de plus para padronizar
 
 import get from '../../../services/requests/get';
 
-function Cestas(){
+function Cestas({ modoDesativados = false }){
     const [busca, setBusca] = useState('');
     const [cestas, setCestas] = useState([]);
     const navigate = useNavigate();
     const [data, setData] = useState("todos");
-    const [loading, setLoading] = useState(true); // Novo estado
-    const [error, setError] = useState(null); // Estado para erros
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const fetchCestas = async () => {
         setLoading(true);
+        setError(null);
         try{
             const response = await get.cestas();
             const dados = response.data;
 
             if(Array.isArray(dados)){
-                setCestas(dados);
+                // Filtra baseado no modo (Ativos vs Desativados)
+                // Usando String() para garantir compatibilidade se o backend retornar boolean ou string
+                const cestasFiltradas = dados.filter(cesta => 
+                    String(cesta.status) === (modoDesativados ? 'false' : 'true')
+                );
+                setCestas(cestasFiltradas);
             }else{
                 console.error("6003:Formato inesperado no response:", response);
                 setError("Erro ao carregar dados.");
@@ -39,7 +46,7 @@ function Cestas(){
 
     useEffect(() => {
         fetchCestas();
-    }, []);
+    }, [modoDesativados]); // Recarrega se o modo mudar
 
     const handleBuscaChange = (e) => {
         setBusca(e.target.value);
@@ -47,7 +54,13 @@ function Cestas(){
 
     const cestasFiltradosBusca = cestas.filter((cesta) => {
         const termoBusca = busca.toLowerCase();
-        const dataEntrega = new Date(cesta.dataEntrega).toISOString().split('T')[0];
+        
+        // Tratamento seguro para data
+        let dataEntrega = '';
+        if (cesta.dataEntrega) {
+            dataEntrega = new Date(cesta.dataEntrega).toISOString().split('T')[0];
+        }
+
         return (
             (cesta.contato.includes(termoBusca) ||
             cesta.nome.toLowerCase().includes(termoBusca)) &&
@@ -59,11 +72,25 @@ function Cestas(){
         navigate(`/app/cestas/editar/${id}`);
     };
 
+    // Título dinâmico
+    const tituloPagina = modoDesativados ? "Cestas Entregues (Arquivo)" : "Cestas Básicas";
+
     return(
         <div className={styles.body}>
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <h2 className={styles.title}>Cestas Básicas</h2>
+                    {/* Grupo de Título e Voltar */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        {modoDesativados && (
+                            <IoMdArrowRoundBack 
+                                className={styles.voltar} 
+                                onClick={() => navigate(-1)} 
+                                title="Voltar"
+                                style={{ fontSize: '1.8rem', cursor: 'pointer', color: '#666' }}
+                            />
+                        )}
+                        <h2 className={styles.title}>{tituloPagina}</h2>
+                    </div>
                     
                     <div className={styles.filters}>
                         <div className={styles.container_busca}>
@@ -77,10 +104,9 @@ function Cestas(){
                                 onChange={handleBuscaChange}
                             />
                         </div>
+                        
                         <div className={styles.botoes}>
-                            <button className={styles.botao} onClick={()=>navigate("/app/cestas/criar")}>
-                                Adicionar
-                            </button>
+                            {/* Filtro de Data */}
                             <select
                                 className={styles.select_sala}
                                 name="filtroData"
@@ -92,6 +118,7 @@ function Cestas(){
                                 <option value="todos">Todas Datas</option>
                                 <option value="especifica">Data Específica</option>
                             </select>
+                            
                             {data !== "todos" && (
                                 <input
                                     className={styles.select_sala}
@@ -129,7 +156,9 @@ function Cestas(){
                                             <td data-label="Nome">{cesta.nome}</td>
                                             <td data-label="Responsável">{cesta.responsavel}</td>
                                             <td data-label="Data Entrega">
-                                                {new Date(cesta.dataEntrega + "T00:00:00").toLocaleDateString('pt-BR')}
+                                                {cesta.dataEntrega 
+                                                    ? new Date(cesta.dataEntrega + "T00:00:00").toLocaleDateString('pt-BR') 
+                                                    : '-'}
                                             </td>
                                             <td className={styles.edicao} data-label="Ações">
                                                 <MdOutlineModeEdit 
@@ -142,9 +171,18 @@ function Cestas(){
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="4" className={styles.empty}>Nenhum registro encontrado.</td>
+                                        <td colSpan="4" className={styles.empty}>
+                                            {modoDesativados ? "Nenhum registro antigo encontrado." : "Nenhum registro encontrado."}
+                                        </td>
                                     </tr>
                                 )
+                            )}
+
+                            {/* Botão Adicionar: Apenas se NÃO for modo desativados e NÃO estiver carregando */}
+                            {!loading && !modoDesativados && (
+                                <tr className={styles.plus} onClick={()=>navigate("/app/cestas/criar")}>
+                                    <td colSpan="4"><FaPlus className={styles.icon_plus}/> Adicionar entrega</td>
+                                </tr>
                             )}
                         </tbody>
                     </table>

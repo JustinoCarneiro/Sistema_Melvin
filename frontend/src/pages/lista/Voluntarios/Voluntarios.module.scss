@@ -34,6 +34,16 @@
         font-weight: bold;
         margin: 0;
     }
+
+    // Botão Voltar (Modo Desativados)
+    .voltar {
+        font-size: 1.8rem;
+        color: #666;
+        cursor: pointer;
+        transition: color 0.2s;
+        
+        &:hover { color: $cor-primaria; }
+    }
 }
 
 .filters {
@@ -89,25 +99,13 @@
         cursor: pointer;
         outline: none;
         transition: all 0.2s;
-        min-width: 180px;
-
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-        background-repeat: no-repeat;
-        background-position: right 0.7rem top 50%;
-        background-size: 0.65rem auto;
-        padding-right: 2rem; 
+        min-width: 140px;
 
         &:focus {
             border-color: $cor-primaria;
             box-shadow: 0 0 0 2px rgba($cor-primaria, 0.1);
         }
-
-        &:hover {
-            border-color: #bbb;
-        }
+        &:hover { border-color: #bbb; }
     }
 }
 
@@ -129,9 +127,8 @@
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0;
-    // white-space: nowrap; // REMOVIDO PARA EVITAR OVERFLOW
     border-bottom: 1px solid black; 
-    table-layout: fixed; // ADICIONADO: Força respeito à largura
+    table-layout: fixed; // Estabilidade no Desktop
 
     .thead {
         background-color: $cor-primaria;
@@ -166,12 +163,19 @@
                 font-size: 0.95rem;
                 border-bottom: 1px solid #eee; 
 
-                // CORREÇÃO: Quebra de texto
+                // Quebra de texto Desktop (Emails)
                 word-wrap: break-word;
                 overflow-wrap: anywhere;
             }
-
-            td:nth-child(2) { 
+            
+            // Destaque Matrícula
+            td:first-child { 
+                font-weight: 500;
+                color: #555;
+            }
+            
+            // Destaque Nome
+            td:nth-child(2) {
                 font-weight: 500;
                 color: $cor-secundaria;
             }
@@ -200,7 +204,7 @@
                 font-size: 1.2rem;
             }
         }
-        
+
         .empty {
             text-align: center;
             padding: 3rem;
@@ -251,8 +255,10 @@
     .botoes {
         justify-content: space-between;
         width: 100%;
+        flex-wrap: wrap;
+        gap: 0.5rem;
         
-        .select_sala {
+        .select_sala, button {
             flex-grow: 1;
         }
     }
@@ -278,33 +284,29 @@
     .tr_body {
         margin-bottom: 1.5rem; 
         background-color: white;
-        
-        // ESTILO DO ALUNO (Com Borda)
         border: 1px solid #e0e0e0;
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        
         padding: 0;
 
         &:hover {
             background-color: white;
-            transform: translateY(-2px); 
+            transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(0,0,0,0.08);
         }
 
         td {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             text-align: right;
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
-            
-            // CORREÇÃO MOBILE
+
             white-space: normal;
             word-break: break-word;
-
-            // Título da linha
+            overflow-wrap: anywhere;
+            
             &::before {
                 content: attr(data-label);
                 float: left;
@@ -313,13 +315,18 @@
                 text-transform: uppercase;
                 font-size: 0.75rem;
                 letter-spacing: 0.5px;
+                margin-right: 1rem;
+                flex-shrink: 0;
+                
+                white-space: nowrap; 
             }
 
             &:last-child {
                 border-bottom: none;
             }
             
-            // HEADER DO CARD (Nome)
+            // Header do Card (Matrícula e Nome juntos não funcionam bem na estrutura de tabela, 
+            // então usamos o Nome (2º filho) como destaque)
             &:nth-child(2) {
                 font-size: 1.1rem;
                 font-weight: 600;
@@ -328,25 +335,24 @@
                 border-top-left-radius: 12px;
                 border-top-right-radius: 12px;
                 border-bottom: 1px solid #e0e0e0;
-                
-                // justify-content: center;
-                // &::before { display: none; } 
+                // align-items: center; 
             }
 
-            // RODAPÉ DO CARD (Ações)
+            // Rodapé do Card (Edição)
             &.edicao {
                 justify-content: center;
+                align-items: center;
                 background-color: #f9f9f9;
                 border-bottom-left-radius: 12px;
                 border-bottom-right-radius: 12px;
                 padding: 0.8rem;
                 
-                &::before { display: none; } 
+                &::before { display: none; }
             }
         }
     }
-
-    // Botão Adicionar (+)
+    
+    // Botão Adicionar (+) no mobile
     .tbody .plus {
         display: block;
         border: 2px dashed rgba($cor-primaria, 0.3) !important;

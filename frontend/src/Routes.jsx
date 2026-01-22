@@ -13,31 +13,33 @@ import NotaValor from './site/pages/NotaValor';
 
 import Login from "./pages/Login";
 import HomeApp from "./pages/HomeApp";
-import Registro from "./pages/Registro";
 import PrivateRoute from "./services/PrivateRoute";
-import Alunos from "./pages/lista/Alunos";
-import Voluntarios from "./pages/lista/Voluntarios"; // Componente Unificado
+import Header from "./components/Header";
+import Config from "./pages/Config";
+import Relatorios from './pages/Relatorios';
+import Rendimento from './pages/Rendimento';
+
+// --- COMPONENTES DE LISTAGEM UNIFICADOS ---
+// Estes componentes agora controlam tanto a lista de Ativos quanto a de Desativados via prop
+import Alunos from "./pages/lista/Alunos"; 
+import Voluntarios from "./pages/lista/Voluntarios"; 
+import EmbaixadoresApp from './pages/lista/EmbaixadoresApp';
+import AmigosMelvinApp from './pages/lista/AmigosMelvinApp';
+import Avisos from './pages/lista/Avisos';
+import Cestas from './pages/lista/Cestas';
+
+// --- FORMULÁRIOS ---
 import AlunoForms from "./pages/forms/Aluno_forms";
-import VoluntarioForms from "./pages/forms/Voluntario_forms"; // Componente Unificado
+import VoluntarioForms from "./pages/forms/Voluntario_forms"; 
+import EmbaixadorForms from './pages/forms/Embaixador_forms';
+import AmigoMelvinForms from './pages/forms/AmigoMelvin_forms';
+import AvisoForms from './pages/forms/Aviso_forms';
+import CestasForms from './pages/forms/Cestas_forms';
+
+// --- FREQUÊNCIAS ---
 import Aluno_frequencia from "./pages/frequencias/Aluno_frequencia";
 import Voluntario_frequencia from "./pages/frequencias/Voluntario_frequencia";
-import Config from "./pages/Config";
-import Header from "./components/Header";
-import AlunosDesativados from "./pages/lista_matriculas_desativadas/AlunosDesativados";
-import VoluntariosDesativados from "./pages/lista_matriculas_desativadas/VoluntariosDesativados";
-import EmbaixadorForms from './pages/forms/Embaixador_forms';
-import EmbaixadoresApp from './pages/lista/EmbaixadoresApp';
-import EmbabaixadoresDesativados from './pages/lista_matriculas_desativadas/EmbaixadoresDesativados';
-import AmigoMelvinForms from './pages/forms/AmigoMelvin_forms';
-import AmigosMelvinApp from './pages/lista/AmigosMelvinApp';
-import AmigosMelvinDesativados from './pages/lista_matriculas_desativadas/AmigosMelvinDesativados';
-import Avisos from './pages/lista/Avisos';
-import AvisoForms from './pages/forms/Aviso_forms';
-import AvisosDesativados from './pages/lista_matriculas_desativadas/AvisosDesativados';
-import Cestas from './pages/lista/Cestas';
-import CestasForms from './pages/forms/Cestas_forms';
-import Rendimento from './pages/Rendimento';
-import Relatorios from './pages/Relatorios';
+
 
 function AppRoutes() {
     return (
@@ -84,6 +86,7 @@ function AppContent() {
             <Header/>
             <div className="main-wrapper">
                 <Routes>
+                    {/* --- HOME DASHBOARD (Por Função) --- */}
                     <Route path="/coor" element={<PrivateRoute element={HomeApp} role="COOR" />} />
                     <Route path="/prof" element={<PrivateRoute element={HomeApp} role="PROF" />} />
                     <Route path="/aux" element={<PrivateRoute element={HomeApp} role="AUX" />} />
@@ -94,42 +97,41 @@ function AppContent() {
                     <Route path="/zela" element={<PrivateRoute element={HomeApp} role="ZELA" />} />
                     <Route path="/psico" element={<PrivateRoute element={HomeApp} role="PSICO" />} />
                     <Route path="/assist" element={<PrivateRoute element={HomeApp} role="ASSIST" />} />
-                    
-                    <Route path="/registro" element={ <Registro/> } />
 
                     {/* --- ALUNOS --- */}
                     <Route path="/alunos" element={ <Alunos/> } />
                     <Route path="/aluno/criar" element={<AlunoForms />} />
                     <Route path="/aluno/editar/:matricula" element={<AlunoForms/>} />
 
-                    {/* --- VOLUNTÁRIOS (ROTAS UNIFICADAS) --- */}
-                    {/* Lista única com filtro */}
+                    {/* --- VOLUNTÁRIOS --- */}
                     <Route path="/voluntarios" element={ <Voluntarios/> } />
-                    
-                    {/* Formulário único de Criação */}
                     <Route path="/voluntario/criar" element={ <VoluntarioForms/> } />
-                    
-                    {/* Formulário único de Edição */}
                     <Route path="/voluntario/editar/:matricula" element={ <VoluntarioForms/> } />
-                    {/* -------------------------------------- */}
-
-                    <Route path="/embaixadores" element={ <EmbaixadoresApp/> }/>
-                    <Route path="/amigosmelvin" element={ <AmigosMelvinApp/> }/>
-                    <Route path="/avisos" element={<Avisos/>}/>
-                    <Route path="/cestas" element={<Cestas/>}/>
-
-                    <Route path="/avisos/criar" element={<AvisoForms/>}/>
-                    <Route path="/cestas/criar" element={<CestasForms/>}/>
-
-                    <Route path="/amigomelvin/editar/:id" element={<AmigoMelvinForms/>} />
-                    <Route path="/embaixador/editar/:id" element={<EmbaixadorForms/>} />
                     
+                    {/* --- EMBAIXADORES --- */}
+                    <Route path="/embaixadores" element={ <EmbaixadoresApp/> }/>
+                    <Route path="/embaixador/editar/:id" element={<EmbaixadorForms/>} />
+
+                    {/* --- AMIGOS DO MELVIN --- */}
+                    <Route path="/amigosmelvin" element={ <AmigosMelvinApp/> }/>
+                    <Route path="/amigomelvin/editar/:id" element={<AmigoMelvinForms/>} />
+
+                    {/* --- AVISOS --- */}
+                    <Route path="/avisos" element={<Avisos/>}/>
+                    <Route path="/avisos/criar" element={<AvisoForms/>}/>
                     <Route path="/avisos/editar/:id" element={<AvisoForms/>}/>
+
+                    {/* --- CESTAS --- */}
+                    <Route path="/cestas" element={<Cestas/>}/>
+                    <Route path="/cestas/criar" element={<CestasForms/>}/>
                     <Route path="/cestas/editar/:id" element={<CestasForms/>}/>
+
+                    {/* --- OUTROS --- */}
                     <Route path="/rendimento_aluno/:matricula" element={<Rendimento/>} />
                     <Route path="/relatorios" element={ <Relatorios/> } />
+                    <Route path="/config" element={<Config />} />
                     
-                    {/* --- FREQUÊNCIAS (MANTIDAS INDIVIDUAIS POR ENQUANTO) --- */}
+                    {/* --- FREQUÊNCIAS --- */}
                     <Route path="/frequencias/alunos" element={<Aluno_frequencia />} />
                     <Route path="/voluntario/frequencias/coordenadores" element={<Voluntario_frequencia tipo="coordenador"/>} />
                     <Route path="/voluntario/frequencias/professores" element={<Voluntario_frequencia tipo="professor"/>} />
@@ -140,15 +142,21 @@ function AppContent() {
                     <Route path="/voluntario/frequencias/marketing" element={<Voluntario_frequencia tipo="marketing"/>} />
                     <Route path="/voluntario/frequencias/zeladores" element={<Voluntario_frequencia tipo="zelador"/>} />
                     <Route path="/voluntario/frequencias/psicologos" element={<Voluntario_frequencia tipo="psicologo"/>} />
-                    {/* Frequência do Assistente (para ADM/DIRE controlar) */}
                     <Route path="/voluntario/frequencias/assistentes" element={<Voluntario_frequencia tipo="assistente"/>} />
 
-                    <Route path="/config" element={<Config />} />
-                    <Route path="/config/matriculasdesativadas/alunos" element={<AlunosDesativados/>} />
-                    <Route path="/config/matriculasdesativadas/voluntarios" element={<VoluntariosDesativados/>} />
-                    <Route path="/config/embaixadoresdesativados" element={ <EmbabaixadoresDesativados/> } />
-                    <Route path="/config/amigosmelvindesativados" element={ <AmigosMelvinDesativados/> } />
-                    <Route path="/config/avisosdesativados" element={<AvisosDesativados/>}/>
+                    {/* --- ROTAS DE CONFIGURAÇÃO (ARQUIVO MORTO / DESATIVADOS) --- */}
+                    {/* Usando os componentes unificados com a prop ativada */}
+                    
+                    <Route path="/config/matriculasdesativadas/alunos" element={<Alunos modoDesativados={true} />} />
+                    
+                    <Route path="/config/matriculasdesativadas/voluntarios" element={<Voluntarios modoDesativados={true} />} />
+                    
+                    <Route path="/config/embaixadoresdesativados" element={<EmbaixadoresApp modoDesativados={true} />} />
+                    
+                    <Route path="/config/amigosmelvindesativados" element={<AmigosMelvinApp modoDesativados={true} />} />
+                    
+                    <Route path="/config/avisosdesativados" element={<Avisos modoDesativados={true} />} />
+                    
                 </Routes>
             </div>
         </>

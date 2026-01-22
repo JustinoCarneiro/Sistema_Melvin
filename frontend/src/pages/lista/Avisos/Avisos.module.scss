@@ -73,6 +73,44 @@
     }
 }
 
+.botoes {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    
+    .select_sala {
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        background-color: white;
+        font-size: 0.95rem;
+        color: #555;
+        cursor: pointer;
+        outline: none;
+        transition: all 0.2s;
+        min-width: 180px;
+
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.7rem top 50%;
+        background-size: 0.65rem auto;
+        padding-right: 2rem; 
+
+        &:focus {
+            border-color: $cor-primaria;
+            box-shadow: 0 0 0 2px rgba($cor-primaria, 0.1);
+        }
+
+        &:hover {
+            border-color: #bbb;
+        }
+    }
+}
+
 .tableResponsive {
     width: 100%;
     overflow-x: auto;
@@ -133,8 +171,7 @@
                 overflow-wrap: anywhere;
             }
 
-            // Destaque para o Título (1ª Coluna)
-            td:first-child { 
+            td:nth-child(2) { 
                 font-weight: 500;
                 color: $cor-secundaria;
             }
@@ -186,6 +223,16 @@
     }
 }
 
+.centeredMessage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    font-size: 1.2rem;
+    color: #666;
+    &.error { color: #C70039; }
+}
+
 /* --- MEDIA QUERIES (Mobile Card View) --- */
 @media (max-width: 768px) {
     .container {
@@ -199,6 +246,15 @@
     .filters {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .botoes {
+        justify-content: space-between;
+        width: 100%;
+        
+        .select_sala {
+            flex-grow: 1;
+        }
     }
 
     /* --- ESTILO CARD VIEW --- */
@@ -223,10 +279,11 @@
         margin-bottom: 1.5rem; 
         background-color: white;
         
-        // ESTILO DO CARD
+        // ESTILO DO ALUNO (Com Borda)
         border: 1px solid #e0e0e0;
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        
         padding: 0;
 
         &:hover {
@@ -238,16 +295,17 @@
         td {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            // CORREÇÃO VISUAL: Alinha ao topo para quando o texto quebrar
+            align-items: flex-start;
             text-align: right;
             padding: 1rem;
             border-bottom: 1px solid #f0f0f0;
             
-            // CORREÇÃO MOBILE
+            // CORREÇÃO MOBILE (Conteúdo)
             white-space: normal;
             word-break: break-word;
 
-            // Labels
+            // RÓTULO (Label)
             &::before {
                 content: attr(data-label);
                 float: left;
@@ -256,14 +314,19 @@
                 text-transform: uppercase;
                 font-size: 0.75rem;
                 letter-spacing: 0.5px;
+                margin-right: 1rem; // Garante espaçamento
+                flex-shrink: 0;
+                
+                // CORREÇÃO CRÍTICA: Impede que o RÓTULO quebre linha
+                white-space: nowrap; 
             }
 
             &:last-child {
                 border-bottom: none;
             }
             
-            // Header do Card (Título)
-            &:first-child {
+            // HEADER DO CARD (Nome)
+            &:nth-child(2) {
                 font-size: 1.1rem;
                 font-weight: 600;
                 color: #333;
@@ -271,17 +334,21 @@
                 border-top-left-radius: 12px;
                 border-top-right-radius: 12px;
                 border-bottom: 1px solid #e0e0e0;
+                
+                // Centraliza verticalmente o nome no cabeçalho
+                align-items: center; 
             }
 
-            // Rodapé do Card (Edição)
+            // RODAPÉ DO CARD (Ações)
             &.edicao {
                 justify-content: center;
+                align-items: center;
                 background-color: #f9f9f9;
                 border-bottom-left-radius: 12px;
                 border-bottom-right-radius: 12px;
                 padding: 0.8rem;
                 
-                &::before { display: none; }
+                &::before { display: none; } 
             }
         }
     }

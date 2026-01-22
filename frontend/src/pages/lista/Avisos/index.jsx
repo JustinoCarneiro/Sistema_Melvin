@@ -1,35 +1,40 @@
 import styles from './Avisos.module.scss';
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import { IoMdSearch } from "react-icons/io";
+import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
 import { MdOutlineModeEdit } from "react-icons/md";
 
 import get from "../../../services/requests/get";
 
-function Avisos(){
+function Avisos({ modoDesativados = false }){
     const [busca, setBusca] = useState('');
     const [avisos, setAvisos] = useState([]);
-    const [loading, setLoading] = useState(true); // Novo estado
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     const fetchAvisos = async () => {
         setLoading(true);
+        setError(null);
         try{
             const response = await get.aviso();
             const dados = response.data;
 
             if(Array.isArray(dados)){
-                const avisosAtivos = dados.filter(aviso => aviso.status === true);
-                setAvisos(avisosAtivos);
-            }else{
+                // Filtra com base no modo: 'false' para desativados, 'true' para ativos
+                const avisosFiltrados = dados.filter(aviso => 
+                    String(aviso.status) === (modoDesativados ? 'false' : 'true')
+                );
+                setAvisos(avisosFiltrados);
+            } else {
                 console.error("6002:Formato inesperado no response:", response);
+                setError("Erro ao carregar dados.");
             }
-        }catch(error){
+        } catch(error){
             console.error("6001:Erro ao obter avisos!", error);   
-            alert('Erro ao obter avisos!');
+            setError("Não foi possível obter a lista de avisos.");
         } finally {
             setLoading(false);
         }
@@ -37,7 +42,7 @@ function Avisos(){
 
     useEffect(() => {
         fetchAvisos();
-    }, []);
+    }, [modoDesativados]); // Recarrega se o modo mudar
 
     const handleBuscaChange = (e) => {
         setBusca(e.target.value);
@@ -56,11 +61,25 @@ function Avisos(){
         navigate(`/app/avisos/editar/${id}`);
     };
 
+    // Define o título da página
+    const tituloPagina = modoDesativados ? "Avisos Desativados" : "Avisos";
+
     return (
         <div className={styles.body}>
             <div className={styles.container}>
                 <div className={styles.header}>
-                    <h2 className={styles.title}>Avisos</h2>
+                    {/* Grupo de Título com botão de voltar condicional */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        {modoDesativados && (
+                            <IoMdArrowRoundBack 
+                                className={styles.voltar} 
+                                onClick={() => navigate(-1)} 
+                                title="Voltar"
+                                style={{ fontSize: '1.8rem', cursor: 'pointer', color: '#666' }}
+                            />
+                        )}
+                        <h2 className={styles.title}>{tituloPagina}</h2>
+                    </div>
                     
                     <div className={styles.filters}>
                         <div className={styles.container_busca}>
@@ -76,6 +95,8 @@ function Avisos(){
                         </div>
                     </div>
                 </div>
+
+                {error && <div style={{color: '#C70039', textAlign: 'center', padding: '0.5rem'}}>{error}</div>}
 
                 <div className={styles.tableResponsive}>
                     <table className={styles.table}>
@@ -110,12 +131,15 @@ function Avisos(){
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="4" className={styles.empty}>Nenhum aviso encontrado.</td>
+                                        <td colSpan="4" className={styles.empty}>
+                                            {modoDesativados ? "Nenhum aviso desativado encontrado." : "Nenhum aviso encontrado."}
+                                        </td>
                                     </tr>
                                 )
                             )}
                             
-                            {!loading && (
+                            {/* Botão Criar Novo (Apenas se NÃO for desativados e NÃO estiver carregando) */}
+                            {!loading && !modoDesativados && (
                                 <tr className={styles.plus} onClick={()=>navigate(`/app/avisos/criar`)}>
                                     <td colSpan="4"><FaPlus className={styles.icon_plus}/> Criar novo aviso</td>
                                 </tr>
