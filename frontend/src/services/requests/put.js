@@ -149,9 +149,13 @@ const put = {
         }
     },
 
+    // --- CORREÇÃO AQUI ---
     async aviso(dados){
-        const endpoint="/aviso";
+        // Agora o endpoint inclui o ID que vem dentro do objeto 'dados'
+        const endpoint = `/aviso/${dados.id}`;
+        
         try{
+            // Enviamos 'dados' no corpo (o backend vai ignorar o ID repetido no corpo ou usar apenas o da URL)
             const response = await http.put(endpoint, dados);
             return response;
         }catch(error){

@@ -1,6 +1,7 @@
 package br.com.melvin.sistema.services;
 
 import java.util.List;
+import java.util.Optional; // Importante
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,24 +28,25 @@ public class AvisoService {
         return new ResponseEntity<Aviso>(savedAviso, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<?> alterar(Aviso aviso){
-        String resposta;
-        Aviso existente = repositorio.findByTitulo(aviso.getTitulo());
-        if(existente == null){
-            resposta = "Aviso não encontrado!";
-            return new ResponseEntity<String>(resposta, HttpStatus.NOT_FOUND);
+    // --- ALTERAÇÃO AQUI ---
+    public ResponseEntity<?> alterar(UUID id, Aviso avisoAtualizado){
+        // Busca pelo ID (Seguro e Único)
+        Optional<Aviso> avisoOpt = repositorio.findById(id);
+
+        if(avisoOpt.isEmpty()){
+            return new ResponseEntity<String>("Aviso não encontrado!", HttpStatus.NOT_FOUND);
         } else {
-            UUID id = existente.getId();
+            Aviso existente = avisoOpt.get();
 
-            existente.setCorpo(aviso.getCorpo());
-            existente.setStatus(aviso.getStatus());
-            existente.setData_inicio(aviso.getData_inicio());
-            existente.setData_final(aviso.getData_final());
+            // Atualiza todos os campos, INCLUSIVE O TÍTULO
+            existente.setTitulo(avisoAtualizado.getTitulo()); 
+            existente.setCorpo(avisoAtualizado.getCorpo());
+            existente.setStatus(avisoAtualizado.getStatus());
+            existente.setData_inicio(avisoAtualizado.getData_inicio());
+            existente.setData_final(avisoAtualizado.getData_final());
             
-            existente.setId(id);
-
+            // O ID já é o mesmo, não precisa setar novamente
             return new ResponseEntity<Aviso>(repositorio.save(existente), HttpStatus.OK);
         }
     }
 }
-

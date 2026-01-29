@@ -13,7 +13,7 @@ import post from '../../../services/requests/post';
 import put from '../../../services/requests/put';
 
 function AvisoForms(){
-    const {id} = useParams();
+    const {id} = useParams(); // Pega o ID da URL
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -25,12 +25,14 @@ function AvisoForms(){
         status: ''
     });
 
+    // --- CARREGAR DADOS NA EDIÇÃO ---
     useEffect(()=>{
         setErrorMessage('');
         if (!id) return;
 
         const fetchAviso = async () => {
             try{
+                // Como não temos endpoint GET /aviso/{id} ainda, filtramos no front
                 const response = await get.aviso();
 
                 if(response.data && Array.isArray(response.data)){
@@ -41,7 +43,8 @@ function AvisoForms(){
                             corpo: aviso.corpo || '',
                             data_inicio: aviso.data_inicio || '',
                             data_final: aviso.data_final || '',
-                            status: aviso.status ? 'true' : 'false'
+                            // Converte Boolean do banco para String do Select
+                            status: aviso.status === true ? 'true' : 'false'
                         });
                     }
                 }
@@ -62,19 +65,28 @@ function AvisoForms(){
         }));
     };
 
+    // --- ENVIAR DADOS ---
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage('');
 
         try{
+            // PREPARAÇÃO DOS DADOS:
+            // O Java espera boolean no status, mas o <select> devolve string "true"/"false"
+            const dadosParaEnvio = {
+                ...formDado,
+                status: formDado.status === 'true' // Converte para Boolean real
+            };
+
             let response;
-            // Para decidir se é PUT ou POST, é melhor confiar no ID da URL
+            
             if(id){
-                // É edição
-                response = await put.aviso({ ...formDado, id }); // Garante que o ID vai junto
+                // --- EDIÇÃO (PUT) ---
+                // Importante: Passamos o ID junto para o serviço montar a URL /aviso/{id}
+                response = await put.aviso({ ...dadosParaEnvio, id }); 
             } else {
-                // É criação
-                response = await post.aviso(formDado);
+                // --- CRIAÇÃO (POST) ---
+                response = await post.aviso(dadosParaEnvio);
             }
 
             if (response.error) {
@@ -82,7 +94,7 @@ function AvisoForms(){
             }
 
             alert('Salvo com sucesso!');
-            navigate(-1);
+            navigate(-1); // Volta para a tela anterior
         } catch (error) {
             console.error('Erro ao salvar aviso!', error);
             setErrorMessage(error.message || 'Ocorreu um erro ao salvar. Tente novamente.');
@@ -92,12 +104,18 @@ function AvisoForms(){
     return(
         <div className={styles.body}>
             <div className={styles.container}>
-                {/* --- HEADER --- */}
-                <div className={styles.headerForm}>
-                    <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
-                    <h2 className={styles.titlePage}>
-                        {id ? "Editar Aviso" : "Novo Aviso"}
-                    </h2>
+                
+                {/* --- HEADER (Estrutura ajustada para animação da seta) --- */}
+                <div className={styles.header}>
+                    <div className={styles.titleGroup}>
+                        <IoMdArrowRoundBack 
+                            className={styles.voltar} 
+                            onClick={() => navigate(-1)}
+                        />
+                        <h2 className={styles.title}>
+                            {id ? "Editar Aviso" : "Novo Aviso"}
+                        </h2>
+                    </div>
                 </div>
 
                 <form className={styles.form} onSubmit={handleSubmit}>
@@ -123,6 +141,7 @@ function AvisoForms(){
                                     value={formDado.corpo}
                                     onChange={handleChange}
                                     rows="5"
+                                    required
                                 ></textarea>
                             </div>
                         </div>
@@ -151,7 +170,13 @@ function AvisoForms(){
                             
                             <div className={styles.inputGroup}>
                                 <label>Status: <span className={styles.required}>*</span></label>
-                                <select className={styles.select} name="status" value={formDado.status} onChange={handleChange}>
+                                <select 
+                                    className={styles.select} 
+                                    name="status" 
+                                    value={formDado.status} 
+                                    onChange={handleChange}
+                                    required
+                                >
                                     <option value="" hidden>Selecione...</option>
                                     <option value="true">Ativo</option>
                                     <option value="false">Inativo</option>

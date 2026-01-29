@@ -21,30 +21,37 @@
     gap: 1.5rem;
 }
 
-/* --- HEADER --- */
-.headerForm {
+/* --- HEADER (ATUALIZADO COM ANIMAÇÃO) --- */
+.header {
     display: flex;
-    align-items: center;
-    margin-bottom: 2rem;
-    border-bottom: 1px solid #eee;
+    flex-direction: column;
+    gap: 1.5rem;
     padding-bottom: 1rem;
-    width: 100%;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 2rem;
 
-    .voltar {
-        font-size: 1.8rem;
-        color: #666;
-        cursor: pointer;
-        transition: color 0.2s;
-        margin-right: 0.8rem;
-        flex-shrink: 0;
-        
-        &:hover { color: $cor-primaria; }
+    .titleGroup {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
     }
 
-    .titlePage {
+    .voltar {
+        font-size: 2.5rem; // Tamanho aumentado
+        color: #555;
+        cursor: pointer;
+        transition: all 0.2s; // Suavidade
+        
+        &:hover { 
+            color: $cor-primaria;
+            transform: translateX(-3px); // A ANIMAÇÃO DE RECUO
+        }
+    }
+
+    .title {
         color: $cor-primaria;
-        font-size: 1.6rem;
-        font-weight: 700;
+        font-size: 1.8rem;
+        font-weight: bold;
         margin: 0;
     }
 }
@@ -98,6 +105,7 @@
         outline: none;
         transition: border 0.2s;
         width: 100%;
+        cursor: pointer;
 
         &:focus {
             border-color: $cor-primaria;
