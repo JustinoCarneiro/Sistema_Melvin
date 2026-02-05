@@ -3,7 +3,6 @@ package br.com.melvin.sistema.model;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,17 +20,24 @@ public class Cestas {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(nullable = false)
     private String nome;
-
+    private String cpf; 
     private String contato;
+    
+    private Boolean voluntario;
 
+    // --- Campos Eclesiásticos ---
     private String rede;
-
     private String lider_celula;
-
+    private String pastor_rede;
     private String responsavel;
 
-    @Column(nullable = false)
-    private LocalDate dataEntrega;
+    // --- Campos da Doação ---
+    private String itens_doados;
+    private String tipo;         
+    private Double peso;        
+    private String frequencia;   
+    
+    // REMOVIDO: private Boolean status;
+    private LocalDate dataEntrega; 
 }

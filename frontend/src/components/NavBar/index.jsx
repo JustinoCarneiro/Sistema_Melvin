@@ -90,7 +90,7 @@ function NavBar({close}){
                         <li> 
                             <Link to="/app/cestas" className={styles.link}>
                                 <IoBasket className={styles.icon}/> 
-                                <p>Cestas Básicas</p>
+                                <p>Doações</p>
                             </Link>
                         </li>
                     </>

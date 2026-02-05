@@ -3,17 +3,25 @@ import styles from './Cestas.module.scss';
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
-import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
+import { IoMdSearch } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
-import { FaPlus } from "react-icons/fa6"; // Importando ícone de plus para padronizar
+import { FaPlus, FaFileExcel, FaBoxOpen, FaWeightHanging, FaHandHoldingHeart } from "react-icons/fa6"; 
 
 import get from '../../../services/requests/get';
+import Botao from '../../../components/gerais/Botao'; 
 
-function Cestas({ modoDesativados = false }){
+// REMOVIDO PROPS DE MODO DESATIVADO
+function Cestas(){
     const [busca, setBusca] = useState('');
     const [cestas, setCestas] = useState([]);
     const navigate = useNavigate();
-    const [data, setData] = useState("todos");
+    
+    // Filtros
+    const [modoData, setModoData] = useState("todos");
+    const [dataInicio, setDataInicio] = useState(new Date().toISOString().split('T')[0]);
+    const [dataFim, setDataFim] = useState(new Date().toISOString().split('T')[0]);
+    const [filtroTipo, setFiltroTipo] = useState("todos");
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -25,20 +33,16 @@ function Cestas({ modoDesativados = false }){
             const dados = response.data;
 
             if(Array.isArray(dados)){
-                // Filtra baseado no modo (Ativos vs Desativados)
-                // Usando String() para garantir compatibilidade se o backend retornar boolean ou string
-                const cestasFiltradas = dados.filter(cesta => 
-                    String(cesta.status) === (modoDesativados ? 'false' : 'true')
-                );
-                setCestas(cestasFiltradas);
+                // REMOVIDO FILTRO DE STATUS - Agora mostra tudo
+                setCestas(dados);
             }else{
-                console.error("6003:Formato inesperado no response:", response);
+                console.error("6003:Formato inesperado:", response);
                 setError("Erro ao carregar dados.");
             }
 
         } catch(error){
-            console.error("6003:Erro ao obter cestas!", error);   
-            setError("Não foi possível buscar as cestas.");
+            console.error("6003:Erro ao obter doações!", error);   
+            setError("Não foi possível buscar os registros.");
         } finally {
             setLoading(false);
         }
@@ -46,50 +50,95 @@ function Cestas({ modoDesativados = false }){
 
     useEffect(() => {
         fetchCestas();
-    }, [modoDesativados]); // Recarrega se o modo mudar
+    }, []);
 
     const handleBuscaChange = (e) => {
         setBusca(e.target.value);
     };
 
-    const cestasFiltradosBusca = cestas.filter((cesta) => {
+    // --- LÓGICA DE FILTRAGEM ---
+    const dadosFiltrados = cestas.filter((cesta) => {
         const termoBusca = busca.toLowerCase();
         
-        // Tratamento seguro para data
-        let dataEntrega = '';
+        let dataItem = '';
         if (cesta.dataEntrega) {
-            dataEntrega = new Date(cesta.dataEntrega).toISOString().split('T')[0];
+            dataItem = new Date(cesta.dataEntrega).toISOString().split('T')[0];
         }
 
-        return (
-            (cesta.contato.includes(termoBusca) ||
-            cesta.nome.toLowerCase().includes(termoBusca)) &&
-            (data === "todos" || dataEntrega === data)
-        );
+        // 1. Texto
+        const matchTexto = (cesta.contato?.includes(termoBusca) || cesta.nome?.toLowerCase().includes(termoBusca));
+        
+        // 2. Tipo
+        const matchTipo = (filtroTipo === "todos" || cesta.tipo === filtroTipo);
+
+        // 3. Data
+        let matchData = true;
+        if (modoData === "especifica") {
+            matchData = (dataItem === dataInicio);
+        } else if (modoData === "intervalo") {
+            matchData = (dataItem >= dataInicio && dataItem <= dataFim);
+        }
+
+        return matchTexto && matchTipo && matchData;
     });
+
+    const totalEntregas = dadosFiltrados.length;
+    const totalPeso = dadosFiltrados.reduce((acc, item) => acc + (parseFloat(item.peso) || 0), 0);
+    const totalVoluntarios = dadosFiltrados.filter(item => item.voluntario === true).length;
+
+    // --- EXPORTAÇÃO (Status removido) ---
+    const handleExportar = () => {
+        if (dadosFiltrados.length === 0) {
+            alert("Não há dados para exportar com os filtros atuais.");
+            return;
+        }
+        // Removido cabeçalho Status
+        const header = ["Nome;CPF;Contato;Voluntário;Rede;Lider;Pastor;Tipo;Peso(kg);Descricao;Frequencia;Data Entrega;Responsavel"];
+
+        const rows = dadosFiltrados.map(item => {
+            const dataFormatada = item.dataEntrega ? new Date(item.dataEntrega + "T00:00:00").toLocaleDateString('pt-BR') : '-';
+            const voluntarioLabel = item.voluntario ? 'Sim' : 'Não';
+            const limparTexto = (txt) => txt ? String(txt).replace(/;/g, " - ") : "";
+
+            return [
+                limparTexto(item.nome),
+                limparTexto(item.cpf),
+                limparTexto(item.contato),
+                voluntarioLabel,
+                limparTexto(item.rede),
+                limparTexto(item.lider_celula),
+                limparTexto(item.pastor_rede),
+                limparTexto(item.tipo),
+                item.peso || '',
+                limparTexto(item.itens_doados),
+                limparTexto(item.frequencia),
+                dataFormatada,
+                limparTexto(item.responsavel)
+                // Removido statusLabel
+            ].join(";"); 
+        });
+
+        const csvContent = [header, ...rows].join("\n");
+        const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Doacoes_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     const handleEditClick = (id) => {
         navigate(`/app/cestas/editar/${id}`);
     };
 
-    // Título dinâmico
-    const tituloPagina = modoDesativados ? "Cestas Entregues (Arquivo)" : "Cestas Básicas";
-
     return(
         <div className={styles.body}>
             <div className={styles.container}>
                 <div className={styles.header}>
-                    {/* Grupo de Título e Voltar */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        {modoDesativados && (
-                            <IoMdArrowRoundBack 
-                                className={styles.voltar} 
-                                onClick={() => navigate(-1)} 
-                                title="Voltar"
-                                style={{ fontSize: '1.8rem', cursor: 'pointer', color: '#666' }}
-                            />
-                        )}
-                        <h2 className={styles.title}>{tituloPagina}</h2>
+                        <h2 className={styles.title}>Controle de Doações</h2>
                     </div>
                     
                     <div className={styles.filters}>
@@ -98,39 +147,110 @@ function Cestas({ modoDesativados = false }){
                             <input 
                                 className={styles.busca} 
                                 type='text'
-                                placeholder='Buscar por nome ou contato...'
-                                name='busca'
+                                placeholder='Buscar por nome...'
                                 value={busca}
                                 onChange={handleBuscaChange}
                             />
                         </div>
                         
                         <div className={styles.botoes}>
-                            {/* Filtro de Data */}
                             <select
                                 className={styles.select_sala}
-                                name="filtroData"
-                                value={data === "todos" ? "todos" : "especifica"}
-                                onChange={(e) => {
-                                    setData(e.target.value === "todos" ? "todos" : new Date().toISOString().split('T')[0]);
-                                }}
+                                value={filtroTipo}
+                                onChange={(e) => setFiltroTipo(e.target.value)}
                             >
-                                <option value="todos">Todas Datas</option>
+                                <option value="todos">Todos Tipos</option>
+                                <option value="ALIMENTO">Alimentos</option>
+                                <option value="VESTUARIO">Roupas</option>
+                                <option value="HIGIENE">Higiene</option>
+                                <option value="MOVEIS">Móveis</option>
+                                <option value="BRINQUEDOS">Brinquedos</option>
+                                <option value="OUTROS">Outros</option>
+                            </select>
+
+                            <select
+                                className={styles.select_sala}
+                                value={modoData}
+                                onChange={(e) => setModoData(e.target.value)}
+                            >
+                                <option value="todos">Todas as Datas</option>
                                 <option value="especifica">Data Específica</option>
+                                <option value="intervalo">Intervalo</option>
                             </select>
                             
-                            {data !== "todos" && (
+                            {modoData === "especifica" && (
                                 <input
                                     className={styles.select_sala}
                                     type="date"
-                                    name="data"
-                                    value={data}
-                                    onChange={(e) => setData(e.target.value)}
+                                    value={dataInicio}
+                                    onChange={(e) => setDataInicio(e.target.value)}
                                 />
                             )}
+
+                            {modoData === "intervalo" && (
+                                <div className={styles.intervaloContainer}>
+                                    <input
+                                        className={styles.select_sala}
+                                        type="date"
+                                        value={dataInicio}
+                                        onChange={(e) => setDataInicio(e.target.value)}
+                                    />
+                                    <span className={styles.ate}>até</span>
+                                    <input
+                                        className={styles.select_sala}
+                                        type="date"
+                                        value={dataFim}
+                                        onChange={(e) => setDataFim(e.target.value)}
+                                    />
+                                </div>
+                            )}
+
+                            <Botao 
+                                nome="Exportar"
+                                corFundo="#217346" 
+                                corBorda="#107C41"
+                                type="button"
+                                onClick={handleExportar}
+                            >
+                                <FaFileExcel />
+                            </Botao>
                         </div>
                     </div>
                 </div>
+
+                {!loading && !error && (
+                    <div className={styles.dashboard}>
+                        <div className={styles.card}>
+                            <div className={`${styles.iconContainer} ${styles.blue}`}>
+                                <FaBoxOpen />
+                            </div>
+                            <div className={styles.cardInfo}>
+                                <span>Total de Entregas</span>
+                                <h3>{totalEntregas}</h3>
+                            </div>
+                        </div>
+
+                        <div className={styles.card}>
+                            <div className={`${styles.iconContainer} ${styles.green}`}>
+                                <FaWeightHanging />
+                            </div>
+                            <div className={styles.cardInfo}>
+                                <span>Peso Total (Kg)</span>
+                                <h3>{totalPeso.toFixed(1)} kg</h3>
+                            </div>
+                        </div>
+
+                        <div className={styles.card}>
+                            <div className={`${styles.iconContainer} ${styles.orange}`}>
+                                <FaHandHoldingHeart />
+                            </div>
+                            <div className={styles.cardInfo}>
+                                <span>Voluntários</span>
+                                <h3>{totalVoluntarios}</h3>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {error && <div style={{color: '#C70039', textAlign: 'center', padding: '0.5rem'}}>{error}</div>}
 
@@ -139,49 +259,54 @@ function Cestas({ modoDesativados = false }){
                         <thead className={styles.thead}>
                             <tr className={styles.tr_head}>
                                 <th>Nome</th>
+                                <th>Rede</th>
+                                <th>Tipo</th>
                                 <th>Responsável</th>
-                                <th>Data de Entrega</th>
-                                <th className={styles.edicao}>Edição</th>
+                                <th>Data</th>
+                                <th className={styles.edicao}>Ação</th>
                             </tr>
                         </thead>
                         <tbody className={styles.tbody}>
                             {loading ? (
-                                <tr>
-                                    <td colSpan="4" className={styles.empty}>Carregando...</td>
-                                </tr>
+                                <tr><td colSpan="6" className={styles.empty}>Carregando...</td></tr>
                             ) : (
-                                cestasFiltradosBusca.length > 0 ? (
-                                    cestasFiltradosBusca.map((cesta) => (
-                                        <tr key={cesta.id} className={styles.tr_body}>
-                                            <td data-label="Nome">{cesta.nome}</td>
-                                            <td data-label="Responsável">{cesta.responsavel}</td>
-                                            <td data-label="Data Entrega">
-                                                {cesta.dataEntrega 
-                                                    ? new Date(cesta.dataEntrega + "T00:00:00").toLocaleDateString('pt-BR') 
+                                dadosFiltrados.length > 0 ? (
+                                    dadosFiltrados.map((item) => (
+                                        <tr key={item.id} className={styles.tr_body}>
+                                            <td data-label="Nome">{item.nome}</td>
+                                            <td data-label="Rede">{item.rede || '-'}</td>
+                                            <td data-label="Tipo">
+                                                <span className={`${styles.badge} ${styles[item.tipo]}`}>
+                                                    {item.tipo || 'OUTROS'}
+                                                </span>
+                                            </td>
+                                            <td data-label="Responsável">{item.responsavel || '-'}</td>
+                                            <td data-label="Data">
+                                                {item.dataEntrega 
+                                                    ? new Date(item.dataEntrega + "T00:00:00").toLocaleDateString('pt-BR') 
                                                     : '-'}
                                             </td>
                                             <td className={styles.edicao} data-label="Ações">
                                                 <MdOutlineModeEdit 
                                                     className={styles.icon_editar}
-                                                    onClick={()=>handleEditClick(cesta.id)}
-                                                    title="Editar Cesta"
+                                                    onClick={()=>handleEditClick(item.id)}
+                                                    title="Editar"
                                                 />
                                             </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="4" className={styles.empty}>
-                                            {modoDesativados ? "Nenhum registro antigo encontrado." : "Nenhum registro encontrado."}
+                                        <td colSpan="6" className={styles.empty}>
+                                            Nenhum registro encontrado.
                                         </td>
                                     </tr>
                                 )
                             )}
 
-                            {/* Botão Adicionar: Apenas se NÃO for modo desativados e NÃO estiver carregando */}
-                            {!loading && !modoDesativados && (
+                            {!loading && (
                                 <tr className={styles.plus} onClick={()=>navigate("/app/cestas/criar")}>
-                                    <td colSpan="4"><FaPlus className={styles.icon_plus}/> Adicionar entrega</td>
+                                    <td colSpan="6"><FaPlus className={styles.icon_plus}/> Nova Doação</td>
                                 </tr>
                             )}
                         </tbody>

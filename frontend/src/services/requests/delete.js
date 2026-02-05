@@ -61,10 +61,11 @@ const del = {
         }
     },
 
-    async cestas(dados){
-        const endpoint = "/cestas";
+    // --- CORREÇÃO AQUI ---
+    async cestas(id){ // Agora recebe o ID diretamente
+        const endpoint = `/cestas/${id}`; // Concatena o ID na URL
         try {
-            const response = await http.delete(endpoint, { data: dados });
+            const response = await http.delete(endpoint); // Remove o 'data' extra
             return response;
         } catch (error) {
             console.error('Erro ao deletar entrega de cesta:', error.response ? error.response.data : error.message);
