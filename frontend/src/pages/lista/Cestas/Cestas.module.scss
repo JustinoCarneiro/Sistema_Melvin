@@ -81,7 +81,7 @@
 .botoes {
     display: flex;
     align-items: center;
-    gap: 0.5rem; // Reduzi um pouco o gap para caber tudo
+    gap: 0.5rem; 
     flex-wrap: wrap;
 
     .select_sala {
@@ -98,7 +98,6 @@
     }
 }
 
-// NOVO: Container para os dois inputs de data
 .intervaloContainer {
     display: flex;
     align-items: center;
@@ -147,6 +146,7 @@
         &.blue { background-color: #e3f2fd; color: #1976d2; }
         &.green { background-color: #e8f5e9; color: #2e7d32; }
         &.orange { background-color: #fff3e0; color: #f57c00; }
+        &.red { background-color: #ffebee; color: #c62828; }
     }
 
     .cardInfo {
@@ -204,11 +204,14 @@
             text-overflow: ellipsis;
             
             &.edicao { text-align: center; width: 10%; }
-            &:nth-child(1) { width: 25%; } 
-            &:nth-child(2) { width: 15%; }
-            &:nth-child(3) { width: 15%; } 
-            &:nth-child(4) { width: 20%; } 
-            &:nth-child(5) { width: 15%; }
+            
+            // LARGURA DAS COLUNAS AJUSTADA PARA 7 ITENS (Soma=100%)
+            &:nth-child(1) { width: 6%; text-align: center; } // Ícone Op.
+            &:nth-child(2) { width: 22%; } // Pessoa
+            &:nth-child(3) { width: 12%; } // Rede
+            &:nth-child(4) { width: 15%; } // Tipo
+            &:nth-child(5) { width: 20%; } // Responsável
+            &:nth-child(6) { width: 15%; } // Data
         }
     }
 
@@ -226,7 +229,8 @@
                 overflow-wrap: anywhere;
             }
 
-            td:first-child { 
+            // A segunda coluna agora é a "Pessoa" (Nome)
+            td:nth-child(2) { 
                 font-weight: 500;
                 color: $cor-secundaria;
             }
@@ -289,13 +293,11 @@
     .header { gap: 1rem; }
     .filters { flex-direction: column; align-items: stretch; }
     
-    // Ajuste dos botões no mobile
     .botoes { 
         justify-content: space-between; 
         width: 100%; 
         .select_sala { flex-grow: 1; } 
         
-        // No mobile, o intervalo quebra linha pra não espremer
         .intervaloContainer {
             width: 100%;
             display: grid;
@@ -344,14 +346,24 @@
 
             &:last-child { border-bottom: none; }
             
-            &:first-child { 
+            /* Coluna 1: Ícone Operação (Parte de cima do cabeçalho do card) */
+            &:nth-child(1) { 
+                background-color: #fafafa;
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+                border-bottom: none;
+                padding-bottom: 0.2rem;
+                align-items: center; 
+            }
+
+            /* Coluna 2: Nome/Pessoa (Parte de baixo do cabeçalho do card) */
+            &:nth-child(2) { 
                 font-size: 1.1rem;
                 font-weight: 600;
                 color: #333;
                 background-color: #fafafa;
-                border-top-left-radius: 12px;
-                border-top-right-radius: 12px;
                 border-bottom: 1px solid #e0e0e0;
+                padding-top: 0; // Tira o espaçamento para grudar com o ícone de cima
                 align-items: center; 
             }
 

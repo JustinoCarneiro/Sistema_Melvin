@@ -49,6 +49,7 @@ public class CestasService {
             existente.setNome(cestaAtualizada.getNome());
             existente.setCpf(cestaAtualizada.getCpf());
             existente.setContato(cestaAtualizada.getContato());
+            existente.setOperacao(cestaAtualizada.getOperacao());
             
             // --- NOVO CAMPO ADICIONADO ---
             existente.setVoluntario(cestaAtualizada.getVoluntario());

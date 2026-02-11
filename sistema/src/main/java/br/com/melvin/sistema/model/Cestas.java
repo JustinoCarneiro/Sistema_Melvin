@@ -20,6 +20,7 @@ public class Cestas {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    private String operacao;
     private String nome;
     private String cpf; 
     private String contato;

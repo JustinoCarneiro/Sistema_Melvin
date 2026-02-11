@@ -1,5 +1,5 @@
 import styles from './Login.module.scss';
-import { useState, useEffect } from 'react'; // Adicione useEffect
+import { useState, useEffect } from 'react'; 
 import { useNavigate, Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
@@ -15,12 +15,16 @@ function Login(){
 
     useEffect(() => {
         const token = Cookies.get('token');
-        if (token) {
-            const role = Cookies.get('role');
-            navigate(role ? `/app/${role.toLowerCase()}` : '/app');
+        const role = Cookies.get('role');
+        
+        // Só redireciona se tiver os dois (token e role). Se não tiver role, o cookie tá quebrado.
+        if (token && role) {
+            navigate(`/app/${role.toLowerCase()}`);
+        } else if (token && !role) {
+             Cookies.remove('token');
+             Cookies.remove('login');
         }
     }, [navigate]);
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,16 +33,18 @@ function Login(){
             const response = await auth.authentication({ login, password });
             
             if (response.status === 200) {
-                const role = response.data.role; // Pega o role diretamente da resposta de login
+                const role = response.data.role; 
+                
+                // Salva o login e o role no cookie para o PrivateRoute e o useEffect lerem
                 Cookies.set('login', login, { sameSite: 'Lax', secure: false });
+                Cookies.set('role', role, { sameSite: 'Lax', secure: false }); 
 
-                // Lógica de redirecionamento simplificada
                 const path = `/app/${role.toLowerCase()}`;
                 navigate(path);
             }
         } catch (error) {
             console.error("3001:Erro ao fazer login", error);
-            setErrorMessage(error.message || 'Erro ao fazer login');
+            setErrorMessage(error.message || 'Erro ao fazer login. Verifique suas credenciais.');
         }
     };
 

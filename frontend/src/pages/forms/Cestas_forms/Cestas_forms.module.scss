@@ -135,6 +135,60 @@
 
 .required { color: red; }
 
+/* --- TIPO DE OPERACAO RESPONSIVO --- */
+.operacaoContainer {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1.2rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    
+    &.isEntrada {
+        background-color: #e8f5e9;
+        border: 1px solid #4caf50;
+    }
+    
+    &.isSaida {
+        background-color: #ffebee;
+        border: 1px solid #f44336;
+    }
+
+    h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        color: #333;
+        white-space: nowrap; // Impede que o titulo quebre antes da hora
+    }
+
+    .opcoesBox {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap; // No tablet já ajuda a não quebrar
+    }
+
+    .labelEntrada {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        font-weight: bold;
+        color: #2e7d32;
+        input { transform: scale(1.5); cursor: pointer; }
+    }
+
+    .labelSaida {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        font-weight: bold;
+        color: #c62828;
+        input { transform: scale(1.5); cursor: pointer; }
+    }
+}
+
 /* --- FOOTER --- */
 .footerActions {
     display: flex;
@@ -184,6 +238,19 @@
         
         button {
             width: 100%; 
+        }
+    }
+
+    .operacaoContainer {
+        flex-direction: column; // Coloca titulo e opções em coluna
+        align-items: flex-start;
+        gap: 1rem;
+
+        .opcoesBox {
+            flex-direction: column; // Coloca "Entrada" em cima e "Saida" embaixo
+            align-items: flex-start;
+            gap: 1rem;
+            width: 100%;
         }
     }
 }

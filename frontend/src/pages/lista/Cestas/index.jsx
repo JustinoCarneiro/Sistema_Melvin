@@ -10,7 +10,6 @@ import { FaPlus, FaFileExcel, FaBoxOpen, FaWeightHanging, FaHandHoldingHeart } f
 import get from '../../../services/requests/get';
 import Botao from '../../../components/gerais/Botao'; 
 
-// REMOVIDO PROPS DE MODO DESATIVADO
 function Cestas(){
     const [busca, setBusca] = useState('');
     const [cestas, setCestas] = useState([]);
@@ -21,6 +20,7 @@ function Cestas(){
     const [dataInicio, setDataInicio] = useState(new Date().toISOString().split('T')[0]);
     const [dataFim, setDataFim] = useState(new Date().toISOString().split('T')[0]);
     const [filtroTipo, setFiltroTipo] = useState("todos");
+    const [filtroOperacao, setFiltroOperacao] = useState("todas");
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -33,8 +33,11 @@ function Cestas(){
             const dados = response.data;
 
             if(Array.isArray(dados)){
-                // REMOVIDO FILTRO DE STATUS - Agora mostra tudo
-                setCestas(dados);
+                const dadosTratados = dados.map(c => ({
+                    ...c,
+                    operacao: c.operacao || 'SAIDA' 
+                }));
+                setCestas(dadosTratados);
             }else{
                 console.error("6003:Formato inesperado:", response);
                 setError("Erro ao carregar dados.");
@@ -65,13 +68,20 @@ function Cestas(){
             dataItem = new Date(cesta.dataEntrega).toISOString().split('T')[0];
         }
 
-        // 1. Texto
-        const matchTexto = (cesta.contato?.includes(termoBusca) || cesta.nome?.toLowerCase().includes(termoBusca));
+        // 1. Texto (Busca por nome, contato ou rede)
+        const matchTexto = (
+            cesta.contato?.includes(termoBusca) || 
+            cesta.nome?.toLowerCase().includes(termoBusca) ||
+            cesta.rede?.toLowerCase().includes(termoBusca) // Adicionado busca por rede, útil para entradas
+        );
         
         // 2. Tipo
         const matchTipo = (filtroTipo === "todos" || cesta.tipo === filtroTipo);
 
-        // 3. Data
+        // 3. Operação (Entrada/Saída)
+        const matchOperacao = (filtroOperacao === "todas" || cesta.operacao === filtroOperacao);
+
+        // 4. Data
         let matchData = true;
         if (modoData === "especifica") {
             matchData = (dataItem === dataInicio);
@@ -79,29 +89,41 @@ function Cestas(){
             matchData = (dataItem >= dataInicio && dataItem <= dataFim);
         }
 
-        return matchTexto && matchTipo && matchData;
+        return matchTexto && matchTipo && matchOperacao && matchData;
     });
 
-    const totalEntregas = dadosFiltrados.length;
-    const totalPeso = dadosFiltrados.reduce((acc, item) => acc + (parseFloat(item.peso) || 0), 0);
-    const totalVoluntarios = dadosFiltrados.filter(item => item.voluntario === true).length;
+    // --- CÁLCULOS DE ESTOQUE (DASHBOARD) ---
+    const totalEntradas = dadosFiltrados
+        .filter(item => item.operacao === 'ENTRADA')
+        .reduce((acc, item) => acc + (parseFloat(item.peso) || 0), 0);
+        
+    const totalSaidas = dadosFiltrados
+        .filter(item => item.operacao === 'SAIDA')
+        .reduce((acc, item) => acc + (parseFloat(item.peso) || 0), 0);
+        
+    const saldoEstoque = totalEntradas - totalSaidas;
 
-    // --- EXPORTAÇÃO (Status removido) ---
+    // --- EXPORTAÇÃO ---
     const handleExportar = () => {
         if (dadosFiltrados.length === 0) {
             alert("Não há dados para exportar com os filtros atuais.");
             return;
         }
-        // Removido cabeçalho Status
-        const header = ["Nome;CPF;Contato;Voluntário;Rede;Lider;Pastor;Tipo;Peso(kg);Descricao;Frequencia;Data Entrega;Responsavel"];
+        
+        const header = ["Operacao;Nome/Origem;CPF;Contato;Voluntário;Rede;Lider;Pastor;Tipo;Peso(kg);Descricao;Frequencia;Data;Staff"];
 
         const rows = dadosFiltrados.map(item => {
             const dataFormatada = item.dataEntrega ? new Date(item.dataEntrega + "T00:00:00").toLocaleDateString('pt-BR') : '-';
             const voluntarioLabel = item.voluntario ? 'Sim' : 'Não';
             const limparTexto = (txt) => txt ? String(txt).replace(/;/g, " - ") : "";
+            
+            // Tratamento para nome vazio (Entradas)
+            let nomeExport = limparTexto(item.nome);
+            if (!nomeExport && item.operacao === 'ENTRADA') nomeExport = `Doação (${limparTexto(item.rede)})`;
 
             return [
-                limparTexto(item.nome),
+                item.operacao,
+                nomeExport,
                 limparTexto(item.cpf),
                 limparTexto(item.contato),
                 voluntarioLabel,
@@ -109,12 +131,11 @@ function Cestas(){
                 limparTexto(item.lider_celula),
                 limparTexto(item.pastor_rede),
                 limparTexto(item.tipo),
-                item.peso || '',
+                item.peso || '0',
                 limparTexto(item.itens_doados),
                 limparTexto(item.frequencia),
                 dataFormatada,
                 limparTexto(item.responsavel)
-                // Removido statusLabel
             ].join(";"); 
         });
 
@@ -123,7 +144,7 @@ function Cestas(){
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", `Doacoes_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.csv`);
+        link.setAttribute("download", `Fluxo_Doacoes_${new Date().toLocaleDateString('pt-BR').replace(/\//g, '-')}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -138,7 +159,7 @@ function Cestas(){
             <div className={styles.container}>
                 <div className={styles.header}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <h2 className={styles.title}>Controle de Doações</h2>
+                        <h2 className={styles.title}>Fluxo de Doações</h2>
                     </div>
                     
                     <div className={styles.filters}>
@@ -147,13 +168,24 @@ function Cestas(){
                             <input 
                                 className={styles.busca} 
                                 type='text'
-                                placeholder='Buscar por nome...'
+                                placeholder='Buscar pessoa ou rede...'
                                 value={busca}
                                 onChange={handleBuscaChange}
                             />
                         </div>
                         
                         <div className={styles.botoes}>
+                            {/* --- FILTRO DE OPERAÇÃO --- */}
+                            <select
+                                className={styles.select_sala}
+                                value={filtroOperacao}
+                                onChange={(e) => setFiltroOperacao(e.target.value)}
+                            >
+                                <option value="todas">🔄 Entradas e Saídas</option>
+                                <option value="ENTRADA">📥 Apenas Entradas</option>
+                                <option value="SAIDA">📤 Apenas Saídas</option>
+                            </select>
+
                             <select
                                 className={styles.select_sala}
                                 value={filtroTipo}
@@ -225,18 +257,8 @@ function Cestas(){
                                 <FaBoxOpen />
                             </div>
                             <div className={styles.cardInfo}>
-                                <span>Total de Entregas</span>
-                                <h3>{totalEntregas}</h3>
-                            </div>
-                        </div>
-
-                        <div className={styles.card}>
-                            <div className={`${styles.iconContainer} ${styles.green}`}>
-                                <FaWeightHanging />
-                            </div>
-                            <div className={styles.cardInfo}>
-                                <span>Peso Total (Kg)</span>
-                                <h3>{totalPeso.toFixed(1)} kg</h3>
+                                <span>Total Arrecadado (Entradas)</span>
+                                <h3>{totalEntradas.toFixed(1)} kg</h3>
                             </div>
                         </div>
 
@@ -245,8 +267,20 @@ function Cestas(){
                                 <FaHandHoldingHeart />
                             </div>
                             <div className={styles.cardInfo}>
-                                <span>Voluntários</span>
-                                <h3>{totalVoluntarios}</h3>
+                                <span>Total Entregue (Saídas)</span>
+                                <h3>{totalSaidas.toFixed(1)} kg</h3>
+                            </div>
+                        </div>
+
+                        <div className={styles.card}>
+                            <div className={`${styles.iconContainer} ${styles.green}`}>
+                                <FaWeightHanging />
+                            </div>
+                            <div className={styles.cardInfo}>
+                                <span>Saldo em Estoque</span>
+                                <h3 style={{color: saldoEstoque < 0 ? '#c62828' : 'inherit'}}>
+                                    {saldoEstoque.toFixed(1)} kg
+                                </h3>
                             </div>
                         </div>
                     </div>
@@ -258,7 +292,8 @@ function Cestas(){
                     <table className={styles.table}>
                         <thead className={styles.thead}>
                             <tr className={styles.tr_head}>
-                                <th>Nome</th>
+                                <th style={{width: '5%', textAlign: 'center'}}>Op.</th>
+                                <th>Pessoa / Origem</th>
                                 <th>Rede</th>
                                 <th>Tipo</th>
                                 <th>Responsável</th>
@@ -268,12 +303,21 @@ function Cestas(){
                         </thead>
                         <tbody className={styles.tbody}>
                             {loading ? (
-                                <tr><td colSpan="6" className={styles.empty}>Carregando...</td></tr>
+                                <tr><td colSpan="7" className={styles.empty}>Carregando...</td></tr>
                             ) : (
                                 dadosFiltrados.length > 0 ? (
                                     dadosFiltrados.map((item) => (
                                         <tr key={item.id} className={styles.tr_body}>
-                                            <td data-label="Nome">{item.nome}</td>
+                                            <td data-label="Operação" style={{textAlign: 'center'}}>
+                                                {item.operacao === 'ENTRADA' ? 
+                                                    <span title="Entrada" style={{fontSize: '1.2rem'}}>📥</span> : 
+                                                    <span title="Saída" style={{fontSize: '1.2rem'}}>📤</span>
+                                                }
+                                            </td>
+                                            <td data-label="Pessoa/Origem">
+                                                {/* Se tem nome, mostra o nome. Se não tem (Entrada), mostra a Rede */}
+                                                {item.nome ? item.nome : <span style={{color: '#888', fontStyle: 'italic'}}>Doação ({item.rede || 'Anônima'})</span>}
+                                            </td>
                                             <td data-label="Rede">{item.rede || '-'}</td>
                                             <td data-label="Tipo">
                                                 <span className={`${styles.badge} ${styles[item.tipo]}`}>
@@ -297,7 +341,7 @@ function Cestas(){
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className={styles.empty}>
+                                        <td colSpan="7" className={styles.empty}>
                                             Nenhum registro encontrado.
                                         </td>
                                     </tr>
@@ -306,7 +350,7 @@ function Cestas(){
 
                             {!loading && (
                                 <tr className={styles.plus} onClick={()=>navigate("/app/cestas/criar")}>
-                                    <td colSpan="6"><FaPlus className={styles.icon_plus}/> Nova Doação</td>
+                                    <td colSpan="7"><FaPlus className={styles.icon_plus}/> Novo Registro</td>
                                 </tr>
                             )}
                         </tbody>
