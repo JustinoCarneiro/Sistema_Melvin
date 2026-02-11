@@ -206,6 +206,9 @@ function CestasForms(){
                                     <option value="VinhoNovo">Rede VinhoNovo</option>
                                     <option value="Vermelha">Rede Roxa</option>
                                     <option value="Laranja">Rede Dourada</option>
+                                    <option value="Amarela">Rede Amarela</option>
+                                    <option value="Ouro">Rede Ouro</option>
+                                    <option value="Turquesa">Rede Turquesa</option>
                                     <option value="Visitante">Visitante / Outra</option>
                                 </select>
                             </div>
