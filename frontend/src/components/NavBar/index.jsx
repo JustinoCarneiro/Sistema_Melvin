@@ -8,6 +8,8 @@ import { TbReportAnalytics, TbSocial } from "react-icons/tb";
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from "js-cookie";
 
+import logo from '../../docs/Instituto_Melvin.png';
+
 function NavBar({close}){
     const navigate = useNavigate();
     const closeNavBar = () => {close(false)}
@@ -19,6 +21,7 @@ function NavBar({close}){
     const [isCoor, setIsCoor] = useState(false);
     const [isPsico, setIsPsico] = useState(false);
     const [isAssist, setIsAssist] = useState(false);
+    const [isAux, setIsAux] = useState(false);
 
     useEffect(() => {
         const userRole = Cookies.get('role');
@@ -28,6 +31,7 @@ function NavBar({close}){
         setIsCoor(userRole === "COOR");
         setIsPsico(userRole === 'PSICO');
         setIsAssist(userRole === 'ASSIST');
+        setIsAux(userRole === 'AUX');
     }, []);
 
     const handleRouteConfig = () => {
@@ -41,7 +45,6 @@ function NavBar({close}){
             <ul className={styles.nav}>
                 
                 {/* --- ALUNOS --- */}
-                {/* Visível para todos os perfis pedagógicos e administrativos */}
                 {(isAdm || isProf || isDire || isCoor || isPsico || isAssist) && (
                     <li> 
                         <Link to="/app/alunos" className={styles.link}>
@@ -61,8 +64,7 @@ function NavBar({close}){
                     </li>
                 )}
 
-                {/* --- VOLUNTÁRIOS (Atualizado) --- */}
-                {/* Agora é um link único, sem submenu */}
+                {/* --- VOLUNTÁRIOS --- */}
                 {(isAdm || isDire || isCoor) && (
                     <li> 
                         <Link to="/app/voluntarios" className={styles.link}>
@@ -72,7 +74,7 @@ function NavBar({close}){
                     </li>
                 )}
 
-                {/* --- OUTROS --- */}
+                {/* --- EMBAIXADORES E AMIGOS (Apenas ADM e DIRE) --- */}
                 {(isAdm || isDire) && (
                     <>
                         <li> 
@@ -87,13 +89,18 @@ function NavBar({close}){
                                 <p>Amigos Melvin</p>
                             </Link>
                         </li>
-                        <li> 
-                            <Link to="/app/cestas" className={styles.link}>
-                                <IoBasket className={styles.icon}/> 
-                                <p>Doações</p>
-                            </Link>
-                        </li>
                     </>
+                )}
+
+                {/* --- DOAÇÕES (ADM, DIRE e AUX) --- */}
+                {/* Separei aqui para incluir o isAux */}
+                {(isAdm || isDire || isAux) && (
+                    <li> 
+                        <Link to="/app/cestas" className={styles.link}>
+                            <IoBasket className={styles.icon}/> 
+                            <p>Doações</p>
+                        </Link>
+                    </li>
                 )}
 
                 {isAdm && (

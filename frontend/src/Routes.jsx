@@ -20,7 +20,6 @@ import Relatorios from './pages/Relatorios';
 import Rendimento from './pages/Rendimento';
 
 // --- COMPONENTES DE LISTAGEM UNIFICADOS ---
-// Estes componentes agora controlam tanto a lista de Ativos quanto a de Desativados via prop
 import Alunos from "./pages/lista/Alunos"; 
 import Voluntarios from "./pages/lista/Voluntarios"; 
 import EmbaixadoresApp from './pages/lista/EmbaixadoresApp';
@@ -81,6 +80,12 @@ function SiteContent(){
 }
 
 function AppContent() {
+    // Lista de perfis que podem acessar áreas pedagógicas/administrativas comuns
+    const perfisGerais = ['ADM', 'DIRE', 'COOR', 'PROF', 'PSICO', 'ASSIST'];
+    
+    // Lista de perfis que podem acessar Doações (Cestas)
+    const perfisDoacao = ['ADM', 'DIRE', 'AUX'];
+
     return (
         <>
             <Header/>
@@ -99,63 +104,60 @@ function AppContent() {
                     <Route path="/assist" element={<PrivateRoute element={HomeApp} role="ASSIST" />} />
 
                     {/* --- ALUNOS --- */}
-                    <Route path="/alunos" element={ <Alunos/> } />
-                    <Route path="/aluno/criar" element={<AlunoForms />} />
-                    <Route path="/aluno/editar/:matricula" element={<AlunoForms/>} />
+                    <Route path="/alunos" element={<PrivateRoute role={perfisGerais} element={Alunos} />} />
+                    <Route path="/aluno/criar" element={<PrivateRoute role={perfisGerais} element={AlunoForms} />} />
+                    <Route path="/aluno/editar/:matricula" element={<PrivateRoute role={perfisGerais} element={AlunoForms} />} />
 
                     {/* --- VOLUNTÁRIOS --- */}
-                    <Route path="/voluntarios" element={ <Voluntarios/> } />
-                    <Route path="/voluntario/criar" element={ <VoluntarioForms/> } />
-                    <Route path="/voluntario/editar/:matricula" element={ <VoluntarioForms/> } />
+                    <Route path="/voluntarios" element={<PrivateRoute role={['ADM', 'DIRE', 'COOR']} element={Voluntarios} />} />
+                    <Route path="/voluntario/criar" element={<PrivateRoute role={['ADM', 'DIRE', 'COOR']} element={VoluntarioForms} />} />
+                    <Route path="/voluntario/editar/:matricula" element={<PrivateRoute role={['ADM', 'DIRE', 'COOR']} element={VoluntarioForms} />} />
                     
                     {/* --- EMBAIXADORES --- */}
-                    <Route path="/embaixadores" element={ <EmbaixadoresApp/> }/>
-                    <Route path="/embaixador/editar/:id" element={<EmbaixadorForms/>} />
+                    <Route path="/embaixadores" element={<PrivateRoute role={['ADM', 'DIRE']} element={EmbaixadoresApp} />} />
+                    <Route path="/embaixador/editar/:id" element={<PrivateRoute role={['ADM', 'DIRE']} element={EmbaixadorForms} />} />
 
                     {/* --- AMIGOS DO MELVIN --- */}
-                    <Route path="/amigosmelvin" element={ <AmigosMelvinApp/> }/>
-                    <Route path="/amigomelvin/editar/:id" element={<AmigoMelvinForms/>} />
+                    <Route path="/amigosmelvin" element={<PrivateRoute role={['ADM', 'DIRE']} element={AmigosMelvinApp} />} />
+                    <Route path="/amigomelvin/editar/:id" element={<PrivateRoute role={['ADM', 'DIRE']} element={AmigoMelvinForms} />} />
 
                     {/* --- AVISOS --- */}
-                    <Route path="/avisos" element={<Avisos/>}/>
-                    <Route path="/avisos/criar" element={<AvisoForms/>}/>
-                    <Route path="/avisos/editar/:id" element={<AvisoForms/>}/>
+                    <Route path="/avisos" element={<PrivateRoute role="ADM" element={Avisos} />}/>
+                    <Route path="/avisos/criar" element={<PrivateRoute role="ADM" element={AvisoForms} />}/>
+                    <Route path="/avisos/editar/:id" element={<PrivateRoute role="ADM" element={AvisoForms} />}/>
 
-                    {/* --- CESTAS --- */}
-                    <Route path="/cestas" element={<Cestas/>}/>
-                    <Route path="/cestas/criar" element={<CestasForms/>}/>
-                    <Route path="/cestas/editar/:id" element={<CestasForms/>}/>
+                    {/* --- CESTAS (DOAÇÕES) - ADM, DIRE e AUX --- */}
+                    <Route path="/cestas" element={<PrivateRoute role={perfisDoacao} element={Cestas} />}/>
+                    <Route path="/cestas/criar" element={<PrivateRoute role={perfisDoacao} element={CestasForms} />}/>
+                    <Route path="/cestas/editar/:id" element={<PrivateRoute role={perfisDoacao} element={CestasForms} />}/>
 
                     {/* --- OUTROS --- */}
-                    <Route path="/rendimento_aluno/:matricula" element={<Rendimento/>} />
-                    <Route path="/relatorios" element={ <Relatorios/> } />
-                    <Route path="/config" element={<Config />} />
+                    <Route path="/rendimento_aluno/:matricula" element={<PrivateRoute role={perfisGerais} element={Rendimento} />} />
+                    <Route path="/relatorios" element={<PrivateRoute role={perfisGerais} element={Relatorios} />} />
+                    
+                    {/* Config apenas para ADM e DIRE (ou ajuste conforme necessidade) */}
+                    <Route path="/config" element={<PrivateRoute role={['ADM', 'DIRE', 'COOR', 'AUX', 'PROF', 'PSICO', 'ASSIST', 'COZI', 'ZELA', 'MARK']} element={Config} />} />
                     
                     {/* --- FREQUÊNCIAS --- */}
-                    <Route path="/frequencias/alunos" element={<Aluno_frequencia />} />
-                    <Route path="/voluntario/frequencias/coordenadores" element={<Voluntario_frequencia tipo="coordenador"/>} />
-                    <Route path="/voluntario/frequencias/professores" element={<Voluntario_frequencia tipo="professor"/>} />
-                    <Route path="/voluntario/frequencias/auxiliares" element={<Voluntario_frequencia tipo="auxiliar"/>} />
-                    <Route path="/voluntario/frequencias/cozinheiros" element={<Voluntario_frequencia tipo="cozinheiro"/>} />
-                    <Route path="/voluntario/frequencias/diretores" element={<Voluntario_frequencia tipo="diretor"/>} />
-                    <Route path="/voluntario/frequencias/administradores" element={<Voluntario_frequencia tipo="administrador"/>} />
-                    <Route path="/voluntario/frequencias/marketing" element={<Voluntario_frequencia tipo="marketing"/>} />
-                    <Route path="/voluntario/frequencias/zeladores" element={<Voluntario_frequencia tipo="zelador"/>} />
-                    <Route path="/voluntario/frequencias/psicologos" element={<Voluntario_frequencia tipo="psicologo"/>} />
-                    <Route path="/voluntario/frequencias/assistentes" element={<Voluntario_frequencia tipo="assistente"/>} />
+                    <Route path="/frequencias/alunos" element={<PrivateRoute role={perfisGerais} element={Aluno_frequencia} />} />
+                    {/* Frequências de staff geralmente são ADM/DIRE/COOR */}
+                    <Route path="/voluntario/frequencias/coordenadores" element={<PrivateRoute role={['ADM', 'DIRE']} element={() => <Voluntario_frequencia tipo="coordenador"/>} />} />
+                    <Route path="/voluntario/frequencias/professores" element={<PrivateRoute role={['ADM', 'DIRE', 'COOR']} element={() => <Voluntario_frequencia tipo="professor"/>} />} />
+                    <Route path="/voluntario/frequencias/auxiliares" element={<PrivateRoute role={['ADM', 'DIRE', 'COOR']} element={() => <Voluntario_frequencia tipo="auxiliar"/>} />} />
+                    <Route path="/voluntario/frequencias/cozinheiros" element={<PrivateRoute role={['ADM', 'DIRE']} element={() => <Voluntario_frequencia tipo="cozinheiro"/>} />} />
+                    <Route path="/voluntario/frequencias/diretores" element={<PrivateRoute role={['ADM']} element={() => <Voluntario_frequencia tipo="diretor"/>} />} />
+                    <Route path="/voluntario/frequencias/administradores" element={<PrivateRoute role={['ADM']} element={() => <Voluntario_frequencia tipo="administrador"/>} />} />
+                    <Route path="/voluntario/frequencias/marketing" element={<PrivateRoute role={['ADM', 'DIRE']} element={() => <Voluntario_frequencia tipo="marketing"/>} />} />
+                    <Route path="/voluntario/frequencias/zeladores" element={<PrivateRoute role={['ADM', 'DIRE']} element={() => <Voluntario_frequencia tipo="zelador"/>} />} />
+                    <Route path="/voluntario/frequencias/psicologos" element={<PrivateRoute role={['ADM', 'DIRE', 'COOR']} element={() => <Voluntario_frequencia tipo="psicologo"/>} />} />
+                    <Route path="/voluntario/frequencias/assistentes" element={<PrivateRoute role={['ADM', 'DIRE', 'COOR']} element={() => <Voluntario_frequencia tipo="assistente"/>} />} />
 
                     {/* --- ROTAS DE CONFIGURAÇÃO (ARQUIVO MORTO / DESATIVADOS) --- */}
-                    {/* Usando os componentes unificados com a prop ativada */}
-                    
-                    <Route path="/config/matriculasdesativadas/alunos" element={<Alunos modoDesativados={true} />} />
-                    
-                    <Route path="/config/matriculasdesativadas/voluntarios" element={<Voluntarios modoDesativados={true} />} />
-                    
-                    <Route path="/config/embaixadoresdesativados" element={<EmbaixadoresApp modoDesativados={true} />} />
-                    
-                    <Route path="/config/amigosmelvindesativados" element={<AmigosMelvinApp modoDesativados={true} />} />
-                    
-                    <Route path="/config/avisosdesativados" element={<Avisos modoDesativados={true} />} />
+                    <Route path="/config/matriculasdesativadas/alunos" element={<PrivateRoute role={perfisGerais} element={() => <Alunos modoDesativados={true} />} />} />
+                    <Route path="/config/matriculasdesativadas/voluntarios" element={<PrivateRoute role={['ADM', 'DIRE']} element={() => <Voluntarios modoDesativados={true} />} />} />
+                    <Route path="/config/embaixadoresdesativados" element={<PrivateRoute role={['ADM', 'DIRE']} element={() => <EmbaixadoresApp modoDesativados={true} />} />} />
+                    <Route path="/config/amigosmelvindesativados" element={<PrivateRoute role={['ADM', 'DIRE']} element={() => <AmigosMelvinApp modoDesativados={true} />} />} />
+                    <Route path="/config/avisosdesativados" element={<PrivateRoute role="ADM" element={() => <Avisos modoDesativados={true} />} />} />
                     
                 </Routes>
             </div>

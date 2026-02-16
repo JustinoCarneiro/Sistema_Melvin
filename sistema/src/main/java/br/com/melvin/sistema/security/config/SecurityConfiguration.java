@@ -59,40 +59,39 @@ public class SecurityConfiguration {
                     // --- ROTAS ADMINISTRATIVAS (Registro de usuários, etc) ---
                     .requestMatchers(HttpMethod.POST,  "/auth/register", "/auth/alterar_senha/{matricula}/{senha}", "/imagens/**", "/aviso/**").hasRole("ADM")
 
-                    // --- CESTAS E IMAGENS ---
-                    .requestMatchers(HttpMethod.POST, "/imagens/**", "/cestas").hasAnyRole("ADM", "DIRE")
+                    // --- CESTAS E IMAGENS (Adicionado AUX) ---
+                    .requestMatchers(HttpMethod.POST, "/cestas").hasAnyRole("ADM", "DIRE", "AUX")
+                    .requestMatchers(HttpMethod.POST, "/imagens/**").hasAnyRole("ADM", "DIRE") // Imagens mantive restrito, mas pode abrir se precisar
                     
                     // --- VOLUNTÁRIOS (Cadastro restrito a ADM) ---
                     .requestMatchers(HttpMethod.POST, "/voluntario", "/aviso/**").hasRole("ADM")
 
-                    // --- DISCENTES / ALUNOS (Aqui entra o ASSIST) ---
-                    // Matricular Aluno: ADM, COOR, DIRE e agora ASSIST
+                    // --- DISCENTES / ALUNOS (ASSIST já incluído) ---
                     .requestMatchers(HttpMethod.POST, "/discente").hasAnyRole("ADM", "COOR", "DIRE", "ASSIST")
-                    // Ver Lista de Alunos: PROF, ADM, DIRE, COOR e agora ASSIST (e PSICO se necessário)
                     .requestMatchers(HttpMethod.GET, "/discente").hasAnyRole("PROF", "ADM", "DIRE", "COOR", "ASSIST", "PSICO")
-                    // Ver Aluno Específico
                     .requestMatchers(HttpMethod.GET, "/discente/matricula/{matricula}").hasAnyRole("PROF", "ADM", "DIRE", "COOR", "ASSIST", "PSICO")
-                    // Editar Aluno
                     .requestMatchers(HttpMethod.PUT, "/discente").hasAnyRole("ADM", "COOR", "DIRE", "ASSIST")
 
-                    // --- DIÁRIOS (Mantido restrito) ---
+                    // --- DIÁRIOS ---
                     .requestMatchers(HttpMethod.POST,"/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
                     .requestMatchers(HttpMethod.GET, "/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
                     .requestMatchers(HttpMethod.PUT, "/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
                     .requestMatchers(HttpMethod.DELETE, "/diarios/**").hasAnyRole("ADM", "COOR")
 
-                    // --- LEITURA GERAL (Amigos Melvin, Cestas, Voluntários) ---
-                    .requestMatchers(HttpMethod.GET, "/amigomelvin", "/cestas").hasAnyRole("ADM", "DIRE")
+                    // --- LEITURA GERAL (Adicionado AUX em Cestas) ---
+                    .requestMatchers(HttpMethod.GET, "/cestas").hasAnyRole("ADM", "DIRE", "AUX")
+                    .requestMatchers(HttpMethod.GET, "/amigomelvin").hasAnyRole("ADM", "DIRE")
                     .requestMatchers(HttpMethod.GET, "/voluntario").hasAnyRole("ADM", "DIRE", "COOR")
                     .requestMatchers(HttpMethod.GET, "/voluntario/matricula/{matricula}").permitAll()
 
-                    // --- EDIÇÃO GERAL ---
-                    .requestMatchers(HttpMethod.PUT, "/amigomelvin", "/embaixador/**", "/imagens/**", "/cestas").hasAnyRole("ADM", "DIRE")
+                    // --- EDIÇÃO GERAL (Adicionado AUX em Cestas) ---
+                    .requestMatchers(HttpMethod.PUT, "/cestas").hasAnyRole("ADM", "DIRE", "AUX")
+                    .requestMatchers(HttpMethod.PUT, "/amigomelvin", "/embaixador/**", "/imagens/**").hasAnyRole("ADM", "DIRE")
                     .requestMatchers(HttpMethod.PUT, "/voluntario", "/auth/alterar_role/{matricula}/{role}", "/aviso/**").hasRole("ADM")
 
-                    // --- DELEÇÃO ---
+                    // --- DELEÇÃO (Adicionado AUX em Cestas - Opcional, se quiser que ele delete) ---
+                    .requestMatchers(HttpMethod.DELETE, "/cestas").hasAnyRole("ADM", "DIRE", "AUX")
                     .requestMatchers(HttpMethod.DELETE, "/voluntario").hasRole("ADM")
-                    .requestMatchers(HttpMethod.DELETE, "/cestas").hasAnyRole("ADM", "DIRE")
                     .requestMatchers(HttpMethod.DELETE, "/frequenciavoluntario", "/discente").hasAnyRole("ADM", "COOR")
                     
                     // --- FREQUÊNCIA DISCENTE ---

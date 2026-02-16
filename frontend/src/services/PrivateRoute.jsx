@@ -14,10 +14,23 @@ const PrivateRoute = ({ element: Component, role, ...rest }) => {
             if (token && login) {
                 try {
                     const responseRole = await auth.receberRole(login);
-                    if (responseRole.status === 200 && responseRole.data === role) {
+                    const userRole = responseRole.data; // O papel que vem do Banco (ex: 'AUX')
+
+                    // --- LÓGICA NOVA PARA MÚLTIPLOS PERFIS ---
+                    let autorizado = false;
+
+                    if (Array.isArray(role)) {
+                        // Se a rota aceita vários (ex: ['ADM', 'AUX']), verifica se o user está na lista
+                        autorizado = role.includes(userRole);
+                    } else {
+                        // Se a rota só aceita um (ex: 'ADM'), compara direto
+                        autorizado = userRole === role;
+                    }
+
+                    if (responseRole.status === 200 && autorizado) {
                         setIsAuthorized(true);
                     } else {
-                        // TOKEN INVÁLIDO OU ROLE ERRADO: Limpa a sujeira!
+                        // TOKEN VÁLIDO MAS SEM PERMISSÃO (ou token inválido)
                         Cookies.remove('token');
                         Cookies.remove('login');
                         Cookies.remove('role');
@@ -25,14 +38,12 @@ const PrivateRoute = ({ element: Component, role, ...rest }) => {
                     }
                 } catch (error) {
                     console.error('1022:Erro ao verificar role do usuário', error);
-                    // ERRO NA API (Token expirado): Limpa a sujeira!
                     Cookies.remove('token');
                     Cookies.remove('login');
                     Cookies.remove('role');
                     setIsAuthorized(false);
                 }
             } else {
-                // Faltam dados na sessão: garante que está tudo limpo
                 Cookies.remove('token');
                 Cookies.remove('login');
                 Cookies.remove('role');
