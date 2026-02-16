@@ -6,12 +6,13 @@ services:
     build:
       context: ./postgres
     container_name: postgresdb
+    # Adicionando leitura do arquivo .env
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
-  #  ports:
-  #    - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     deploy:
@@ -23,21 +24,29 @@ services:
     image: backend-melvin
     build:
       context: ./sistema
+    container_name: backend-melvin # Nome fixo ajuda no debug
+    env_file:
+      - .env
     environment:
+      # Passando as variáveis do .env para o Java
       SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
-      SPRING_JPA_PROPERTIES_HIBERNATE_SHOW_SQL: "true"
-      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "true"
+      
+      # Variáveis personalizadas que o application.properties vai ler
       JWT_SECRET: ${JWT_SECRET}
       FRONTEND_URL: ${FRONTEND_URL}
+      
+      # Hibernate
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_JPA_SHOW_SQL: "false"
     ports:
       - "8080:8080"
     volumes:
       - ./sistema:/app/src
+      # Volumes para persistir arquivos
       - docs_diarios:/app/docs/diarios
       - docs_imagensembaixadores:/app/docs/imagens_embaixadores
       - docs_imagensavisos:/app/docs/imagens_avisos
@@ -54,6 +63,8 @@ services:
       context: ./frontend
       args: 
         - VITE_REACT_APP_FETCH_URL=${VITE_REACT_APP_FETCH_URL}
+    env_file:
+      - .env
     ports:
       - "80:5173"
     depends_on:
@@ -61,8 +72,7 @@ services:
     volumes:
       - ./frontend:/PORTFOLIO
       - /PORTFOLIO/node_modules
-  
-  
+
 volumes:
   postgres_data:
   docs_diarios:
