@@ -43,21 +43,41 @@ function Aluno_forms(){
             setErrorMessage(''); 
             if(!matricula) return;
 
+            // 1. PRIMEIRO TRY: Busca os dados do ALUNO
             try {
-                const diarioExistente = await get.diarioByMatricula(matricula);
-                if(diarioExistente && diarioExistente.data != ""){
-                    setDiario(diarioExistente);
-                }
-
                 const response = await get.discenteByMatricula(matricula);
-                if(response.data){
-                    setFormDado(prev => ({ ...prev, ...response.data }));
+                
+                // Pega os dados (suporta tanto se a API retornar .data quanto o objeto direto)
+                const dadosAluno = response.data || response; 
+
+                if(dadosAluno){
+                    // Limpa os 'null' do banco para '' (string vazia), evitando inputs quebrados
+                    const dadosTratados = Object.keys(dadosAluno).reduce((acc, key) => {
+                        acc[key] = dadosAluno[key] !== null ? dadosAluno[key] : '';
+                        return acc;
+                    }, {});
+
+                    setFormDado(prev => ({ ...prev, ...dadosTratados }));
                 }
             } catch (error) {
-                console.error('Erro ao obter dados:', error);
+                console.error('Erro ao obter dados do aluno:', error);
                 setErrorMessage('Não foi possível carregar os dados do aluno.');
+                return; // Se falhar o aluno, paramos por aqui
+            }
+
+            // 2. SEGUNDO TRY: Busca o DIÁRIO de forma independente
+            try {
+                const diarioExistente = await get.diarioByMatricula(matricula);
+                if(diarioExistente && (diarioExistente.data || diarioExistente.fileName)){
+                    setDiario(diarioExistente);
+                }
+            } catch (error) {
+                // Se der erro (ex: não tem diário ou a Assistente Social não tem permissão),
+                // o sistema cai aqui, mas NÃO apaga os dados do aluno que já foram carregados!
+                console.warn('Aviso: Diário não encontrado ou acesso negado para este usuário.');
             }
         };
+        
         fetchAluno();
     }, [matricula]);
 
