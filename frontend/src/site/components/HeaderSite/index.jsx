@@ -14,7 +14,7 @@ function HeaderSite(){
     };
 
     return(
-        <div className={styles.body}>
+        <header className={styles.body}>
             <div className={styles.logo} onClick={handlePageHome}>
                 <img src={logo} alt="Logo Instituto Melvin" className={styles.img}/>
             </div>
@@ -37,7 +37,7 @@ function HeaderSite(){
                     <button className={styles.button}>Doação</button>
                 </div>
             </div>
-        </div>
+        </header>
     )
 }
 

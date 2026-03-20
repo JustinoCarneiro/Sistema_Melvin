@@ -23,7 +23,7 @@ describe('Authentication & RBAC', () => {
     const auxToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDI0NzAwNSIsImlzcyI6InNpc3RlbWFtZWx2aW4iLCJleHAiOjE3NzQwMzk2OTF9.EJP4KaSSjtVg3yPmmZcrmuBdcKGpim6Dm2SJDAgPa-o';
     
     // Override the global login intercept for this specific test case
-    cy.intercept('POST', '**/api/auth/login', {
+    cy.intercept('POST', '**/auth/login*', {
       statusCode: 200,
       body: { 
         token: matricula === '20247001' ? admToken : auxToken, 
@@ -57,10 +57,19 @@ describe('Authentication & RBAC', () => {
     cy.login('ADM', '20247001');
     cy.visit('/#/app/config');
     
-    // Ensure the page loaded before clicking deslogar
-    cy.get('h3', { timeout: 10000 }).contains('Meu Perfil').should('be.visible');
+    // Ensure the page loaded and cookies are stable
+    cy.get('h3', { timeout: 15000 }).contains('Meu Perfil').should('be.visible');
+    cy.wait(1000); // Wait for all profile data XHRs to finish
     
+    // Diagnostic: Log current cookies before clicking deslogar
+    cy.getCookies().then((cookies) => {
+      console.log('Cookies before logout:', cookies.map(c => `${c.name}=${c.value}`).join('; '));
+    });
+
     cy.contains('button', 'Deslogar').click({ force: true });
-    cy.url().should('include', '/login');
+    
+    // Check for login page with a slightly longer timeout and specific element
+    cy.url({ timeout: 15000 }).should('include', '/login');
+    cy.get('button[type="submit"]', { timeout: 15000 }).should('be.visible');
   });
 });

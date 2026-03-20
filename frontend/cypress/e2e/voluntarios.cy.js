@@ -16,6 +16,6 @@ describe('Voluntários Management', () => {
   it('should list volunteers', () => {
     cy.visit('/#/app/voluntarios');
     cy.wait('@getVoluntarios');
-    cy.get('tr.tr_body').should('contain', 'Voluntário 1');
+    cy.get('tr[class*="tr_body"]').should('contain', 'Voluntário 1');
   });
 });

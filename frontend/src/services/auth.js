@@ -10,8 +10,8 @@ const auth = {
             
             const { token, role } = response.data;
             
-            Cookies.set('token', token, { sameSite: 'Lax', secure: false });
-            Cookies.set('role', role, { sameSite: 'Lax', secure: false });
+            Cookies.set('token', token, { sameSite: 'Lax', secure: false, path: '/' });
+            Cookies.set('role', role, { sameSite: 'Lax', secure: false, path: '/' });
             
             return response;
         } catch (error) {
@@ -58,9 +58,26 @@ const auth = {
     },
 
     async deslogar(){
+        console.log('--- LOGGING OUT ---');
+        console.log('Cookies before removal:', document.cookie);
+        
         try {
-            Cookies.remove('token');
-            Cookies.remove('login');
+            const cookiesToClear = ['token', 'role', 'login'];
+            
+            cookiesToClear.forEach(cookieName => {
+                // 1. Clear via js-cookie with path
+                Cookies.remove(cookieName, { path: '/' });
+                // 2. Clear via js-cookie without path
+                Cookies.remove(cookieName);
+                
+                // 3. NUCLEAR OPTION: Raw document.cookie expiration
+                // This covers cases where js-cookie might fail due to subtle variations
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname};`;
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
+            });
+
+            console.log('Cookies after removal:', document.cookie);
         } catch (error) {
             console.error('1004:Erro ao deslogar:', error);
             return Promise.reject(error);

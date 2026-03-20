@@ -16,13 +16,25 @@ function Login(){
     useEffect(() => {
         const token = Cookies.get('token');
         const role = Cookies.get('role');
+        const allCookies = document.cookie;
+        
+        console.log('Login Page Loaded - Cookies:', allCookies);
+        console.log('Detected Token:', !!token);
+        console.log('Detected Role:', !!role);
         
         // Só redireciona se tiver os dois (token e role). Se não tiver role, o cookie tá quebrado.
         if (token && role) {
+            console.log('Session detected, redirecting to dashboard...');
             navigate(`/app/${role.toLowerCase()}`);
         } else if (token && !role) {
-             Cookies.remove('token');
-             Cookies.remove('login');
+             console.log('Incomplete session, clearing cookies...');
+             const cookiesToClear = ['token', 'role', 'login'];
+             cookiesToClear.forEach(cookieName => {
+                 Cookies.remove(cookieName, { path: '/' });
+                 Cookies.remove(cookieName);
+                 document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+                 document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname};`;
+             });
         }
     }, [navigate]);
 
@@ -36,8 +48,8 @@ function Login(){
                 const role = response.data.role; 
                 
                 // Salva o login e o role no cookie para o PrivateRoute e o useEffect lerem
-                Cookies.set('login', login, { sameSite: 'Lax', secure: false });
-                Cookies.set('role', role, { sameSite: 'Lax', secure: false }); 
+                Cookies.set('login', login, { sameSite: 'Lax', secure: false, path: '/' });
+                Cookies.set('role', role, { sameSite: 'Lax', secure: false, path: '/' }); 
 
                 const path = `/app/${role.toLowerCase()}`;
                 navigate(path);

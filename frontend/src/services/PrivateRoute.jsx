@@ -31,22 +31,22 @@ const PrivateRoute = ({ element: Component, role, ...rest }) => {
                         setIsAuthorized(true);
                     } else {
                         // TOKEN VÁLIDO MAS SEM PERMISSÃO (ou token inválido)
-                        Cookies.remove('token');
-                        Cookies.remove('login');
-                        Cookies.remove('role');
+                        Cookies.remove('token', { path: '/' });
+                        Cookies.remove('login', { path: '/' });
+                        Cookies.remove('role', { path: '/' });
                         setIsAuthorized(false);
                     }
                 } catch (error) {
                     console.error('1022:Erro ao verificar role do usuário', error);
-                    Cookies.remove('token');
-                    Cookies.remove('login');
-                    Cookies.remove('role');
+                    Cookies.remove('token', { path: '/' });
+                    Cookies.remove('login', { path: '/' });
+                    Cookies.remove('role', { path: '/' });
                     setIsAuthorized(false);
                 }
             } else {
-                Cookies.remove('token');
-                Cookies.remove('login');
-                Cookies.remove('role');
+                Cookies.remove('token', { path: '/' });
+                Cookies.remove('login', { path: '/' });
+                Cookies.remove('role', { path: '/' });
                 setIsAuthorized(false);
             }
         };

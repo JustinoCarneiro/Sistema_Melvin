@@ -32,7 +32,8 @@ beforeEach(() => {
   }).as('roleRequest');
   
   // Auth / Login calls (Global to ensure it's always ready)
-  cy.intercept('POST', '**/api/auth/login', {
+  // Using very broad pattern to catch any absolute or relative variation
+  cy.intercept('POST', '**/auth/login*', {
     statusCode: 200,
     body: { 
       token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDI0NzAwMSIsImlzcyI6InNpc3RlbWFtZWx2aW4iLCJleHAiOjE3NzQwMzk2MjN9.DpNGfu9yEGHKxnhwIAMw2hlkk2fIbOqGh0jhcXbmSEc', 
@@ -40,8 +41,20 @@ beforeEach(() => {
     }
   }).as('loginRequest');
 
+  // Catch-all Logger to debug which requests are actually made
+  cy.intercept('**', (req) => {
+    if (req.url.includes('login')) {
+      console.log('--- LOGIN ATTEMPT DETECTED ---');
+      console.log('Method:', req.method);
+      console.log('URL:', req.url);
+    } else {
+      console.log('Cypress Request:', req.method, req.url);
+    }
+    req.continue();
+  });
+
   // Profile/User info calls
-  cy.intercept('GET', '**/api/voluntario/matricula/*', {
+  cy.intercept('GET', '**/voluntario/matricula/*', {
     statusCode: 200,
     body: { matricula: '20247001', nome: 'Mock User', funcao: 'administrador' }
   }).as('profileRequest');

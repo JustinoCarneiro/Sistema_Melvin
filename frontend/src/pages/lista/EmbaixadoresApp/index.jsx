@@ -25,7 +25,7 @@ function EmbaixadoresApp({ modoDesativados = false }){
             if(Array.isArray(dados)){
                 // Filtra baseado no modo (Ativos vs Desativados)
                 const embaixadoresFiltrados = dados.filter(embaixador => 
-                    String(embaixador.status) === (modoDesativados ? 'false' : 'true')
+                    String(embaixador?.status) === (modoDesativados ? 'false' : 'true')
                 );
                 setEmbaixadores(embaixadoresFiltrados);
             }else{
@@ -52,9 +52,9 @@ function EmbaixadoresApp({ modoDesativados = false }){
     const embaixadoresFiltradosBusca = embaixadores.filter((embaixador) => {
         const termoBusca = busca.toLowerCase();
         return (
-            embaixador.contato.includes(termoBusca) ||
+            (embaixador.contato || '').toLowerCase().includes(termoBusca) ||
             (embaixador.instagram || '').toLowerCase().includes(termoBusca) ||
-            embaixador.nome.toLowerCase().includes(termoBusca)   ||
+            (embaixador.nome || '').toLowerCase().includes(termoBusca)   ||
             (embaixador.email || '').toLowerCase().includes(termoBusca)
         );
     });

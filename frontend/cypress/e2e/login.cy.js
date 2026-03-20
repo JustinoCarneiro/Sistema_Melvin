@@ -14,6 +14,6 @@ describe('Login Flow Exceptions', () => {
     cy.get('form').submit();
 
     cy.wait('@loginFail');
-    cy.get('p').contains('incorrect').should('be.visible'); // Partial match for language flexibility
+    cy.contains('p', 'incorreta').should('be.visible');
   });
 });

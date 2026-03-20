@@ -47,8 +47,8 @@ function AmigosMelvinApp({ modoDesativados = false }){
     const amigosmelvinFiltradosBusca = amigosmelvin.filter((amigomelvin) => {
         const termoBusca = busca.toLowerCase();
         return (
-            amigomelvin.contato.includes(termoBusca) ||
-            amigomelvin.nome.toLowerCase().includes(termoBusca) ||
+            (amigomelvin.contato || '').toLowerCase().includes(termoBusca) ||
+            (amigomelvin.nome || '').toLowerCase().includes(termoBusca) ||
             (amigomelvin.email || '').toLowerCase().includes(termoBusca)
         );
     });

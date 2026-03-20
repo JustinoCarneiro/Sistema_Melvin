@@ -14,7 +14,7 @@ function FooterSite(){
     };
 
     return(
-        <div className={styles.body}>
+        <footer className={styles.body}>
             <div className={styles.contato}>
                 <h3 className={styles.title}>Contato</h3>
                 <div className={styles.contato_container}>
@@ -65,7 +65,7 @@ function FooterSite(){
                     <p>Acesso do voluntário</p>
                 </div>
             </div>
-        </div>
+        </footer>
     )
 }
 

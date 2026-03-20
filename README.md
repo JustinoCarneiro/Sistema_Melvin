@@ -67,6 +67,45 @@ A segurança é tratada como prioridade no Sistema Melvin, utilizando padrões d
 
 ---
 
+## 🧪 Testes e Qualidade
+
+O projeto conta com uma suíte de testes automatizados para garantir a estabilidade e a corretude das funcionalidades principais:
+
+### 1. Frontend (End-to-End - Cypress)
+Os testes de ponta-a-ponta simulam a interação do usuário real com a aplicação:
+
+- **Cestas (Doações) (`cestas.cy.js`)**: Valida a listagem, busca dinâmica por doador/rede e navegação para o formulário de novos registros.
+- **Diário de Acompanhamento (`diario.cy.js`)**: Verifica o carregamento automático de arquivos anexados aos alunos e a funcionalidade de download seguro.
+- **Avisos (`avisos.cy.js`)**: Testa a listagem de notificações ativas e o fluxo de criação de novos avisos.
+- **Autenticação e RBAC (`auth.cy.js`)**: Valida o fluxo de login, redirecionamento correto baseado no papel do usuário (ADM, AUX) e o processo de logout (limpeza de cookies).
+- **Exceções de Login (`login.cy.js`)**: Garante o tratamento de erros para credenciais inválidas.
+
+**Como executar:**
+```bash
+cd frontend
+npm run cypress:run  # Executa todos os testes em modo headless
+npm run cypress:open # Abre o Cypress Runner para execução interativa
+```
+
+### 2. Backend (Testes Unitários e de Integração - JUnit 5)
+Focados na lógica de negócio e integridade dos serviços:
+
+- **DiscenteServiceTest**: Valida regras críticas de negócio para alunos.
+- **CestasServiceTest**: Cobre a lógica de criação, alteração e remoção de doações de cestas.
+- **AmigoMelvinServiceTest**: Testes para a gestão de parceiros e amigos do Melvin.
+- **DiarioServiceTest**: Valida a lógica de manipulação de arquivos de diário.
+- **AvisoServiceTest**: Garante a integridade na gestão de avisos.
+- **TokenServiceTest**: Valida a geração e verificação de tokens JWT de segurança.
+- **SistemaApplicationTests**: Garante que o contexto do Spring Boot é carregado corretamente.
+
+**Como executar:**
+```bash
+cd sistema
+./mvnw test
+```
+
+---
+
 ## 🛠️ Scripts de Automação
 
 O projeto inclui scripts em Bash para facilitar o dia a dia e o deploy:
@@ -101,6 +140,16 @@ Acesse em: **[http://institutomelvin.org:3000](http://institutomelvin.org:3000)*
 ### 3. Desenvolvimento (Hot Reload)
 - **Frontend**: Qualquer alteração na pasta `frontend/` reflete instantaneamente no navegador (via Vite Proxy).
 - **Backend**: Alterações na pasta `sistema/` exigem rodar o `./deploy.sh` novamente para recompilar o JAR.
+
+---
+
+## 🔧 Notas Técnicas (Desenvolvimento)
+
+### Compatibilidade de Serviços (Frontend)
+Para garantir que os componentes de formulário (como `Aluno_forms.jsx`) funcionem corretamente tanto em criação quanto em edição, os serviços `discenteService` e `diarioService` possuem o método `.get()` como um *alias* para `.getByMatricula()`. Isso mantém a consistência da interface com o padrão de chamadas da API.
+
+### Endpoints da API
+- Os endpoints seguem padrões REST, mas atente-se: `/cestas` e `/diarios` são no plural, enquanto `/aviso` é no singular. Os testes do Cypress já estão configurados para respeitar essas rotas.
 
 ---
 

@@ -3,9 +3,8 @@ describe('Relatórios (Reporting)', () => {
     const matricula = 'adm_test';
     const role = 'ADM';
     
-    cy.setCookie('token', 'fake_token');
-    cy.setCookie('role', role);
-    cy.setCookie('login', matricula);
+    cy.clearCookies();
+    cy.login(role, matricula);
 
     // Mock for PrivateRoute
     cy.intercept('GET', `**/auth/role_${matricula}`, { statusCode: 200, body: role });
@@ -20,6 +19,6 @@ describe('Relatórios (Reporting)', () => {
     cy.visit('/#/app/relatorios');
     cy.wait('@getAlunos');
     cy.get('h2').contains('Relatórios').should('be.visible');
-    cy.get('tr.tr_body').should('contain', 'Aluno Relatório');
+    cy.get('tr[class*="tr_body"]').should('contain', 'Aluno Relatório');
   });
 });

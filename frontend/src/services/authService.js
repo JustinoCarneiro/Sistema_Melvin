@@ -7,8 +7,8 @@ const authService = {
         try {
             const response = await http.post(endpoint, data);
             const { token, role } = response.data;
-            Cookies.set('token', token, { sameSite: 'Lax', secure: false });
-            Cookies.set('role', role, { sameSite: 'Lax', secure: false });
+            Cookies.set('token', token, { sameSite: 'Lax', secure: false, path: '/' });
+            Cookies.set('role', role, { sameSite: 'Lax', secure: false, path: '/' });
             return response;
         } catch (error) {
             console.error('Erro no serviço de autenticação:', error.response?.data || error.message);
@@ -66,9 +66,13 @@ const authService = {
 
     async logout() {
         try {
-            Cookies.remove('token');
-            Cookies.remove('role');
-            Cookies.remove('login');
+            const cookiesToClear = ['token', 'role', 'login'];
+            cookiesToClear.forEach(cookieName => {
+                Cookies.remove(cookieName, { path: '/' });
+                Cookies.remove(cookieName);
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname};`;
+            });
         } catch (error) {
             console.error('Erro ao deslogar:', error);
             return Promise.reject(error);

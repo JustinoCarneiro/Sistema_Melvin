@@ -12,6 +12,10 @@ const diarioService = {
         }
     },
 
+    get(matricula) {
+        return this.getByMatricula(matricula);
+    },
+
     async upload(file, matricula) {
         const endpoint = "/diarios/upload";
         const formData = new FormData();

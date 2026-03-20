@@ -3,9 +3,8 @@ describe('Operational Modules (Avisos & Cestas)', () => {
     const matricula = 'adm_test';
     const role = 'ADM';
     
-    cy.setCookie('token', 'fake_token');
-    cy.setCookie('role', role);
-    cy.setCookie('login', matricula);
+    cy.clearCookies();
+    cy.login(role, matricula);
 
     // Mock for PrivateRoute
     cy.intercept('GET', `**/auth/role_${matricula}`, { statusCode: 200, body: role });
@@ -24,12 +23,12 @@ describe('Operational Modules (Avisos & Cestas)', () => {
   it('should manage avisos', () => {
     cy.visit('/#/app/avisos');
     cy.wait('@getAvisos');
-    cy.get('tr.tr_body').should('contain', 'Aviso Teste');
+    cy.get('tr[class*="tr_body"]').should('contain', 'Aviso Teste');
   });
 
   it('should manage cestas', () => {
     cy.visit('/#/app/cestas');
     cy.wait('@getCestas');
-    cy.get('tr.tr_body').should('contain', 'Recebedor 1');
+    cy.get('tr[class*="tr_body"]').should('contain', 'Recebedor 1');
   });
 });

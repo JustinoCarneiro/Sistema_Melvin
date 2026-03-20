@@ -26,6 +26,10 @@ const discenteService = {
         }
     },
 
+    get(matricula) {
+        return this.getByMatricula(matricula);
+    },
+
     async create(dados) {
         const endpoint = "/discente";
         try {

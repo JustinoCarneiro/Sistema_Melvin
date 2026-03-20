@@ -366,7 +366,7 @@ function Aluno_forms(){
                                     <div {...getRootProps({ className: styles.dropzone })}>
                                         <input {...getInputProps()} disabled={isPsico} />
                                         <span className={styles.filename}>
-                                            {diario ? (diario.name || diario.data?.fileName) : "Clique ou arraste o arquivo..."}
+                                            {diario ? (diario.name || diario.fileName) : "Clique ou arraste o arquivo..."}
                                         </span>
                                         <SiGoogledocs className={styles.iconDoc}/>
                                     </div>

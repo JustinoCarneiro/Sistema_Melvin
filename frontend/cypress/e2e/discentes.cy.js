@@ -16,6 +16,6 @@ describe('Discentes Management', () => {
   it('should list students', () => {
     cy.visit('/#/app/alunos');
     cy.wait('@getAlunos');
-    cy.get('tr.tr_body').should('contain', 'João Silva');
+    cy.get('tr[class*="tr_body"]').should('contain', 'João Silva');
   });
 });
