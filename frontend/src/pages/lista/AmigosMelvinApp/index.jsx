@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
-import get from "../../../services/requests/get";
+import amigoMelvinService from "../../../services/amigoMelvinService";
 
 function AmigosMelvinApp({ modoDesativados = false }){
     const [busca, setBusca] = useState('');
@@ -15,7 +15,7 @@ function AmigosMelvinApp({ modoDesativados = false }){
     const fetchAmigosmelvin = async () => {
         setLoading(true);
         try{
-            const response = await get.amigosmelvin();
+            const response = await amigoMelvinService.list();
             const dados = response.data;
 
             if(Array.isArray(dados)){

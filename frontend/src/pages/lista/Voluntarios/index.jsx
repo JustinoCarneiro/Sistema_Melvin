@@ -10,7 +10,7 @@ import { FaPlus } from "react-icons/fa6";
 import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 
 import Botao from '../../../components/gerais/Botao';
-import get from '../../../services/requests/get';
+import voluntarioService from '../../../services/voluntarioService';
 
 function Voluntarios({ modoDesativados = false }) {
     const navigate = useNavigate();
@@ -38,8 +38,8 @@ function Voluntarios({ modoDesativados = false }) {
             setLoadingDesativados(true);
             const fetchDesativados = async () => {
                 try {
-                    // Supondo que get.voluntarios retorna todos, filtramos por status
-                    const response = await get.voluntario(); 
+                    // Supondo que voluntarioService.list retorna todos, filtramos por status
+                    const response = await voluntarioService.list(); 
                     const dados = response.data;
                     if (Array.isArray(dados)) {
                         setDesativados(dados.filter(v => String(v.status) === 'false'));

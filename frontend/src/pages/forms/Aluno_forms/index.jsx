@@ -10,10 +10,8 @@ import { SiGoogledocs } from "react-icons/si";
 import Botao from '../../../components/gerais/Botao';
 import Input from '../../../components/gerais/Input';
 
-import post from '../../../services/requests/post';
-import get from '../../../services/requests/get';
-import put from '../../../services/requests/put';
-import del from '../../../services/requests/delete';
+import discenteService from '../../../services/discenteService';
+import diarioService from '../../../services/diarioService';
 
 function Aluno_forms(){
     const {matricula} = useParams();
@@ -29,7 +27,7 @@ function Aluno_forms(){
         nome_pai: '', contato_pai: '', instrucao_pai: '', ocupacao_pai: '', local_trabalho_pai: '', contato_trabalho_pai: '', alfabetizacao_pai: '', estado_civil_pai: '', 
         nome_mae: '', contato_mae: '', instrucao_mae: '', ocupacao_mae: '', local_trabalho_mae: '', contato_trabalho_mae: '', alfabetizacao_mae: '', estado_civil_mae: '', 
         qtd_filho: '', beneficio_governo: '', meio_transporte: '', qtd_transporte: '', mora_familiar: '', outro_familiar: '', todos_moram_casa: '', renda_total: '', clt: '', autonomo: '', familia_congrega: '', gostaria_congregar: '', 
-        doenca: '', medicacao: '', remedio_instituto: '', tratamento: '', horario_medicamento: '', esportes: '', saida_aluno: '', contato_saida: '', status: '',
+        doenca: '', medicacao: '', remedio_instituto: '', tratamento: '', horario_medicamento: '', esportes: '', status: '',
         karate: false, ballet: false, informatica: false, musica: false, artesanato: false, futsal: false, ingles: false
     });
 
@@ -45,10 +43,10 @@ function Aluno_forms(){
 
             // 1. PRIMEIRO TRY: Busca os dados do ALUNO
             try {
-                const response = await get.discenteByMatricula(matricula);
+                const response = await discenteService.get(matricula);
                 
-                // Pega os dados (suporta tanto se a API retornar .data quanto o objeto direto)
-                const dadosAluno = response.data || response; 
+                // Pega os dados
+                const dadosAluno = response.data; 
 
                 if(dadosAluno){
                     // Limpa os 'null' do banco para '' (string vazia), evitando inputs quebrados
@@ -67,7 +65,8 @@ function Aluno_forms(){
 
             // 2. SEGUNDO TRY: Busca o DIÁRIO de forma independente
             try {
-                const diarioExistente = await get.diarioByMatricula(matricula);
+                const response = await diarioService.get(matricula);
+                const diarioExistente = response.data;
                 if(diarioExistente && (diarioExistente.data || diarioExistente.fileName)){
                     setDiario(diarioExistente);
                 }
@@ -102,8 +101,8 @@ function Aluno_forms(){
             let response;
             if (formDado.status === 'deletar') {
                 if (window.confirm('Deseja realmente deletar este aluno?')) {
-                    await del.discente(matricula);
-                    try { await del.diario(matricula); } catch (e) { console.warn("Diário não encontrado"); }
+                    await discenteService.delete(matricula);
+                    try { await diarioService.delete(matricula); } catch (e) { console.warn("Diário não encontrado"); }
                     alert('Registro deletado!');
                     navigate(-1);
                     return;
@@ -111,14 +110,14 @@ function Aluno_forms(){
             }
 
             if (matricula) {
-                response = await put.discente(formDado);
+                response = await discenteService.update(formDado);
                 if (diario instanceof File) {
-                    await put.atualizarDiario({ matricula: response.data.matricula, file: diario });
+                    await diarioService.update({ matricula: response.data.matricula, file: diario });
                 }
             } else {
-                response = await post.discente(formDado);
+                response = await discenteService.create(formDado);
                 if (diario instanceof File) {
-                    await post.uploadDiario({ matricula: response.data.matricula, file: diario });
+                    await diarioService.create({ matricula: response.data.matricula, file: diario });
                 }
             }
 
@@ -134,8 +133,8 @@ function Aluno_forms(){
         e.preventDefault();
         try{
             if (diario) {
-                const filename = diario.data.fileName || diario.name
-                await get.downloadFile(matricula, filename);
+                const filename = diario.data?.fileName || diario.name
+                await diarioService.download(matricula, filename);
             }
         }catch(error){
             alert('Erro ao baixar arquivo.');

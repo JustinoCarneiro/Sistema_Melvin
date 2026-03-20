@@ -7,7 +7,7 @@ import { IoMdSearch } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
 import { FaPlus, FaFileExcel, FaBoxOpen, FaWeightHanging, FaHandHoldingHeart } from "react-icons/fa6"; 
 
-import get from '../../../services/requests/get';
+import cestaService from '../../../services/cestaService';
 import Botao from '../../../components/gerais/Botao'; 
 
 function Cestas(){
@@ -29,7 +29,7 @@ function Cestas(){
         setLoading(true);
         setError(null);
         try{
-            const response = await get.cestas();
+            const response = await cestaService.list();
             const dados = response.data;
 
             if(Array.isArray(dados)){

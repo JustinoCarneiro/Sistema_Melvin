@@ -6,9 +6,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import Botao from '../../../components/gerais/Botao';
 import Input from '../../../components/gerais/Input';
 
-import post from '../../../services/requests/post';
-import get from '../../../services/requests/get';
-import put from '../../../services/requests/put';
+import amigoMelvinService from '../../../services/amigoMelvinService';
 
 function AmigoMelvin_forms(){
     const {id} = useParams();
@@ -24,7 +22,7 @@ function AmigoMelvin_forms(){
             setErrorMessage('');
             if (id) {
                 try {
-                    const response = await get.amigosmelvin();
+                    const response = await amigoMelvinService.list();
                     if (response.data && Array.isArray(response.data)) {
                         const amigo = response.data.find(amg => amg.id === id);
                         if (amigo) {
@@ -62,9 +60,9 @@ function AmigoMelvin_forms(){
             // Verifica se está editando (id existe) ou criando novo
             if (id) {
                 // Passa o ID junto com os dados para o PUT saber qual atualizar
-                response = await put.amigosmelvin({ ...formDado, id });
+                response = await amigoMelvinService.update({ ...formDado, id });
             } else {
-                response = await post.amigosmelvin(formDado);
+                response = await amigoMelvinService.create(formDado);
             }
 
             if (response.error) throw new Error(response.error.message);

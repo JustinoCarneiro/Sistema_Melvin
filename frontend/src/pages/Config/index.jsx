@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { FaUserCog, FaCalendarCheck, FaTools } from "react-icons/fa";
 import Cookies from "js-cookie";
 
-import get from "../../services/requests/get";
-import put from "../../services/requests/put";
-import post from "../../services/requests/post";
+import voluntarioService from "../../services/voluntarioService";
+import frequenciaService from "../../services/frequenciaService";
 
 import Botao from "../../components/gerais/Botao";
 import Deslogar from "../../components/Deslogar";
@@ -40,7 +39,7 @@ function Config(){
                 let matriculaCookie = Cookies.get('login');
                 if(!matriculaCookie) return;
 
-                const response = await get.frequenciavoluntario(data, matriculaCookie);
+                const response = await frequenciaService.listVoluntario(data, matriculaCookie);
                 if (response.data) {
                     setFrequencia({
                         presenca_manha: response.data.presenca_manha || '',
@@ -62,7 +61,7 @@ function Config(){
             if (!login) return;
 
             try {
-                const response = await get.voluntarioByMatricula(login);
+                const response = await voluntarioService.getByMatricula(login);
                 if (response.status === 200) {
                     setUserData(response.data);
                     const userRole = Cookies.get('role');
@@ -116,13 +115,13 @@ function Config(){
                 justificativa: frequencia.justificativa
             };
 
-            const check = await get.frequenciavoluntario(data, userData.matricula);
+            const check = await frequenciaService.listVoluntario(data, userData.matricula);
 
             if (check && check.data) {
-                await put.frequenciavoluntario(payload);  
+                await frequenciaService.updateVoluntario(payload);  
                 alert("Presença atualizada!");
             } else {
-                await post.frequenciavoluntario(payload);
+                await frequenciaService.createVoluntario(payload);
                 alert("Presença marcada!");
             }
         } catch(error) {

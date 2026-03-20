@@ -8,9 +8,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import Botao from '../../../components/gerais/Botao';
 import Input from "../../../components/gerais/Input";
 
-import get from '../../../services/requests/get';
-import post from '../../../services/requests/post';
-import put from '../../../services/requests/put';
+import avisoService from '../../../services/avisoService';
 
 function AvisoForms(){
     const {id} = useParams(); // Pega o ID da URL
@@ -33,7 +31,7 @@ function AvisoForms(){
         const fetchAviso = async () => {
             try{
                 // Como não temos endpoint GET /aviso/{id} ainda, filtramos no front
-                const response = await get.aviso();
+                const response = await avisoService.list();
 
                 if(response.data && Array.isArray(response.data)){
                     const aviso = response.data.find(avs => avs.id === id);
@@ -83,10 +81,10 @@ function AvisoForms(){
             if(id){
                 // --- EDIÇÃO (PUT) ---
                 // Importante: Passamos o ID junto para o serviço montar a URL /aviso/{id}
-                response = await put.aviso({ ...dadosParaEnvio, id }); 
+                response = await avisoService.update({ ...dadosParaEnvio, id }); 
             } else {
                 // --- CRIAÇÃO (POST) ---
-                response = await post.aviso(dadosParaEnvio);
+                response = await avisoService.create(dadosParaEnvio);
             }
 
             if (response.error) {

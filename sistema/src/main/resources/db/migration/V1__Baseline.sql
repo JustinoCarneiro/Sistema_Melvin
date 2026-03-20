@@ -1,0 +1,2 @@
+-- Baseline for the existing schema.
+-- Flyway will use baseline-on-migrate=true to mark the current state as version 1.

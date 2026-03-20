@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import get from '../services/requests/get';
-import post from '../services/requests/post';
+import discenteService from '../services/discenteService';
+import frequenciaService from '../services/frequenciaService';
 
 export function useRendimento(matricula) {
     // Dados do aluno
@@ -32,8 +32,8 @@ export function useRendimento(matricula) {
             setError('');
             try {
                 const [alunoRes, avaliacoesRes] = await Promise.all([
-                    get.discenteByMatricula(matricula),
-                    get.avaliacoesPorMatricula(matricula)
+                    discenteService.getByMatricula(matricula),
+                    discenteService.getAvaliacoes(matricula)
                 ]);
 
                 setAluno(alunoRes.data);
@@ -68,7 +68,7 @@ export function useRendimento(matricula) {
             const promises = [];
             for (let dia = 1; dia <= diasNoMes; dia++) {
                 const data = `${anoSelecionado}-${String(mesSelecionado).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-                promises.push(get.frequenciadiscente(data, matricula));
+                promises.push(frequenciaService.listDiscente(data, matricula));
             }
             const responses = await Promise.allSettled(promises);
             const todasFrequencias = responses
@@ -92,7 +92,7 @@ export function useRendimento(matricula) {
                 nota,
                 data: new Date().toISOString().split('T')[0],
             };
-            const response = await post.avaliacao(avaliacaoData);
+            const response = await discenteService.createAvaliacao(avaliacaoData);
             setAvaliacoes(prev => ({ ...prev, [nomeAula]: response.data }));
             alert('Avaliação salva com sucesso!');
         } catch (err) {

@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 
-import put from '../../../services/requests/put';
-import post from '../../../services/requests/post';
-import get from '../../../services/requests/get';
+import voluntarioService from '../../../services/voluntarioService';
+import frequenciaService from '../../../services/frequenciaService';
 
 import Botao from '../../../components/gerais/Botao';
 
@@ -40,7 +39,7 @@ function Voluntario_frequencia({tipo}){
         const fetchVoluntarios = async () => {
             setLoading(true);
             try {
-                const response = await get.voluntario();
+                const response = await voluntarioService.list();
                 const objetoDados = response.data;
 
                 if (Array.isArray(objetoDados)) {
@@ -64,7 +63,7 @@ function Voluntario_frequencia({tipo}){
 
     const fetchFrequencias = async (selectedDate) => {
         try {
-            const response = await get.frequenciavoluntario(selectedDate);
+            const response = await frequenciaService.listVoluntario(selectedDate);
             const presencaObj = {};
 
             response.data.forEach(frequencia => {
@@ -110,12 +109,12 @@ function Voluntario_frequencia({tipo}){
                 const presenca_tarde = presencas[matricula]?.presenca_tarde || '';
                 const justificativa = presencas[matricula]?.justificativa || '';
 
-                const frequenciaVoluntarioExistente = await get.frequenciavoluntario(data, matricula);
+                const frequenciaVoluntarioExistente = await frequenciaService.listVoluntario(data, matricula);
 
                 if (frequenciaVoluntarioExistente && frequenciaVoluntarioExistente.data) {
-                    return await put.frequenciavoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });  
+                    return await frequenciaService.updateVoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });  
                 } else {
-                    return await post.frequenciavoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });
+                    return await frequenciaService.createVoluntario({ matricula, nome, data, justificativa, presenca_manha, presenca_tarde });
                 }
             });
 

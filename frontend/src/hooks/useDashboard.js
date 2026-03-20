@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import get from '../services/requests/get';
+import dashboardService from '../services/dashboardService';
+import frequenciaService from '../services/frequenciaService';
 
 export function useDashboard() {
     const [frequenciaPorSala, setFrequenciaPorSala] = useState({ manha: {}, tarde: {} });
@@ -19,9 +20,9 @@ export function useDashboard() {
             setError(null);
             try {
                 const [frequenciaRes, avisosRes, rankingRes] = await Promise.all([
-                    get.frequenciadiscente(new Date().toISOString().split('T')[0]),
-                    get.dashboardAvisos(),
-                    get.dashboardRanking(rankingSortBy)
+                    frequenciaService.listDiscente(new Date().toISOString().split('T')[0]),
+                    dashboardService.getAvisos(),
+                    dashboardService.getRanking(rankingSortBy)
                 ]);
 
                 // ... (Processamento de Frequência, Avisos e Ranking)
@@ -58,7 +59,7 @@ export function useDashboard() {
             setIsRankingLoading(true); // 2. Ativa o loading SÓ do ranking
             setError(null);
             try {
-                const rankingRes = await get.dashboardRanking(rankingSortBy);
+                const rankingRes = await dashboardService.getRanking(rankingSortBy);
                 const ranking = rankingRes.data || [];
                 setRankingMelhores(ranking);
                 setRankingPiores([...ranking].sort((a, b) => a.mediaGeral - b.mediaGeral));

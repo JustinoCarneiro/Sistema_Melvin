@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
 
-import get from "../../../services/requests/get";
+import embaixadorService from "../../../services/embaixadorService";
 
 function EmbaixadoresApp({ modoDesativados = false }){
     const [busca, setBusca] = useState('');
@@ -19,7 +19,7 @@ function EmbaixadoresApp({ modoDesativados = false }){
         setLoading(true);
         setError(null);
         try{
-            const response = await get.embaixadores();
+            const response = await embaixadorService.list();
             const dados = response.data;
 
             if(Array.isArray(dados)){

@@ -9,9 +9,8 @@ import { SiGoogledocs } from "react-icons/si"; // Ou use um ícone de imagem se 
 import Botao from '../../../components/gerais/Botao';
 import Input from '../../../components/gerais/Input';
 
-import post from '../../../services/requests/post';
-import get from '../../../services/requests/get';
-import put from '../../../services/requests/put';
+import embaixadorService from '../../../services/embaixadorService';
+import imagemService from '../../../services/imagemService';
 
 function Embaixador_forms(){
     const {id} = useParams();
@@ -29,12 +28,12 @@ function Embaixador_forms(){
 
             try{
                 // Busca dados gerais
-                const response = await get.embaixadores();
+                const response = await embaixadorService.list();
                 
                 // Tenta buscar imagem se estiver editando
                 if (id) {
                     try {
-                        const imagemExistente = await get.imagemPorId(id, "embaixador");
+                        const imagemExistente = await imagemService.getById(id, "embaixador");
                         if(imagemExistente && imagemExistente.data){
                             setImagem(imagemExistente);
                         }
@@ -93,19 +92,17 @@ function Embaixador_forms(){
             // Verifica existência pelo ID na lista ou simplesmente pelo ID da URL
             if(id){
                 console.log("Atualizando embaixador...");
-                // PUT geralmente precisa do ID no corpo ou na URL, dependendo da API. 
-                // Aqui assumo que o objeto formDado vai, mas a função put.embaixadores deve tratar.
-                response = await put.embaixadores({ ...formDado, id });
+                response = await embaixadorService.update({ ...formDado, id });
 
                 if (imagem instanceof File) {
-                    await put.imagem(id, "embaixador", imagem);
+                    await imagemService.update(id, "embaixador", imagem);
                 }
             } else {
                 console.log("Criando embaixador...");
-                response = await post.embaixadores(formDado);
+                response = await embaixadorService.create(formDado);
 
                 if (imagem && imagem instanceof File && response.data?.id) {
-                    await post.imagem(response.data.id, "embaixador", imagem);
+                    await imagemService.upload(response.data.id, "embaixador", imagem);
                 }
             }
 

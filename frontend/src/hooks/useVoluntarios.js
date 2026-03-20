@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import Cookies from "js-cookie";
-import get from '../services/requests/get';
+import voluntarioService from '../services/voluntarioService';
 
 export function useVoluntarios() {
     const [voluntarios, setVoluntarios] = useState([]);
@@ -20,7 +20,7 @@ export function useVoluntarios() {
         setIsAdm(userRole === "ADM");
 
         // Busca TODOS os voluntários sem filtro de tipo na API
-        get.voluntario()
+        voluntarioService.list()
             .then(response => {
                 setVoluntarios(response.data || []);
             })
@@ -34,12 +34,12 @@ export function useVoluntarios() {
     useEffect(() => {
         if (busca === '') {
             setLoading(true);
-            get.voluntario().then(res => setVoluntarios(res.data || [])).finally(() => setLoading(false));
+            voluntarioService.list().then(res => setVoluntarios(res.data || [])).finally(() => setLoading(false));
             return;
         }
         const timer = setTimeout(() => {
             setLoading(true);
-            get.voluntario(busca)
+            voluntarioService.list(busca)
                 .then(response => {
                     setVoluntarios(response.data || []);
                 })

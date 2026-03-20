@@ -10,7 +10,7 @@ import { FaPlus, FaFileExcel } from "react-icons/fa6";
 import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 
 import Botao from '../../../components/gerais/Botao';
-import get from '../../../services/requests/get';
+import discenteService from '../../../services/discenteService';
 
 function Alunos({ modoDesativados = false }) {
     const navigate = useNavigate();
@@ -45,7 +45,7 @@ function Alunos({ modoDesativados = false }) {
             setLoadingDesativados(true);
             const fetchDesativados = async () => {
                 try {
-                    const response = await get.discente();
+                    const response = await discenteService.list();
                     const dados = response.data;
                     if (Array.isArray(dados)) {
                         // Filtra status false
@@ -92,7 +92,7 @@ function Alunos({ modoDesativados = false }) {
     const handleExportClick = async () => {
         setExporting(true);
         try {
-            await get.exportarDiscentes(busca);
+            await discenteService.export(busca);
         } catch (error) {
             alert(error.message || "Não foi possível exportar os dados.");
         } finally {

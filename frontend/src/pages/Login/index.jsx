@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-import auth from '../../services/auth';
+import authService from '../../services/authService';
 
 import logo from '../../docs/Instituto_Melvin.png';
 
@@ -30,7 +30,7 @@ function Login(){
         e.preventDefault();
         setErrorMessage('');
         try {
-            const response = await auth.authentication({ login, password });
+            const response = await authService.login({ login, password });
             
             if (response.status === 200) {
                 const role = response.data.role; 

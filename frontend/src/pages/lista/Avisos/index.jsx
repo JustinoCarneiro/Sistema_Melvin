@@ -6,7 +6,7 @@ import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
 import { MdOutlineModeEdit } from "react-icons/md";
 
-import get from "../../../services/requests/get";
+import avisoService from "../../../services/avisoService";
 
 function Avisos({ modoDesativados = false }){
     const [busca, setBusca] = useState('');
@@ -19,7 +19,7 @@ function Avisos({ modoDesativados = false }){
         setLoading(true);
         setError(null);
         try{
-            const response = await get.aviso();
+            const response = await avisoService.list();
             const dados = response.data;
 
             if(Array.isArray(dados)){

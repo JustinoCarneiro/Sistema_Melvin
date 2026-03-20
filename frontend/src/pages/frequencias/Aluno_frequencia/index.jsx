@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 
-import get from '../../../services/requests/get';
-import post from '../../../services/requests/post';
-import put from '../../../services/requests/put';
+import discenteService from '../../../services/discenteService';
+import voluntarioService from '../../../services/voluntarioService';
+import frequenciaService from '../../../services/frequenciaService';
 
 import Botao from '../../../components/gerais/Botao';
 
@@ -32,7 +32,7 @@ function Aluno_frequencia(){
     const fetchAlunos = async () => {
         setLoading(true);
         try {
-            const response = await get.discente(); 
+            const response = await discenteService.list(); 
             if (Array.isArray(response.data)) {
                 setTodosOsAlunos(response.data); 
             } else {
@@ -68,7 +68,7 @@ function Aluno_frequencia(){
 
     const fetchFrequencias = async (selectedDate) => {
         try {
-            const response = await get.frequenciadiscente(selectedDate);
+            const response = await frequenciaService.listDiscente(selectedDate);
             const presencaObj = {};
 
             response.data.forEach(frequencia => {
@@ -115,7 +115,7 @@ function Aluno_frequencia(){
 
             if(role === "PROF" || role === "AUX"){
                 try {
-                    const dadosVoluntario = await get.voluntarioByMatricula(matricula);
+                    const dadosVoluntario = await voluntarioService.getByMatricula(matricula);
                     const { salaUm, salaDois, aulaExtra} = dadosVoluntario.data;
 
                     const salas = [];
@@ -146,12 +146,12 @@ function Aluno_frequencia(){
                 const presenca_tarde = presencas[key]?.presenca_tarde || '';
                 const justificativa = presencas[key]?.justificativa || '';
 
-                const frequenciaDiscenteExistente = await get.frequenciadiscente(data, matricula);
+                const frequenciaDiscenteExistente = await frequenciaService.listDiscente(data, matricula);
 
                 if (frequenciaDiscenteExistente && frequenciaDiscenteExistente.data) {
-                    return await put.frequenciadiscente({ matricula, nome, sala, data, justificativa, presenca_manha, presenca_tarde });
+                    return await frequenciaService.updateDiscente({ matricula, nome, sala, data, justificativa, presenca_manha, presenca_tarde });
                 } else {
-                    return await post.frequenciadiscente({ matricula, nome, sala, data, justificativa, presenca_manha, presenca_tarde });
+                    return await frequenciaService.createDiscente({ matricula, nome, sala, data, justificativa, presenca_manha, presenca_tarde });
                 }
             });
 

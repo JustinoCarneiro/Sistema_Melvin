@@ -83,13 +83,13 @@ const put = {
     },
 
     async alterarsenha(matricula, nova_senha){
-        const endpoint = `/auth/alterar_senha/${matricula}/${nova_senha}`;
+        const endpoint = `/auth/alterar_senha`;
         try{
-            const response = await http.put(endpoint);
+            const response = await http.put(endpoint, { login: matricula, newPassword: nova_senha });
             return response;
         }catch(error){
             console.error("1018:Erro ao alterar senha do usuário:", error.response ? error.response.data : error.message);
-            const errorMessage = error.response?.data || error.message;
+            const errorMessage = error.response?.data?.message || error.message;
             return Promise.reject(new Error(errorMessage));
         }
     },

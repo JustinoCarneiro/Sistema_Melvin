@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Cookies from "js-cookie";
-import get from '../services/requests/get';
+import discenteService from '../services/discenteService';
+import voluntarioService from '../services/voluntarioService';
 
 export function useAlunos() {
     const [alunos, setAlunos] = useState([]);
@@ -47,7 +48,7 @@ export function useAlunos() {
                 } else {
                     const matricula = Cookies.get('login');
                     if(matricula){
-                        const dadosVoluntario = await get.voluntarioByMatricula(matricula);
+                        const dadosVoluntario = await voluntarioService.getByMatricula(matricula);
                         const { salaUm, salaDois, aulaExtra } = dadosVoluntario.data;
                         const salas = [];
                         if (salaUm) salas.push(salaUm.toString());
@@ -69,7 +70,7 @@ export function useAlunos() {
     useEffect(() => {
         const timer = setTimeout(() => {
             setLoading(true);
-            get.discente(busca)
+            discenteService.list(busca)
                 .then(response => {
                     setAlunos(response.data || []);
                 })

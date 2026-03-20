@@ -5,10 +5,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import Botao from '../../../components/gerais/Botao';
 import Input from '../../../components/gerais/Input';
 
-import post from '../../../services/requests/post';
-import get from '../../../services/requests/get';
-import put from '../../../services/requests/put';
-import del from '../../../services/requests/delete';
+import cestaService from '../../../services/cestaService';
 
 function CestasForms(){
     const { id } = useParams();
@@ -40,7 +37,7 @@ function CestasForms(){
         const fetchCesta = async () => {
             setErrorMessage('');
             try{
-                const response = await get.cestas();
+                const response = await cestaService.list();
                 if(response.data && Array.isArray(response.data)){
                     const cesta = response.data.find(cst => cst.id === id);
                     if(cesta){
@@ -111,8 +108,8 @@ function CestasForms(){
             };
 
             let response;
-            if(id) response = await put.cestas({ ...dadosParaEnvio, id });
-            else response = await post.cestas(dadosParaEnvio);
+            if(id) response = await cestaService.update({ ...dadosParaEnvio, id });
+            else response = await cestaService.create(dadosParaEnvio);
 
             if (response.error) throw new Error(response.error.message);
             alert('Salvo com sucesso!');
@@ -125,7 +122,7 @@ function CestasForms(){
     const handleDelete = async () => {
         if (window.confirm('Tem certeza que deseja deletar este registro?')) {
             try {
-                await del.cestas(id); 
+                await cestaService.delete(id); 
                 alert('Registro deletado com sucesso!');
                 navigate(-1);
             } catch (error) {

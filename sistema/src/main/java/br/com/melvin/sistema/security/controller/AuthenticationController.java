@@ -14,19 +14,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.melvin.sistema.repository.integrantes.VoluntarioRepository;
+import br.com.melvin.sistema.domain.voluntario.repository.VoluntarioRepository;
 import br.com.melvin.sistema.security.config.TokenService;
 import br.com.melvin.sistema.security.model.AuthenticationDTO;
 import br.com.melvin.sistema.security.model.LoginResponseDTO;
 import br.com.melvin.sistema.security.model.ResgisterDTO;
 import br.com.melvin.sistema.security.model.User;
 import br.com.melvin.sistema.security.model.UserRole;
+import br.com.melvin.sistema.security.model.PasswordUpdateDTO;
 import br.com.melvin.sistema.security.repository.UserRepository;
 
+import br.com.melvin.sistema.shared.dto.ErrorResponseDTO;
 import jakarta.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.BadCredentialsException;
 
 
 @RestController
@@ -57,20 +60,22 @@ public class AuthenticationController {
             var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
             var auth = this.authenticationManager.authenticate(usernamePassword);
             var token = tokenService.generateToken((User) auth.getPrincipal());
+            var user = (User) auth.getPrincipal();
 
             logger.info("Login bem-sucedido para o usuário: {}", data.login());
-            return ResponseEntity.ok(new LoginResponseDTO(token, ((User) auth.getPrincipal()).getRole().toString()));
+            return ResponseEntity.ok(new LoginResponseDTO(token, user.getRole().toString()));
 
+        } catch (BadCredentialsException e) {
+            logger.warn("Falha na autenticação para o usuário: {}. Credenciais inválidas.", data.login());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponseDTO(HttpStatus.UNAUTHORIZED.value(), "Matrícula ou senha inválida."));
         } catch (Exception e) {
-            logger.error("Falha na autenticação para o usuário: {}. Erro: {}", data.login(), e.getMessage());
-            return ResponseEntity.status(401).body("Matrícula ou senha inválida."); // Retornar uma resposta de erro clara
+            logger.error("Erro inesperado durante login para o usuário: {}. Erro: {}", data.login(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Erro interno no servidor."));
         }
     }
     
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody ResgisterDTO dados) {
-        // Adiciona um log inicial para ver se o método está sendo chamado
-        System.out.println("Register endpoint called");
 
         if (this.repositoryVoluntario.findByMatricula(dados.login()) == null) {
             return ResponseEntity.badRequest().build();
@@ -88,19 +93,20 @@ public class AuthenticationController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/alterar_senha/{matricula}/{senha}")
-    public ResponseEntity<?> alterarSenha(@PathVariable String matricula, @PathVariable String senha) {
-        System.out.println("Alterar Senha endpoint called");
+    @PutMapping("/alterar_senha")
+    public ResponseEntity<?> alterarSenha(@RequestBody @Valid PasswordUpdateDTO data) {
+        logger.info("Tentativa de alteração de senha para o usuário: {}", data.login());
 
-        User user = repositoryUser.findByLogin(matricula);
+        User user = repositoryUser.findByLogin(data.login());
         if (user == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado.");
         }
 
-        String encryptedPassword = passwordEncoder.encode(senha);
+        String encryptedPassword = passwordEncoder.encode(data.newPassword());
         user.setPassword(encryptedPassword);
         repositoryUser.save(user);
 
+        logger.info("Senha alterada com sucesso para o usuário: {}", data.login());
         return ResponseEntity.ok().build();
     }
 
@@ -108,30 +114,18 @@ public class AuthenticationController {
     public ResponseEntity<?> role(@PathVariable String matricula) {
         User user = repositoryUser.findByLogin(matricula);
         if (user == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDTO(HttpStatus.NOT_FOUND.value(), "Usuário não encontrado."));
         }
         
         UserRole role = user.getRole();
         return ResponseEntity.ok(role);
     }
 
-    @GetMapping("/senha/{matricula}")
-    public ResponseEntity<?> senha(@PathVariable String matricula){
-        User user = repositoryUser.findByLogin(matricula);
-
-        if (user == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        String password = user.getPassword();
-        return ResponseEntity.ok(password);
-    }
-
     @PutMapping("/alterar_role/{matricula}/{role}")
-    public ResponseEntity<?> alterarRole(@PathVariable String matricula, @PathVariable String role){
+    public ResponseEntity<?> alterarRole(@PathVariable String matricula, @PathVariable String role) {
         User user = repositoryUser.findByLogin(matricula);
         if (user == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDTO(HttpStatus.NOT_FOUND.value(), "Usuário não encontrado."));
         }
 
         try {
@@ -140,7 +134,7 @@ public class AuthenticationController {
             repositoryUser.save(user);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Role inválida");
+            return ResponseEntity.badRequest().body(new ErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), "Role inválida"));
         }
     }
 }

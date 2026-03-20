@@ -7,11 +7,8 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import Botao from '../../../components/gerais/Botao';
 import Input from '../../../components/gerais/Input';
 
-import post from '../../../services/requests/post';
-import get from '../../../services/requests/get';
-import put from '../../../services/requests/put';
-import del from '../../../services/requests/delete';
-import auth from '../../../services/auth';
+import voluntarioService from '../../../services/voluntarioService';
+import authService from '../../../services/authService';
 
 function Voluntario_forms(){
     const {matricula} = useParams();
@@ -36,7 +33,7 @@ function Voluntario_forms(){
             if (!matricula) return;
 
             try {
-                const response = await get.voluntarioByMatricula(matricula);
+                const response = await voluntarioService.get(matricula);
                 if(response.data){
                     setFormDado(prev => ({ ...prev, ...response.data }));
                 }
@@ -62,7 +59,7 @@ function Voluntario_forms(){
         const novaRole = getRoleFromFuncao(novaFuncao);
         if (novaRole && formDado.matricula) {
             try {
-                await put.alterarRole(formDado.matricula, novaRole);
+                await authService.updateRole(formDado.matricula, novaRole);
                 setFormDado(prev => ({ ...prev, funcao: novaFuncao }));
             } catch (error) { console.error(error); }
         }
@@ -80,7 +77,7 @@ function Voluntario_forms(){
         if (!role) return alert(`A função "${formDado.funcao}" não tem perfil de acesso.`);
 
         try {
-            const response = await auth.registrar({ login: formDado.matricula, password: senhaAcesso, role: role });
+            const response = await authService.register({ login: formDado.matricula, password: senhaAcesso, role: role });
             if (response?.status === 200) {
                 alert("Acesso criado!");
                 setSenhaAcesso(''); setConfirmarSenha('');
@@ -91,7 +88,7 @@ function Voluntario_forms(){
     const handleRedefinirSenha = async () => {
         if (!senhaAcesso || senhaAcesso !== confirmarSenha) return alert("As senhas não coincidem!");
         try {
-            const response = await put.alterarsenha(formDado.matricula, senhaAcesso);
+            const response = await authService.updatePassword(formDado.matricula, senhaAcesso);
             if (response?.status === 200) {
                 alert("Senha redefinida!");
                 setSenhaAcesso(''); setConfirmarSenha('');
@@ -107,7 +104,7 @@ function Voluntario_forms(){
             let response;
             if (formDado.status === 'deletar') {
                 if(window.confirm('Deseja realmente deletar este voluntário?')) {
-                    await del.voluntario(matricula);
+                    await voluntarioService.delete(matricula);
                     alert('Deletado com sucesso!');
                     navigate('/app/voluntarios');
                     return;
@@ -115,9 +112,9 @@ function Voluntario_forms(){
             }
 
             if (matricula) {
-                response = await put.voluntario(formDado);
+                response = await voluntarioService.update(formDado);
             } else {
-                response = await post.voluntario(formDado);
+                response = await voluntarioService.create(formDado);
             }
 
             if (response.error) throw new Error(response.error.message);

@@ -1,6 +1,8 @@
 package br.com.melvin.sistema.security.config;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 
 import br.com.melvin.sistema.config.UrlFrontend;
 
@@ -57,7 +59,8 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.PUT, "/discente/{matricula}/avaliacoes").authenticated()
 
                     // --- ROTAS ADMINISTRATIVAS (Registro de usuários, etc) ---
-                    .requestMatchers(HttpMethod.POST,  "/auth/register", "/auth/alterar_senha/{matricula}/{senha}", "/imagens/**", "/aviso/**").hasRole("ADM")
+                    .requestMatchers(HttpMethod.POST,  "/auth/register", "/imagens/**", "/aviso/**").hasRole("ADM")
+                    .requestMatchers(HttpMethod.PUT, "/auth/alterar_senha").hasRole("ADM")
 
                     // --- CESTAS E IMAGENS (Adicionado AUX) ---
                     .requestMatchers(HttpMethod.POST, "/cestas").hasAnyRole("ADM", "DIRE", "AUX")
@@ -124,13 +127,31 @@ public class SecurityConfiguration {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOriginPattern("*");
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE, "Access-Control-Allow-Origin"));
-        configuration.setAllowCredentials(true);
+        String allowedOrigin = urlFrontend.getUrl();
+        
+        // Always allow common development origins for convenience in dev mode
+        List<String> origins = new ArrayList<>(Arrays.asList(
+            "http://localhost:3000",
+            "http://localhost:5173",
+            "http://institutomelvin.org:3000",
+            "http://institutomelvin.org"
+        ));
+        
+        if (allowedOrigin != null && !allowedOrigin.isEmpty() && !allowedOrigin.equals("*")) {
+            origins.add(allowedOrigin);
+            // Also allow the non-secure/port variations of the configured origin
+            if (allowedOrigin.startsWith("https://")) {
+                origins.add(allowedOrigin.replace("https://", "http://"));
+            }
+        }
 
-        logger.info("CORS configuration: Allowed origins = {}", configuration.getAllowedOriginPatterns());
-        logger.info("CORS configuration: Allowed methods = {}", configuration.getAllowedMethods());
+        configuration.setAllowedOrigins(origins);
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        logger.info("CORS configuration: Allowed origins = {}", configuration.getAllowedOrigins());
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

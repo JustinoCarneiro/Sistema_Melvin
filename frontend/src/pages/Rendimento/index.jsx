@@ -3,8 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 
-import get from '../../services/requests/get';
-import put from '../../services/requests/put';
+import discenteService from '../../services/discenteService';
 import StarRating from '../../components/gerais/StarRating';
 import Botao from '../../components/gerais/Botao';
 import { IoMdArrowRoundBack } from "react-icons/io";
@@ -26,7 +25,7 @@ function Rendimento() {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const alunoRes = await get.discenteByMatricula(matricula);
+                const alunoRes = await discenteService.get(matricula);
                 setAluno(alunoRes.data);
                 setAvaliacoes({
                     avaliacaoPresenca: alunoRes.data.avaliacaoPresenca,
@@ -51,7 +50,7 @@ function Rendimento() {
     const handleSave = async () => {
         setError('');
         try {
-            await put.discenteAvaliacoes(matricula, avaliacoes);
+            await discenteService.updateAvaliacoes(matricula, avaliacoes);
             alert('Avaliações salvas com sucesso!');
             navigate(-1);
         } catch(err) {

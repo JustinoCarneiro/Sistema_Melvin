@@ -52,9 +52,9 @@ function MainLayout() {
     return (
         <>
             <Routes>
-                <Route path="/*"     element={ <SiteContent/> } />
                 <Route path="/login" element={ <Login/> } />
                 <Route path="/app/*" element={ <AppContent/> } />
+                <Route path="/*"     element={ <SiteContent/> } />
             </Routes>
         </>
     );
