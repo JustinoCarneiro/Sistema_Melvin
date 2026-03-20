@@ -8,8 +8,8 @@ SERVER_PATH="~/sistema/sistema_melvin/"
 
 echo "📡 Transferindo arquivos para o servidor ($SERVER_IP)..."
 
-# rsync excluindo pastas desnecessárias
-rsync -avz --exclude 'node_modules' --exclude 'target' --exclude 'dist' --exclude '.git' --exclude 'backups' \
+# rsync excluindo pastas desnecessárias e deletando o que não existe mais localmente
+rsync -avz --delete --exclude 'node_modules' --exclude 'target' --exclude 'dist' --exclude '.git' --exclude 'backups' \
 ./ $SERVER_USER@$SERVER_IP:$SERVER_PATH
 
 if [ $? -ne 0 ]; then
