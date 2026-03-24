@@ -5,6 +5,9 @@ describe('Config & Profile', () => {
     
     cy.login(role, matricula);
     
+    // Mock for PrivateRoute RBAC check
+    cy.intercept('GET', `**/auth/role_${matricula}`, { statusCode: 200, body: role });
+
     // Override specific profile for this test
     cy.intercept('GET', '**/api/voluntario/matricula/*', {
       statusCode: 200,

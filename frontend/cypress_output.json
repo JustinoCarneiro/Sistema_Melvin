@@ -1,0 +1,395 @@
+Warning: The allowCypressEnv configuration option is enabled. This allows any browser code to read values from Cypress.env(). This is insecure and will be removed in a future major version.
+
+1. Replace Cypress.env() calls with cy.env() (for sensitive values) or Cypress.expose() (for public configuration)
+2. Set allowCypressEnv: false in your Cypress configuration to disable Cypress.env()
+
+Learn more: https://on.cypress.io/cypress-env-migration
+
+
+================================================================================
+
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        15.12.0                                                                        │
+  │ Browser:        Electron 138 (headless)                                                        │
+  │ Node Version:   v24.13.1 (/home/marcos/.nvm/versions/node/v24.13.1/bin/node)                   │
+  │ Specs:          1 found (discentes.cy.js)                                                      │
+  │ Searched:       cypress/e2e/discentes.cy.js                                                    │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  discentes.cy.js                                                                 (1 of 1)
+{
+  "stats": {
+    "suites": 1,
+    "tests": 1,
+    "passes": 0,
+    "pending": 0,
+    "failures": 1,
+    "start": "2026-03-24T02:10:37.777Z",
+    "end": "2026-03-24T02:11:00.629Z",
+    "duration": 22852
+  },
+  "tests": [
+    {
+      "title": "should list students",
+      "fullTitle": "Discentes Management should list students",
+      "file": null,
+      "duration": 22607,
+      "currentRetry": 0,
+      "err": {
+        "message": "Timed out retrying after 5000ms: `cy.wait()` timed out waiting `5000ms` for the 1st request to the route: `getAlunos`. No request ever occurred.\n\nhttps://on.cypress.io/wait",
+        "name": "CypressError",
+        "stack": "CypressError: Timed out retrying after 5000ms: `cy.wait()` timed out waiting `5000ms` for the 1st request to the route: `getAlunos`. No request ever occurred.\n\nhttps://on.cypress.io/wait\n    at cypressErr (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:78375:18)\n    at Object.errByPath (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:78443:10)\n    at checkForXhr (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:138931:84)\n    at <unknown> (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:138956:28)\n    at tryCatcher (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:4285:29)\n    at whenStable (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:152052:70)\n    at <unknown> (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:151967:14)\n    at tryCatcher (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise._settlePromiseFromHandler (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1489:31)\n    at Promise._settlePromise (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1546:18)\n    at Promise._settlePromise0 (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1591:10)\n    at Promise._settlePromises (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1671:18)\n    at Promise._fulfill (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1615:18)\n    at <unknown> (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:5420:46)\nFrom Your Spec Code:\n    at Context.eval (webpack://frontend/./cypress/e2e/discentes.cy.js:18:7)",
+        "parsedStack": [
+          {
+            "message": "CypressError: Timed out retrying after 5000ms: `cy.wait()` timed out waiting `5000ms` for the 1st request to the route: `getAlunos`. No request ever occurred.",
+            "whitespace": ""
+          },
+          {
+            "function": "cypressErr",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 78375,
+            "column": 18,
+            "whitespace": "    "
+          },
+          {
+            "function": "Object.errByPath",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 78443,
+            "column": 10,
+            "whitespace": "    "
+          },
+          {
+            "function": "checkForXhr",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 138931,
+            "column": 84,
+            "whitespace": "    "
+          },
+          {
+            "function": "<unknown>",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 138956,
+            "column": 28,
+            "whitespace": "    "
+          },
+          {
+            "function": "tryCatcher",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1777,
+            "column": 23,
+            "whitespace": "    "
+          },
+          {
+            "function": "Promise.attempt.Promise.try",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 4285,
+            "column": 29,
+            "whitespace": "    "
+          },
+          {
+            "function": "whenStable",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 152052,
+            "column": 70,
+            "whitespace": "    "
+          },
+          {
+            "function": "<unknown>",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 151967,
+            "column": 14,
+            "whitespace": "    "
+          },
+          {
+            "function": "tryCatcher",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1777,
+            "column": 23,
+            "whitespace": "    "
+          },
+          {
+            "function": "Promise._settlePromiseFromHandler",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1489,
+            "column": 31,
+            "whitespace": "    "
+          },
+          {
+            "function": "Promise._settlePromise",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1546,
+            "column": 18,
+            "whitespace": "    "
+          },
+          {
+            "function": "Promise._settlePromise0",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1591,
+            "column": 10,
+            "whitespace": "    "
+          },
+          {
+            "function": "Promise._settlePromises",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1671,
+            "column": 18,
+            "whitespace": "    "
+          },
+          {
+            "function": "Promise._fulfill",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1615,
+            "column": 18,
+            "whitespace": "    "
+          },
+          {
+            "function": "<unknown>",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 5420,
+            "column": 46,
+            "whitespace": "    "
+          },
+          {
+            "message": "From Your Spec Code:",
+            "whitespace": ""
+          },
+          {
+            "function": "Context.eval",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/tests?p=cypress/e2e/discentes.cy.js",
+            "originalFile": "webpack://frontend/./cypress/e2e/discentes.cy.js",
+            "relativeFile": "cypress/e2e/discentes.cy.js",
+            "absoluteFile": "/home/marcos/Applications/sistema_melvin/frontend/cypress/e2e/discentes.cy.js",
+            "line": 18,
+            "column": 7,
+            "whitespace": "    "
+          }
+        ],
+        "codeFrame": {
+          "line": 18,
+          "column": 8,
+          "originalFile": "cypress/e2e/discentes.cy.js",
+          "relativeFile": "frontend/cypress/e2e/discentes.cy.js",
+          "absoluteFile": "/home/marcos/Applications/sistema_melvin/frontend/cypress/e2e/discentes.cy.js",
+          "frame": "  16 |   it('should list students', () => {\n  17 |     cy.visit('/#/app/alunos');\n> 18 |     cy.wait('@getAlunos');\n     |        ^\n  19 |     cy.get('tr[class*=\"tr_body\"]').should('contain', 'João Silva');\n  20 |   });\n  21 | });",
+          "language": "js"
+        }
+      }
+    }
+  ],
+  "pending": [],
+  "failures": [
+    {
+      "title": "should list students",
+      "fullTitle": "Discentes Management should list students",
+      "file": null,
+      "currentRetry": 0,
+      "err": {
+        "message": "Timed out retrying after 5000ms: `cy.wait()` timed out waiting `5000ms` for the 1st request to the route: `getAlunos`. No request ever occurred.\n\nhttps://on.cypress.io/wait",
+        "name": "CypressError",
+        "stack": "CypressError: Timed out retrying after 5000ms: `cy.wait()` timed out waiting `5000ms` for the 1st request to the route: `getAlunos`. No request ever occurred.\n\nhttps://on.cypress.io/wait\n    at cypressErr (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:78375:18)\n    at Object.errByPath (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:78443:10)\n    at checkForXhr (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:138931:84)\n    at <unknown> (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:138956:28)\n    at tryCatcher (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise.attempt.Promise.try (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:4285:29)\n    at whenStable (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:152052:70)\n    at <unknown> (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:151967:14)\n    at tryCatcher (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1777:23)\n    at Promise._settlePromiseFromHandler (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1489:31)\n    at Promise._settlePromise (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1546:18)\n    at Promise._settlePromise0 (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1591:10)\n    at Promise._settlePromises (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1671:18)\n    at Promise._fulfill (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:1615:18)\n    at <unknown> (http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js:5420:46)\nFrom Your Spec Code:\n    at Context.eval (webpack://frontend/./cypress/e2e/discentes.cy.js:18:7)",
+        "parsedStack": [
+          {
+            "message": "CypressError: Timed out retrying after 5000ms: `cy.wait()` timed out waiting `5000ms` for the 1st request to the route: `getAlunos`. No request ever occurred.",
+            "whitespace": ""
+          },
+          {
+            "function": "cypressErr",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 78375,
+            "column": 18,
+            "whitespace": "    "
+          },
+          {
+            "function": "Object.errByPath",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 78443,
+            "column": 10,
+            "whitespace": "    "
+          },
+          {
+            "function": "checkForXhr",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 138931,
+            "column": 84,
+            "whitespace": "    "
+          },
+          {
+            "function": "<unknown>",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 138956,
+            "column": 28,
+            "whitespace": "    "
+          },
+          {
+            "function": "tryCatcher",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1777,
+            "column": 23,
+            "whitespace": "    "
+          },
+          {
+            "function": "Promise.attempt.Promise.try",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 4285,
+            "column": 29,
+            "whitespace": "    "
+          },
+          {
+            "function": "whenStable",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 152052,
+            "column": 70,
+            "whitespace": "    "
+          },
+          {
+            "function": "<unknown>",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 151967,
+            "column": 14,
+            "whitespace": "    "
+          },
+          {
+            "function": "tryCatcher",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1777,
+            "column": 23,
+            "whitespace": "    "
+          },
+          {
+            "function": "Promise._settlePromiseFromHandler",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1489,
+            "column": 31,
+            "whitespace": "    "
+          },
+          {
+            "function": "Promise._settlePromise",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1546,
+            "column": 18,
+            "whitespace": "    "
+          },
+          {
+            "function": "Promise._settlePromise0",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1591,
+            "column": 10,
+            "whitespace": "    "
+          },
+          {
+            "function": "Promise._settlePromises",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1671,
+            "column": 18,
+            "whitespace": "    "
+          },
+          {
+            "function": "Promise._fulfill",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 1615,
+            "column": 18,
+            "whitespace": "    "
+          },
+          {
+            "function": "<unknown>",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "originalFile": "http://institutomelvin.org:3000/__cypress/runner/cypress_runner.js",
+            "line": 5420,
+            "column": 46,
+            "whitespace": "    "
+          },
+          {
+            "message": "From Your Spec Code:",
+            "whitespace": ""
+          },
+          {
+            "function": "Context.eval",
+            "fileUrl": "http://institutomelvin.org:3000/__cypress/tests?p=cypress/e2e/discentes.cy.js",
+            "originalFile": "webpack://frontend/./cypress/e2e/discentes.cy.js",
+            "relativeFile": "cypress/e2e/discentes.cy.js",
+            "absoluteFile": "/home/marcos/Applications/sistema_melvin/frontend/cypress/e2e/discentes.cy.js",
+            "line": 18,
+            "column": 7,
+            "whitespace": "    "
+          }
+        ],
+        "codeFrame": {
+          "line": 18,
+          "column": 8,
+          "originalFile": "cypress/e2e/discentes.cy.js",
+          "relativeFile": "frontend/cypress/e2e/discentes.cy.js",
+          "absoluteFile": "/home/marcos/Applications/sistema_melvin/frontend/cypress/e2e/discentes.cy.js",
+          "frame": "  16 |   it('should list students', () => {\n  17 |     cy.visit('/#/app/alunos');\n> 18 |     cy.wait('@getAlunos');\n     |        ^\n  19 |     cy.get('tr[class*=\"tr_body\"]').should('contain', 'João Silva');\n  20 |   });\n  21 | });",
+          "language": "js"
+        }
+      }
+    }
+  ],
+  "passes": []
+}
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        1                                                                                │
+  │ Passing:      0                                                                                │
+  │ Failing:      1                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  1                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     22 seconds                                                                       │
+  │ Spec Ran:     discentes.cy.js                                                                  │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  /home/marcos/Applications/sistema_melvin/frontend/cypress/screenshots/discentes.     (1279x719)
+     cy.js/Discentes Management -- should list students (failed).png                                
+
+
+================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ ✖  discentes.cy.js                          00:22        1        -        1        -        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ✖  1 of 1 failed (100%)                     00:22        1        -        1        -        -  
+

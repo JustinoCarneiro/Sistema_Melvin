@@ -6,6 +6,9 @@ describe('Discentes Management', () => {
     cy.clearCookies();
     cy.login(role, matricula);
     
+    // Safety mock for role check
+    cy.intercept('GET', '**/auth/role_*', { statusCode: 200, body: role }).as('roleMock');
+    
     // Override specific students for this test
     cy.intercept('GET', '**/api/discente', {
       statusCode: 200,
@@ -16,6 +19,6 @@ describe('Discentes Management', () => {
   it('should list students', () => {
     cy.visit('/#/app/alunos');
     cy.wait('@getAlunos');
-    cy.get('tr[class*="tr_body"]').should('contain', 'João Silva');
+    cy.get('[class*="tr_body"], [class*="card_body"]').should('contain', 'João Silva');
   });
 });

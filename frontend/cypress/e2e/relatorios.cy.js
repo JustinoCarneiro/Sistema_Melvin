@@ -19,6 +19,6 @@ describe('Relatórios (Reporting)', () => {
     cy.visit('/#/app/relatorios');
     cy.wait('@getAlunos');
     cy.get('h2').contains('Relatórios').should('be.visible');
-    cy.get('tr[class*="tr_body"]').should('contain', 'Aluno Relatório');
+    cy.get('[class*="tr_body"], [class*="card_body"]').should('contain', 'Aluno Relatório');
   });
 });

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import styles from './NavBar.module.scss';
 import { useState, useEffect } from 'react';
 import { IoClose, IoSettings, IoBasket } from 'react-icons/io5';
@@ -5,116 +6,109 @@ import { PiStudentBold, PiChalkboardTeacher } from "react-icons/pi";
 import { GoAlertFill } from "react-icons/go";
 import { LuHeartHandshake } from "react-icons/lu";
 import { TbReportAnalytics, TbSocial } from "react-icons/tb";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Cookies from "js-cookie";
+import { motion } from 'framer-motion';
 
-import logo from '../../docs/Instituto_Melvin.png';
-
-function NavBar({close}){
+function NavBar({ close }) {
     const navigate = useNavigate();
-    const closeNavBar = () => {close(false)}
+    const location = useLocation();
+    const closeNavBar = () => { close(false) }
 
-    // Estados de Permissão
-    const [isDire, setIsDire] = useState(false);
-    const [isProf, setIsProf] = useState(false);
-    const [isAdm, setIsAdm] = useState(false);
-    const [isCoor, setIsCoor] = useState(false);
-    const [isPsico, setIsPsico] = useState(false);
-    const [isAssist, setIsAssist] = useState(false);
-    const [isAux, setIsAux] = useState(false);
+    const [roles, setRoles] = useState({
+        isDire: false,
+        isProf: false,
+        isAdm: false,
+        isCoor: false,
+        isPsico: false,
+        isAssist: false,
+        isAux: false
+    });
 
     useEffect(() => {
         const userRole = Cookies.get('role');
-        setIsProf(userRole === 'PROF');
-        setIsDire(userRole === 'DIRE');     
-        setIsAdm(userRole === "ADM");
-        setIsCoor(userRole === "COOR");
-        setIsPsico(userRole === 'PSICO');
-        setIsAssist(userRole === 'ASSIST');
-        setIsAux(userRole === 'AUX');
+        setRoles({
+            isProf: userRole === 'PROF',
+            isDire: userRole === 'DIRE',
+            isAdm: userRole === "ADM",
+            isCoor: userRole === "COOR",
+            isPsico: userRole === 'PSICO',
+            isAssist: userRole === 'ASSIST',
+            isAux: userRole === 'AUX'
+        });
     }, []);
 
-    const handleRouteConfig = () => {
-        navigate('/app/config');
-    }
+    const { isAdm, isProf, isDire, isCoor, isPsico, isAssist, isAux } = roles;
 
-    return(
-        <div className={styles.body}>
-            <IoClose className={styles.close} onClick={closeNavBar}/>
-            
+    const navItems = [
+        { show: (isAdm || isProf || isDire || isCoor || isPsico || isAssist), to: "/app/alunos", icon: <PiStudentBold />, label: "Alunos" },
+        { show: (isAdm || isProf || isDire || isCoor || isPsico || isAssist), to: "/app/relatorios", icon: <TbReportAnalytics />, label: "Relatórios" },
+        { show: (isAdm || isDire || isCoor), to: "/app/voluntarios", icon: <PiChalkboardTeacher />, label: "Voluntários" },
+        { show: isAdm || isDire, to: "/app/embaixadores", icon: <TbSocial />, label: "Embaixadores" },
+        { show: isAdm || isDire, to: "/app/amigosmelvin", icon: <LuHeartHandshake />, label: "Amigos Melvin" },
+        { show: (isAdm || isDire || isAux), to: "/app/cestas", icon: <IoBasket />, label: "Doações" },
+        { show: isAdm, to: "/app/avisos", icon: <GoAlertFill />, label: "Avisos" },
+    ];
+
+    const containerVariants = {
+        hidden: { x: '-100%' },
+        visible: { 
+            x: 0,
+            transition: { 
+                type: 'spring', 
+                stiffness: 300, 
+                damping: 30,
+                staggerChildren: 0.05,
+                delayChildren: 0.1
+            }
+        },
+        exit: { 
+            x: '-100%',
+            transition: { ease: 'easeInOut' }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, x: -20 },
+        visible: { opacity: 1, x: 0 }
+    };
+
+    return (
+        <motion.div 
+            className={styles.body}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+        >
+            <IoClose className={styles.close} onClick={closeNavBar} />
+
             <ul className={styles.nav}>
-                
-                {/* --- ALUNOS --- */}
-                {(isAdm || isProf || isDire || isCoor || isPsico || isAssist) && (
-                    <li> 
-                        <Link to="/app/alunos" className={styles.link}>
-                            <PiStudentBold className={styles.icon}/> 
-                            <p>Alunos</p>
+                {navItems.map((item, index) => item.show && (
+                    <motion.li key={index} variants={itemVariants}>
+                        <Link 
+                            to={item.to} 
+                            className={`${styles.link} ${location.pathname === item.to ? styles.active : ''}`}
+                            onClick={closeNavBar}
+                        >
+                            <span className={styles.icon}>{item.icon}</span>
+                            <p>{item.label}</p>
                         </Link>
-                    </li>
-                )}
-                
-                {/* --- RELATÓRIOS --- */}
-                {(isAdm || isProf || isDire || isCoor || isPsico || isAssist) && (
-                    <li> 
-                        <Link to="/app/relatorios" className={styles.link}>
-                            <TbReportAnalytics className={styles.icon}/> 
-                            <p>Relatórios</p>
-                        </Link>
-                    </li>
-                )}
-
-                {/* --- VOLUNTÁRIOS --- */}
-                {(isAdm || isDire || isCoor) && (
-                    <li> 
-                        <Link to="/app/voluntarios" className={styles.link}>
-                            <PiChalkboardTeacher className={styles.icon}/> 
-                            <p>Voluntários</p> 
-                        </Link>
-                    </li>
-                )}
-
-                {/* --- EMBAIXADORES E AMIGOS (Apenas ADM e DIRE) --- */}
-                {(isAdm || isDire) && (
-                    <>
-                        <li> 
-                            <Link to="/app/embaixadores" className={styles.link}>
-                                <TbSocial className={styles.icon}/> 
-                                <p>Embaixadores</p>
-                            </Link>
-                        </li>
-                        <li> 
-                            <Link to="/app/amigosmelvin" className={styles.link}>
-                                <LuHeartHandshake className={styles.icon}/> 
-                                <p>Amigos Melvin</p>
-                            </Link>
-                        </li>
-                    </>
-                )}
-
-                {/* --- DOAÇÕES (ADM, DIRE e AUX) --- */}
-                {/* Separei aqui para incluir o isAux */}
-                {(isAdm || isDire || isAux) && (
-                    <li> 
-                        <Link to="/app/cestas" className={styles.link}>
-                            <IoBasket className={styles.icon}/> 
-                            <p>Doações</p>
-                        </Link>
-                    </li>
-                )}
-
-                {isAdm && (
-                    <li> 
-                        <Link to="/app/avisos" className={styles.link}>
-                            <GoAlertFill className={styles.icon}/> 
-                            <p>Avisos</p>
-                        </Link>
-                    </li>
-                )}
+                    </motion.li>
+                ))}
             </ul>
 
-            <IoSettings className={styles.config} onClick={handleRouteConfig}/>
-        </div>
+            <div className={styles.configWrapper}>
+                <div 
+                    className={`${styles.link} ${location.pathname === '/app/config' ? styles.active : ''}`}
+                    onClick={() => { navigate('/app/config'); closeNavBar(); }}
+                    style={{ cursor: 'pointer' }}
+                >
+                    <span className={styles.icon}><IoSettings /></span>
+                    <p>Configurações</p>
+                </div>
+            </div>
+        </motion.div>
     )
 }
 

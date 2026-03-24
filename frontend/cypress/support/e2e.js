@@ -25,14 +25,11 @@ beforeEach(() => {
     }
   }).as('loginRequest');
 
-  // Unified role request intercept
-  cy.intercept('GET', '**/api/auth/role_*', { 
-    statusCode: 200, 
-    body: 'ADM' 
-  }).as('roleRequest');
-  
-  // Auth / Login calls (Global to ensure it's always ready)
-  // Using very broad pattern to catch any absolute or relative variation
+  // Unified role request intercept - Super broad to catch any variation
+  cy.intercept('GET', '**/auth/role_*', { statusCode: 200, body: 'ADM' }).as('globalRoleRequest');
+  cy.intercept('GET', '**/api/auth/role_*', { statusCode: 200, body: 'ADM' }).as('globalRoleRequestApi');
+
+  // Login calls
   cy.intercept('POST', '**/auth/login*', {
     statusCode: 200,
     body: { 

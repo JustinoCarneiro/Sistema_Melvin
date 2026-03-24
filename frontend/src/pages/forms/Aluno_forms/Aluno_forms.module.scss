@@ -65,6 +65,7 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    padding-bottom: 3rem; // Espaço extra para garantir que nada na base seja cortado
 }
 
 .sectionTitle {
@@ -94,6 +95,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
+    overflow: visible; // Garantir que dropzones e outros elementos não sejam clipados
 }
 
 .coluna {
@@ -208,7 +210,8 @@
     background-color: #fafafa;
     cursor: pointer;
     transition: all 0.2s;
-    min-height: 3rem;
+    min-height: 4rem; // Um pouco maior para garantir visibilidade
+    overflow: visible;
 
     &:hover {
         border-color: $cor-primaria;

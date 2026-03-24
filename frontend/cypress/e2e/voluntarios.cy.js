@@ -6,6 +6,9 @@ describe('Voluntários Management', () => {
     cy.clearCookies();
     cy.login(role, matricula);
     
+    // Safety mock for role check
+    cy.intercept('GET', '**/auth/role_*', { statusCode: 200, body: role }).as('roleMock');
+    
     // Override specific volunteers for this test
     cy.intercept('GET', '**/api/voluntario', {
       statusCode: 200,
@@ -16,6 +19,6 @@ describe('Voluntários Management', () => {
   it('should list volunteers', () => {
     cy.visit('/#/app/voluntarios');
     cy.wait('@getVoluntarios');
-    cy.get('tr[class*="tr_body"]').should('contain', 'Voluntário 1');
+    cy.get('[class*="tr_body"], [class*="card_body"]').should('contain', 'Voluntário 1');
   });
 });

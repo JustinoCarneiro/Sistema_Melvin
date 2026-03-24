@@ -33,7 +33,7 @@
 
 .input{
     all: unset;
-    background-color: white;
+    background-color: var(--bg-color);
     padding: 0.2rem;
     cursor: pointer;
 }
@@ -41,7 +41,7 @@
 .button{
     all: unset;
     align-self: start;
-    background-color: white;
+    background-color: var(--bg-color);
     padding: 0.5rem;
     border-radius: 7px;
     margin-bottom: 0.5rem;

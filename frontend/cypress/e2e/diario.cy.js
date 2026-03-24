@@ -43,6 +43,7 @@ describe('Diário de Acompanhamento', () => {
   it('should allow selecting a new file', () => {
     // Note: Testing actual drag-and-drop/upload is complex with mocks, 
     // but we can verify the element exists and is interactable.
-    cy.get('div[class*="dropzone"]').should('be.visible');
+    // Target the specific dropzone area, avoiding the wrapper
+    cy.get('div[class*="_dropzone_"]').first().scrollIntoView().should('be.visible');
   });
 });

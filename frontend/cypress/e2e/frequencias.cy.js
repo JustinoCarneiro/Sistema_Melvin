@@ -26,7 +26,8 @@ describe('Frequências (Attendance)', () => {
     cy.visit('/#/app/frequencias/alunos');
     cy.wait('@getAlunos');
     
-    cy.get('tr[class*="tr_body"]').first().within(() => {
+    // Target either the table row or the mobile card equivalent
+    cy.get('[class*="tr_body"], [class*="card_body"]').first().within(() => {
       cy.get('select').select('P');
     });
     

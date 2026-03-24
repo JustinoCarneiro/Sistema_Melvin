@@ -23,12 +23,12 @@ describe('Operational Modules (Avisos & Cestas)', () => {
   it('should manage avisos', () => {
     cy.visit('/#/app/avisos');
     cy.wait('@getAvisos');
-    cy.get('tr[class*="tr_body"]').should('contain', 'Aviso Teste');
+    cy.get('[class*="tr_body"], [class*="card_body"]').should('contain', 'Aviso Teste');
   });
 
   it('should manage cestas', () => {
     cy.visit('/#/app/cestas');
     cy.wait('@getCestas');
-    cy.get('tr[class*="tr_body"]').should('contain', 'Recebedor 1');
+    cy.get('[class*="tr_body"], [class*="card_body"]').should('contain', 'Recebedor 1');
   });
 });

@@ -2,56 +2,69 @@
 
 .body {
     width: 100%;
-    min-height: 100vh;
+    min-height: calc(100vh - 4.5rem);
     display: flex;
     justify-content: center;
-    padding: 2rem;
-    background-color: $cor-fundo;
+    padding: 2.5rem 1.5rem;
+    background-color: var(--bg-color);
+
+    @media (max-width: 768px) {
+        padding: 1rem;
+    }
 }
 
 .container {
     width: 100%;
-    max-width: 1200px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    padding: 2rem;
+    max-width: 1400px;
+    background-color: var(--surface-color);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--glass-border);
+    padding: 2.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
+
+    @media (max-width: 768px) {
+        padding: 1.25rem;
+        gap: 1.5rem;
+        border-radius: 12px;
+    }
 }
 
 .header {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #eee;
-
+    
     .titleGroup {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 1.25rem;
     }
 
-    // BOTÃO VOLTAR (Com Animação e Tamanho Ajustado)
     .voltar {
-        font-size: 2.5rem; // Aumentado
-        color: #555;
+        font-size: 2.25rem;
+        color: var(--text-muted);
         cursor: pointer;
-        transition: all 0.2s;
+        transition: var(--transition-fast);
         
-        &:hover { 
-            color: $cor-primaria; 
-            transform: translateX(-3px); // Efeito de recuo
+        &:hover {
+            color: var(--accent-primary);
+            transform: translateX(-4px);
         }
     }
 
     .title {
-        color: $cor-primaria;
-        font-size: 1.8rem;
-        font-weight: bold;
+        color: var(--text-main);
+        font-size: 2rem;
+        font-weight: 700;
         margin: 0;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    @media (max-width: 768px) {
+        .title { font-size: 1.75rem; }
     }
 }
 
@@ -59,24 +72,36 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 1rem;
+    gap: 1.25rem;
     width: 100%;
-    justify-content: space-between;
+
+    @media (max-width: 1100px) {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }
 
 .container_busca {
     display: flex;
     align-items: center;
-    background-color: #f0f0f0;
-    border-radius: 20px;
-    padding: 0.5rem 1rem;
+    background-color: #f8fafc;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
     flex-grow: 1;
-    min-width: 200px;
+    min-width: 300px;
+    transition: var(--transition-fast);
+
+    &:focus-within {
+        border-color: var(--accent-primary);
+        background-color: white;
+        box-shadow: 0 0 0 4px rgba(33, 115, 70, 0.1);
+    }
 
     .icon_busca {
-        color: #666;
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
+        color: var(--text-muted);
+        font-size: 1.4rem;
+        margin-right: 0.75rem;
     }
 
     .busca {
@@ -85,59 +110,78 @@
         outline: none;
         width: 100%;
         font-size: 1rem;
-        color: #333;
-        &::placeholder { color: #999; }
+        color: var(--text-main);
+        
+        &::placeholder {
+            color: var(--text-muted);
+        }
+    }
+
+    @media (max-width: 768px) {
+        min-width: 100%;
     }
 }
 
 .controls {
     display: flex;
+    align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
     
     .input_data {
-        padding: 0.6rem 1rem;
-        border-radius: 6px;
-        border: 1px solid #ddd;
-        background-color: white;
+        padding: 0.75rem 1.25rem;
+        border-radius: 10px;
+        border: 1px solid var(--glass-border);
+        background-color: #f8fafc;
         font-size: 0.95rem;
-        color: #555;
+        font-weight: 500;
+        color: var(--text-main);
         cursor: pointer;
         outline: none;
-        transition: border-color 0.2s;
-        
-        &:focus { border-color: $cor-primaria; }
-    }
-}
+        transition: var(--transition-fast);
+        min-width: 180px;
 
-.form {
-    display: flex;
-    flex-direction: column;
+        &:focus {
+            border-color: var(--accent-primary);
+            background-color: white;
+        }
+
+        &:hover {
+            border-color: #cbd5e1;
+        }
+    }
+
+    @media (max-width: 1100px) {
+        width: 100%;
+        .input_data { flex: 1; }
+    }
 }
 
 .tableResponsive {
     width: 100%;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
 }
 
 .table {
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0;
-    border-bottom: 1px solid black; 
-    table-layout: fixed; // Essencial para tabelas com inputs
+    table-layout: fixed;
 
     .thead {
-        background-color: $cor-primaria;
-        color: white;
+        background-color: #f8fafc;
         
         th {
-            padding: 1rem;
+            padding: 1.25rem 1rem;
             text-align: left;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--glass-border);
             
             &.th_center { text-align: center; }
         }
@@ -145,19 +189,25 @@
 
     .tbody {
         tr {
-            transition: background-color 0.2s;
-            &:hover { background-color: #f8f9fa; }
+            transition: var(--transition-fast);
+
+            &:hover {
+                background-color: rgba(33, 115, 70, 0.03);
+            }
 
             td {
-                padding: 0.8rem 1rem;
-                color: #333;
+                padding: 1rem;
+                color: var(--text-main);
                 font-size: 0.95rem;
-                border-bottom: 1px solid #eee;
-                vertical-align: middle;
-
-                // CORREÇÃO: Quebra de texto
+                border-bottom: 1px solid var(--glass-border); 
                 word-wrap: break-word;
                 overflow-wrap: anywhere;
+                vertical-align: middle;
+            }
+
+            td:nth-child(2) { 
+                font-weight: 600;
+                color: var(--accent-primary);
             }
         }
         
@@ -165,153 +215,147 @@
 
         .empty {
             text-align: center;
-            padding: 3rem;
-            color: #999;
+            padding: 4rem;
+            color: var(--text-muted);
             font-style: italic;
         }
     }
 }
 
-// Estilos dos Inputs de Presença
 .select_turnos {
     display: flex;
-    gap: 0.5rem;
-    justify-content: center; // Centraliza no desktop
+    gap: 0.75rem;
+    justify-content: center;
 }
 
 .select_presenca {
     padding: 0.4rem;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+    border-radius: 6px;
+    border: 1px solid var(--glass-border);
     background-color: white;
-    font-size: 1rem;
-    width: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    width: 55px;
     text-align: center;
     cursor: pointer;
+    transition: var(--transition-fast);
+    outline: none;
     
-    &:focus { border-color: $cor-primaria; }
+    &:focus {
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px rgba(33, 115, 70, 0.1);
+    }
 }
 
 .input_justificativa {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #fff;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    background-color: #f8fafc;
     font-size: 0.9rem;
+    transition: var(--transition-fast);
+    outline: none;
     
-    // Evita overflow horizontal do input
-    box-sizing: border-box;
-    
-    &:focus { border-color: $cor-primaria; outline: none; }
+    &:focus {
+        border-color: var(--accent-primary);
+        background-color: white;
+        box-shadow: 0 0 0 3px rgba(33, 115, 70, 0.1);
+    }
 }
 
 .footerActions {
     display: flex;
     justify-content: flex-end;
-    margin-top: 2rem;
+    margin-top: 1rem;
+
+    @media (max-width: 768px) {
+        justify-content: stretch;
+        button { width: 100%; }
+    }
 }
 
 /* --- MEDIA QUERIES (Mobile Card View) --- */
 @media (max-width: 768px) {
-    .container {
-        padding: 1rem;
+    .tableResponsive {
+        border: none;
+        overflow: visible; 
+    }
+    
+    .table {
+        table-layout: auto;
     }
 
-    .filters, .controls {
-        flex-direction: column;
-        align-items: stretch;
-        
-        .input_data { width: 100%; }
+    .thead {
+        display: none;
     }
 
-    /* --- TABELA VIRA CARDS --- */
-    .tableResponsive { overflow: visible; }
-    .table { border: none; }
-    .thead { display: none; }
-
-    .table, .tbody, .tr_body, td {
+    .table, .tbody, tr, td {
         display: block;
         width: 100%;
     }
 
-    .tr_body {
-        margin-bottom: 1.5rem;
+    tr.tr_body {
+        margin-bottom: 1.5rem; 
         background-color: white;
-        
-        // ESTILO CARD COM BORDA
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        padding: 0;
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
 
         td {
             display: flex;
-            justify-content: space-between;
-            align-items: center; // Centraliza verticalmente inputs pequenos
+            justify-content: space-between; 
+            align-items: center; 
             text-align: right;
-            padding: 1rem;
+            padding: 1rem 1.25rem;
             border-bottom: 1px solid #f0f0f0;
-
-            // CORREÇÃO MOBILE
-            white-space: normal;
-            word-break: break-word;
             
             &::before {
                 content: attr(data-label);
-                float: left;
                 font-weight: 700;
-                color: $cor-primaria;
+                color: var(--text-muted);
                 text-transform: uppercase;
-                font-size: 0.75rem;
-                margin-right: 1rem;
+                font-size: 0.7rem;
+                letter-spacing: 0.05em;
+                margin-right: 1.5rem;
                 flex-shrink: 0;
-
-                // PROTEÇÃO: Rótulo nunca quebra
-                white-space: nowrap; 
             }
 
-            &:last-child { border-bottom: none; }
+            &:last-child {
+                border-bottom: none;
+            }
             
-            // Header do Card (Nome)
+            // Highlight name
             &:nth-child(2) {
-                background-color: #fafafa;
                 font-size: 1.1rem;
-                font-weight: 600;
-                color: #333;
-                border-bottom: 1px solid #e0e0e0;
-                border-top-left-radius: 12px;
-                border-top-right-radius: 12px;
-                justify-content: space-between; 
-            }
-
-            // Centraliza selects de presença no card
-            &.td_presenca {
-                justify-content: space-between; // Label na esq, selects na dir
+                font-weight: 700;
+                color: var(--accent-primary);
+                background-color: #f8fafc;
+                text-align: left;
                 
-                .select_turnos {
-                    justify-content: flex-end; // Garante que fiquem à direita no mobile
-                }
-            }
-
-            .input_justificativa { 
-                width: 100%; 
-                margin-top: 0.5rem; 
+                &::before { color: var(--accent-primary); }
             }
             
-            // Justificativa embaixo do label
             &[data-label="Justificativa"] {
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: stretch;
                 text-align: left;
                 
                 &::before { margin-bottom: 0.5rem; }
             }
+            
+            &.td_presenca {
+                .select_turnos {
+                    flex-direction: row;
+                    justify-content: flex-end;
+                }
+            }
         }
-    }
-    
-    .footerActions {
-        justify-content: center;
-        button { width: 100%; }
     }
 }

@@ -1,57 +1,103 @@
 @import '../../index.scss';
 
-.body{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    height: 5rem;
-    align-items: center;
-    background-color: #044D8C;
-    color: white;
-    padding-left: 2.5rem;
-    padding-right: 2.5rem;
-    z-index: 1;
-    position: relative;
+.body {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  height: 4.5rem;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
 }
 
-.icon{
-    font-size: 2.5rem;
-    cursor: pointer;
+.menuIcon {
+  font-size: 2.25rem;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+
+  &:hover {
+    color: var(--accent-primary);
+    background: rgba(33, 115, 70, 0.05);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
-.title{
-    cursor: pointer;
+.title {
+  grid-column: 2;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem; // Slightly larger title
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-main);
+  cursor: pointer;
+  margin: 0;
+  background: linear-gradient(135deg, var(--text-main) 0%, var(--accent-primary) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
 }
 
-.usuario{
-    font-size: 1.7rem;
+.usuario {
+  grid-column: 3;
+  justify-self: end;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.35rem 1rem;
+  background: rgba(33, 115, 70, 0.05);
+  border: 1px solid rgba(33, 115, 70, 0.1);
+  border-radius: 9999px;
+  color: var(--accent-primary);
 }
 
-.filtro{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); 
-    z-index: 1; 
+.filtro {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(2px);
+  z-index: 10;
 }
 
-@media (max-width: $size-c) {
-    .icon{
-        font-size: 2rem;
-        cursor: pointer;
-        margin-left: -1rem;
+@media (max-width: 600px) {
+    .body {
+        grid-template-columns: 1fr auto 1fr;
+        padding: 0.5rem 1rem;
+        height: 4rem;
     }
 
-    .title{
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 1.2rem;
-        align-self: center;
+    .menuIcon {
+        grid-column: 1;
+        justify-self: start;
+        font-size: 1.75rem;
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .title {
+        grid-column: 2;
+        justify-self: center;
+        text-align: center;
+        font-size: 1rem;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
     }
 
     .usuario {

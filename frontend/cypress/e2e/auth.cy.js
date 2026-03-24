@@ -15,7 +15,13 @@ describe('Authentication & RBAC', () => {
     });
 
     cy.visit('/#/login');
-    cy.wait(1000); // Give the app a second to stabilize
+    cy.intercept('GET', '**/auth/role_*', (req) => {
+        const matricula = req.url.split('role_')[1];
+        // Default to ADM for 20247001, AUX for 20247005
+        const role = (matricula === '20247005') ? 'AUX' : 'ADM'; 
+        req.reply({ statusCode: 200, body: role });
+    }).as('globalRoleRequest');
+    cy.wait(1000); 
   });
 
   const performLogin = (role, matricula) => {
@@ -35,9 +41,15 @@ describe('Authentication & RBAC', () => {
     cy.get('input[name="senha"]', { timeout: 10000 }).should('be.visible').type(matricula === '20247001' ? 'admin' : '123456');
     
     // Submit form directly for maximum stability
+    cy.intercept('GET', '**/auth/role_*', {
+      statusCode: 200,
+      body: role // Use the passed role (ADM/AUX)
+    }).as('roleRequest');
+
     cy.get('form').submit();
     
     cy.wait('@loginRequest', { timeout: 20000 });
+    cy.wait('@roleRequest', { timeout: 20000 });
   };
 
   it('should redirect to ADM dashboard after ADM login', () => {

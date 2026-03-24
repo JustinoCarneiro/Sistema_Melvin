@@ -1,10 +1,11 @@
+/* eslint-disable react/prop-types */
 import styles from './Login.module.scss';
 import { useState, useEffect } from 'react'; 
 import { useNavigate, Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import authService from '../../services/authService';
-
 import logo from '../../docs/Instituto_Melvin.png';
 
 function Login(){
@@ -16,25 +17,9 @@ function Login(){
     useEffect(() => {
         const token = Cookies.get('token');
         const role = Cookies.get('role');
-        const allCookies = document.cookie;
         
-        console.log('Login Page Loaded - Cookies:', allCookies);
-        console.log('Detected Token:', !!token);
-        console.log('Detected Role:', !!role);
-        
-        // Só redireciona se tiver os dois (token e role). Se não tiver role, o cookie tá quebrado.
         if (token && role) {
-            console.log('Session detected, redirecting to dashboard...');
             navigate(`/app/${role.toLowerCase()}`);
-        } else if (token && !role) {
-             console.log('Incomplete session, clearing cookies...');
-             const cookiesToClear = ['token', 'role', 'login'];
-             cookiesToClear.forEach(cookieName => {
-                 Cookies.remove(cookieName, { path: '/' });
-                 Cookies.remove(cookieName);
-                 document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
-                 document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname};`;
-             });
         }
     }, [navigate]);
 
@@ -46,59 +31,95 @@ function Login(){
             
             if (response.status === 200) {
                 const role = response.data.role; 
-                
-                // Salva o login e o role no cookie para o PrivateRoute e o useEffect lerem
                 Cookies.set('login', login, { sameSite: 'Lax', secure: false, path: '/' });
                 Cookies.set('role', role, { sameSite: 'Lax', secure: false, path: '/' }); 
 
-                const path = `/app/${role.toLowerCase()}`;
-                navigate(path);
+                navigate(`/app/${role.toLowerCase()}`);
             }
         } catch (error) {
-            console.error("3001:Erro ao fazer login", error);
+            console.error("Erro ao fazer login", error);
             setErrorMessage(error.message || 'Erro ao fazer login. Verifique suas credenciais.');
         }
     };
 
     const [obs, setObs] = useState(false);
 
-    const handleChange = () => {
-        setObs(!obs);
-    }
-
     return(
         <div className={styles.body}>
-            <div className={styles.container}>
+            <motion.div 
+                className={styles.container}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
                 <form className={styles.form} onSubmit={handleSubmit}>
                     <Link to="/">
-                        <img src={logo} alt="logo" className={styles.logo}/>
+                        <motion.img 
+                            src={logo} 
+                            alt="logo" 
+                            className={styles.logo}
+                            whileHover={{ scale: 1.05 }}
+                        />
                     </Link>
-                    <input
-                        type="text" 
-                        name="matricula" 
-                        placeholder="matrícula"
-                        value={login}
-                        onChange={(e) => setLogin(e.target.value)}
-                        className={styles.input}
-                    />
-                    <input
-                        type="password" 
-                        name="senha" 
-                        placeholder="senha"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className={styles.input}
-                    />
-                    {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
-                    <button type="submit" className={styles.button}>
-                        <p className={styles.texto}>Entrar</p>
-                    </button>
+                    
+                    <div className={styles.inputGroup}>
+                        <input
+                            type="text" 
+                            name="matricula" 
+                            placeholder="matrícula"
+                            value={login}
+                            onChange={(e) => setLogin(e.target.value)}
+                            className={styles.input}
+                            required
+                        />
+                        <input
+                            type="password" 
+                            name="senha" 
+                            placeholder="senha"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className={styles.input}
+                            required
+                        />
+                    </div>
+
+                    {errorMessage && (
+                        <motion.p 
+                            className={styles.errorMessage}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                        >
+                            {errorMessage}
+                        </motion.p>
+                    )}
+
+                    <motion.button 
+                        type="submit" 
+                        className={styles.button}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        Entrar
+                    </motion.button>
                 </form>
-                <button className={styles.esqu_senha} onClick={handleChange}>
-                    <p>esqueci a minha senha</p>
+
+                <button className={styles.esqu_senha} onClick={() => setObs(!obs)}>
+                    esqueci a minha senha
                 </button>
-                {obs && <p className={styles.obs}>Recorra ao seu coordenador para gerar uma nova senha.</p>}
-            </div>
+
+                <AnimatePresence>
+                    {obs && (
+                        <motion.p 
+                            className={styles.obs}
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                        >
+                            Recorra ao seu coordenador para gerar uma nova senha.
+                        </motion.p>
+                    )}
+                </AnimatePresence>
+            </motion.div>
         </div>
     )
 }

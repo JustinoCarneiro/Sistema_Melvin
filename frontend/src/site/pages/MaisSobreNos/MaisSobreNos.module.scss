@@ -1,7 +1,7 @@
 @import "../../../index.scss";
 
 .body{
-    background-color: #ffffff;
+    background-color: var(--bg-color);
     width: 100%;
     min-height: calc(100vh - 15rem);
 }
@@ -282,39 +282,69 @@
 
 @media (max-width: $size-b){
     .imagens{
-        justify-content: center;
+        width: 16rem;
+        height: 16rem;
+        margin: 0 auto 2rem;
+        position: relative;
     }
 
-    .imagem_es{
-        display: none;
+    .imagens > * {
+        width: 14.5rem;
+        height: 14.5rem;
+        border-radius: 1rem;
+    }
+
+    .imagem_back{
+        left: 0;
+        top: 0;
+        background-color: rgb(137, 187, 75);
+        z-index: 1;
+    }
+
+    .imagem_front{
+        right: 0;
+        bottom: 0;
+        z-index: 2;
     }
 
     .faixa_instmelvin{
-        padding-inline: 1.5rem;
+        padding-inline: 1rem;
     }
 
     .conteudo{
-        width: 22.5rem;
+        width: 100%;
+        max-width: 100%;
+        padding-inline: 1rem;
     }
 
     .paragrafo_abaixo{
-        padding-inline: 1.5rem;
+        padding-inline: 1rem;
     }
 
     .faixa_objetivos{
-        padding-inline: 1.5rem;
+        padding-inline: 1rem;
+    }
+
+    .objetivos{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
     }
 
     .faixa_valores {
-        padding-inline: 1.5rem;
+        padding-inline: 1rem;
     }
 
     .faixa_voluntarios{
-        padding-inline: 1.5rem;
+        padding-inline: 1rem;
     }
 
     .grid_voluntarios{
-        padding-inline: 1.5rem;
+        padding-inline: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
     }
 }
 

@@ -7,7 +7,7 @@
     justify-content: space-around;
     align-content: start;
     padding-top: 2rem;
-    background-color: #df298d;
+    background-color: var(--accent-red);
     padding-bottom: 2rem;
 }
 
@@ -25,7 +25,7 @@
 }
 
 .imagem_back{
-    background-color: rgb(216, 106, 214);
+    background-color: var(--accent-blue);
     z-index: 1;
 }
 

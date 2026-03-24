@@ -15,6 +15,16 @@ function Home() {
         setRankingSortBy
     } = useDashboard();
 
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        try {
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
+        } catch (e) {
+            return dateString;
+        }
+    };
+
     const rankingOptions = [
         { value: 'media', label: 'Média Geral' },
         { value: 'presenca', label: 'Presença' },
@@ -24,10 +34,18 @@ function Home() {
         { value: 'psicologico', label: 'Psicológico' },
     ];
 
-    if (loading) return <div className={styles.loadingContainer}>Carregando Dashboard...</div>;
+    if (loading) return (
+        <div className={styles.loadingContainer}>
+            Carregando Dashboard...
+        </div>
+    );
 
     if (error && !frequenciaPorSala.manha) {
-        return <div className={styles.errorContainer}>{error}</div>;
+        return (
+            <div className={styles.errorContainer}>
+                {error}
+            </div>
+        );
     }
 
     const RankingList = ({ alunos, type }) => (
@@ -56,6 +74,24 @@ function Home() {
                 <h1 className={styles.pageTitle}>Dashboard</h1>
                 <p className={styles.pageSubtitle}>Visão geral do instituto</p>
             </div>
+
+            {/* --- AVISOS (MOVIMENTADO PARA O TOPO) --- */}
+            {avisos.length > 0 && (
+                <div className={styles.avisosSection}>
+                    <h3 className={styles.sectionTitle}><FaBullhorn /> Quadro de Avisos</h3>
+                    <div className={styles.avisosGrid}>
+                        {avisos.map(aviso => (
+                            <div key={aviso.id} className={styles.avisoCard}>
+                                <div className={styles.avisoHeader}>
+                                    <h4>{aviso.titulo}</h4>
+                                    {aviso.data_inicio && <span className={styles.avisoDate}>{formatDate(aviso.data_inicio)}</span>}
+                                </div>
+                                <p>{aviso.corpo}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             <div className={styles.dashboardGrid}>
                 {/* --- CARD DE FREQUÊNCIA --- */}
@@ -106,7 +142,7 @@ function Home() {
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <div className={styles.headerTitleGroup}>
-                            <FaArrowUp color="#28a745"/>
+                            <FaArrowUp color="#22c55e"/>
                             <h3>Destaques</h3>
                         </div>
                         <select 
@@ -119,7 +155,11 @@ function Home() {
                         </select>
                     </div>
                     <div className={styles.listContainer}>
-                        {isRankingLoading ? <p className={styles.updating}>Atualizando...</p> : <RankingList alunos={rankingMelhores} type="good" />}
+                        {isRankingLoading ? (
+                            <p className={styles.updating}>Atualizando...</p>
+                        ) : (
+                            <RankingList alunos={rankingMelhores} type="good" />
+                        )}
                     </div>
                 </div>
 
@@ -127,33 +167,19 @@ function Home() {
                 <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <div className={styles.headerTitleGroup}>
-                            <FaArrowDown color="#dc3545"/>
+                            <FaArrowDown color="#ef4444"/>
                             <h3>Atenção Necessária</h3>
                         </div>
                     </div>
                     <div className={styles.listContainer}>
-                        {isRankingLoading ? <p className={styles.updating}>Atualizando...</p> : <RankingList alunos={rankingPiores} type="bad" />}
+                        {isRankingLoading ? (
+                            <p className={styles.updating}>Atualizando...</p>
+                        ) : (
+                            <RankingList alunos={rankingPiores} type="bad" />
+                        )}
                     </div>
                 </div>
             </div>
-            
-            {/* --- AVISOS --- */}
-            {avisos.length > 0 && (
-                <div className={styles.avisosSection}>
-                    <h3 className={styles.sectionTitle}><FaBullhorn /> Quadro de Avisos</h3>
-                    <div className={styles.avisosGrid}>
-                        {avisos.map(aviso => (
-                            <div key={aviso.id} className={styles.avisoCard}>
-                                <div className={styles.avisoHeader}>
-                                    <h4>{aviso.titulo}</h4>
-                                    {aviso.data_inicio && <span className={styles.avisoDate}>{aviso.data_inicio}</span>}
-                                </div>
-                                <p>{aviso.corpo}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

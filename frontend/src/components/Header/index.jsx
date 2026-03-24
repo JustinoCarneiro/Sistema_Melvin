@@ -2,11 +2,12 @@ import styles from './Header.module.scss';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { IoMenu } from "react-icons/io5";
 import NavBar from "../NavBar";
 
-function Header(){
+function Header() {
     const [navbar, setNavbar] = useState(false);
     const navigate = useNavigate();
 
@@ -22,43 +23,50 @@ function Header(){
 
     let tipo;
     let caminho;
-    if(userRole === "COOR"){
-        tipo = "Coordenação";
-        caminho = "/app/coor";
-    }else if(userRole === "PROF"){
-        tipo = "Professor";
-        caminho = "/app/prof";
-    }else if(userRole === "AUX"){
-        tipo = "Auxiliar";
-        caminho = "/app/aux";
-    }else if(userRole === "COZI"){
-        tipo = "Cozinha";
-        caminho = "/app/cozi";
-    }else if(userRole === "DIRE"){
-        tipo = "Diretoria";
-        caminho = "/app/dire";
-    }else if(userRole === "MARK"){
-        tipo = "Marketing";
-        caminho = "/app/mark";
-    }else if(userRole === "ZELA"){
-        tipo = "Zeladoria";
-        caminho = "/app/zela";
-    }else if(userRole === "ADM"){
-        tipo = "Administração";
-        caminho = "/app/adm";
-    } else if(userRole === "PSICO"){
-        tipo = "Psicólogo";
-        caminho = "/app/psico";
+    const roles = {
+        "COOR": ["Coordenação", "/app/coor"],
+        "PROF": ["Professor", "/app/prof"],
+        "AUX": ["Auxiliar", "/app/aux"],
+        "COZI": ["Cozinha", "/app/cozi"],
+        "DIRE": ["Diretoria", "/app/dire"],
+        "MARK": ["Marketing", "/app/mark"],
+        "ZELA": ["Zeladoria", "/app/zela"],
+        "ADM": ["Administração", "/app/adm"],
+        "PSICO": ["Psicólogo", "/app/psico"]
+    };
+
+    if (roles[userRole]) {
+        [tipo, caminho] = roles[userRole];
     }
 
-    return(
-        <div className={styles.body}>
-            <IoMenu className={styles.icon} onClick={handleNavBar}/>
-            <h2 className={styles.title} onClick={() => navigate(caminho)}>SISTEMA MELVIN</h2>
-            <p className={styles.usuario}>{tipo}</p>
-            {navbar && <NavBar close={closeNavBar}/>}
-            {navbar && <div className={styles.filtro} onClick={closeNavBar}/>}
-        </div>
+    return (
+        <header className={styles.body}>
+            <IoMenu 
+                className={styles.menuIcon} 
+                onClick={handleNavBar}
+            />
+            
+            <h2 className={styles.title} onClick={() => navigate(caminho)}>
+                SISTEMA MELVIN
+            </h2>
+            
+            <div className={styles.usuario}>{tipo}</div>
+
+            <AnimatePresence>
+                {navbar && (
+                    <>
+                        <NavBar close={closeNavBar} />
+                        <motion.div 
+                            className={styles.filtro} 
+                            onClick={closeNavBar}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        />
+                    </>
+                )}
+            </AnimatePresence>
+        </header>
     )
 }
 

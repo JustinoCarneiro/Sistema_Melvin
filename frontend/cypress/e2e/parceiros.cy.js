@@ -24,6 +24,6 @@ describe('Partners (Embaixadores & Amigos)', () => {
   it('should list partners', () => {
     cy.visit('/#/app/embaixadores');
     cy.wait('@getEmbaixadores');
-    cy.get('tr[class*="tr_body"]').should('contain', 'Embaixador 1');
+    cy.get('[class*="tr_body"], [class*="card_body"]').should('contain', 'Embaixador 1');
   });
 });
