@@ -1,18 +1,17 @@
 @import "../../../index.scss";
 
 .body{
-    background-color: var(--bg-color);
     width: 100%;
-    min-height: calc(100vh - 15rem);
 }
 
 .faixa_instmelvin{
     display: flex;
     justify-content: space-around;
     align-content: start;
-    padding-top: 2rem;
+    padding-top: 8rem;
     background-color: #06721f;
-    padding-bottom: 2rem;
+    padding-bottom: 8rem;
+    min-height: 50vh;
 }
 
 .conteudo{

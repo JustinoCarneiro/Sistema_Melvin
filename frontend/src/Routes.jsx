@@ -62,20 +62,22 @@ function MainLayout() {
 
 function SiteContent(){
     return(
-        <>
+        <div className="site-layout">
             <HeaderSite/>
-            <Routes>
-                <Route path="/" element={ <Home/> }/>
-                <Route path="/maissobrenos" element={ <MaisSobreNos/> } />
-                <Route path="/embaixadores" element={ <Embaixadores/> } />
-                <Route path="/amigosmelvin" element={ <AmigosMelvin/> } />
-                <Route path="/cadastroamigo" element={ <CadastroAmigo/> } />
-                <Route path="/serembaixador" element={ <SerEmbaixador/> }/>
-                <Route path="/doacoes" element={ <Doacao/> }/>
-                <Route path="/notatemvalor" element={ <NotaValor/> }/>
-            </Routes>
+            <main className="site-content">
+                <Routes>
+                    <Route path="/" element={ <Home/> }/>
+                    <Route path="/maissobrenos" element={ <MaisSobreNos/> } />
+                    <Route path="/embaixadores" element={ <Embaixadores/> } />
+                    <Route path="/amigosmelvin" element={ <AmigosMelvin/> } />
+                    <Route path="/cadastroamigo" element={ <CadastroAmigo/> } />
+                    <Route path="/serembaixador" element={ <SerEmbaixador/> }/>
+                    <Route path="/doacoes" element={ <Doacao/> }/>
+                    <Route path="/notatemvalor" element={ <NotaValor/> }/>
+                </Routes>
+            </main>
             <FooterSite/>
-        </>
+        </div>
     )
 }
 

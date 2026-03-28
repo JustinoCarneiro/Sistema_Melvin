@@ -1,9 +1,13 @@
 import './App.scss'
 import AppRoutes from './Routes'
+import ScrollToTop from './site/components/ScrollToTop'
 
 function App() {
   return (
-    <AppRoutes/>                  //Para utilizar as rotas criadas em routes.jsx
+    <>
+      <AppRoutes/>
+      <ScrollToTop/>
+    </>
   )
 }
 

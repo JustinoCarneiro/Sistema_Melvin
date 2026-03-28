@@ -1,0 +1,45 @@
+@import '../../../index.scss';
+
+.btn {
+    display: none; // Escondido no desktop
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    border: none;
+    background-color: #044D8C;
+    color: white;
+    font-size: 1.4rem;
+    cursor: pointer;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(1rem);
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background-color: #0660b0;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+// Só aparece no mobile/tablet
+@media (max-width: $size-h) {
+    .btn {
+        display: flex;
+    }
+}

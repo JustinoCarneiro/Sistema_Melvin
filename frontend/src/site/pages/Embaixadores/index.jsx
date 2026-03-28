@@ -17,14 +17,24 @@ function Embaixadores(){
         const fetchEmbaixadores = async () => {
             try{
                 const response = await get.embaixadores();
-                const embaixadoresData = await Promise.all(response.data
+                const dados = response.data;
+
+                if (!Array.isArray(dados)) {
+                    console.error("Formato inesperado no response de embaixadores:", response);
+                    setError(new Error("Erro ao carregar dados dos embaixadores."));
+                    setLoading(false);
+                    return;
+                }
+
+                const embaixadoresData = await Promise.all(dados
                     .filter(embaixador => {
                         return embaixador.status;
                     })
                     .map(async embaixador => {
                         try {
                             const imagemResponse = await get.imagemlista();
-                            const imagemParaEmbaixador = imagemResponse.data.find(imagem => imagem.idAtrelado === embaixador.id && imagem.tipo === 'embaixador');
+                            const imagemData = Array.isArray(imagemResponse.data) ? imagemResponse.data : [];
+                            const imagemParaEmbaixador = imagemData.find(imagem => imagem.idAtrelado === embaixador.id && imagem.tipo === 'embaixador');
 
                             if (imagemParaEmbaixador) {
                                 const imageUrl = `${import.meta.env.VITE_REACT_APP_FETCH_URL}${imagemParaEmbaixador.filePath}`;

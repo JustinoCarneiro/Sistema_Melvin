@@ -2,14 +2,14 @@
 
 .body{
     width: 100%;
-    min-height: calc(100vh - 15rem);
     display: flex;
     justify-content: space-around;
     align-content: start;
     align-items: center;
-    padding-top: 2rem;
+    padding-top: 8rem;
     background-color: #F29F05;
-    padding-bottom: 2rem;
+    padding-bottom: 8rem;
+    min-height: 60vh;
 }
 
 .img{

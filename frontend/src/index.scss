@@ -78,6 +78,17 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
 }
 
+.site-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.site-content {
+  flex: 1;
+}
+
 /* Scrollbar Customization */
 ::-webkit-scrollbar {
   width: 8px;

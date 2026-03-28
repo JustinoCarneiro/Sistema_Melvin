@@ -2,13 +2,13 @@
 
 .body{
     width: 100%;
-    min-height: calc(100vh - 15rem);
+    min-height: 50vh;
     display: flex;
     justify-content: space-around;
     align-content: start;
-    padding-top: 2rem;
+    padding-top: 8rem;
     background-color: var(--accent-red);
-    padding-bottom: 2rem;
+    padding-bottom: 8rem;
 }
 
 .imagens{
