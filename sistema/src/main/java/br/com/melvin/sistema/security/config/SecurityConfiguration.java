@@ -132,6 +132,7 @@ public class SecurityConfiguration {
         // Always allow common development origins for convenience in dev mode
         List<String> origins = new ArrayList<>(Arrays.asList(
             "http://localhost:3000",
+            "http://localhost:3001",
             "http://localhost:5173",
             "http://institutomelvin.org:3000",
             "http://institutomelvin.org"

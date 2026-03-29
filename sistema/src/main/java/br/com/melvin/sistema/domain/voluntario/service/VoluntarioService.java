@@ -45,20 +45,18 @@ public class VoluntarioService {
         int currentYear = Year.now().getValue();
         String yearPrefix = String.valueOf(currentYear);
         
-        // Adiciona o número 7 após o ano
-        String fixedNumber = "7";
-        
-        Query query = entityManager.createNativeQuery("SELECT COUNT(*) FROM discente");
+        // Conta apenas voluntários matriculados no ano atual para o incremento
+        Query query = entityManager.createNativeQuery("SELECT COUNT(*) FROM voluntario WHERE matricula LIKE '" + yearPrefix + "%'");
         int count = ((Number) query.getSingleResult()).intValue();
         int nextNumber = count + 1;
         
-        // Gera a matrícula com o formato 202470001, 202470002, etc.
-        String newMatricula = "%s%s%04d".formatted(yearPrefix, fixedNumber, nextNumber);
+        // Gera a matrícula no formato [Ano][XXX] (ex: 2026001)
+        String newMatricula = "%s%03d".formatted(yearPrefix, nextNumber);
         
-        // Verifica se a matrícula já existe
+        // Verifica se a matrícula já existe para evitar duplicatas em caso de deleção
         while (voluntarioRepository.findByMatricula(newMatricula) != null) {
             nextNumber++;
-            newMatricula = "%s%s%04d".formatted(yearPrefix, fixedNumber, nextNumber);
+            newMatricula = "%s%03d".formatted(yearPrefix, nextNumber);
         }
         
         return newMatricula;

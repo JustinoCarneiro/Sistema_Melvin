@@ -12,7 +12,7 @@ describe('Voluntários Management', () => {
     // Override specific volunteers for this test
     cy.intercept('GET', '**/api/voluntario', {
       statusCode: 200,
-      body: [{ matricula: 'V001', nome: 'Voluntário 1', status: 'true', funcao: 'professor' }]
+      body: [{ matricula: '2026001', nome: 'Voluntário 1', status: 'true', funcao: 'professor' }]
     }).as('getVoluntarios');
   });
 

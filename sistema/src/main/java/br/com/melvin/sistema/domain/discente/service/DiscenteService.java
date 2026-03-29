@@ -54,17 +54,18 @@ public class DiscenteService {
         int currentYear = Year.now().getValue();
         String yearPrefix = String.valueOf(currentYear);
     
-        Query query = entityManager.createNativeQuery("SELECT COUNT(*) FROM discente");
+        // Conta apenas discentes matriculados no ano atual para o incremento
+        Query query = entityManager.createNativeQuery("SELECT COUNT(*) FROM discente WHERE matricula LIKE '" + yearPrefix + "%'");
         int count = ((Number) query.getSingleResult()).intValue();
         int nextNumber = count + 1;
     
-        // Gera a matrícula
-        String newMatricula = "%s%04d".formatted(yearPrefix, nextNumber);
+        // Gera a matrícula no formato [Ano][XXX] (ex: 2026001)
+        String newMatricula = "%s%03d".formatted(yearPrefix, nextNumber);
     
-        // Verifica se a matrícula já existe
+        // Verifica se a matrícula já existe para evitar duplicatas em caso de deleção
         while (discenteRepository.findByMatricula(newMatricula) != null) {
             nextNumber++;
-            newMatricula = "%s%04d".formatted(yearPrefix, nextNumber);
+            newMatricula = "%s%03d".formatted(yearPrefix, nextNumber);
         }
     
         return newMatricula;

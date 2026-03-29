@@ -2,7 +2,7 @@ describe('Diário de Acompanhamento', () => {
   beforeEach(() => {
     const role = 'ADM';
     const matricula = 'adm_test';
-    const alunoMatricula = '20240001';
+    const alunoMatricula = '2026001';
     
     cy.clearCookies();
     cy.login(role, matricula);

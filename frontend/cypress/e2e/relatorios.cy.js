@@ -11,7 +11,7 @@ describe('Relatórios (Reporting)', () => {
 
     cy.intercept('GET', '**/discente', {
       statusCode: 200,
-      body: [{ matricula: '20240001', nome: 'Aluno Relatório', status: 'true' }]
+      body: [{ matricula: '2026001', nome: 'Aluno Relatório', status: 'true' }]
     }).as('getAlunos');
   });
 

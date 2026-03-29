@@ -12,8 +12,8 @@ describe('Frequências (Attendance)', () => {
     cy.intercept('GET', '**/discente', {
       statusCode: 200,
       body: [
-        { matricula: '20240001', nome: 'Aluno 1', status: 'true', sala: 1, turno: 'manha' },
-        { matricula: '20240002', nome: 'Aluno 1', status: 'true', sala: 1, turno: 'tarde' }
+        { matricula: '2026001', nome: 'Aluno 1', status: 'true', sala: 1, turno: 'manha' },
+        { matricula: '2026002', nome: 'Aluno 1', status: 'true', sala: 1, turno: 'tarde' }
       ]
     }).as('getAlunos');
     

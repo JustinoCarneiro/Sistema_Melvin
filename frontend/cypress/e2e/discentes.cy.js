@@ -12,7 +12,7 @@ describe('Discentes Management', () => {
     // Override specific students for this test
     cy.intercept('GET', '**/api/discente', {
       statusCode: 200,
-      body: [{ matricula: '20240001', nome: 'João Silva', status: 'true', sala: 1, turno: 'manha' }]
+      body: [{ matricula: '2026001', nome: 'João Silva', status: 'true', sala: 1, turno: 'manha' }]
     }).as('getAlunos');
   });
 
