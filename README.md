@@ -40,10 +40,41 @@ sistema-melvin/
 │   ├── src/main/resources/  # application.properties e recursos estáticos
 │   └── pom.xml              # Gerenciamento de dependências Maven
 ├── postgres/                # Configurações do Banco de Dados
-├── docker-compose.yml       # Orquestração de todos os serviços (App, DB)
+├── docker-compose.yml       # Orquestração de todos os serviços (Produção)
+├── docker-compose.dev.yml   # Orquestração para DESENVOLVIMENTO (Frontend com HMR)
 ├── .env                     # Variáveis de ambiente e segredos (NÃO COMMITAR)
-└── start.sh                 # Script para inicialização simplificada via Docker
+├── dev.sh                   # Script para iniciar ambiente de desenvolvimento com HMR
+└── deploy.sh                # Script para build e deploy de produção
 ```
+
+---
+
+## 🔢 Padrão de Matrícula
+
+O sistema utiliza um padrão numérico para matrículas geradas automaticamente:
+
+- **Alunos**: `[Ano][XXX]` (Ex: `2026001`, `2026002`) - 7 dígitos, sequência reiniciada anualmente.
+- **Voluntários**: `[Ano][XXX]` (Ex: `2026001`) - Segue o mesmo padrão dos alunos, mas em tabela separada.
+- **Legacy**: Matrículas de 8 dígitos (como `20247001`) são preservadas para compatibilidade de registros antigos.
+
+---
+
+## ⚙️ Ambiente de Desenvolvimento
+
+Para facilitar o desenvolvimento, o projeto conta com um ambiente otimizado com **Hot Module Replacement (HMR)** no frontend:
+
+### 1. Inicialização Rápida
+O script `dev.sh` configura o banco de dados, compila o backend (se necessário) e inicia o frontend em modo de desenvolvimento:
+
+```bash
+chmod +x dev.sh
+./dev.sh
+```
+
+### 2. Acessos
+- **Frontend (HMR)**: [http://localhost:3001](http://localhost:3001)
+- **Backend API**: [http://localhost:8443](http://localhost:8443)
+- **Credenciais de Teste (Admin)**: `20247001` / `admin`
 
 ---
 
@@ -69,22 +100,21 @@ A segurança é tratada como prioridade no Sistema Melvin, utilizando padrões d
 
 ## 🧪 Testes e Qualidade
 
-O projeto conta com uma suíte de testes automatizados para garantir a estabilidade e a corretude das funcionalidades principais:
+O projeto conta com uma suíte de testes automatizados:
 
 ### 1. Frontend (End-to-End - Cypress)
-Os testes de ponta-a-ponta simulam a interação do usuário real com a aplicação:
+Os testes de ponta-a-ponta simulam a interação do usuário e validam o novo padrão de matrícula:
 
-- **Cestas (Doações) (`cestas.cy.js`)**: Valida a listagem, busca dinâmica por doador/rede e navegação para o formulário de novos registros.
-- **Diário de Acompanhamento (`diario.cy.js`)**: Verifica o carregamento automático de arquivos anexados aos alunos e a funcionalidade de download seguro.
-- **Avisos (`avisos.cy.js`)**: Testa a listagem de notificações ativas e o fluxo de criação de novos avisos.
-- **Autenticação e RBAC (`auth.cy.js`)**: Valida o fluxo de login, redirecionamento correto baseado no papel do usuário (ADM, AUX) e o processo de logout (limpeza de cookies).
-- **Exceções de Login (`login.cy.js`)**: Garante o tratamento de erros para credenciais inválidas.
+- **Discentes (`discentes.cy.js`)**: Valida o novo padrão `2026001`.
+- **Voluntários (`voluntarios.cy.js`)**: Valida o novo padrão numérico.
+- **Frequências (`frequencias.cy.js`)**: Testa a chamada escolar para as novas matrículas.
+- **Autenticação (`auth.cy.js`)**: Valida RBAC com usuários Admin e Auxiliar.
 
 **Como executar:**
 ```bash
 cd frontend
-npm run cypress:run  # Executa todos os testes em modo headless
-npm run cypress:open # Abre o Cypress Runner para execução interativa
+npm run cypress:run  # Headless (Console)
+npm run cypress:open # Interativo (Navegador)
 ```
 
 ### 2. Backend (Testes Unitários e de Integração - JUnit 5)
@@ -121,18 +151,14 @@ O projeto inclui scripts em Bash para facilitar o dia a dia e o deploy:
 
 ---
 
-## 🚀 Como Executar e Desenvolver
+## 🚀 Como Executar (Produção)
 
 ### 1. Configuração Inicial
-1.  Certifique-se de ter o **Docker** instalado.
-2.  Adicione o domínio ao seu arquivo `/etc/hosts` (opcional para desenvolvimento):
-    `127.0.0.1 institutomelvin.org`
-3.  Configure o arquivo `.env` (baseado no `.env.example`). O sistema já está configurado para usar **URLs relativas** (`/api`), o que permite alternar entre HTTP e HTTPS sem alterar o código.
+1. Certifique-se de ter o **Docker** instalado.
+2. Configure o arquivo `.env` (baseado no `.env.example`).
 
 ### 2. Inicialização
-Para subir o ambiente completo:
 ```bash
-chmod +x *.sh
 ./deploy.sh
 ```
 Acesse em: **[http://institutomelvin.org:3000](http://institutomelvin.org:3000)**
