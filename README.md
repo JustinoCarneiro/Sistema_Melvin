@@ -86,6 +86,7 @@ A segurança é tratada como prioridade no Sistema Melvin, utilizando padrões d
 - **JWT (JSON Web Tokens)**: A autenticação é *stateless* (sem estado no servidor), utilizando tokens JWT para validar sessões.
 - **RBAC (Role-Based Access Control)**: O acesso é controlado por papéis específicos (`ADM`, `DIRE`, `COOR`, `PROF`, `ASSIST`, `PSICO`, `AUX`). Cada endpoint possui restrições granulares de acesso.
 - **Spring Security**: Filtros customizados validam cada requisição antes de chegar à lógica de negócio.
+- **Configuração de Permissões (RBAC Dinâmico)**: Interface para ADMs e Diretoria definirem dinamicamente quais cargos podem acessar cada funcionalidade (Editar notas, Cadastrar alunos, etc.), persistindo as regras no banco de dados.
 
 ### 2. Proteção de Dados
 - **Hashing de Senhas (Argon2)**: As senhas são armazenadas utilizando o algoritmo **Argon2**, atualmente um dos mais robustos contra ataques de força bruta e rainbox tables.
@@ -109,6 +110,7 @@ Os testes de ponta-a-ponta simulam a interação do usuário e validam o novo pa
 - **Voluntários (`voluntarios.cy.js`)**: Valida o novo padrão numérico.
 - **Frequências (`frequencias.cy.js`)**: Testa a chamada escolar para as novas matrículas.
 - **Autenticação (`auth.cy.js`)**: Valida RBAC com usuários Admin e Auxiliar.
+- **Permissões (`permissao.cy.js`)**: Valida a interface de configuração de permissões, incluindo edição, salvamento e responsividade (Mobile First).
 
 **Como executar:**
 ```bash
