@@ -37,6 +37,11 @@ const voluntarioService = {
         }
     },
 
+    // Alias para manter consistência com outros serviços e componentes de formulário
+    async get(matricula) {
+        return this.getByMatricula(matricula);
+    },
+
     async create(dados) {
         const endpoint = "/voluntario";
         try {
