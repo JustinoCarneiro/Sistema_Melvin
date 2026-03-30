@@ -83,8 +83,10 @@ function SiteContent(){
 }
 
 function AppContent() {
-    // Lista de perfis que podem acessar áreas pedagógicas/administrativas comuns
     const perfisGerais = ['ADM', 'DIRE', 'COOR', 'PROF', 'PSICO', 'ASSIST'];
+    
+    // Lista completa de perfis da equipe para módulos dinamicos
+    const perfisEquipe = ['ADM', 'DIRE', 'COOR', 'PROF', 'PSICO', 'ASSIST', 'AUX', 'MARK', 'COZI', 'ZELA'];
     
     // Lista de perfis que podem acessar Doações (Cestas)
     const perfisDoacao = ['ADM', 'DIRE', 'AUX'];
@@ -112,27 +114,27 @@ function AppContent() {
                     <Route path="/aluno/editar/:matricula" element={<PrivateRoute role={perfisGerais} element={AlunoForms} />} />
 
                     {/* --- VOLUNTÁRIOS --- */}
-                    <Route path="/voluntarios" element={<PrivateRoute role={['ADM', 'DIRE', 'COOR']} element={Voluntarios} />} />
-                    <Route path="/voluntario/criar" element={<PrivateRoute role={['ADM', 'DIRE', 'COOR']} element={VoluntarioForms} />} />
-                    <Route path="/voluntario/editar/:matricula" element={<PrivateRoute role={['ADM', 'DIRE', 'COOR']} element={VoluntarioForms} />} />
+                    <Route path="/voluntarios" element={<PrivateRoute role={perfisEquipe} element={Voluntarios} />} />
+                    <Route path="/voluntario/criar" element={<PrivateRoute role={perfisEquipe} element={VoluntarioForms} />} />
+                    <Route path="/voluntario/editar/:matricula" element={<PrivateRoute role={perfisEquipe} element={VoluntarioForms} />} />
                     
                     {/* --- EMBAIXADORES --- */}
-                    <Route path="/embaixadores" element={<PrivateRoute role={['ADM', 'DIRE']} element={EmbaixadoresApp} />} />
-                    <Route path="/embaixador/editar/:id" element={<PrivateRoute role={['ADM', 'DIRE']} element={EmbaixadorForms} />} />
+                    <Route path="/embaixadores" element={<PrivateRoute role={perfisEquipe} element={EmbaixadoresApp} />} />
+                    <Route path="/embaixador/editar/:id" element={<PrivateRoute role={perfisEquipe} element={EmbaixadorForms} />} />
 
                     {/* --- AMIGOS DO MELVIN --- */}
-                    <Route path="/amigosmelvin" element={<PrivateRoute role={['ADM', 'DIRE']} element={AmigosMelvinApp} />} />
-                    <Route path="/amigomelvin/editar/:id" element={<PrivateRoute role={['ADM', 'DIRE']} element={AmigoMelvinForms} />} />
+                    <Route path="/amigosmelvin" element={<PrivateRoute role={perfisEquipe} element={AmigosMelvinApp} />} />
+                    <Route path="/amigomelvin/editar/:id" element={<PrivateRoute role={perfisEquipe} element={AmigoMelvinForms} />} />
 
                     {/* --- AVISOS --- */}
-                    <Route path="/avisos" element={<PrivateRoute role="ADM" element={Avisos} />}/>
-                    <Route path="/avisos/criar" element={<PrivateRoute role="ADM" element={AvisoForms} />}/>
-                    <Route path="/avisos/editar/:id" element={<PrivateRoute role="ADM" element={AvisoForms} />}/>
+                    <Route path="/avisos" element={<PrivateRoute role={perfisEquipe} element={Avisos} />}/>
+                    <Route path="/avisos/criar" element={<PrivateRoute role={perfisEquipe} element={AvisoForms} />}/>
+                    <Route path="/avisos/editar/:id" element={<PrivateRoute role={perfisEquipe} element={AvisoForms} />}/>
 
-                    {/* --- CESTAS (DOAÇÕES) - ADM, DIRE e AUX --- */}
-                    <Route path="/cestas" element={<PrivateRoute role={perfisDoacao} element={Cestas} />}/>
-                    <Route path="/cestas/criar" element={<PrivateRoute role={perfisDoacao} element={CestasForms} />}/>
-                    <Route path="/cestas/editar/:id" element={<PrivateRoute role={perfisDoacao} element={CestasForms} />}/>
+                    {/* --- CESTAS (DOAÇÕES) --- */}
+                    <Route path="/cestas" element={<PrivateRoute role={perfisEquipe} element={Cestas} />}/>
+                    <Route path="/cestas/criar" element={<PrivateRoute role={perfisEquipe} element={CestasForms} />}/>
+                    <Route path="/cestas/editar/:id" element={<PrivateRoute role={perfisEquipe} element={CestasForms} />}/>
 
                     {/* --- OUTROS --- */}
                     <Route path="/rendimento_aluno/:matricula" element={<PrivateRoute role={perfisGerais} element={Rendimento} />} />

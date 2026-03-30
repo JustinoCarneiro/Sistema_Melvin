@@ -7,8 +7,11 @@ import { FaPlus } from "react-icons/fa6";
 import { MdOutlineModeEdit } from "react-icons/md";
 
 import avisoService from "../../../services/avisoService";
+import { usePermissions } from "../../../hooks/usePermissions";
 
 function Avisos({ modoDesativados = false }){
+    const { hasPermission, isAdm } = usePermissions();
+    const podeGerenciar = hasPermission('GERENCIAR_AVISOS');
     const [busca, setBusca] = useState('');
     const [avisos, setAvisos] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -120,13 +123,17 @@ function Avisos({ modoDesativados = false }){
                                             <td data-label="Título">{aviso.titulo}</td>
                                             <td data-label="Data Início">{aviso.data_inicio}</td>
                                             <td data-label="Data Término">{aviso.data_final}</td>
-                                            <td className={styles.edicao} data-label="Ações">
-                                                <MdOutlineModeEdit 
-                                                    className={styles.icon_editar}
-                                                    onClick={()=>handleEditClick(aviso.id)}
-                                                    title="Editar Aviso"
-                                                />
-                                            </td>
+                                            {(isAdm || podeGerenciar) && (
+                                                <td className={styles.edicao} data-label="Ações">
+                                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                                                        <MdOutlineModeEdit 
+                                                            className={styles.icon_editar}
+                                                            onClick={()=>handleEditClick(aviso.id)}
+                                                            title="Editar Aviso"
+                                                        />
+                                                    </div>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))
                                 ) : (
@@ -139,7 +146,7 @@ function Avisos({ modoDesativados = false }){
                             )}
                             
                             {/* Botão Criar Novo (Apenas se NÃO for desativados e NÃO estiver carregando) */}
-                            {!loading && !modoDesativados && (
+                            {!loading && !modoDesativados && (isAdm || podeGerenciar) && (
                                 <tr className={styles.plus} onClick={()=>navigate(`/app/avisos/criar`)}>
                                     <td colSpan="4"><FaPlus className={styles.icon_plus}/> Criar novo aviso</td>
                                 </tr>

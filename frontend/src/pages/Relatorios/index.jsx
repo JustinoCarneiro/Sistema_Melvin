@@ -30,7 +30,7 @@ function Relatorios() {
     } = useAlunos();
 
     const podeVisualizarRelatorios = hasPermission('VISUALIZAR_RELATORIOS');
-    const podeExportar = isAdm || isCoor || isDire || hasPermission('ADMINISTRATIVO');
+    const podeExportar = isAdm || hasPermission('ADMINISTRATIVO');
 
     // Debug: Monitorar erros no console
     useEffect(() => {
@@ -246,7 +246,7 @@ function Relatorios() {
                             </>
                         )}
 
-                        {(podeVisualizarRelatorios || isAdm || isCoor || isDire) && (
+                        {(podeVisualizarRelatorios || isAdm) && (
                             <select
                                 className={styles.select_sala}
                                 value={turnoSelecionado}
@@ -271,7 +271,7 @@ function Relatorios() {
                             ))}
                         </select>
 
-                        {(podeExportar || isAdm || isCoor || isDire) && (
+                        {(podeExportar || isAdm) && (
                             <Botao 
                                 nome={exporting ? "..." : "Exportar"}
                                 corFundo="#217346"

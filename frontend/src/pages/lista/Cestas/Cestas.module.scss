@@ -309,9 +309,14 @@
     color: var(--text-muted);
     cursor: pointer;
     transition: var(--transition-fast);
-    display: block;
-    margin: 0 auto;
-    &:hover { color: var(--accent-primary); transform: scale(1.1); }
+    padding: 0.5rem;
+    border-radius: 8px;
+    
+    &:hover {
+        background: rgba(33, 115, 70, 0.08);
+        color: var(--accent-primary);
+        transform: scale(1.1);
+    }
 }
 
 /* --- MEDIA QUERIES --- */

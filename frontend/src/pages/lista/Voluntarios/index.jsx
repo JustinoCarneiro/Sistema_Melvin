@@ -207,10 +207,12 @@ function Voluntarios({ modoDesativados = false }) {
                                             <td data-label="Email">{voluntario.email}</td>
                                             {(isAdm || podeGerenciarVoluntarios) && (
                                                 <td className={styles.edicao} data-label="Ações">
-                                                    <MdOutlineModeEdit
-                                                        className={styles.icon_editar}
-                                                        onClick={() => handleEditClick(voluntario.matricula)}
-                                                    />
+                                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                                                        <MdOutlineModeEdit
+                                                            className={styles.icon_editar}
+                                                            onClick={() => handleEditClick(voluntario.matricula)}
+                                                        />
+                                                    </div>
                                                 </td>
                                             )}
                                         </tr>

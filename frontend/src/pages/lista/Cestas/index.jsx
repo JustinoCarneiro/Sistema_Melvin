@@ -9,8 +9,11 @@ import { FaPlus, FaFileExcel, FaBoxOpen, FaWeightHanging, FaHandHoldingHeart } f
 
 import cestaService from '../../../services/cestaService';
 import Botao from '../../../components/gerais/Botao'; 
+import { usePermissions } from '../../../hooks/usePermissions';
 
 function Cestas(){
+    const { hasPermission, isAdm } = usePermissions();
+    const podeGerenciar = hasPermission('GERENCIAR_CESTAS');
     const [busca, setBusca] = useState('');
     const [cestas, setCestas] = useState([]);
     const navigate = useNavigate();
@@ -330,13 +333,17 @@ function Cestas(){
                                                     ? new Date(item.dataEntrega + "T00:00:00").toLocaleDateString('pt-BR') 
                                                     : '-'}
                                             </td>
-                                            <td className={styles.edicao} data-label="Ações">
-                                                <MdOutlineModeEdit 
-                                                    className={styles.icon_editar}
-                                                    onClick={()=>handleEditClick(item.id)}
-                                                    title="Editar"
-                                                />
-                                            </td>
+                                            {(isAdm || podeGerenciar) && (
+                                                <td className={styles.edicao} data-label="Ações">
+                                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                                                        <MdOutlineModeEdit 
+                                                            className={styles.icon_editar}
+                                                            onClick={()=>handleEditClick(item.id)}
+                                                            title="Editar"
+                                                        />
+                                                    </div>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))
                                 ) : (
@@ -348,7 +355,7 @@ function Cestas(){
                                 )
                             )}
 
-                            {!loading && (
+                            {(isAdm || podeGerenciar) && !loading && (
                                 <tr className={styles.plus} onClick={()=>navigate("/app/cestas/criar")}>
                                     <td colSpan="7"><FaPlus className={styles.icon_plus}/> Novo Registro</td>
                                 </tr>

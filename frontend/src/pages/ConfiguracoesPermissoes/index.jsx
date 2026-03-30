@@ -22,7 +22,12 @@ const RULE_LABELS = {
     'CADASTRAR_ALUNO': 'Cadastrar/Editar Alunos',
     'EDITAR_AVALIACAO_PSICO': 'Editar Relatórios Psico',
     'GERENCIAR_CESTAS': 'Gerenciar Cestas Básicas',
-    'GERENCIAR_VOLUNTARIOS': 'Gerenciar Voluntários'
+    'GERENCIAR_VOLUNTARIOS': 'Gerenciar Voluntários',
+    'VISUALIZAR_ALUNOS': 'Visualizar Alunos',
+    'VISUALIZAR_RELATORIOS': 'Visualizar Relatórios',
+    'GERENCIAR_EMBAIXADORES': 'Gerenciar Embaixadores',
+    'GERENCIAR_AMIGOS': 'Gerenciar Amigos do Melvin',
+    'GERENCIAR_AVISOS': 'Gerenciar Avisos'
 };
 
 function ConfiguracoesPermissoes() {
@@ -39,7 +44,39 @@ function ConfiguracoesPermissoes() {
         try {
             setLoading(true);
             const response = await permissaoService.listarTodas();
-            setPermissoes(response.data);
+            
+            // Ordem sugerida para agrupar por objeto/módulo
+            const ORDEM_PREFERENCIAL = [
+                // Alunos / Acadêmico
+                'VISUALIZAR_ALUNOS',
+                'CADASTRAR_ALUNO',
+                'GERENCIAR_FREQUENCIA',
+                'EDITAR_RENDIMENTO',
+                'EDITAR_AVALIACAO_PSICO',
+                // Gestão de Equipe
+                'GERENCIAR_VOLUNTARIOS',
+                // Módulos Administrativos
+                'GERENCIAR_CESTAS',
+                'GERENCIAR_EMBAIXADORES',
+                'GERENCIAR_AMIGOS',
+                'GERENCIAR_AVISOS',
+                // Geral
+                'VISUALIZAR_RELATORIOS'
+            ];
+
+            const dadosOrdenados = [...response.data].sort((a, b) => {
+                const idxA = ORDEM_PREFERENCIAL.indexOf(a.nomeRegra);
+                const idxB = ORDEM_PREFERENCIAL.indexOf(b.nomeRegra);
+                
+                // Se não estiver na lista (permissão nova), mantém no final por ordem alfebética
+                if (idxA === -1 && idxB === -1) return a.nomeRegra.localeCompare(b.nomeRegra);
+                if (idxA === -1) return 1;
+                if (idxB === -1) return -1;
+                
+                return idxA - idxB;
+            });
+
+            setPermissoes(dadosOrdenados);
         } catch (error) {
             console.error("Erro ao carregar permissões", error);
             setMessage({ type: 'error', text: 'Erro ao carregar permissões do servidor.' });

@@ -17,8 +17,8 @@ function NavBar({ close }) {
     const closeNavBar = () => { close(false) }
 
     const navItems = [
-        { show: (isAdm || isProf || isDire || isCoor || isPsico || isAssist || hasPermission('VISUALIZAR_ALUNOS')), to: "/app/alunos", icon: <PiStudentBold />, label: "Alunos" },
-        { show: (isAdm || isProf || isDire || isCoor || isPsico || isAssist || hasPermission('VISUALIZAR_RELATORIOS')), to: "/app/relatorios", icon: <TbReportAnalytics />, label: "Relatórios" },
+        { show: (isAdm || isDire || isCoor || hasPermission('VISUALIZAR_ALUNOS')), to: "/app/alunos", icon: <PiStudentBold />, label: "Alunos" },
+        { show: (isAdm || isDire || isCoor || hasPermission('VISUALIZAR_RELATORIOS')), to: "/app/relatorios", icon: <TbReportAnalytics />, label: "Relatórios" },
         { show: (isAdm || isDire || isCoor || hasPermission('GERENCIAR_VOLUNTARIOS')), to: "/app/voluntarios", icon: <PiChalkboardTeacher />, label: "Voluntários" },
         { show: isAdm || isDire || hasPermission('GERENCIAR_EMBAIXADORES'), to: "/app/embaixadores", icon: <TbSocial />, label: "Embaixadores" },
         { show: isAdm || isDire || hasPermission('GERENCIAR_AMIGOS'), to: "/app/amigosmelvin", icon: <LuHeartHandshake />, label: "Amigos Melvin" },

@@ -4,8 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
 import amigoMelvinService from "../../../services/amigoMelvinService";
+import { usePermissions } from "../../../hooks/usePermissions";
 
 function AmigosMelvinApp({ modoDesativados = false }){
+    const { hasPermission, isAdm } = usePermissions();
+    const podeGerenciar = hasPermission('GERENCIAR_AMIGOS');
     const [busca, setBusca] = useState('');
     const [amigosmelvin, setAmigosMelvin] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -116,13 +119,17 @@ function AmigosMelvinApp({ modoDesativados = false }){
                                             <td data-label="Nome">{amigomelvin.nome}</td>
                                             <td data-label="Contato">{amigomelvin.contato}</td>
                                             <td data-label="Email">{amigomelvin.email}</td>
-                                            <td className={styles.edicao} data-label="Ações">
-                                                <MdOutlineModeEdit 
-                                                    className={styles.icon_editar}
-                                                    onClick={()=>handleEditClick(amigomelvin.id)}
-                                                    title="Editar Amigo"
-                                                />
-                                            </td>
+                                            {(isAdm || podeGerenciar) && (
+                                                <td className={styles.edicao} data-label="Ações">
+                                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                                                        <MdOutlineModeEdit 
+                                                            className={styles.icon_editar}
+                                                            onClick={()=>handleEditClick(amigomelvin.id)}
+                                                            title="Editar Amigo"
+                                                        />
+                                                    </div>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))
                                 ) : (

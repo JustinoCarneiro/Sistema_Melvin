@@ -2,58 +2,63 @@
 
 .body {
     width: 100%;
-    min-height: 100vh;
+    min-height: calc(100vh - 4.5rem);
     display: flex;
     justify-content: center;
-    padding: 2rem;
-    background-color: $cor-fundo;
+    padding: 2.5rem 1.5rem;
+    background-color: var(--bg-color);
+
+    @media (max-width: 768px) {
+        padding: 1rem;
+    }
 }
 
 .container {
     width: 100%;
-    max-width: 1200px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    max-width: 1400px;
+    background-color: var(--surface-color);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--glass-border);
     padding: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
+
+    @media (max-width: 768px) {
+        padding: 1.25rem;
+        gap: 1.5rem;
+        border-radius: 12px;
+    }
 }
 
 .header {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #eee;
-
-    // --- BLOCO ATUALIZADO (Título + Botão Voltar) ---
+    
     .titleGroup {
         display: flex;
         align-items: center;
-        gap: 1rem;
-    }
-
-    .title {
-        color: $cor-primaria;
-        font-size: 1.8rem;
-        font-weight: bold;
-        margin: 0;
+        gap: 1.25rem;
     }
 
     .voltar {
-        font-size: 2.5rem; // Aumentado para ficar visível
-        color: #555;
+        font-size: 1.8rem;
+        color: var(--text-muted);
         cursor: pointer;
-        transition: all 0.2s; // Transição suave para cor e movimento
+        transition: var(--transition-fast);
         
-        &:hover { 
-            color: $cor-primaria;
-            transform: translateX(-3px); // A ANIMAÇÃO DA SETA
-        }
+        &:hover { color: var(--accent-primary); transform: translateX(-4px); }
     }
-    // --------------------------------------------------
+
+    .title {
+        color: var(--text-main);
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        font-family: 'Outfit', sans-serif;
+    }
 }
 
 .filters {
@@ -67,16 +72,24 @@
 .container_busca {
     display: flex;
     align-items: center;
-    background-color: #f0f0f0;
-    border-radius: 20px;
-    padding: 0.5rem 1rem;
+    background-color: #f8fafc;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
     flex-grow: 1;
-    min-width: 250px;
+    min-width: 300px;
+    transition: var(--transition-fast);
+
+    &:focus-within {
+        border-color: var(--accent-primary);
+        background-color: white;
+        box-shadow: 0 0 0 4px rgba(33, 115, 70, 0.1);
+    }
 
     .icon_busca {
-        color: #666;
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
+        color: var(--text-muted);
+        font-size: 1.4rem;
+        margin-right: 0.75rem;
     }
 
     .busca {
@@ -85,77 +98,66 @@
         outline: none;
         width: 100%;
         font-size: 1rem;
-        color: #333;
-        
-        &::placeholder {
-            color: #999;
-        }
+        color: var(--text-main);
+        &::placeholder { color: var(--text-muted); }
     }
 }
 
 .tableResponsive {
     width: 100%;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    
-    &::-webkit-scrollbar {
-        height: 8px;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: #ccc;
-        border-radius: 4px;
-    }
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
 }
 
 .table {
     width: 100%;
     border-collapse: separate; 
     border-spacing: 0;
-    border-bottom: 1px solid black; 
-    table-layout: fixed; // Mantém a tabela estável
+    table-layout: fixed;
 
     .thead {
-        background-color: $cor-primaria;
-        color: white;
+        background-color: #f8fafc;
         
         th {
-            padding: 1rem;
+            padding: 1.25rem 1rem;
             text-align: left;
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--glass-border);
             
             &.edicao {
                 text-align: center;
-                width: 80px;
+                width: 100px;
             }
         }
     }
 
     .tbody {
         tr {
-            transition: background-color 0.2s;
+            transition: var(--transition-fast);
 
             &:hover {
-                background-color: #f8f9fa;
+                background-color: rgba(33, 115, 70, 0.03);
             }
 
             td {
-                padding: 1rem;
-                color: #333;
+                padding: 1.25rem 1rem;
+                color: var(--text-main);
                 font-size: 0.95rem;
-                border-bottom: 1px solid #eee; 
-
-                // QUEBRA DE TEXTO (Importante para emails)
+                border-bottom: 1px solid var(--glass-border); 
                 word-wrap: break-word;
                 overflow-wrap: anywhere;
+                vertical-align: middle;
             }
 
             // Destaque para o Nome (1ª Coluna)
             td:first-child { 
-                font-weight: 500;
-                color: $cor-secundaria;
+                font-weight: 600;
+                color: var(--accent-primary);
             }
         }
         
@@ -166,22 +168,24 @@
         .empty {
             text-align: center;
             padding: 3rem;
-            color: #999;
+            color: var(--text-muted);
             font-style: italic;
         }
     }
 }
 
 .icon_editar {
-    font-size: 1.3rem;
-    color: #666;
+    font-size: 2.5rem;
+    color: var(--text-muted);
     cursor: pointer;
-    transition: color 0.2s;
-    display: block;
-    margin: 0 auto;
+    transition: var(--transition-fast);
+    padding: 0.5rem;
+    border-radius: 8px;
 
     &:hover {
-        color: $cor-primaria;
+        color: var(--accent-primary);
+        background: rgba(33, 115, 70, 0.08);
+        transform: scale(1.1);
     }
 }
 

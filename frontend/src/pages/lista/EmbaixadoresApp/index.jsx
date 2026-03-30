@@ -7,8 +7,11 @@ import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
 
 import embaixadorService from "../../../services/embaixadorService";
+import { usePermissions } from "../../../hooks/usePermissions";
 
 function EmbaixadoresApp({ modoDesativados = false }){
+    const { hasPermission, isAdm } = usePermissions();
+    const podeGerenciar = hasPermission('GERENCIAR_EMBAIXADORES');
     const [busca, setBusca] = useState('');
     const [embaixadores, setEmbaixadores] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -124,13 +127,17 @@ function EmbaixadoresApp({ modoDesativados = false }){
                                             <td data-label="Instagram">{embaixador.instagram}</td>
                                             <td data-label="Contato">{embaixador.contato}</td>
                                             <td data-label="Email">{embaixador.email}</td>
-                                            <td className={styles.edicao} data-label="Ações">
-                                                <MdOutlineModeEdit 
-                                                    className={styles.icon_editar}
-                                                    onClick={()=>handleEditClick(embaixador.id)}
-                                                    title="Editar Embaixador"
-                                                />
-                                            </td>
+                                            {(isAdm || podeGerenciar) && (
+                                                <td className={styles.edicao} data-label="Ações">
+                                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
+                                                        <MdOutlineModeEdit 
+                                                            className={styles.icon_editar}
+                                                            onClick={()=>handleEditClick(embaixador.id)}
+                                                            title="Editar Embaixador"
+                                                        />
+                                                    </div>
+                                                </td>
+                                            )}
                                         </tr>
                                     ))
                                 ) : (

@@ -138,7 +138,7 @@ function Alunos({ modoDesativados = false }) {
                         {/* Botões extras: Apenas no modo ATIVOS */}
                         {!modoDesativados && (
                             <div className={styles.botoes}>
-                                {(isAdm || isCoor || isDire || isAssist || isPsico || podeCadastrarAluno) && (
+                                {(isAdm || isCoor || isDire || podeCadastrarAluno) && (
                                     <>
                                         <select
                                             className={styles.select_sala}
@@ -208,7 +208,7 @@ function Alunos({ modoDesativados = false }) {
                                 <th>Matrícula</th>
                                 <th>Nome</th>
                                 <th>Responsável</th>
-                                {(isAdm || isCoor || isDire || isPsico || isAssist || podeEditarRendimento || podeCadastrarAluno) && <th className={styles.edicao}>Ações</th>}
+                                {(isAdm || isCoor || isDire || podeEditarRendimento || podeCadastrarAluno) && <th className={styles.edicao}>Ações</th>}
                             </tr>
                         </thead>
                         <tbody className={styles.tbody}>
@@ -225,7 +225,7 @@ function Alunos({ modoDesativados = false }) {
                                             <td data-label="Matrícula">{aluno.matricula}</td>
                                             <td data-label="Nome">{aluno.nome}</td>
                                             <td data-label="Responsável">{aluno.nome_pai || aluno.nome_mae || '-'}</td>
-                                            {(isAdm || isCoor || isDire || isPsico || isAssist || podeEditarRendimento || podeCadastrarAluno) && (
+                                            {(isAdm || isCoor || isDire || podeEditarRendimento || podeCadastrarAluno) && (
                                                 <td className={styles.edicao} data-label="Ações">
                                                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
                                                         {podeCadastrarAluno && (

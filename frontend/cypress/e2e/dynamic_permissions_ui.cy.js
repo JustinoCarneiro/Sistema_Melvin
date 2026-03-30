@@ -15,6 +15,8 @@ describe('Dynamic Permissions UI Logic', () => {
     cy.intercept('GET', '**/api/discente/2026001', { statusCode: 200, body: { ...mockAlunos[0], avaliacaoPresenca: 5, avaliacaoPsicologico: 3 } }).as('getAlunoDetails');
     cy.intercept('GET', '**/api/discente*', { statusCode: 200, body: mockAlunos }).as('getAlunos');
     cy.intercept('GET', '**/api/voluntario/matricula/*', { statusCode: 200, body: { matricula: MATRICULA, nome: 'Test User', salaUm: '1', salaDois: '2' } }).as('getVoluntario');
+    cy.intercept('GET', '**/api/voluntario', { statusCode: 200, body: [{ matricula: '1001', nome: 'Voluntário Teste', status: 'true', funcao: 'professor' }] }).as('getVoluntarios');
+    cy.intercept('GET', '**/api/cestas', { statusCode: 200, body: [] }).as('getCestas');
   };
 
   const verifyNoRedirect = () => {
@@ -72,15 +74,60 @@ describe('Dynamic Permissions UI Logic', () => {
     });
   });
 
-  describe('Profile with NO Permissions', () => {
-    it('should hide sensitive UI elements even if authenticated', () => {
-      setupMocks('PROF', []); 
+  describe('Professor Profile - Comprehensive Permission Toggle', () => {
+    const allPermissions = [
+      'VISUALIZAR_ALUNOS', 'CADASTRAR_ALUNO', 'EDITAR_RENDIMENTO', 
+      'GERENCIAR_VOLUNTARIOS', 'GERENCIAR_CESTAS', 'GERENCIAR_AMIGOS', 
+      'GERENCIAR_EMBAIXADORES', 'GERENCIAR_AVISOS', 'VISUALIZAR_RELATORIOS',
+      'ADMINISTRATIVO'
+    ];
+
+    it('should show ALL modules and actions when FULL permissions granted', () => {
+      setupMocks('PROF', allPermissions);
+      
+      // Check NavBar (must open it first if it's mobile/collapsed, but here we assume it's visible or we visit directly)
       cy.visit('/#/app/alunos');
       verifyNoRedirect();
-      cy.contains('João Silva', { timeout: 15000 }).should('be.visible');
+
+      // Check Alunos actions
+      cy.contains('Adicionar novo aluno').should('be.visible');
+      cy.get('[class*="icon_editar"]').should('be.visible');
+      cy.get('[class*="icon_rendimento"]').should('be.visible');
+
+      // Check Voluntários
+      cy.visit('/#/app/voluntarios');
+      verifyNoRedirect();
+      cy.contains('Voluntários').should('be.visible');
+      cy.contains('Adicionar novo integrante').should('be.visible');
+
+      // Check Cestas
+      cy.visit('/#/app/cestas');
+      verifyNoRedirect();
+      cy.contains('Fluxo de Doações').should('be.visible');
+      cy.contains('Novo Registro').should('be.visible');
+
+      // Check Relatórios Export
+      cy.visit('/#/app/relatorios');
+      cy.get('button').contains('Exportar').should('be.visible');
+    });
+
+    it('should hide ALL modules and actions when NO permissions granted', () => {
+      setupMocks('PROF', []);
+      
+      // Visit Alunos (base access)
+      cy.visit('/#/app/alunos');
+      verifyNoRedirect();
+
+      // Actions should be hidden
       cy.contains('Adicionar novo aluno').should('not.exist');
       cy.get('[class*="icon_editar"]').should('not.exist');
       cy.get('[class*="icon_rendimento"]').should('not.exist');
+
+      // Voluntários should redirect or show access denied if we visit directly
+      // But since PrivateRoute uses perfisEquipe, it will allow the visit but the component will be empty or hide actions
+      cy.visit('/#/app/voluntarios');
+      cy.contains('Adicionar novo integrante').should('not.exist');
+      cy.get('[class*="icon_editar"]').should('not.exist');
     });
   });
 });
