@@ -60,4 +60,10 @@ beforeEach(() => {
   cy.intercept('GET', '**/api/dashboard/**', { statusCode: 200, body: [] }).as('dashboardRequest');
   cy.intercept('GET', '**/api/frequenciadiscente/**', { statusCode: 200, body: {} }).as('freqRequest');
   cy.intercept('GET', '**/api/aviso', { statusCode: 200, body: [] }).as('avisoRequest');
+  
+  // Dynamic Permissions - Crucial for useAlunos hook since recent security refactor
+  cy.intercept('GET', '**/api/permissoes/minhas', { 
+    statusCode: 200, 
+    body: ['EDITAR_RENDIMENTO', 'GERENCIAR_FREQUENCIA', 'CADASTRAR_ALUNO', 'EDITAR_AVALIACAO_PSICO'] 
+  }).as('globalPermissoes');
 });

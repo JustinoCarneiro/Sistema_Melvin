@@ -9,12 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 
 import br.com.melvin.sistema.domain.discente.model.Discente;
 import br.com.melvin.sistema.domain.discente.repository.DiscenteRepository;
 import br.com.melvin.sistema.shared.service.ExcelExportService;
 import br.com.melvin.sistema.domain.discente.dto.DiscenteAvaliacaoDTO;
 import br.com.melvin.sistema.security.model.User;
+import br.com.melvin.sistema.domain.permissao.service.PermissaoService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -36,6 +38,9 @@ public class DiscenteService {
 
     @Autowired
     private ExcelExportService excelExportService;
+
+    @Autowired
+    private PermissaoService permissaoService;
 
     // Método para listar todos os discentes
     public List<Discente> listar(){
@@ -202,17 +207,16 @@ public class DiscenteService {
             return new ResponseEntity<>("Discente não encontrado.", HttpStatus.NOT_FOUND);
         }
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userRole = user.getRole().toString();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (userRole.equals("ADM") || userRole.equals("DIRE") || userRole.equals("COOR")) {
+        if (permissaoService.hasPermission(authentication, "EDITAR_RENDIMENTO")) {
             discente.setAvaliacaoPresenca(data.getAvaliacaoPresenca());
             discente.setAvaliacaoParticipacao(data.getAvaliacaoParticipacao());
             discente.setAvaliacaoComportamento(data.getAvaliacaoComportamento());
             discente.setAvaliacaoRendimento(data.getAvaliacaoRendimento());
         }
 
-        if (userRole.equals("PSICO")) {
+        if (permissaoService.hasPermission(authentication, "EDITAR_AVALIACAO_PSICO")) {
             discente.setAvaliacaoPsicologico(data.getAvaliacaoPsicologico());
         }
 

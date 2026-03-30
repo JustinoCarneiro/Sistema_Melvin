@@ -18,6 +18,7 @@ import Header from "./components/Header";
 import Config from "./pages/Config";
 import Relatorios from './pages/Relatorios';
 import Rendimento from './pages/Rendimento';
+import ConfiguracoesPermissoes from './pages/ConfiguracoesPermissoes';
 
 // --- COMPONENTES DE LISTAGEM UNIFICADOS ---
 import Alunos from "./pages/lista/Alunos"; 
@@ -160,6 +161,9 @@ function AppContent() {
                     <Route path="/config/embaixadoresdesativados" element={<PrivateRoute role={['ADM', 'DIRE']} element={() => <EmbaixadoresApp modoDesativados={true} />} />} />
                     <Route path="/config/amigosmelvindesativados" element={<PrivateRoute role={['ADM', 'DIRE']} element={() => <AmigosMelvinApp modoDesativados={true} />} />} />
                     <Route path="/config/avisosdesativados" element={<PrivateRoute role="ADM" element={() => <Avisos modoDesativados={true} />} />} />
+                    
+                    {/* --- CONFIGURAÇÕES DE SEGURANÇA --- */}
+                    <Route path="/config/permissoes" element={<PrivateRoute role="ADM" element={ConfiguracoesPermissoes} />} />
                     
                 </Routes>
             </div>

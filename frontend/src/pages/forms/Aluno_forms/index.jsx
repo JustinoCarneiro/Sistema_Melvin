@@ -133,7 +133,7 @@ function Aluno_forms(){
         e.preventDefault();
         try{
             if (diario) {
-                const filename = diario.data?.fileName || diario.name
+                const filename = diario.fileName || diario.name;
                 await diarioService.download(matricula, filename);
             }
         }catch(error){
@@ -148,18 +148,6 @@ function Aluno_forms(){
                 <div className={styles.headerForm}>
                     <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate(-1)}/>
                     <h2 className={styles.titlePage}>{matricula ? "Editar Aluno" : "Novo Aluno"}</h2>
-                    
-                    {matricula && (
-                        <div className={styles.headerButton}>
-                            <Botao 
-                                nome="Rendimento" 
-                                corFundo="#7EA629" 
-                                corBorda="#58751A" 
-                                type="button"
-                                onClick={() => navigate(`/app/rendimento_aluno/${matricula}`)}
-                            />
-                        </div>
-                    )}
                 </div>
 
                 <form className={styles.form} onSubmit={handleSubmit}>
@@ -366,7 +354,7 @@ function Aluno_forms(){
                                     <div {...getRootProps({ className: styles.dropzone })}>
                                         <input {...getInputProps()} disabled={isPsico} />
                                         <span className={styles.filename}>
-                                            {diario ? (diario.name || diario.fileName) : "Clique ou arraste o arquivo..."}
+                                            {diario ? (diario.fileName || diario.name) : "Clique ou arraste o arquivo..."}
                                         </span>
                                         <SiGoogledocs className={styles.iconDoc}/>
                                     </div>

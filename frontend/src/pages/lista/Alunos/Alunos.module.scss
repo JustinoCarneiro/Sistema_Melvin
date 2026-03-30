@@ -199,7 +199,7 @@
             
             &.edicao {
                 text-align: center;
-                width: 100px;
+                width: 150px;
             }
         }
     }
@@ -225,6 +225,13 @@
             td:nth-child(2) { 
                 font-weight: 600;
                 color: var(--accent-primary);
+            }
+
+            td.edicao {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 0.5rem;
             }
         }
         
@@ -257,7 +264,7 @@
     }
 }
 
-.icon_editar {
+.icon_editar, .icon_rendimento {
     font-size: 2.5rem;
     color: var(--text-muted);
     cursor: pointer;
@@ -266,10 +273,17 @@
     border-radius: 8px;
     
     &:hover {
-        color: var(--accent-primary);
         background: rgba(33, 115, 70, 0.08);
         transform: scale(1.1);
     }
+}
+
+.icon_editar:hover {
+    color: var(--accent-primary);
+}
+
+.icon_rendimento:hover {
+    color: #F29F05;
 }
 
 /* --- MEDIA QUERIES (Mobile Card View) --- */

@@ -268,6 +268,16 @@ function Config(){
                                     onClick={() => navigate('/app/config/avisosdesativados')} 
                                 />
                             </div>
+                            
+                            <h4 className={styles.subTitle} style={{marginTop: '1.5rem', marginBottom: '1rem'}}>Segurança do Sistema</h4>
+                            <div className={styles.shortcutsGrid}>
+                                <Botao 
+                                    nome="Permissões de Acesso" 
+                                    corFundo="#5B21B6" 
+                                    corBorda="#4C1D95" 
+                                    onClick={() => navigate('/app/config/permissoes')} 
+                                />
+                            </div>
                         </div>
                     </section>
                 )}

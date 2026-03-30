@@ -213,25 +213,27 @@
     min-height: 4rem; // Um pouco maior para garantir visibilidade
     overflow: visible;
 
+    overflow: visible;
+
     &:hover {
         border-color: $cor-primaria;
         background-color: #f0f8f0;
     }
+}
 
-    .filename {
-        font-size: 0.9rem;
-        color: #666;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 180px;
-    }
+.filename {
+    font-size: 0.9rem;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
 
-    .iconDoc {
-        color: #4285F4;
-        font-size: 1.4rem;
-        flex-shrink: 0;
-    }
+.iconDoc {
+    color: #4285F4;
+    font-size: 1.4rem;
+    flex-shrink: 0;
 }
 
 .btnDownload {

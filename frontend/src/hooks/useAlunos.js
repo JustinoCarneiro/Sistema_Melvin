@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Cookies from "js-cookie";
 import discenteService from '../services/discenteService';
 import voluntarioService from '../services/voluntarioService';
+import permissaoService from '../services/permissaoService';
 
 export function useAlunos() {
     const [alunos, setAlunos] = useState([]);
@@ -20,6 +21,7 @@ export function useAlunos() {
     const [isPsico, setIsPsico] = useState(false);
     const [isAssist, setIsAssist] = useState(false);
     const [salasDisponiveis, setSalasDisponiveis] = useState([]);
+    const [podeEditarRendimento, setPodeEditarRendimento] = useState(false);
 
     useEffect(() => {
         const carregarDadosIniciais = async () => {
@@ -39,6 +41,9 @@ export function useAlunos() {
                 setIsDire(isUserDire);
                 setIsPsico(isUserPsico);
                 setIsAssist(isUserAssist);
+
+                const hasRendimentoPerm = await permissaoService.hasPermission('EDITAR_RENDIMENTO');
+                setPodeEditarRendimento(hasRendimentoPerm || isUserAdm || isUserDire || isUserCoor || isUserPsico || userRole === 'PROF');
 
                 // Lógica de visualização de salas (CORRIGIDA)
                 // Agora verificamos isUserAssist (variável local verdadeira)
@@ -123,6 +128,6 @@ export function useAlunos() {
         alunosFiltrados,
         loading, error,
         isAdm, isCoor, isDire, isPsico, isAssist,
-        salasDisponiveis
+        salasDisponiveis, podeEditarRendimento
     };
 }

@@ -22,6 +22,7 @@ import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -56,24 +57,26 @@ public class SecurityConfiguration {
                     // --- ROTAS AUTENTICADAS GERAIS ---
                     .requestMatchers(HttpMethod.GET, "/auth/role_{matricula}").authenticated()
                     .requestMatchers(HttpMethod.GET, "/dashboard/**").authenticated()
-                    .requestMatchers(HttpMethod.PUT, "/discente/{matricula}/avaliacoes").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/api/permissoes/minhas").authenticated()
+                    .requestMatchers(HttpMethod.PUT, "/discente/{matricula}/avaliacoes").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'EDITAR_RENDIMENTO') or @permissaoService.hasPermission(authentication, 'EDITAR_AVALIACAO_PSICO')"))
+                    .requestMatchers("/api/permissoes/**").hasRole("ADM")
 
                     // --- ROTAS ADMINISTRATIVAS (Registro de usuários, etc) ---
                     .requestMatchers(HttpMethod.POST,  "/auth/register", "/imagens/**", "/aviso/**").hasRole("ADM")
                     .requestMatchers(HttpMethod.PUT, "/auth/alterar_senha").hasRole("ADM")
 
                     // --- CESTAS E IMAGENS (Adicionado AUX) ---
-                    .requestMatchers(HttpMethod.POST, "/cestas").hasAnyRole("ADM", "DIRE", "AUX")
+                    .requestMatchers(HttpMethod.POST, "/cestas").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_CESTAS')"))
                     .requestMatchers(HttpMethod.POST, "/imagens/**").hasAnyRole("ADM", "DIRE") // Imagens mantive restrito, mas pode abrir se precisar
                     
                     // --- VOLUNTÁRIOS (Cadastro restrito a ADM) ---
-                    .requestMatchers(HttpMethod.POST, "/voluntario", "/aviso/**").hasRole("ADM")
+                    .requestMatchers(HttpMethod.POST, "/voluntario", "/aviso/**").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_VOLUNTARIOS')"))
 
                     // --- DISCENTES / ALUNOS (ASSIST já incluído) ---
-                    .requestMatchers(HttpMethod.POST, "/discente").hasAnyRole("ADM", "COOR", "DIRE", "ASSIST")
+                    .requestMatchers(HttpMethod.POST, "/discente").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'CADASTRAR_ALUNO')"))
                     .requestMatchers(HttpMethod.GET, "/discente").hasAnyRole("PROF", "ADM", "DIRE", "COOR", "ASSIST", "PSICO")
                     .requestMatchers(HttpMethod.GET, "/discente/matricula/{matricula}").hasAnyRole("PROF", "ADM", "DIRE", "COOR", "ASSIST", "PSICO")
-                    .requestMatchers(HttpMethod.PUT, "/discente").hasAnyRole("ADM", "COOR", "DIRE", "ASSIST")
+                    .requestMatchers(HttpMethod.PUT, "/discente").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'CADASTRAR_ALUNO')"))
 
                     // --- DIÁRIOS ---
                     .requestMatchers(HttpMethod.POST,"/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
@@ -93,14 +96,14 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.PUT, "/voluntario", "/auth/alterar_role/{matricula}/{role}", "/aviso/**").hasRole("ADM")
 
                     // --- DELEÇÃO (Adicionado AUX em Cestas - Opcional, se quiser que ele delete) ---
-                    .requestMatchers(HttpMethod.DELETE, "/cestas").hasAnyRole("ADM", "DIRE", "AUX")
-                    .requestMatchers(HttpMethod.DELETE, "/voluntario").hasRole("ADM")
+                    .requestMatchers(HttpMethod.DELETE, "/cestas").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_CESTAS')"))
+                    .requestMatchers(HttpMethod.DELETE, "/voluntario").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_VOLUNTARIOS')"))
                     .requestMatchers(HttpMethod.DELETE, "/frequenciavoluntario", "/discente").hasAnyRole("ADM", "COOR")
                     
                     // --- FREQUÊNCIA DISCENTE ---
-                    .requestMatchers(HttpMethod.POST, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
-                    .requestMatchers(HttpMethod.PUT, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
-                    .requestMatchers(HttpMethod.DELETE, "/frequenciadiscente").hasAnyRole("PROF", "COOR", "ADM")
+                    .requestMatchers(HttpMethod.POST, "/frequenciadiscente").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_FREQUENCIA')"))
+                    .requestMatchers(HttpMethod.PUT, "/frequenciadiscente").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_FREQUENCIA')"))
+                    .requestMatchers(HttpMethod.DELETE, "/frequenciadiscente").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_FREQUENCIA')"))
 
                     .anyRequest().authenticated()
                 )

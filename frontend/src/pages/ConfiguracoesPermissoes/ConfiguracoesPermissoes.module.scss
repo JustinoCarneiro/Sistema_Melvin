@@ -1,0 +1,280 @@
+@import "../../index.scss";
+@import "../../styles/glass";
+
+.body {
+    width: 100%;
+    min-height: calc(100vh - 4.5rem);
+    display: flex;
+    justify-content: center;
+    padding: 3rem 2rem;
+    background-color: var(--bg-color);
+
+    @media (max-width: 768px) {
+        padding: 1.5rem 1rem;
+    }
+}
+
+.mainContent {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.pageHeader {
+    margin-bottom: 0.5rem;
+
+    .pageTitle {
+        color: var(--text-main);
+        font-size: 2.5rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+
+        svg {
+            color: var(--accent-primary);
+        }
+
+        @media (max-width: 768px) {
+            font-size: 1.75rem;
+        }
+    }
+
+    .pageSubtitle {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+    }
+}
+
+.card {
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+    border: 1px solid var(--glass-border);
+    transition: var(--transition-base);
+
+    @media (max-width: 768px) {
+        padding: 1.25rem;
+    }
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    animation: slideDown 0.3s ease-out;
+
+    &.success {
+        background-color: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    &.error {
+        background-color: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tableContainer {
+    overflow-x: auto;
+    margin-top: 1rem;
+    border-radius: 12px;
+    border: 1px solid #eee;
+
+    /* Sticky column logic */
+    display: block;
+
+    @media (max-width: 900px) {
+        display: none; // Hidden on mobile/small-tablet in favor of cards
+    }
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    th, td {
+        padding: 1.25rem 1rem;
+        text-align: center;
+        border-bottom: 1px solid #f1f5f9;
+        white-space: nowrap;
+    }
+
+    th {
+        background-color: #f8fafc;
+        color: var(--text-muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+
+    /* Sticky first column */
+    th:first-child, 
+    td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 10;
+        background-color: white;
+        text-align: left;
+        border-right: 1px solid #f1f5f9;
+    }
+
+    th:first-child {
+        background-color: #f8fafc;
+    }
+
+    tr:hover td {
+        background-color: #f8fafc;
+    }
+
+    .regraName {
+        font-weight: 600;
+        color: var(--text-main);
+        min-width: 250px;
+    }
+}
+
+/* Card view for mobile */
+.mobileCardsContainer {
+    display: none;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    @media (max-width: 900px) {
+        display: flex;
+    }
+}
+
+.regraCard {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+
+    .regraCardHeader {
+        font-weight: 700;
+        color: var(--accent-primary);
+        font-size: 1.1rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px dashed #cbd5e1;
+    }
+
+    .rolesGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1rem;
+    }
+
+    .roleItem {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: white;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        cursor: pointer;
+        transition: var(--transition-fast);
+
+        &:hover {
+            border-color: var(--accent-primary);
+            background: #f0fdf4;
+        }
+
+        &.active {
+            border-color: var(--accent-primary);
+            background: #f0fdf4;
+        }
+
+        .roleLabel {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+    }
+}
+
+.checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--accent-primary);
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+
+    @media (max-width: 768px) {
+        justify-content: stretch;
+    }
+}
+
+.saveButton {
+    background-color: var(--accent-primary);
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 12px rgba(33, 115, 70, 0.2);
+
+    &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(33, 115, 70, 0.3);
+    }
+
+    &:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    &:disabled {
+        background-color: #cbd5e1;
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    color: var(--text-muted);
+    font-size: 1.25rem;
+}
