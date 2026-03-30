@@ -2,65 +2,45 @@ import { useState, useEffect, useMemo } from 'react';
 import Cookies from "js-cookie";
 import discenteService from '../services/discenteService';
 import voluntarioService from '../services/voluntarioService';
-import permissaoService from '../services/permissaoService';
+import { usePermissions } from './usePermissions';
 
 export function useAlunos() {
+    const { hasPermission, isAdm, isCoor, isDire, isPsico, isAssist, loading: loadingPerms } = usePermissions();
+    
     const [alunos, setAlunos] = useState([]);
     const [busca, setBusca] = useState('');
-    // Alterado: Inicia como 'todos' para ADM/Assistente ver tudo logo de cara
     const [aula, setAula] = useState('todos'); 
     const [filtroEspera, setFiltroEspera] = useState(false);
-    const [turnoSelecionado, setTurnoSelecionado] = useState('todos'); // Melhor padrão 'todos'
+    const [turnoSelecionado, setTurnoSelecionado] = useState('todos');
     
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
-    const [isAdm, setIsAdm] = useState(false);
-    const [isCoor, setIsCoor] = useState(false);
-    const [isDire, setIsDire] = useState(false);
-    const [isPsico, setIsPsico] = useState(false);
-    const [isAssist, setIsAssist] = useState(false);
     const [salasDisponiveis, setSalasDisponiveis] = useState([]);
-    const [podeEditarRendimento, setPodeEditarRendimento] = useState(false);
+
+    // Flags Dinâmicas
+    const podeCadastrarAluno = hasPermission('CADASTRAR_ALUNO');
+    const podeGerenciarFrequencia = hasPermission('GERENCIAR_FREQUENCIA');
+    const podeEditarRendimento = hasPermission('EDITAR_RENDIMENTO') || hasPermission('EDITAR_AVALIACAO_PSICO');
 
     useEffect(() => {
+        if (loadingPerms) return;
+
         const carregarDadosIniciais = async () => {
             try {
-                const userRole = Cookies.get('role');
-                
-                // Variáveis locais para verificação imediata
-                const isUserAdm = userRole === 'ADM';
-                const isUserCoor = userRole === 'COOR';
-                const isUserDire = userRole === 'DIRE';
-                const isUserPsico = userRole === 'PSICO';
-                const isUserAssist = userRole === 'ASSIST';
-
-                // Atualiza estados
-                setIsAdm(isUserAdm);
-                setIsCoor(isUserCoor);
-                setIsDire(isUserDire);
-                setIsPsico(isUserPsico);
-                setIsAssist(isUserAssist);
-
-                const hasRendimentoPerm = await permissaoService.hasPermission('EDITAR_RENDIMENTO');
-                setPodeEditarRendimento(hasRendimentoPerm || isUserAdm || isUserDire || isUserCoor || isUserPsico || userRole === 'PROF');
-
-                // Lógica de visualização de salas (CORRIGIDA)
-                // Agora verificamos isUserAssist (variável local verdadeira)
-                if (isUserAdm || isUserCoor || isUserDire || isUserPsico || isUserAssist) {
+                // Lógica de visualização de salas
+                if (isAdm || isCoor || isDire || isPsico || isAssist) {
                     setSalasDisponiveis(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']);
-                    setAula('todos'); // Garante que comece vendo tudo
                 } else {
                     const matricula = Cookies.get('login');
                     if(matricula){
-                        const dadosVoluntario = await voluntarioService.getByMatricula(matricula);
+                        const dadosVoluntario = await voluntarioService.get(matricula);
                         const { salaUm, salaDois, aulaExtra } = dadosVoluntario.data;
                         const salas = [];
                         if (salaUm) salas.push(salaUm.toString());
                         if (salaDois) salas.push(salaDois.toString());
                         if (aulaExtra) salas.push(aulaExtra.toString());
                         setSalasDisponiveis(salas);
-                        setAula(salas[0] || '1');
+                        if (salas.length > 0) setAula(salas[0]);
                     }
                 }
             } catch (err) {
@@ -69,9 +49,9 @@ export function useAlunos() {
             }
         };
         carregarDadosIniciais();
-    }, []);
+    }, [loadingPerms, isAdm, isCoor, isDire, isPsico, isAssist]);
 
-    // Busca de alunos (Mantida igual)
+    // Busca de alunos
     useEffect(() => {
         const timer = setTimeout(() => {
             setLoading(true);
@@ -80,7 +60,6 @@ export function useAlunos() {
                     setAlunos(response.data || []);
                 })
                 .catch(err => {
-                    // Erro 403 (Proibido) não deve quebrar a tela, só mostrar vazio
                     if (err.response && err.response.status === 403) {
                          setAlunos([]); 
                     } else {
@@ -98,22 +77,19 @@ export function useAlunos() {
         
         return alunos.filter((aluno) => {
             const statusCondicao = filtroEspera ? aluno.status === 'espera' : aluno.status === 'true';
-            
-            // Corrige filtro de turno (se for 'todos', aceita qualquer coisa)
             const turnoCondicao = turnoSelecionado === 'todos' || aluno.turno === turnoSelecionado;
             
             const aulaCondicao = (() => {
                 if (aula === "todos") return true;
                 if (!aula) return true; 
 
-                // Lógica para salas numeradas (1-4) vs Oficinas (5-12)
                 if (parseInt(aula) <= 4) {
                     return aluno.sala === parseInt(aula, 10);
                 }
                 
                 const mapeamento = {'5': 'ingles', '6': 'karate', '7': 'informatica', '8': 'teatro', '9': 'ballet', '10': 'musica', '11': 'futsal', '12': 'artesanato'};
                 const chaveOficina = mapeamento[aula];
-                return aluno[chaveOficina] === true || aluno[chaveOficina] === "true"; // Verifica boolean ou string
+                return aluno[chaveOficina] === true || aluno[chaveOficina] === "true";
             })();
     
             return statusCondicao && turnoCondicao && aulaCondicao;
@@ -126,8 +102,11 @@ export function useAlunos() {
         filtroEspera, setFiltroEspera,
         turnoSelecionado, setTurnoSelecionado,
         alunosFiltrados,
-        loading, error,
+        loading: loading || loadingPerms, 
+        error,
         isAdm, isCoor, isDire, isPsico, isAssist,
-        salasDisponiveis, podeEditarRendimento
+        hasPermission,
+        podeCadastrarAluno, podeGerenciarFrequencia, podeEditarRendimento,
+        salasDisponiveis
     };
 }

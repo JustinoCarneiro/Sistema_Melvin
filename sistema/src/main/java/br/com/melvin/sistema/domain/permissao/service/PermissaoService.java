@@ -35,11 +35,16 @@ public class PermissaoService {
         }
 
         createIfNotFound("EDITAR_RENDIMENTO", "ADM,DIRE,COOR");
-        createIfNotFound("GERENCIAR_FREQUENCIA", "ADM,DIRE,COOR,PROF"); // Add PROF
+        createIfNotFound("GERENCIAR_FREQUENCIA", "ADM,DIRE,COOR,PROF");
         createIfNotFound("CADASTRAR_ALUNO", "ADM,COOR,DIRE,ASSIST");
         createIfNotFound("EDITAR_AVALIACAO_PSICO", "PSICO");
         createIfNotFound("GERENCIAR_CESTAS", "ADM,DIRE,AUX");
         createIfNotFound("GERENCIAR_VOLUNTARIOS", "ADM");
+        createIfNotFound("GERENCIAR_EMBAIXADORES", "ADM,DIRE");
+        createIfNotFound("GERENCIAR_AMIGOS", "ADM,DIRE");
+        createIfNotFound("GERENCIAR_AVISOS", "ADM");
+        createIfNotFound("VISUALIZAR_ALUNOS", "PROF,ADM,DIRE,COOR,ASSIST,PSICO");
+        createIfNotFound("VISUALIZAR_RELATORIOS", "PROF,ADM,DIRE,COOR,ASSIST,PSICO");
     }
 
     private void createIfNotFound(String regra, String defaultRoles) {

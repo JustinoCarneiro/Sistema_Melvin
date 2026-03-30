@@ -8,20 +8,24 @@ import StarRating from '../../components/gerais/StarRating';
 import Botao from '../../components/gerais/Botao';
 import { IoMdArrowRoundBack } from "react-icons/io";
 
+import { usePermissions } from '../../hooks/usePermissions';
+
 function Rendimento() {
     const { matricula } = useParams();
     const navigate = useNavigate();
+    const { hasPermission, loading: loadingPerms } = usePermissions();
+    
     const [aluno, setAluno] = useState(null);
     const [avaliacoes, setAvaliacoes] = useState({});
-    const [userRole, setUserRole] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
 
-    const podeAvaliarGeral = ['ADM', 'DIRE', 'COOR'].includes(userRole);
-    const podeAvaliarPsico = userRole === 'PSICO';
+    const podeAvaliarGeral = hasPermission('EDITAR_RENDIMENTO');
+    const podeAvaliarPsico = hasPermission('EDITAR_AVALIACAO_PSICO');
 
     useEffect(() => {
-        setUserRole(Cookies.get('role'));
+        if (loadingPerms) return;
+        
         const fetchData = async () => {
             setLoading(true);
             try {
@@ -41,7 +45,7 @@ function Rendimento() {
             }
         };
         fetchData();
-    }, [matricula]);
+    }, [matricula, loadingPerms]);
 
     const handleRate = (categoria, nota) => {
         setAvaliacoes(prev => ({ ...prev, [categoria]: nota }));
@@ -58,7 +62,7 @@ function Rendimento() {
         }
     };
 
-    if (loading) return <div className={styles.loading}>Carregando...</div>;
+    if (loading || loadingPerms) return <div className={styles.loading}>Carregando...</div>;
     
     // Categorias de avaliação
     const categorias = [

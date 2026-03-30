@@ -36,7 +36,7 @@ function Alunos({ modoDesativados = false }) {
         loading: loadingAtivos,
         error: errorAtivos,
         isAdm, isCoor, isDire, isPsico, isAssist,
-        podeEditarRendimento,
+        podeCadastrarAluno, podeGerenciarFrequencia, podeEditarRendimento,
         salasDisponiveis
     } = useAlunos();
 
@@ -138,7 +138,7 @@ function Alunos({ modoDesativados = false }) {
                         {/* Botões extras: Apenas no modo ATIVOS */}
                         {!modoDesativados && (
                             <div className={styles.botoes}>
-                                {(isAdm || isCoor || isDire || isAssist || isPsico) && (
+                                {(isAdm || isCoor || isDire || isAssist || isPsico || podeCadastrarAluno) && (
                                     <>
                                         <select
                                             className={styles.select_sala}
@@ -171,7 +171,7 @@ function Alunos({ modoDesativados = false }) {
                                     ))}
                                 </select>
                                 
-                                {!isPsico && !isAssist && (
+                                {(isAdm || isDire || isCoor || podeGerenciarFrequencia) && (
                                     <Botao
                                         nome="Frequências"
                                         corFundo="#7EA629"
@@ -208,7 +208,7 @@ function Alunos({ modoDesativados = false }) {
                                 <th>Matrícula</th>
                                 <th>Nome</th>
                                 <th>Responsável</th>
-                                {(isAdm || isCoor || isDire || isPsico || isAssist || podeEditarRendimento) && <th className={styles.edicao}>Ações</th>}
+                                {(isAdm || isCoor || isDire || isPsico || isAssist || podeEditarRendimento || podeCadastrarAluno) && <th className={styles.edicao}>Ações</th>}
                             </tr>
                         </thead>
                         <tbody className={styles.tbody}>
@@ -225,10 +225,10 @@ function Alunos({ modoDesativados = false }) {
                                             <td data-label="Matrícula">{aluno.matricula}</td>
                                             <td data-label="Nome">{aluno.nome}</td>
                                             <td data-label="Responsável">{aluno.nome_pai || aluno.nome_mae || '-'}</td>
-                                            {(isAdm || isCoor || isDire || isPsico || isAssist || podeEditarRendimento) && (
+                                            {(isAdm || isCoor || isDire || isPsico || isAssist || podeEditarRendimento || podeCadastrarAluno) && (
                                                 <td className={styles.edicao} data-label="Ações">
                                                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem' }}>
-                                                        {(isAdm || isCoor || isDire || isPsico || isAssist) && (
+                                                        {podeCadastrarAluno && (
                                                             <MdOutlineModeEdit
                                                                 className={styles.icon_editar}
                                                                 onClick={() => handleEditClick(aluno.matricula)}
@@ -257,7 +257,7 @@ function Alunos({ modoDesativados = false }) {
                             )}
                             
                             {/* Botão Adicionar: Apenas se NÃO for modo desativados e NÃO estiver carregando */}
-                            {!isLoading && !modoDesativados && (isAdm || isCoor || isDire || isAssist) && (
+                            {!isLoading && !modoDesativados && podeCadastrarAluno && (
                                 <tr className={styles.plus} onClick={() => navigate("/app/aluno/criar")}>
                                     <td colSpan="4"><FaPlus className={styles.icon_plus} /> Adicionar novo aluno</td>
                                 </tr>

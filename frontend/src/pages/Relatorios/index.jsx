@@ -25,8 +25,12 @@ function Relatorios() {
         alunosFiltrados,
         loading, error,
         salasDisponiveis,
-        isAdm, isCoor, isDire
+        isAdm, isCoor, isDire,
+        hasPermission
     } = useAlunos();
+
+    const podeVisualizarRelatorios = hasPermission('VISUALIZAR_RELATORIOS');
+    const podeExportar = isAdm || isCoor || isDire || hasPermission('ADMINISTRATIVO');
 
     // Debug: Monitorar erros no console
     useEffect(() => {
@@ -69,7 +73,6 @@ function Relatorios() {
         const freqsDoMes = frequencias.filter(f => {
             if (!f.data) return false;
             try {
-                // Força conversão para string para evitar erros de split
                 const dataString = String(f.data);
                 if(!dataString.includes('-')) return false;
 
@@ -120,7 +123,7 @@ function Relatorios() {
     }, [alunosFiltrados, frequencias, mesSelecionado, anoSelecionado, view]);
 
     // Helpers
-    const formatNota = (valor) => valor ? valor.toFixed(1) : '-';
+    const formatNota = (valor) => valor ? parseFloat(valor).toFixed(1) : '-';
     
     const getCorNota = (valor) => {
         if (!valor) return 'inherit';
@@ -137,24 +140,24 @@ function Relatorios() {
     };
 
     const formatDataColuna = (dataString) => {
-        const [ano, mes, dia] = dataString.split('-');
-        return `${dia}/${mes}`;
+        if (!dataString) return '';
+        const partes = dataString.split('-');
+        if (partes.length < 3) return dataString;
+        return `${partes[2]}/${partes[1]}`;
     };
 
     const handleExportClick = async () => {
         setExporting(true);
         try {
             if (view === 'frequencia') {
-                // Exportação da Grade de Frequência
                 await get.exportarFrequencia(
                     mesSelecionado, 
                     anoSelecionado, 
-                    aula, // 'aula' é o estado que guarda a sala selecionada
+                    aula, 
                     turnoSelecionado, 
                     busca
                 );
             } else {
-                // Exportação Padrão (Desempenho/Lista Geral)
                 await get.exportarDiscentes(busca);
             }
         } catch (error) {
@@ -168,7 +171,6 @@ function Relatorios() {
     if (loading) return <div className={styles.centeredMessage}>Carregando dados...</div>;
     if (error) return <div className={`${styles.centeredMessage} ${styles.error}`}>{error}</div>;
 
-    // Proteção final para renderização da lista
     const listaSegura = alunosFiltrados || [];
 
     return (
@@ -176,7 +178,6 @@ function Relatorios() {
             <div className={styles.container}>
                 <div className={styles.header}>
                     <div className={styles.topHeader}>
-                        {/* --- TÍTULO E CONTADOR --- */}
                         <div className={styles.titleWrapper}>
                             <h2 className={styles.title}>Relatórios</h2>
                             <span className={styles.counterBadge}>
@@ -184,7 +185,6 @@ function Relatorios() {
                             </span>
                         </div>
 
-                        {/* --- BOTÕES DE ABA --- */}
                         <div className={styles.toggleContainer}>
                             <button 
                                 className={`${styles.toggleBtn} ${view === 'desempenho' ? styles.active : ''}`}
@@ -201,7 +201,6 @@ function Relatorios() {
                         </div>
                     </div>
                     
-                    {/* --- FILTROS --- */}
                     <div className={styles.filters}>
                         <div className={styles.container_busca}>
                             <IoMdSearch className={styles.icon_busca} />
@@ -247,7 +246,7 @@ function Relatorios() {
                             </>
                         )}
 
-                        {(isAdm || isCoor || isDire) && (
+                        {(podeVisualizarRelatorios || isAdm || isCoor || isDire) && (
                             <select
                                 className={styles.select_sala}
                                 value={turnoSelecionado}
@@ -272,7 +271,7 @@ function Relatorios() {
                             ))}
                         </select>
 
-                        {(isAdm || isCoor || isDire) && (
+                        {(podeExportar || isAdm || isCoor || isDire) && (
                             <Botao 
                                 nome={exporting ? "..." : "Exportar"}
                                 corFundo="#217346"
@@ -280,15 +279,13 @@ function Relatorios() {
                                 type="button"
                                 onClick={handleExportClick}
                                 disabled={exporting}
-                            >
-                                <FaFileExcel />
-                            </Botao>
+                                children={<FaFileExcel />}
+                            />
                         )}
                     </div>
                 </div>
 
                 <div className={styles.tableResponsive}>
-                    {/* --- TABELA DE DESEMPENHO --- */}
                     {view === 'desempenho' && (
                         <table className={styles.table}>
                             <thead className={styles.thead}>
@@ -332,7 +329,6 @@ function Relatorios() {
                         </table>
                     )}
 
-                    {/* --- TABELA DE FREQUÊNCIA --- */}
                     {view === 'frequencia' && (
                         <>
                             {loadingFreq ? (

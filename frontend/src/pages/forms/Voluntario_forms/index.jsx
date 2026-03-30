@@ -10,9 +10,13 @@ import Input from '../../../components/gerais/Input';
 import voluntarioService from '../../../services/voluntarioService';
 import authService from '../../../services/authService';
 
-function Voluntario_forms(){
-    const {matricula} = useParams();
+import { usePermissions } from '../../../hooks/usePermissions';
+
+function Voluntario_forms() {
+    const { matricula } = useParams();
     const navigate = useNavigate();
+    const { hasPermission, loading: loadingPerms } = usePermissions();
+    
     const [errorMessage, setErrorMessage] = useState('');
     const [isAdm, setIsAdm] = useState(false);
 
@@ -21,9 +25,9 @@ function Voluntario_forms(){
     const [confirmarSenha, setConfirmarSenha] = useState('');
 
     const [formDado, setFormDado] = useState({
-        matricula: '', nome: '', email: '', contato: '', sexo: '', data: '', cor: '', nacionalidade: '', endereco: '', bairro: '', cidade: '', rg: '', funcao: '', aulaExtra: '', salaUm: '', salaDois:'', segunda: '', terca: '', quarta: '', quinta: '', sexta: '', status: ''
+        matricula: '', nome: '', email: '', contato: '', sexo: '', data: '', cor: '', nacionalidade: '', endereco: '', bairro: '', cidade: '', rg: '', funcao: '', aulaExtra: '', salaUm: '', salaDois: '', segunda: '', terca: '', quarta: '', quinta: '', sexta: '', status: ''
     });
-    
+
     useEffect(() => {
         const userRole = Cookies.get('role');
         setIsAdm(userRole === 'ADM');
@@ -34,7 +38,7 @@ function Voluntario_forms(){
 
             try {
                 const response = await voluntarioService.get(matricula);
-                if(response.data){
+                if (response.data) {
                     setFormDado(prev => ({ ...prev, ...response.data }));
                 }
             } catch (error) {
@@ -103,7 +107,7 @@ function Voluntario_forms(){
         try {
             let response;
             if (formDado.status === 'deletar') {
-                if(window.confirm('Deseja realmente deletar este voluntário?')) {
+                if (window.confirm('Deseja realmente deletar este voluntário?')) {
                     await voluntarioService.delete(matricula);
                     alert('Deletado com sucesso!');
                     navigate('/app/voluntarios');
@@ -119,43 +123,43 @@ function Voluntario_forms(){
 
             if (response.error) throw new Error(response.error.message);
             alert('Salvo com sucesso!');
-            
+
             if (!matricula && response.data?.matricula) {
-                 navigate(`/app/voluntario/editar/${response.data.matricula}`);
+                navigate(`/app/voluntario/editar/${response.data.matricula}`);
             } else {
-                 navigate('/app/voluntarios');
+                navigate('/app/voluntarios');
             }
         } catch (error) {
             setErrorMessage(error.message || 'Erro ao salvar.');
         }
     };
-    
-    return(
+
+    return (
         <div className={styles.body}>
             <div className={styles.container}>
                 {/* --- HEADER --- */}
                 <div className={styles.headerForm}>
-                    <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate('/app/voluntarios')}/>
+                    <IoMdArrowRoundBack className={styles.voltar} onClick={() => navigate('/app/voluntarios')} />
                     <h2 className={styles.titlePage}>
                         {matricula ? `Editar Voluntário (${matricula})` : "Novo Voluntário"}
                     </h2>
                 </div>
 
                 <form className={styles.form} onSubmit={handleSubmit}>
-                    
+
                     {/* --- PESSOAL --- */}
                     <h3 className={styles.sectionTitle}>Informações Pessoais</h3>
                     <div className={styles.gridContainer}>
                         <div className={styles.coluna}>
                             <Input label="Nome Completo:" name="nome" value={formDado.nome} onChange={handleChange} comp="grande" prioridade="true" />
-                            
+
                             <div className={styles.linhaDupla}>
                                 <Input label="Contato:" name="contato" value={formDado.contato} onChange={handleChange} comp="pequeno" placeholder="(00) 00000-0000" />
                                 <Input label="Data Nasc.:" type="date" name="data" value={formDado.data} onChange={handleChange} comp="pequeno" />
                             </div>
-                            
+
                             <Input label="Endereço:" name="endereco" value={formDado.endereco} onChange={handleChange} comp="grande" />
-                            
+
                             <div className={styles.linhaDupla}>
                                 <Input label="Bairro:" name="bairro" value={formDado.bairro} onChange={handleChange} comp="pequeno" />
                                 <Input label="Cidade:" name="cidade" value={formDado.cidade} onChange={handleChange} comp="pequeno" />
@@ -195,7 +199,7 @@ function Voluntario_forms(){
                                     <option value="espera">Em espera...</option>
                                 </select>
                             </div>
-                            
+
                             <div className={styles.inputGroup}>
                                 <label>Função: <span className={styles.required}>*</span></label>
                                 <select className={styles.select} name="funcao" value={formDado.funcao} onChange={handleChange}>
@@ -260,7 +264,7 @@ function Voluntario_forms(){
                     <div className={styles.turnosContainer}>
                         {['segunda', 'terca', 'quarta', 'quinta', 'sexta'].map(dia => (
                             <div key={dia} className={styles.inputGroup}>
-                                <label style={{textTransform: 'capitalize'}}>{dia}:</label>
+                                <label style={{ textTransform: 'capitalize' }}>{dia}:</label>
                                 <select className={styles.select} name={dia} value={formDado[dia]} onChange={handleChange}>
                                     <option value="" hidden>...</option>
                                     <option value="integral">Integral</option>
@@ -273,18 +277,18 @@ function Voluntario_forms(){
                     </div>
 
                     {/* --- LOGIN (ADM ONLY) --- */}
-                    {isAdm && matricula && (
+                    {(isAdm || hasPermission('GERENCIAR_VOLUNTARIOS')) && matricula && (
                         <div className={styles.loginSection}>
                             <h3 className={styles.loginTitle}>Acesso ao Sistema</h3>
                             <p className={styles.loginDesc}>
                                 Crie ou redefina a senha para o usuário <strong>{matricula}</strong>.
                             </p>
-                            
+
                             <div className={styles.gridContainer}>
                                 <Input label="Nova Senha:" type="password" name="senhaAcesso" value={senhaAcesso} onChange={(e) => setSenhaAcesso(e.target.value)} comp="grande" />
                                 <Input label="Confirmar Senha:" type="password" name="confirmarSenha" value={confirmarSenha} onChange={(e) => setConfirmarSenha(e.target.value)} comp="grande" />
                             </div>
-                            
+
                             <div className={styles.loginButtons}>
                                 <Botao nome="Criar Acesso" corFundo="#044D8C" corBorda="#043560" type="button" onClick={handleCriarAcesso} />
                                 <Botao nome="Redefinir Senha" corFundo="#F29F05" corBorda="#8A6F3E" type="button" onClick={handleRedefinirSenha} />

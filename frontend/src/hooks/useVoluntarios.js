@@ -1,25 +1,25 @@
 import { useState, useEffect, useMemo } from 'react';
-import Cookies from "js-cookie";
 import voluntarioService from '../services/voluntarioService';
+import { usePermissions } from './usePermissions';
 
 export function useVoluntarios() {
+    const { hasPermission, isAdm, loading: loadingPerms } = usePermissions();
+
     const [voluntarios, setVoluntarios] = useState([]);
     const [busca, setBusca] = useState('');
     const [filtroEspera, setFiltroEspera] = useState(false);
-    
-    // NOVO: Estado para controlar qual função estamos vendo (padrão: todos)
     const [filtroFuncao, setFiltroFuncao] = useState('todos'); 
     
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isAdm, setIsAdm] = useState(false);
+
+    // Flag Dinâmica
+    const podeGerenciarVoluntarios = hasPermission('GERENCIAR_VOLUNTARIOS');
 
     useEffect(() => {
+        if (loadingPerms) return;
         setLoading(true);
-        const userRole = Cookies.get('role');
-        setIsAdm(userRole === "ADM");
 
-        // Busca TODOS os voluntários sem filtro de tipo na API
         voluntarioService.list()
             .then(response => {
                 setVoluntarios(response.data || []);
@@ -28,15 +28,10 @@ export function useVoluntarios() {
                 setError(err.message || 'Falha ao carregar voluntários.');
             })
             .finally(() => setLoading(false));
-    }, []);
+    }, [loadingPerms]);
 
     // Lógica de busca por nome (Debounce)
     useEffect(() => {
-        if (busca === '') {
-            setLoading(true);
-            voluntarioService.list().then(res => setVoluntarios(res.data || [])).finally(() => setLoading(false));
-            return;
-        }
         const timer = setTimeout(() => {
             setLoading(true);
             voluntarioService.list(busca)
@@ -52,15 +47,12 @@ export function useVoluntarios() {
         return () => clearTimeout(timer);
     }, [busca]);
 
-    // Filtragem Inteligente (Função + Status)
+    // Filtragem Inteligente
     const voluntariosFiltrados = useMemo(() => {
         return voluntarios.filter((voluntario) => {
-            // 1. Filtro do Dropdown
             if (filtroFuncao !== 'todos' && voluntario.funcao !== filtroFuncao) {
                 return false;
             }
-            
-            // 2. Filtro de Status (Pendente/Ativo)
             const statusCondicao = filtroEspera ? voluntario.status === 'espera' : voluntario.status === 'true';
             return statusCondicao;
         });
@@ -69,8 +61,12 @@ export function useVoluntarios() {
     return {
         busca, setBusca,
         filtroEspera, setFiltroEspera,
-        filtroFuncao, setFiltroFuncao, // Exporta o controle do dropdown
+        filtroFuncao, setFiltroFuncao,
         voluntariosFiltrados,
-        loading, error, isAdm
+        loading: loading || loadingPerms,
+        error, 
+        isAdm,
+        hasPermission,
+        podeGerenciarVoluntarios
     };
 }

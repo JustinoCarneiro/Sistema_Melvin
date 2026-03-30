@@ -22,8 +22,10 @@ import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.cors.CorsConfiguration;
+import br.com.melvin.sistema.domain.permissao.service.PermissaoService;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -37,6 +39,9 @@ public class SecurityConfiguration {
 
     @Autowired
     UrlFrontend urlFrontend;
+    
+    @Autowired
+    PermissaoService permissaoService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -58,7 +63,9 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.GET, "/auth/role_{matricula}").authenticated()
                     .requestMatchers(HttpMethod.GET, "/dashboard/**").authenticated()
                     .requestMatchers(HttpMethod.GET, "/api/permissoes/minhas").authenticated()
-                    .requestMatchers(HttpMethod.PUT, "/discente/{matricula}/avaliacoes").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'EDITAR_RENDIMENTO') or @permissaoService.hasPermission(authentication, 'EDITAR_AVALIACAO_PSICO')"))
+                    .requestMatchers(HttpMethod.PUT, "/discente/{matricula}/avaliacoes").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "EDITAR_RENDIMENTO") || 
+                                                 permissaoService.hasPermission(authentication.get(), "EDITAR_AVALIACAO_PSICO")))
                     .requestMatchers("/api/permissoes/**").hasRole("ADM")
 
                     // --- ROTAS ADMINISTRATIVAS (Registro de usuários, etc) ---
@@ -66,17 +73,27 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.PUT, "/auth/alterar_senha").hasRole("ADM")
 
                     // --- CESTAS E IMAGENS (Adicionado AUX) ---
-                    .requestMatchers(HttpMethod.POST, "/cestas").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_CESTAS')"))
+                    .requestMatchers(HttpMethod.POST, "/cestas").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
                     .requestMatchers(HttpMethod.POST, "/imagens/**").hasAnyRole("ADM", "DIRE") // Imagens mantive restrito, mas pode abrir se precisar
                     
-                    // --- VOLUNTÁRIOS (Cadastro restrito a ADM) ---
-                    .requestMatchers(HttpMethod.POST, "/voluntario", "/aviso/**").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_VOLUNTARIOS')"))
+                    // --- VOLUNTÁRIOS ---
+                    .requestMatchers(HttpMethod.POST, "/voluntario").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
+                    
+                    // --- AVISOS ---
+                    .requestMatchers(HttpMethod.POST, "/aviso/**").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AVISOS")))
 
                     // --- DISCENTES / ALUNOS (ASSIST já incluído) ---
-                    .requestMatchers(HttpMethod.POST, "/discente").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'CADASTRAR_ALUNO')"))
-                    .requestMatchers(HttpMethod.GET, "/discente").hasAnyRole("PROF", "ADM", "DIRE", "COOR", "ASSIST", "PSICO")
-                    .requestMatchers(HttpMethod.GET, "/discente/matricula/{matricula}").hasAnyRole("PROF", "ADM", "DIRE", "COOR", "ASSIST", "PSICO")
-                    .requestMatchers(HttpMethod.PUT, "/discente").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'CADASTRAR_ALUNO')"))
+                    .requestMatchers(HttpMethod.POST, "/discente").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "CADASTRAR_ALUNO")))
+                    .requestMatchers(HttpMethod.GET, "/discente").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_ALUNOS")))
+                    .requestMatchers(HttpMethod.GET, "/discente/matricula/{matricula}").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_ALUNOS")))
+                    .requestMatchers(HttpMethod.PUT, "/discente").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "CADASTRAR_ALUNO")))
 
                     // --- DIÁRIOS ---
                     .requestMatchers(HttpMethod.POST,"/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
@@ -84,26 +101,46 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.PUT, "/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
                     .requestMatchers(HttpMethod.DELETE, "/diarios/**").hasAnyRole("ADM", "COOR")
 
-                    // --- LEITURA GERAL (Adicionado AUX em Cestas) ---
-                    .requestMatchers(HttpMethod.GET, "/cestas").hasAnyRole("ADM", "DIRE", "AUX")
-                    .requestMatchers(HttpMethod.GET, "/amigomelvin").hasAnyRole("ADM", "DIRE")
-                    .requestMatchers(HttpMethod.GET, "/voluntario").hasAnyRole("ADM", "DIRE", "COOR")
+                    // --- LEITURA GERAL ---
+                    .requestMatchers(HttpMethod.GET, "/cestas").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
+                    .requestMatchers(HttpMethod.GET, "/amigomelvin").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AMIGOS")))
+                    .requestMatchers(HttpMethod.GET, "/voluntario").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
                     .requestMatchers(HttpMethod.GET, "/voluntario/matricula/{matricula}").permitAll()
 
-                    // --- EDIÇÃO GERAL (Adicionado AUX em Cestas) ---
-                    .requestMatchers(HttpMethod.PUT, "/cestas").hasAnyRole("ADM", "DIRE", "AUX")
-                    .requestMatchers(HttpMethod.PUT, "/amigomelvin", "/embaixador/**", "/imagens/**").hasAnyRole("ADM", "DIRE")
-                    .requestMatchers(HttpMethod.PUT, "/voluntario", "/auth/alterar_role/{matricula}/{role}", "/aviso/**").hasRole("ADM")
+                    // --- EDIÇÃO GERAL ---
+                    .requestMatchers(HttpMethod.PUT, "/cestas").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
+                    .requestMatchers(HttpMethod.PUT, "/amigomelvin").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AMIGOS")))
+                    .requestMatchers(HttpMethod.PUT, "/embaixador/**").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_EMBAIXADORES")))
+                    .requestMatchers(HttpMethod.PUT, "/voluntario").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
+                    .requestMatchers(HttpMethod.PUT, "/aviso/**").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AVISOS")))
+                    .requestMatchers(HttpMethod.PUT, "/auth/alterar_role/{matricula}/{role}").hasRole("ADM")
+                    .requestMatchers(HttpMethod.PUT, "/imagens/**").hasAnyRole("ADM", "DIRE")
 
-                    // --- DELEÇÃO (Adicionado AUX em Cestas - Opcional, se quiser que ele delete) ---
-                    .requestMatchers(HttpMethod.DELETE, "/cestas").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_CESTAS')"))
-                    .requestMatchers(HttpMethod.DELETE, "/voluntario").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_VOLUNTARIOS')"))
-                    .requestMatchers(HttpMethod.DELETE, "/frequenciavoluntario", "/discente").hasAnyRole("ADM", "COOR")
+                    // --- DELEÇÃO ---
+                    .requestMatchers(HttpMethod.DELETE, "/cestas").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
+                    .requestMatchers(HttpMethod.DELETE, "/voluntario").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
+                    .requestMatchers(HttpMethod.DELETE, "/frequenciavoluntario").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
+                    .requestMatchers(HttpMethod.DELETE, "/discente").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "CADASTRAR_ALUNO")))
                     
                     // --- FREQUÊNCIA DISCENTE ---
-                    .requestMatchers(HttpMethod.POST, "/frequenciadiscente").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_FREQUENCIA')"))
-                    .requestMatchers(HttpMethod.PUT, "/frequenciadiscente").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_FREQUENCIA')"))
-                    .requestMatchers(HttpMethod.DELETE, "/frequenciadiscente").access(new WebExpressionAuthorizationManager("@permissaoService.hasPermission(authentication, 'GERENCIAR_FREQUENCIA')"))
+                    .requestMatchers(HttpMethod.POST, "/frequenciadiscente").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_FREQUENCIA")))
+                    .requestMatchers(HttpMethod.PUT, "/frequenciadiscente").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_FREQUENCIA")))
+                    .requestMatchers(HttpMethod.DELETE, "/frequenciadiscente").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_FREQUENCIA")))
 
                     .anyRequest().authenticated()
                 )

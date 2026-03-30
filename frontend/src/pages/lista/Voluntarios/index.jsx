@@ -29,7 +29,8 @@ function Voluntarios({ modoDesativados = false }) {
         voluntariosFiltrados: ativosFiltrados,
         loading: loadingAtivos,
         error: errorAtivos,
-        isAdm
+        isAdm,
+        podeGerenciarVoluntarios
     } = useVoluntarios();
 
     // --- EFEITO: BUSCAR DESATIVADOS ---
@@ -193,7 +194,7 @@ function Voluntarios({ modoDesativados = false }) {
                                     <th>Nome</th>
                                     <th>Função</th>
                                     <th>Email</th>
-                                    {isAdm && <th className={styles.edicao}>Edição</th>}
+                                    {(isAdm || podeGerenciarVoluntarios) && <th className={styles.edicao}>Edição</th>}
                                 </tr>
                             </thead>
                             <tbody className={styles.tbody}>
@@ -204,7 +205,7 @@ function Voluntarios({ modoDesativados = false }) {
                                             <td data-label="Nome">{voluntario.nome}</td>
                                             <td data-label="Função">{formatFuncao(voluntario.funcao)}</td>
                                             <td data-label="Email">{voluntario.email}</td>
-                                            {isAdm && (
+                                            {(isAdm || podeGerenciarVoluntarios) && (
                                                 <td className={styles.edicao} data-label="Ações">
                                                     <MdOutlineModeEdit
                                                         className={styles.icon_editar}
@@ -223,7 +224,7 @@ function Voluntarios({ modoDesativados = false }) {
                                 )}
                                 
                                 {/* Botão Adicionar (Apenas modo Ativos e sem filtro de espera) */}
-                                {!modoDesativados && isAdm && !filtroEspera && (
+                                {!modoDesativados && podeGerenciarVoluntarios && !filtroEspera && (
                                     <tr className={styles.plus} onClick={handleCreateClick}>
                                         <td colSpan="5"><FaPlus className={styles.icon_plus} /> Adicionar novo integrante</td>
                                     </tr>
