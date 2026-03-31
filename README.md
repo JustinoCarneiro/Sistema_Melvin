@@ -25,7 +25,7 @@ sistema-melvin/
 │   │   ├── components/      # Componentes UI reutilizáveis
 │   │   ├── pages/           # Páginas principais da aplicação
 │   │   ├── services/        # Camada de integração com API e Auth
-│   │   ├── hooks/           # Hooks personalizados para lógica React
+│   │   ├── hooks/           # usePermissions, useAlunos, useVoluntarios
 │   │   └── site/            # Componentes específicos do site público
 │   └── Dockerfile           # Configuração de container para o frontend
 ├── sistema/                 # API Backend (Spring Boot)
@@ -83,10 +83,13 @@ chmod +x dev.sh
 A segurança é tratada como prioridade no Sistema Melvin, utilizando padrões de mercado:
 
 ### 1. Autenticação e Autorização
-- **JWT (JSON Web Tokens)**: A autenticação é *stateless* (sem estado no servidor), utilizando tokens JWT para validar sessões.
-- **RBAC (Role-Based Access Control)**: O acesso é controlado por papéis específicos (`ADM`, `DIRE`, `COOR`, `PROF`, `ASSIST`, `PSICO`, `AUX`). Cada endpoint possui restrições granulares de acesso.
-- **Spring Security**: Filtros customizados validam cada requisição antes de chegar à lógica de negócio.
-- **Configuração de Permissões (RBAC Dinâmico)**: Interface para ADMs e Diretoria definirem dinamicamente quais cargos podem acessar cada funcionalidade (Editar notas, Cadastrar alunos, etc.), persistindo as regras no banco de dados.
+- **JWT (JSON Web Tokens)**: A autenticação é *stateless* utilizando tokens JWT para validar sessões.
+- **RBAC Dinâmico (ACL)**: O acesso não é mais estático por cargos. O sistema agora possui um sistema de permissões dinâmicas onde o Administrador decide, via interface, quais cargos podem:
+    - Ver/Editar Alunos e Rendimentos.
+    - Gerenciar Voluntários e Frequências.
+    - Gerenciar Cestas, Embaixadores, Amigos e Avisos.
+    - Exportar Relatórios e Dados Sensíveis.
+- **Spring Security**: Filtros validam dinamicamente se o cargo do usuário possui a permissão necessária para o recurso solicitado.
 
 ### 2. Proteção de Dados
 - **Hashing de Senhas (Argon2)**: As senhas são armazenadas utilizando o algoritmo **Argon2**, atualmente um dos mais robustos contra ataques de força bruta e rainbox tables.
@@ -109,8 +112,9 @@ Os testes de ponta-a-ponta simulam a interação do usuário e validam o novo pa
 - **Discentes (`discentes.cy.js`)**: Valida o novo padrão `2026001`.
 - **Voluntários (`voluntarios.cy.js`)**: Valida o novo padrão numérico.
 - **Frequências (`frequencias.cy.js`)**: Testa a chamada escolar para as novas matrículas.
-- **Autenticação (`auth.cy.js`)**: Valida RBAC com usuários Admin e Auxiliar.
-- **Permissões (`permissao.cy.js`)**: Valida a interface de configuração de permissões, incluindo edição, salvamento e responsividade (Mobile First).
+- **Autenticação (`auth.cy.js`)**: Valida login e redirecionamentos.
+- **Permissões (`permissao.cy.js`)**: Valida a interface de configuração de permissões (CRUD de Regras).
+- **Lógica de Permissões UI (`dynamic_permissions_ui.cy.js`)**: Valida se botões ("Editar", "Novo", "Exportar") e menus somem/aparecem corretamente ao trocar as permissões dos perfis.
 
 **Como executar:**
 ```bash
