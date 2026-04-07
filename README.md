@@ -154,6 +154,10 @@ O projeto inclui scripts em Bash para facilitar o dia a dia e o deploy:
 - **`deploy-remote.sh`**: Deploy em um clique:
     - Sincroniza o código local com o servidor Ubuntu via `rsync`.
     - Executa o `deploy.sh` remotamente via `ssh`.
+- **`monitor_melvin.sh`** (servidor): Monitoramento de saúde do backend:
+    - Registra uso de memória do container a cada hora em `/var/log/melvin_monitor.log`.
+    - Detecta ocorrências de `OutOfMemoryError` automaticamente.
+    - Reinicia o backend preventivamente se a memória ultrapassar 85%.
 
 ---
 
@@ -192,6 +196,34 @@ Se o servidor Nginx retornar erro 502, verifique no arquivo `/etc/nginx/sites-en
 - O `proxy_pass` deve usar **`http`** (e não `https`) para falar com o container Docker internamente:
   `proxy_pass http://localhost:8443/;`
 - A barra `/` no final é essencial para o roteamento correto da API.
+
+### Erro 504 Gateway Time-out (Crônico)
+Se as páginas públicas (Embaixadores, Sobre Nós) ou o login passarem a retornar `504 Gateway Time-out` após semanas de uptime, a causa é **exaustão de memória heap da JVM**.
+
+**Causa-raiz**: O container Docker do backend tem limite de 1GB. Sem flags explícitos, a JVM auto-calcula o heap máximo como apenas ~247MB (1/4 do limite), que é insuficiente para Spring Boot + Hibernate + Argon2 em operação contínua.
+
+**Solução aplicada (Dockerfile)**:
+```dockerfile
+ENTRYPOINT ["java", "-Xms256m", "-Xmx512m", "-jar", "app.jar"]
+```
+
+**Diagnóstico rápido**:
+```bash
+# Verificar heap do processo rodando
+docker exec backend-melvin cat /proc/1/cmdline | tr '\0' ' '
+
+# Verificar uso de memória atual
+docker stats --no-stream backend-melvin
+
+# Verificar se houve OOM
+docker logs backend-melvin 2>&1 | grep -i "OutOfMemoryError"
+
+# Consultar histórico de monitoramento
+cat /var/log/melvin_monitor.log | tail -48
+```
+
+### ⚠️ Backup do Banco (Cuidado com Prune)
+O script de backup mensal (`/root/scripts/backup_postgres.sh`) **não deve** conter `docker system prune -a -f` ou `docker volume prune -f`, pois esses comandos podem remover imagens e volumes de containers em operação. A limpeza adequada é feita via `find` removendo apenas dumps antigos (> 30 dias).
 
 ---
 
