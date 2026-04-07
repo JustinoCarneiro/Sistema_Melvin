@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import styles from './Login.module.scss';
-import { useState, useEffect } from 'react'; 
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import authService from '../../services/authService';
 import logo from '../../docs/Instituto_Melvin.png';
 
-function Login(){
+function Login() {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -17,7 +17,7 @@ function Login(){
     useEffect(() => {
         const token = Cookies.get('token');
         const role = Cookies.get('role');
-        
+
         if (token && role) {
             navigate(`/app/${role.toLowerCase()}`);
         }
@@ -28,11 +28,11 @@ function Login(){
         setErrorMessage('');
         try {
             const response = await authService.login({ login, password });
-            
+
             if (response.status === 200) {
-                const role = response.data.role; 
+                const role = response.data.role;
                 Cookies.set('login', login, { sameSite: 'Lax', secure: false, path: '/' });
-                Cookies.set('role', role, { sameSite: 'Lax', secure: false, path: '/' }); 
+                Cookies.set('role', role, { sameSite: 'Lax', secure: false, path: '/' });
 
                 navigate(`/app/${role.toLowerCase()}`);
             }
@@ -44,9 +44,9 @@ function Login(){
 
     const [obs, setObs] = useState(false);
 
-    return(
+    return (
         <div className={styles.body}>
-            <motion.div 
+            <motion.div
                 className={styles.container}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -54,18 +54,18 @@ function Login(){
             >
                 <form className={styles.form} onSubmit={handleSubmit}>
                     <Link to="/">
-                        <motion.img 
-                            src={logo} 
-                            alt="logo" 
+                        <motion.img
+                            src={logo}
+                            alt="logo"
                             className={styles.logo}
                             whileHover={{ scale: 1.05 }}
                         />
                     </Link>
-                    
+
                     <div className={styles.inputGroup}>
                         <input
-                            type="text" 
-                            name="matricula" 
+                            type="text"
+                            name="matricula"
                             placeholder="matrícula"
                             value={login}
                             onChange={(e) => setLogin(e.target.value)}
@@ -73,8 +73,8 @@ function Login(){
                             required
                         />
                         <input
-                            type="password" 
-                            name="senha" 
+                            type="password"
+                            name="senha"
                             placeholder="senha"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -84,7 +84,7 @@ function Login(){
                     </div>
 
                     {errorMessage && (
-                        <motion.p 
+                        <motion.p
                             className={styles.errorMessage}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -93,8 +93,8 @@ function Login(){
                         </motion.p>
                     )}
 
-                    <motion.button 
-                        type="submit" 
+                    <motion.button
+                        type="submit"
                         className={styles.button}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -109,7 +109,7 @@ function Login(){
 
                 <AnimatePresence>
                     {obs && (
-                        <motion.p 
+                        <motion.p
                             className={styles.obs}
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
