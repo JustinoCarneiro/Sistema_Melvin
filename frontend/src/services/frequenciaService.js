@@ -99,6 +99,17 @@ const frequenciaService = {
         }
     },
 
+    async getAlertasFaltas(mes, ano) {
+        const endpoint = `/frequenciadiscente/alertas-faltas?mes=${mes}&ano=${ano}`;
+        try {
+            const response = await http.get(endpoint);
+            return response;
+        } catch (error) {
+            console.error('Erro ao obter alertas de faltas:', error.response?.data || error.message);
+            return Promise.reject(new Error(error.response?.data?.message || error.message));
+        }
+    },
+
     async exportDiscente(mes, ano, sala, turno, busca) {
         const mesBackend = parseInt(mes) + 1;
         let endpoint = `/frequenciadiscente/export?mes=${mesBackend}&ano=${ano}`;

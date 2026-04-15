@@ -20,14 +20,21 @@ describe('Frequências (Attendance)', () => {
     // Global dashboard mocks
     cy.intercept('GET', '**/dashboard/**', { statusCode: 200, body: [] });
     cy.intercept('GET', '**/frequenciadiscente/**', { statusCode: 200, body: [] }).as('getFreq');
+    cy.intercept('GET', '**/frequenciadiscente/alertas-faltas*', {
+      statusCode: 200,
+      body: [{ matricula: '2026001', quantidade: 5 }]
+    }).as('getAlertas');
   });
 
-  it('should register student attendance', () => {
+  it('should register student attendance and show alerts', () => {
     cy.visit('/#/app/frequencias/alunos');
-    cy.wait('@getAlunos');
+    cy.wait(['@getAlunos', '@getAlertas']);
     
-    // Target either the table row or the mobile card equivalent
-    cy.get('[class*="tr_body"], [class*="card_body"]').first().within(() => {
+    // Verify alert exists for the student with 5 absences
+    cy.get('[class*="tr_body"]').first().within(() => {
+      cy.get('[title*="5 faltas"]').should('be.visible').within(() => {
+        cy.contains('5').should('be.visible');
+      });
       cy.get('select').select('P');
     });
     

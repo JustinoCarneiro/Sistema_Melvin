@@ -17,6 +17,7 @@ describe('Dynamic Permissions UI Logic', () => {
     cy.intercept('GET', '**/api/voluntario/matricula/*', { statusCode: 200, body: { matricula: MATRICULA, nome: 'Test User', salaUm: '1', salaDois: '2' } }).as('getVoluntario');
     cy.intercept('GET', '**/api/voluntario', { statusCode: 200, body: [{ matricula: '1001', nome: 'Voluntário Teste', status: 'true', funcao: 'professor' }] }).as('getVoluntarios');
     cy.intercept('GET', '**/api/cestas', { statusCode: 200, body: [] }).as('getCestas');
+    cy.intercept('GET', '**/frequenciadiscente/alertas-faltas*', { statusCode: 200, body: [] }).as('getAlertasGlobal');
   };
 
   const verifyNoRedirect = () => {

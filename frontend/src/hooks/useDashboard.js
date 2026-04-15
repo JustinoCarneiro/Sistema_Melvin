@@ -8,6 +8,7 @@ export function useDashboard() {
     const [rankingPiores, setRankingPiores] = useState([]);
     const [avisos, setAvisos] = useState([]);
     const [rankingSortBy, setRankingSortBy] = useState('media');
+    const [alertasFaltas, setAlertasFaltas] = useState([]);
     
     const [loading, setLoading] = useState(true); // Loading principal da página
     const [isRankingLoading, setIsRankingLoading] = useState(false); // 1. NOVO loading para o ranking
@@ -19,10 +20,12 @@ export function useDashboard() {
             setLoading(true);
             setError(null);
             try {
-                const [frequenciaRes, avisosRes, rankingRes] = await Promise.all([
+                const now = new Date();
+                const [frequenciaRes, avisosRes, rankingRes, alertasRes] = await Promise.all([
                     frequenciaService.listDiscente(new Date().toISOString().split('T')[0]),
                     dashboardService.getAvisos(),
-                    dashboardService.getRanking(rankingSortBy)
+                    dashboardService.getRanking(rankingSortBy),
+                    frequenciaService.getAlertasFaltas(now.getMonth() + 1, now.getFullYear())
                 ]);
 
                 // ... (Processamento de Frequência, Avisos e Ranking)
@@ -40,6 +43,15 @@ export function useDashboard() {
                 const ranking = rankingRes.data || [];
                 setRankingMelhores(ranking);
                 setRankingPiores([...ranking].sort((a, b) => a.mediaGeral - b.mediaGeral));
+
+                const alertasData = alertasRes.data || []; // Array de {matricula, quantidade}
+                const alunosComFaltas = ranking
+                    .filter(aluno => alertasData.some(a => a.matricula === aluno.matricula))
+                    .map(aluno => ({
+                        ...aluno,
+                        quantidadeFaltas: alertasData.find(a => a.matricula === aluno.matricula)?.quantidade
+                    }));
+                setAlertasFaltas(alunosComFaltas);
 
             } catch (err) {
                 setError(err.message || 'Falha ao carregar o dashboard.');
@@ -82,6 +94,7 @@ export function useDashboard() {
         rankingMelhores, 
         rankingPiores,
         rankingSortBy,
-        setRankingSortBy
+        setRankingSortBy,
+        alertasFaltas
     };
 }

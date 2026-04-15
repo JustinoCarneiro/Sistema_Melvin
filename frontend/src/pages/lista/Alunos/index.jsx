@@ -6,11 +6,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAlunos } from '../../../hooks/useAlunos';
 
 import { MdOutlineModeEdit } from "react-icons/md";
-import { FaPlus, FaFileExcel, FaStar } from "react-icons/fa6";
+import { FaPlus, FaFileExcel, FaStar, FaExclamationTriangle } from "react-icons/fa";
 import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 
 import Botao from '../../../components/gerais/Botao';
 import discenteService from '../../../services/discenteService';
+import frequenciaService from '../../../services/frequenciaService';
 
 function Alunos({ modoDesativados = false }) {
     const navigate = useNavigate();
@@ -24,6 +25,9 @@ function Alunos({ modoDesativados = false }) {
     const [loadingDesativados, setLoadingDesativados] = useState(false);
     const [errorDesativados, setErrorDesativados] = useState(null);
     const [buscaDesativados, setBuscaDesativados] = useState('');
+
+    // --- ESTADO DE AVISO DE FALTAS ---
+    const [alertasFaltas, setAlertasFaltas] = useState([]);
 
     // --- HOOK PARA MODO "ATIVOS" ---
     // O hook é chamado sempre (regras do React), mas só usamos seus dados se modoDesativados for false
@@ -62,6 +66,20 @@ function Alunos({ modoDesativados = false }) {
             fetchDesativados();
         }
     }, [modoDesativados]);
+
+    // --- EFEITO: BUSCAR ALERTAS DE FALTAS ---
+    useEffect(() => {
+        const fetchAlertas = async () => {
+            try {
+                const now = new Date();
+                const response = await frequenciaService.getAlertasFaltas(now.getMonth() + 1, now.getFullYear());
+                setAlertasFaltas(response.data || []);
+            } catch (err) {
+                console.error("Erro ao buscar alertas de faltas:", err);
+            }
+        };
+        fetchAlertas();
+    }, []);
 
     // --- FILTRAGEM DE DESATIVADOS (LOCAL) ---
     // Usamos useMemo para não recalcular a cada render se nada mudar
@@ -223,7 +241,25 @@ function Alunos({ modoDesativados = false }) {
                                     listaParaExibir.map((aluno) => (
                                         <tr key={aluno.matricula} className={styles.tr_body}>
                                             <td data-label="Matrícula">{aluno.matricula}</td>
-                                            <td data-label="Nome">{aluno.nome}</td>
+                                            <td data-label="Nome">
+                                                {aluno.nome}
+                                                {Array.isArray(alertasFaltas) && alertasFaltas.find(a => a.matricula === aluno.matricula) && (
+                                                    <span 
+                                                        title={`Atenção: ${alertasFaltas.find(a => a.matricula === aluno.matricula).quantidade} faltas neste mês`} 
+                                                        style={{ 
+                                                            color: '#e11d48', 
+                                                            marginLeft: '8px',
+                                                            fontSize: '0.85rem',
+                                                            display: 'inline-flex',
+                                                            alignItems: 'center',
+                                                            fontWeight: 'bold'
+                                                        }}
+                                                    >
+                                                        <FaExclamationTriangle />
+                                                        <span style={{ marginLeft: '4px' }}>{alertasFaltas.find(a => a.matricula === aluno.matricula).quantidade}</span>
+                                                    </span>
+                                                )}
+                                            </td>
                                             <td data-label="Responsável">{aluno.nome_pai || aluno.nome_mae || '-'}</td>
                                             {(isAdm || isCoor || isDire || podeEditarRendimento || podeCadastrarAluno) && (
                                                 <td className={styles.edicao} data-label="Ações">

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import br.com.melvin.sistema.domain.frequencia.model.FrequenciaDiscente;
+import br.com.melvin.sistema.domain.frequencia.dto.FaltaAlertaDTO;
 import br.com.melvin.sistema.domain.frequencia.repository.FrequenciaDiscenteRepository;
 import br.com.melvin.sistema.domain.discente.repository.DiscenteRepository;
 import jakarta.transaction.Transactional;
@@ -30,6 +31,10 @@ public class FrequenciaDiscenteService {
 
     public List<FrequenciaDiscente> listarFrequenciaPorData(LocalDate data){
         return repository.findAllByData(data);
+    }
+
+    public List<FaltaAlertaDTO> listarAlertasFaltas(LocalDate inicioMes, LocalDate fimMes){
+        return repository.findMatriculasComTresOuMaisFaltas(inicioMes, fimMes);
     }
 
     public FrequenciaDiscente capturarFrequencia(String matricula, LocalDate data){

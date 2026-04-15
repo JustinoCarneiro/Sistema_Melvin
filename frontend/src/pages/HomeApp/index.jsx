@@ -1,6 +1,6 @@
 import styles from './HomeApp.module.scss';
 import { useDashboard } from '../../hooks/useDashboard';
-import { FaStar, FaArrowUp, FaArrowDown, FaBullhorn, FaCalendarAlt } from 'react-icons/fa';
+import { FaStar, FaArrowUp, FaArrowDown, FaBullhorn, FaCalendarAlt, FaExclamationTriangle } from 'react-icons/fa';
 
 function Home() {
     const { 
@@ -12,7 +12,8 @@ function Home() {
         rankingMelhores, 
         rankingPiores, 
         rankingSortBy, 
-        setRankingSortBy
+        setRankingSortBy,
+        alertasFaltas
     } = useDashboard();
 
     const formatDate = (dateString) => {
@@ -176,6 +177,37 @@ function Home() {
                             <p className={styles.updating}>Atualizando...</p>
                         ) : (
                             <RankingList alunos={rankingPiores} type="bad" />
+                        )}
+                    </div>
+                </div>
+
+                {/* --- ALERTA DE FALTAS --- */}
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <div className={styles.headerTitleGroup}>
+                            <FaExclamationTriangle color="#e11d48"/>
+                            <h3>Faltas Excessivas (Mês)</h3>
+                        </div>
+                    </div>
+                    <div className={styles.listContainer}>
+                        {isRankingLoading ? (
+                            <p className={styles.updating}>Atualizando...</p>
+                        ) : (
+                            <ul className={styles.rankingList}>
+                                {Array.isArray(alertasFaltas) && alertasFaltas.length > 0 ? alertasFaltas.map((aluno, index) => (
+                                    <li key={aluno.matricula} className={styles.rankingItem}>
+                                        <div className={styles.studentInfo}>
+                                            <span className={styles.studentName}>{aluno.nome}</span>
+                                            <span className={styles.studentMatricula}>#{aluno.matricula}</span>
+                                        </div>
+                                        <div className={styles.scoreBadge} style={{ backgroundColor: '#e11d4822', color: '#e11d48' }}>
+                                            {aluno.quantidadeFaltas} faltas
+                                        </div>
+                                    </li>
+                                )) : (
+                                    <li className={styles.emptyList}>Nenhum alerta para o mês atual.</li>
+                                )}
+                            </ul>
                         )}
                     </div>
                 </div>

@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import { useNavigate } from 'react-router-dom';
 
 import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
+import { FaExclamationTriangle } from "react-icons/fa";
 
 import discenteService from '../../../services/discenteService';
 import voluntarioService from '../../../services/voluntarioService';
@@ -22,6 +23,7 @@ function Aluno_frequencia(){
     const [busca, setBusca] = useState('');
     const [salasDisponiveis, setSalasDisponiveis] = useState([]);
     const [loading, setLoading] = useState(false); // Loading state
+    const [alertasFaltas, setAlertasFaltas] = useState([]);
 
     const getTurnoAtual = () => {
         const now = new Date();
@@ -94,6 +96,20 @@ function Aluno_frequencia(){
     useEffect(() => {
         if (data) {
             fetchFrequencias(data);
+            
+            // Buscar alertas do mês / ano da data selecionada
+            const fetchAlertas = async () => {
+                try {
+                    const [anoStr, mesStr] = data.split('-');
+                    if (anoStr && mesStr) {
+                        const response = await frequenciaService.getAlertasFaltas(Number(mesStr), Number(anoStr));
+                        setAlertasFaltas(response.data || []);
+                    }
+                } catch (error) {
+                    console.error("Erro ao obter alertas!", error);
+                }
+            };
+            fetchAlertas();
         }
     }, [data]);
 
@@ -290,7 +306,25 @@ function Aluno_frequencia(){
                                         alunosFiltrados.map((aluno) => (
                                             <tr key={aluno.matricula} className={styles.tr_body}>
                                                 <td data-label="Matrícula">{aluno.matricula}</td>
-                                                <td data-label="Nome">{aluno.nome}</td>
+                                                <td data-label="Nome">
+                                                    {aluno.nome}
+                                                    {Array.isArray(alertasFaltas) && alertasFaltas.find(a => a.matricula === aluno.matricula) && (
+                                                        <span 
+                                                            title={`Atenção: ${alertasFaltas.find(a => a.matricula === aluno.matricula).quantidade} faltas no mês selecionado`} 
+                                                            style={{ 
+                                                                color: '#e11d48', 
+                                                                marginLeft: '8px',
+                                                                fontSize: '0.85rem',
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                fontWeight: 'bold'
+                                                            }}
+                                                        >
+                                                            <FaExclamationTriangle />
+                                                            <span style={{ marginLeft: '4px' }}>{alertasFaltas.find(a => a.matricula === aluno.matricula).quantidade}</span>
+                                                        </span>
+                                                    )}
+                                                </td>
                                                 <td data-label="Presença" className={styles.td_center}>
                                                     <select
                                                         className={styles.select_presenca}

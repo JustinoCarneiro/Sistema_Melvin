@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import br.com.melvin.sistema.domain.frequencia.model.FrequenciaDiscente;
+import br.com.melvin.sistema.domain.frequencia.dto.FaltaAlertaDTO;
 
 
 public interface FrequenciaDiscenteRepository extends JpaRepository<FrequenciaDiscente, UUID>{
@@ -18,4 +19,7 @@ public interface FrequenciaDiscenteRepository extends JpaRepository<FrequenciaDi
 
     @Query("SELECT COUNT(DISTINCT f.matricula) FROM FrequenciaDiscente f WHERE f.data = :data AND (f.presenca_manha = 'P' OR f.presenca_tarde = 'P')")
     Long countPresentesByData(@Param("data") LocalDate data);
+
+    @Query("SELECT new br.com.melvin.sistema.domain.frequencia.dto.FaltaAlertaDTO(f.matricula, COUNT(f.id)) FROM FrequenciaDiscente f WHERE f.data >= :inicioMes AND f.data <= :fimMes AND (f.presenca_manha = 'F' OR f.presenca_tarde = 'F') GROUP BY f.matricula HAVING COUNT(f.id) >= 3")
+    List<FaltaAlertaDTO> findMatriculasComTresOuMaisFaltas(@Param("inicioMes") LocalDate inicioMes, @Param("fimMes") LocalDate fimMes);
 }

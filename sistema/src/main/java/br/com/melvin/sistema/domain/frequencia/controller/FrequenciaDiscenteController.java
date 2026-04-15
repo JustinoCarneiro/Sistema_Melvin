@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.melvin.sistema.domain.frequencia.model.FrequenciaDiscente;
+import br.com.melvin.sistema.domain.frequencia.dto.FaltaAlertaDTO;
 import br.com.melvin.sistema.domain.discente.model.Discente;
 import br.com.melvin.sistema.domain.frequencia.service.FrequenciaDiscenteService;
 import br.com.melvin.sistema.shared.service.ExcelExportService;
@@ -68,6 +69,17 @@ public class FrequenciaDiscenteController {
     @DeleteMapping("/{matricula}/{data}")
     public ResponseEntity<String> remover(@PathVariable String matricula, @PathVariable LocalDate data){
         return service.remover(matricula, data);
+    }
+    // --- Endpoint de Alertas de Faltas ---
+    @GetMapping("/alertas-faltas")
+    public ResponseEntity<List<FaltaAlertaDTO>> getAlertasFaltas(
+            @RequestParam int mes,
+            @RequestParam int ano
+    ) {
+        LocalDate inicio = LocalDate.of(ano, mes, 1);
+        LocalDate fim = inicio.withDayOfMonth(inicio.lengthOfMonth());
+        List<FaltaAlertaDTO> alertas = service.listarAlertasFaltas(inicio, fim);
+        return ResponseEntity.ok(alertas);
     }
 
     // --- Endpoint de Exportação ---
