@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,12 @@ public class FrequenciaVoluntarioService {
             resposta = "Matricula não cadastrada!";
             return new ResponseEntity<String>(resposta, HttpStatus.NOT_FOUND);
         } else {
-            return new ResponseEntity<FrequenciaVoluntario>(repository.save(frequencia), HttpStatus.CREATED);
+            try {
+                return new ResponseEntity<FrequenciaVoluntario>(repository.save(frequencia), HttpStatus.CREATED);
+            } catch (DataIntegrityViolationException e) {
+                resposta = "Frequência já cadastrada!";
+                return new ResponseEntity<String>(resposta, HttpStatus.CONFLICT);
+            }
         }
     }
 

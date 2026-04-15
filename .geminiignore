@@ -1,0 +1,84 @@
+# .geminiignore
+# Use este arquivo para evitar que o Antigravity/Gemini leia arquivos desnecessários, economizando tokens.
+
+# --- Pastas de Controle de Versão e Ferramentas ---
+.git/
+.github/
+.vscode/
+.idea/
+.mvn/
+
+# --- Dependências e Pacotes ---
+node_modules/
+vendor/
+packages/
+jspm_packages/
+bower_components/
+.npm/
+
+# --- Artefatos de Build e Saída ---
+dist/
+build/
+out/
+target/
+bin/
+obj/
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# --- Bancos de Dados e Caching ---
+*.sqlite
+*.db
+.cache/
+.sass-cache/
+.eslintcache
+.parcel-cache
+.turbo/
+.vercel/
+
+# --- Arquivos de Ambiente e Sensíveis ---
+.env
+.env.*
+*.pem
+*.key
+*.pub
+*.crt
+
+# --- Arquivos do Sistema Operacional ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Mídia e Arquivos Binários Grandes (Consomem muitos tokens desnecessariamente) ---
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.pdf
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.ttf
+*.woff
+*.woff2
+*.eot
+
+# --- Específicos do Projeto Melvin ---
+backups/
+frontend/cypress/
+frontend/cypress_output.json
+frontend/dist/
+sistema/target/

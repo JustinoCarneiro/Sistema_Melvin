@@ -9,10 +9,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
-@Table(name="frequenciavoluntario")
+@Table(name="frequenciavoluntario", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"matricula", "data"})
+})
 @Entity 
 @Getter
 @Setter

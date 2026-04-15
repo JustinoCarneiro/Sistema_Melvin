@@ -8,10 +8,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "frequencia_discente", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"matricula", "data"})
+})
 @Getter
 @Setter
 public class FrequenciaDiscente{
