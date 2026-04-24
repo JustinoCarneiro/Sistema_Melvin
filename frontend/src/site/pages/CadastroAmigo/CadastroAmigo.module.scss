@@ -1,54 +1,128 @@
 @import "../../../index.scss";
 
-.body{
+.body {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    align-content: start;
-    padding-top: 2rem;
+    justify-content: center;
+    padding: 6rem 1rem;
     background-color: #3cb0f4;
-    padding-bottom: 2rem;
-    padding-inline: 2rem;
+    min-height: 80vh;
+    font-family: sans-serif;
     color: rgb(57, 57, 57);
 }
 
-.title{
-    font-weight: 300;
-    padding-bottom: 1rem;
+.checkoutWrapper {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-.texto{
-    font-weight: 300;
-    padding-bottom: 1rem;
+.headerInfo {
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
-.label{
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #F29F05;
+    margin-bottom: 0.5rem;
+}
+
+.texto {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.form {
     display: flex;
     flex-direction: column;
-    width: 20rem;
+    gap: 1.2rem;
+}
+
+.label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #333;
     gap: 0.5rem;
-    padding-bottom: 1rem;
 }
 
-.input{
-    all: unset;
-    background-color: var(--bg-color);
-    padding: 0.2rem;
+.input {
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+        border-color: #3cb0f4;
+    }
+}
+
+.cardInputContainer {
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+.button {
+    background-color: #F29F05;
+    color: white;
+    border: none;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
     cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 1rem;
+
+    &:hover:not(:disabled) {
+        background-color: #d88e04;
+    }
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
 }
 
-.button{
-    all: unset;
-    align-self: start;
-    background-color: var(--bg-color);
-    padding: 0.5rem;
-    border-radius: 7px;
-    margin-bottom: 0.5rem;
-    cursor: pointer;
+.errorMessage {
+    background: #fee;
+    color: #e53935;
+    padding: 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    border: 1px solid #fcc;
 }
 
-@media (max-width: $size-b){
-    .label{
-        width: 15rem;
+.successContainer {
+    text-align: center;
+    padding: 2rem 0;
+
+    h2 {
+        color: #2e7d32;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    p {
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .checkoutWrapper {
+        padding: 1.5rem;
     }
 }

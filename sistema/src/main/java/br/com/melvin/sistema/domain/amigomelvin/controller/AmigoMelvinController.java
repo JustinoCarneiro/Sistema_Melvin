@@ -13,6 +13,9 @@ import br.com.melvin.sistema.domain.amigomelvin.service.AmigoMelvinService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import br.com.melvin.sistema.domain.amigomelvin.dto.SubscriptionRequestDTO;
+import br.com.melvin.sistema.domain.amigomelvin.dto.OneTimeDonationDTO;
+import br.com.melvin.sistema.domain.amigomelvin.dto.DoacaoItemDTO;
 
 
 @RestController
@@ -27,9 +30,29 @@ public class AmigoMelvinController {
         return service.listar();
     }
 
+    @GetMapping("/stats")
+    public ResponseEntity<?> getStats() {
+        return ResponseEntity.ok(service.getStats());
+    }
+
     @PostMapping
     public ResponseEntity<?> adicionar(@RequestBody AmigoMelvin amigomelvin) {
         return service.adicionar(amigomelvin);
+    }
+    
+    @PostMapping("/subscribe")
+    public ResponseEntity<?> assinar(@RequestBody SubscriptionRequestDTO dto) {
+        return service.processarAssinatura(dto);
+    }
+    
+    @PostMapping("/one-time")
+    public ResponseEntity<?> oneTimeDonation(@RequestBody OneTimeDonationDTO dto) {
+        return service.processarDoacaoUnica(dto);
+    }
+
+    @PostMapping("/items")
+    public ResponseEntity<?> doacaoItens(@RequestBody DoacaoItemDTO dto) {
+        return service.registrarDoacaoItem(dto);
     }
     
     @PutMapping

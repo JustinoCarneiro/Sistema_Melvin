@@ -64,7 +64,7 @@ O sistema utiliza um padrão numérico para matrículas geradas automaticamente:
 Para facilitar o desenvolvimento, o projeto conta com um ambiente otimizado com **Hot Module Replacement (HMR)** no frontend:
 
 ### 1. Inicialização Rápida
-O script `dev.sh` configura o banco de dados, compila o backend (se necessário) e inicia o frontend em modo de desenvolvimento:
+O script `dev.sh` configura o ambiente de desenvolvimento com Hot Reload (HMR) no frontend:
 
 ```bash
 chmod +x dev.sh
@@ -99,6 +99,11 @@ A segurança é tratada como prioridade no Sistema Melvin, utilizando padrões d
 ### 3. Integridade e Validação
 - **Input Validation (Jakarta Validation)**: Todos os dados que entram na API são validados (tamanho, formato, presença) antes do processamento.
 - **Network Isolation**: No ambiente Docker, o banco de dados PostgreSQL não fica exposto para a rede externa, sendo acessível exclusivamente pelo backend (quando executado via Docker Compose).
+
+### 3. Integrações de Pagamento e Notificações (Amigos do Melvin)
+- **Stripe (Motor Financeiro)**: A plataforma integra com a Stripe via SDK nativo. Para testes locais, é recomendada a ferramenta `stripe-cli` para simular webhooks de pagamentos de assinaturas.
+- **E-mails Automáticos**: Disparos transacionais (`spring-boot-starter-mail`) configurados no background via `@Async` para não penalizar a performance.
+- **Validação Anti-Fraude**: Endpoints de Webhooks bloqueiam tentativas sem a assinatura validada (`Stripe-Signature`).
 
 ---
 
@@ -146,14 +151,15 @@ cd sistema
 
 O projeto inclui scripts em Bash para facilitar o dia a dia e o deploy:
 
-- **`deploy.sh`**: Realiza o build e deploy local via Docker Compose:
-    - Sobe o banco, compila o Java e inicia o Frontend.
+- **`dev.sh`**: Ambiente de Desenvolvimento (Hot Reload):
+    - Sobe o banco e o backend.
+    - Frontend em modo dev com auto-refresh.
+- **`deploy.sh`**: Ambiente de Produção:
+    - Uso Local: `./deploy.sh` (Sobe containers otimizados em modo detach).
+    - Uso Remoto: `./deploy.sh remote` (Sincroniza arquivos via rsync e executa o deploy no servidor).
 - **`backup.sh`**: Gestão de Backups:
     - Gera um dump compactado (`.sql.gz`) do banco de dados.
     - Mantém apenas os últimos 7 dias de backups automaticamente.
-- **`deploy-remote.sh`**: Deploy em um clique:
-    - Sincroniza o código local com o servidor Ubuntu via `rsync`.
-    - Executa o `deploy.sh` remotamente via `ssh`.
 - **`monitor_melvin.sh`** (servidor): Monitoramento de saúde do backend:
     - Registra uso de memória do container a cada hora em `/var/log/melvin_monitor.log`.
     - Detecta ocorrências de `OutOfMemoryError` automaticamente.
@@ -165,7 +171,20 @@ O projeto inclui scripts em Bash para facilitar o dia a dia e o deploy:
 
 ### 1. Configuração Inicial
 1. Certifique-se de ter o **Docker** instalado.
-2. Configure o arquivo `.env` (baseado no `.env.example`).
+2. Configure o arquivo `.env` (baseado no `.env.example`). Certifique-se de adicionar as novas variáveis necessárias para o módulo "Amigos do Melvin":
+
+```env
+# Módulo de Doações (Stripe)
+VITE_STRIPE_PUBLIC_KEY=pk_test_...         # Chave pública para o Frontend
+STRIPE_API_KEY=sk_test_...                 # Chave secreta para o Backend
+STRIPE_WEBHOOK_SECRET=whsec_...            # Segredo para validar Webhooks
+
+# Módulo de E-mail (SMTP)
+SPRING_MAIL_HOST=smtp.gmail.com
+SPRING_MAIL_PORT=587
+SPRING_MAIL_USERNAME=seu-email@gmail.com
+SPRING_MAIL_PASSWORD=sua-senha-de-app
+```
 
 ### 2. Inicialização
 ```bash
@@ -186,6 +205,21 @@ Para garantir que os componentes de formulário (como `Aluno_forms.jsx`) funcion
 
 ### Endpoints da API
 - Os endpoints seguem padrões REST, mas atente-se: `/cestas` e `/diarios` são no plural, enquanto `/aviso` é no singular. Os testes do Cypress já estão configurados para respeitar essas rotas.
+
+### Testando Webhooks Localmente (Stripe CLI)
+Para testar a confirmação de pagamentos ("Amigos do Melvin") sem precisar de um cartão real recorrente, utilize o Stripe CLI para simular o evento `invoice.paid`:
+
+1. Faça o login e inicie o forwarder na mesma porta do backend:
+```bash
+stripe login
+stripe listen --forward-to localhost:8443/api/v1/webhooks/payments
+```
+2. O terminal retornará um **Webhook Secret** (`whsec_...`). Coloque-o no `.env` do backend.
+3. Dispare o evento simulado em outro terminal:
+```bash
+stripe trigger invoice.paid
+```
+O console do backend acusará "Webhook processed" e o doador será movido para o status `ACTIVE`.
 
 ---
 

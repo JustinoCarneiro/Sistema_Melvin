@@ -1,67 +1,151 @@
 @import "../../../index.scss";
 
-.body{
+.body {
     width: 100%;
     display: flex;
-    justify-content: space-around;
-    align-content: start;
+    flex-direction: column;
     align-items: center;
-    padding-top: 8rem;
+    padding: 6rem 1rem;
     background-color: #F29F05;
-    padding-bottom: 8rem;
-    min-height: 60vh;
+    min-height: 80vh;
+    font-family: sans-serif;
 }
 
-.img{
-    width: 20rem;
-    height: 15rem;
-    object-fit: cover;
-}
-
-.conteudo{
-    display: flex;
-    flex-direction: column;
-    width: 25rem;
-    gap: 1rem;
+.heroSection {
+    text-align: center;
     color: white;
+    margin-bottom: 2rem;
+    
+    .title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
 }
 
-.title{
-    font-weight: 200;
-}
-
-.texto{
-    text-align: justify;
+.donationContainer {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1.5rem;
 }
 
-.button{
-    all: unset;
-    font-size: 0.8rem;
-    color: black;
-    background-color: aliceblue;
-    padding-inline: 1rem;
-    padding-block: 0.5rem;
-    border-radius: 5px;
-    cursor: pointer;
-    align-self: start;
+.toggleGroup {
+    display: flex;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    overflow: hidden;
+
+    .toggleBtn {
+        flex: 1;
+        padding: 0.8rem;
+        border: none;
+        background: transparent;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+        
+        &.active {
+            background: white;
+            color: #F29F05;
+        }
+    }
 }
 
-@media (max-width: $size-d){
-    .body{
-        flex-direction: column;
+.plansGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    
+    .planCard {
+        background: rgba(255, 255, 255, 0.8);
+        border: 2px solid transparent;
+        border-radius: 8px;
+        padding: 1rem;
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: #333;
+        
+        &.selected {
+            border-color: #F29F05;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+    }
+
+    .customInputCard {
+        display: flex;
         align-items: center;
-    }
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        
+        span {
+            margin-right: 0.5rem;
+        }
 
-    .img{
-        margin-bottom: 2rem;
+        .customInput {
+            border: none;
+            background: transparent;
+            font-size: 1.2rem;
+            font-weight: bold;
+            width: 100%;
+            outline: none;
+            color: #333;
+            
+            &::placeholder {
+                color: #999;
+                font-weight: normal;
+            }
+        }
     }
 }
 
-@media (max-width: $size-c){
-    .conteudo{
-        width: 19rem;
+.ctaButton {
+    background-color: #2e7d32;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+    margin-top: 1rem;
+    
+    &:hover {
+        background-color: #1b5e20;
+    }
+    
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+@media (min-width: 768px) {
+    .body {
+        padding: 8rem 2rem;
+    }
+    
+    .heroSection {
+        .title {
+            font-size: 3rem;
+        }
     }
 }

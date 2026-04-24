@@ -1,9 +1,13 @@
 package br.com.melvin.sistema.domain.amigomelvin.model;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,11 +36,16 @@ public class AmigoMelvin {
     private String formaPagamento;
 
     @Column(nullable = false)
-    private String valorMensal;
+    private BigDecimal valorMensal;
 
-    @Column(nullable = false)
-    private Boolean status;
+    @Enumerated(EnumType.STRING)
+    private DonorStatus status;
 
-    @Column(nullable = false)
-    private Boolean contatado;
+    private String stripeCustomerId;
+
+    private String subscriptionId;
+
+    private Integer mesesContribuindo;
+
+    private LocalDateTime dataInicio;
 }

@@ -70,7 +70,7 @@ function SiteContent(){
                     <Route path="/" element={ <Home/> }/>
                     <Route path="/maissobrenos" element={ <MaisSobreNos/> } />
                     <Route path="/embaixadores" element={ <Embaixadores/> } />
-                    <Route path="/amigosmelvin" element={ <AmigosMelvin/> } />
+                    <Route path="/amigos-do-melvin" element={ <AmigosMelvin/> } />
                     <Route path="/cadastroamigo" element={ <CadastroAmigo/> } />
                     <Route path="/serembaixador" element={ <SerEmbaixador/> }/>
                     <Route path="/doacoes" element={ <Doacao/> }/>

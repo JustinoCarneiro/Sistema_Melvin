@@ -55,8 +55,8 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                     // --- ROTAS PÚBLICAS (Login e leituras abertas) ---
-                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/frequenciavoluntario/**", "/frequenciadiscente/**", "/imagens/**", "/embaixador/**", "/app/docs/imagens_embaixadores/**", "/app/docs/diarios/**", "/app/docs/imagens_avisos/**", "/aviso").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/auth/login", "/frequenciavoluntario/**", "/embaixador/**", "/amigomelvin").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/frequenciavoluntario/**", "/frequenciadiscente/**", "/imagens/**", "/embaixador/**", "/app/docs/imagens_embaixadores/**", "/app/docs/diarios/**", "/app/docs/imagens_avisos/**", "/aviso", "/amigomelvin/stats").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/auth/login", "/frequenciavoluntario/**", "/embaixador/**", "/amigomelvin", "/amigomelvin/subscribe", "/amigomelvin/one-time", "/amigomelvin/items", "/api/v1/webhooks/payments").permitAll()
                     .requestMatchers(HttpMethod.PUT, "/frequenciavoluntario/**").permitAll()
 
                     // --- ROTAS AUTENTICADAS GERAIS ---

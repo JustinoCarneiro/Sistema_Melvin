@@ -1,11 +1,15 @@
 #!/bin/bash
-
 # --- script de desenvolvimento com HMR (Hot Module Replacement) ---
 
 echo "🚀 Iniciando ambiente de DESENVOLVIMENTO (Frontend com Auto-Update)..."
 
-# Garante que o frontend-dev consiga encontrar o backend
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build --force-recreate
+# Tenta parar o postgres local para não dar conflito de porta
+if command -v service &> /dev/null; then
+    sudo service postgresql stop 2>/dev/null || true
+fi
+
+# Sobe os containers com HMR (Frontend mapeia a pasta src)
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build --force-recreate --remove-orphans
 
 echo "✅ Ambiente de desenvolvimento pronto!"
 echo "📺 Frontend (HMR): http://localhost:3001"
