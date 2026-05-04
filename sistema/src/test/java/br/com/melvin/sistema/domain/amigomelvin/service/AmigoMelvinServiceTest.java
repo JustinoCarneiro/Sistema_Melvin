@@ -17,7 +17,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AmigoMelvinServiceTest {
+public @SuppressWarnings("null")
+class AmigoMelvinServiceTest {
 
     @Mock
     private AmigoMelvinRepository repositorio;

@@ -11,14 +11,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import br.com.melvin.sistema.domain.permissao.service.PermissaoService;
 import br.com.melvin.sistema.domain.discente.dto.DiscenteAvaliacaoDTO;
-import br.com.melvin.sistema.security.model.User;
-import br.com.melvin.sistema.security.model.UserRole;
+
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;

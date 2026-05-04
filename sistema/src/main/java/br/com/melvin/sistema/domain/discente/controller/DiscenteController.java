@@ -17,6 +17,7 @@ import br.com.melvin.sistema.domain.discente.service.DiscenteService;
 
 @RestController
 @RequestMapping("/discente")
+@SuppressWarnings("null")
 public class DiscenteController {
     
     @Autowired

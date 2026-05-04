@@ -1,11 +1,11 @@
 package br.com.melvin.sistema.domain.permissao.service;
 
-import br.com.melvin.sistema.domain.permissao.dto.PermissaoRegraDTO;
+
 import br.com.melvin.sistema.domain.permissao.model.PermissaoRegra;
 import br.com.melvin.sistema.domain.permissao.repository.PermissaoRegraRepository;
 import br.com.melvin.sistema.security.model.User;
 import br.com.melvin.sistema.security.model.UserRole;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

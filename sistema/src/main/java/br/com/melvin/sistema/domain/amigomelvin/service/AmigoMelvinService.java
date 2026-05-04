@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
+@SuppressWarnings("null")
 public class AmigoMelvinService {
 
     private final AmigoMelvinRepository repositorio;

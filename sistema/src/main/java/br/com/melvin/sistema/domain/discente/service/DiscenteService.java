@@ -15,7 +15,7 @@ import br.com.melvin.sistema.domain.discente.model.Discente;
 import br.com.melvin.sistema.domain.discente.repository.DiscenteRepository;
 import br.com.melvin.sistema.shared.service.ExcelExportService;
 import br.com.melvin.sistema.domain.discente.dto.DiscenteAvaliacaoDTO;
-import br.com.melvin.sistema.security.model.User;
+
 import br.com.melvin.sistema.domain.permissao.service.PermissaoService;
 
 import jakarta.persistence.EntityManager;
@@ -64,7 +64,7 @@ public class DiscenteService {
         int count = ((Number) query.getSingleResult()).intValue();
         int nextNumber = count + 1;
     
-        // Gera a matrícula no formato [Ano][XXX] (ex: 2026001)
+        // Gera a matrícula no formato [Ano][NNN] (ex: 2026001)
         String newMatricula = "%s%03d".formatted(yearPrefix, nextNumber);
     
         // Verifica se a matrícula já existe para evitar duplicatas em caso de deleção

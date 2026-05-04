@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
+@SuppressWarnings("null")
 public class EmbaixadorService {
     @Autowired
     EmbaixadorRepository repositorio;

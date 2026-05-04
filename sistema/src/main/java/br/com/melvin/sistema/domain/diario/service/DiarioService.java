@@ -22,6 +22,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
+@SuppressWarnings("null")
 public class DiarioService {
 
     @Value("${file.upload-dir-diarios}")

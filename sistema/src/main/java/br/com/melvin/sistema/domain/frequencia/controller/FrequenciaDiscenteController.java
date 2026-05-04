@@ -30,6 +30,7 @@ import br.com.melvin.sistema.domain.discente.service.DiscenteService;
 
 @RestController
 @RequestMapping("/frequenciadiscente")
+@SuppressWarnings("null")
 public class FrequenciaDiscenteController {
 
     @Autowired

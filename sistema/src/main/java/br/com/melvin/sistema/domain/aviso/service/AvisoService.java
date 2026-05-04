@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
+@SuppressWarnings("null")
 public class AvisoService {
     @Autowired
     AvisoRepository repositorio;

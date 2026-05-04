@@ -50,7 +50,7 @@ public class VoluntarioService {
         int count = ((Number) query.getSingleResult()).intValue();
         int nextNumber = count + 1;
         
-        // Gera a matrícula no formato [Ano][XXX] (ex: 2026001)
+        // Gera a matrícula no formato [Ano][NNN] (ex: 2026001)
         String newMatricula = "%s%03d".formatted(yearPrefix, nextNumber);
         
         // Verifica se a matrícula já existe para evitar duplicatas em caso de deleção
