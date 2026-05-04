@@ -26,7 +26,7 @@ function HeaderSite(){
                     <button className={styles.button} onClick={() => navigate("/embaixadores")}>Embaixadores</button>
                 </div>
                 <div className={styles.caixa_botao}>
-                    <button className={styles.button} onClick={() => navigate("/amigosmelvin")}>Amigos do Melvin</button>
+                    <button className={styles.button} onClick={() => navigate("/amigos-do-melvin")}>Amigos do Melvin</button>
                 </div>
                 <div className={styles.caixa_botao_nota} onClick={() => navigate("/notatemvalor")}>
                     <FaFileInvoiceDollar className={styles.coracao}/>

@@ -14,7 +14,7 @@ function AmigoMelvin_forms(){
     const [errorMessage, setErrorMessage] = useState('');
 
     const [formDado, setFormDado] = useState({
-        nome: '', email: '', contato: '', status: '', contatado: '', formaPagamento: '', valorMensal: ''
+        nome: '', email: '', contato: '', status: '', formaPagamento: 'Cartão', valorMensal: ''
     });
     
     useEffect(() => {
@@ -30,9 +30,8 @@ function AmigoMelvin_forms(){
                                 nome: amigo.nome || '',
                                 email: amigo.email || '',
                                 contato: amigo.contato || '',
-                                status: amigo.status ? 'true' : 'false',
-                                contatado: amigo.contatado ? 'true' : 'false',
-                                formaPagamento: amigo.formaPagamento || '',
+                                status: amigo.status || 'PENDING',
+                                formaPagamento: amigo.formaPagamento || 'Cartão',
                                 valorMensal: amigo.valorMensal || ''
                             });
                         }
@@ -104,30 +103,19 @@ function AmigoMelvin_forms(){
                                     <label>Status: <span className={styles.required}>*</span></label>
                                     <select className={styles.select} name="status" value={formDado.status} onChange={handleChange}>
                                         <option value="" hidden>Selecione...</option>
-                                        <option value="true">Ativo</option>
-                                        <option value="false">Inativo</option>
+                                        <option value="ACTIVE">Ativo</option>
+                                        <option value="PENDING">Pendente</option>
+                                        <option value="INACTIVE">Inativo</option>
+                                        <option value="CANCELLED">Cancelado</option>
                                     </select>
                                 </div>
                                 <div className={styles.inputGroup}>
-                                    <label>Foi Contatado? <span className={styles.required}>*</span></label>
-                                    <select className={styles.select} name="contatado" value={formDado.contatado} onChange={handleChange}>
-                                        <option value="" hidden>Selecione...</option>
-                                        <option value="true">Sim</option>
-                                        <option value="false">Não</option>
-                                    </select>
+                                    <label>Forma Contribuição: <span className={styles.required}>*</span></label>
+                                    <input className={styles.select} value="Cartão" disabled />
                                 </div>
                             </div>
 
                             <div className={styles.linhaDupla}>
-                                <div className={styles.inputGroup}>
-                                    <label>Forma Contribuição: <span className={styles.required}>*</span></label>
-                                    <select className={styles.select} name="formaPagamento" value={formDado.formaPagamento} onChange={handleChange}>
-                                        <option value="" hidden>Selecione...</option>
-                                        <option value="Pix">Pix</option>
-                                        <option value="Cartão">Cartão</option>
-                                        <option value="Dinheiro">Dinheiro</option>
-                                    </select>
-                                </div>
                                 <Input label="Valor Mensal:" name="valorMensal" value={formDado.valorMensal} onChange={handleChange} comp="pequeno" placeholder="R$ 0,00" />
                             </div>
                         </div>

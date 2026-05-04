@@ -14,6 +14,7 @@ services:
       - "3001:5173"
     environment:
       - VITE_API_URL=http://backend-melvin:8080
+      - VITE_STRIPE_PUBLIC_KEY=${VITE_STRIPE_PUBLIC_KEY}
     depends_on:
       - backend
 

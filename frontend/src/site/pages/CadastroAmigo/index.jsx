@@ -130,6 +130,7 @@ function CheckoutForm({ donationType, amount }) {
                 Dados do Cartão:
                 <div className={styles.cardInputContainer}>
                     <CardElement options={{
+                        hidePostalCode: true,
                         style: {
                             base: {
                                 fontSize: '16px',
@@ -147,7 +148,7 @@ function CheckoutForm({ donationType, amount }) {
             <button 
                 className={styles.button} 
                 type="submit" 
-                disabled={!stripe || loading}
+                disabled={!stripe || loading || !nome || !email || !contato}
             >
                 {loading ? "Processando..." : `Finalizar Doação de R$ ${amount}`}
             </button>

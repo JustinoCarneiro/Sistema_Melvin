@@ -32,7 +32,11 @@ public class AmigoMelvinService {
     private final DoacaoItemRepository doacaoItemRepository;
     private final EmailService emailService;
 
+    @org.springframework.beans.factory.annotation.Value("${stripe.price.id:price_dummy}")
+    private String stripePriceId;
+
     public List<AmigoMelvin> listar(){
+
         return repositorio.findAll();
     }
 
@@ -71,7 +75,7 @@ public class AmigoMelvinService {
             
             // Usar um priceId dummy ou ler de configuração futuramente. 
             // Para simplificar a integração inicial, usaremos um valor genérico.
-            com.stripe.model.Subscription subscription = stripeService.createSubscription(customer.getId(), "price_dummy");
+            com.stripe.model.Subscription subscription = stripeService.createSubscription(customer.getId(), stripePriceId);
             log.info("Subscription criada no Stripe com sucesso.");
             
             AmigoMelvin amigo = new AmigoMelvin();

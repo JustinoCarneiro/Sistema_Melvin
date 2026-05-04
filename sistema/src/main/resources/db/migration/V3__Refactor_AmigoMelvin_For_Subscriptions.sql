@@ -9,5 +9,5 @@ ALTER TABLE amigomelvin ADD COLUMN subscription_id VARCHAR(255);
 ALTER TABLE amigomelvin ADD COLUMN meses_contribuindo INTEGER;
 ALTER TABLE amigomelvin ADD COLUMN data_inicio TIMESTAMP;
 
--- Alterar tipo da coluna valor_mensal de VARCHAR para NUMERIC
-ALTER TABLE amigomelvin ALTER COLUMN valor_mensal TYPE NUMERIC(38, 2) USING valor_mensal::NUMERIC;
+-- Alterar tipo da coluna valor_mensal de VARCHAR para NUMERIC (Tratando separador decimal de vírgula para ponto)
+ALTER TABLE amigomelvin ALTER COLUMN valor_mensal TYPE NUMERIC(38, 2) USING REPLACE(valor_mensal, ',', '.')::NUMERIC;

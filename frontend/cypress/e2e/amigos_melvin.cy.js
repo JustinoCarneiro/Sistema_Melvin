@@ -1,10 +1,10 @@
 describe('Amigos do Melvin - Fluxo de Doação', () => {
     beforeEach(() => {
-        cy.visit('/amigos-do-melvin');
+        cy.visit('/#/amigos-do-melvin');
     });
 
     it('Deve renderizar a página de planos corretamente', () => {
-        cy.contains('h1', 'Faça parte dessa história').should('be.visible');
+        cy.contains('h1', 'Faça a diferença!').should('be.visible');
         cy.contains('R$ 20').should('be.visible');
         cy.contains('R$ 50').should('be.visible');
         cy.contains('R$ 100').should('be.visible');
@@ -18,13 +18,13 @@ describe('Amigos do Melvin - Fluxo de Doação', () => {
         cy.contains('button', '[ Quero ser um amigo ]').click();
 
         // Verifica redirecionamento
-        cy.url().should('include', '/cadastroamigo');
+        cy.url().should('include', '/#/cadastroamigo');
         cy.contains('h2', 'Finalizar Apoio').should('be.visible');
         cy.contains('R$ 50').should('be.visible');
     });
 
     it('Deve exibir erros de validação no formulário de checkout', () => {
-        cy.visit('/cadastroamigo');
+        cy.visit('/#/cadastroamigo');
         
         // Tenta enviar vazio
         cy.get('form').within(() => {
@@ -39,10 +39,10 @@ describe('Amigos do Melvin - Fluxo de Doação', () => {
     // Teste com Mock: como o Stripe Elements exige iframe, interagir com ele no Cypress E2E é complexo sem injetar keys de teste.
     // O objetivo do mock é interceptar a chamada do amigoMelvinService.
     it('Deve exibir o estado de Processando e a mensagem de Sucesso no envio', () => {
-        cy.visit('/cadastroamigo', {
+        cy.visit('/#/cadastroamigo', {
             onBeforeLoad(win) {
                 // Injeta state na navegação para simular o vindo do router
-                win.history.pushState({ type: 'monthly', value: 50 }, '', '/cadastroamigo');
+                win.history.pushState({ type: 'monthly', value: 50 }, '', '/#/cadastroamigo');
             }
         });
 
