@@ -1,0 +1,99 @@
+#!/bin/bash
+# Git commit-msg Hook: Verifica se a documentação foi atualizada junto com o código.
+# Usa os prefixos do Conventional Commits para decidir automaticamente.
+#
+# TIPOS QUE EXIGEM DOCS ATUALIZADOS:
+#   feat:     → nova funcionalidade pública
+#   fix:      → correção de bug com impacto visível
+#
+# TIPOS QUE PASSAM DIRETO (refactor interno, sem impacto público):
+#   refactor: → reestruturação interna de código
+#   chore:    → tarefas de manutenção (dependências, configs)
+#   style:    → formatação, espaços, ponto e vírgula
+#   test:     → adição ou correção de testes
+#   docs:     → atualização de documentação (já é o objetivo)
+#   perf:     → otimização de performance interna
+#   ci:       → pipelines e automação de CI
+#   build:    → mudanças no sistema de build
+#
+# Instalação (já feita via setup):
+#   cp .agents/hooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# ─── Tipos que NÃO exigem atualização de docs ───────────────────────────────
+TIPOS_INTERNOS="^(refactor|chore|style|test|docs|perf|ci|build)(\(.+\))?!?:"
+
+if echo "$COMMIT_MSG" | grep -qiE "$TIPOS_INTERNOS"; then
+  # Commit interno — passa sem verificação de docs
+  exit 0
+fi
+
+# ─── Tipos que EXIGEM atualização de docs ───────────────────────────────────
+TIPOS_PUBLICOS="^(feat|fix)(\(.+\))?!?:"
+
+if echo "$COMMIT_MSG" | grep -qiE "$TIPOS_PUBLICOS"; then
+  # Verifica se há código alterado
+  CODIGO_ALTERADO=$(git diff --cached --name-only | grep -E "^(sistema/|frontend/src/)" | wc -l)
+
+  if [ "$CODIGO_ALTERADO" -gt 0 ]; then
+    DOCS=(
+      "docs/DOCUMENTACAO_TECNICA.md"
+      "docs/APRESENTACAO_PARA_O_INSTITUTO.md"
+      "README.md"
+    )
+
+    DOCS_ALTERADOS=0
+    for doc in "${DOCS[@]}"; do
+      if git diff --cached --name-only | grep -q "$doc"; then
+        DOCS_ALTERADOS=$((DOCS_ALTERADOS + 1))
+      fi
+    done
+
+    if [ "$DOCS_ALTERADOS" -eq 0 ]; then
+      echo ""
+      echo "📋 DOCUMENTAÇÃO DESATUALIZADA"
+      echo "────────────────────────────────────────────────────────────────"
+      echo "  Commits do tipo 'feat:' e 'fix:' exigem documentação atualizada."
+      echo ""
+      echo "  Nenhum dos documentos abaixo foi incluído neste commit:"
+      for doc in "${DOCS[@]}"; do
+        echo "    → $doc"
+      done
+      echo ""
+      echo "  📖 Checklist completo: .agents/instructions/update-docs.md"
+      echo ""
+      echo "  ✅ Se for um refactor sem impacto público, use o prefixo correto:"
+      echo "     git commit -m 'refactor: descreva a mudança interna'"
+      echo "     git commit -m 'chore: atualiza dependência X'"
+      echo "     git commit -m 'style: formata arquivo Y'"
+      echo ""
+      echo "────────────────────────────────────────────────────────────────"
+      exit 1
+    fi
+  fi
+
+  exit 0
+fi
+
+# ─── Mensagem sem prefixo reconhecido ───────────────────────────────────────
+echo ""
+echo "⚠️  FORMATO DE COMMIT INVÁLIDO"
+echo "────────────────────────────────────────────────────────────────"
+echo "  Use o padrão Conventional Commits:"
+echo ""
+echo "  REQUEREM atualização de docs:"
+echo "    feat: adiciona tela de relatório mensal"
+echo "    fix: corrige cálculo de frequência"
+echo ""
+echo "  NÃO requerem atualização de docs:"
+echo "    refactor: extrai método calcularPresenca"
+echo "    chore: atualiza versão do Spring Boot"
+echo "    style: formata arquivos do módulo discente"
+echo "    test: adiciona teste para FrequenciaService"
+echo "    docs: atualiza README com novos scripts"
+echo "    perf: otimiza query de busca de alunos"
+echo ""
+echo "────────────────────────────────────────────────────────────────"
+exit 1

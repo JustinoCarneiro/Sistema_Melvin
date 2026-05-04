@@ -1,0 +1,40 @@
+#!/bin/bash
+# Git Pre-commit Hook: Verifica se a documentação foi atualizada junto com o código.
+# Instalação: cp .agents/hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+DOCS=(
+  "docs/DOCUMENTACAO_TECNICA.md"
+  "docs/APRESENTACAO_PARA_O_INSTITUTO.md"
+  "README.md"
+)
+
+# Verifica se há alterações em arquivos de código (backend ou frontend)
+CODIGO_ALTERADO=$(git diff --cached --name-only | grep -E "^(sistema/|frontend/src/)" | wc -l)
+
+if [ "$CODIGO_ALTERADO" -gt 0 ]; then
+  DOCS_ALTERADOS=0
+  for doc in "${DOCS[@]}"; do
+    if git diff --cached --name-only | grep -q "$doc"; then
+      DOCS_ALTERADOS=$((DOCS_ALTERADOS + 1))
+    fi
+  done
+
+  if [ "$DOCS_ALTERADOS" -eq 0 ]; then
+    echo ""
+    echo "⚠️  AVISO: Você alterou código mas não atualizou nenhum documento."
+    echo ""
+    echo "   Os documentos a serem atualizados são:"
+    for doc in "${DOCS[@]}"; do
+      echo "   → $doc"
+    done
+    echo ""
+    echo "   Consulte: .agents/instructions/update-docs.md para o checklist completo."
+    echo ""
+    echo "   Para commitar mesmo assim (ex: refactor interno sem impacto público):"
+    echo "   git commit --no-verify -m 'sua mensagem'"
+    echo ""
+    exit 1
+  fi
+fi
+
+exit 0

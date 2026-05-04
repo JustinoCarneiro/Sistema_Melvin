@@ -271,4 +271,4 @@ O script de backup mensal (`/root/scripts/backup_postgres.sh`) **não deve** con
 
 ---
 
-Desenvolvido com ❤️ para o **Instituto Social Melvin**
+Desenvolvido com ❤️ para o **Instituto Social Melvim**
