@@ -13,6 +13,7 @@ import br.com.melvin.sistema.domain.amigomelvin.service.AmigoMelvinService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import br.com.melvin.sistema.domain.amigomelvin.dto.SubscriptionRequestDTO;
 import br.com.melvin.sistema.domain.amigomelvin.dto.OneTimeDonationDTO;
 import br.com.melvin.sistema.domain.amigomelvin.dto.DoacaoItemDTO;
@@ -58,5 +59,10 @@ public class AmigoMelvinController {
     @PutMapping
     public ResponseEntity<?> alterar(@RequestBody AmigoMelvin amigomelvin) {
         return service.alterar(amigomelvin);
+    }
+
+    @PostMapping("/{id}/cancelar")
+    public ResponseEntity<?> cancelarAssinaturaManual(@PathVariable java.util.UUID id) {
+        return service.cancelarAssinaturaManual(id);
     }
 }

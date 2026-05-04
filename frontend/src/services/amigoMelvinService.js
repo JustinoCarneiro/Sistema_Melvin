@@ -69,6 +69,15 @@ const amigoMelvinService = {
             console.error("Erro ao obter estatísticas dos amigos do melvin:", error.response?.data || error.message);
             return Promise.reject(error);
         }
+    },
+
+    async cancelSubscription(id) {
+        try {
+            return await http.post(`/amigomelvin/${id}/cancelar`);
+        } catch (error) {
+            console.error("Erro ao cancelar assinatura:", error.response?.data || error.message);
+            return Promise.reject(new Error(error.response?.data || error.message));
+        }
     }
 };
 

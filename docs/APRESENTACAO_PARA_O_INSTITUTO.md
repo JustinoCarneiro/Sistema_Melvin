@@ -116,6 +116,14 @@ O programa de sustentabilidade do Instituto conta com um **motor financeiro auto
 - **Os dados do cartão nunca passam pelo Instituto** — vão diretamente para os servidores seguros da Stripe.
 - Quando o banco aprova o pagamento, a Stripe avisa o sistema automaticamente. O doador é ativado e a confirmação é enviada por e-mail — **sem nenhuma intervenção manual** da equipe.
 
+### Autoatendimento e Cancelamento Descomplicado:
+- Se um doador precisar alterar o cartão ou cancelar a doação, ele não precisa enviar mensagem para a equipe. Ele mesmo faz isso através de um **Portal Seguro (Customer Portal)** acessado por um link recebido em seu e-mail.
+- A coordenação também pode cancelar a assinatura diretamente pelo painel do Melvin com um único clique.
+
+### Recuperação e Antifraude:
+- **Retentativas Inteligentes:** Se o cartão falhar por falta de limite, o sistema não cancela na hora. Ele tenta cobrar de forma automática e inteligente (até 8 vezes) para recuperar a doação.
+- **Proteção Antifraude:** O sistema possui o Stripe Radar ativado, que bloqueia automaticamente cartões suspeitos ou clonados, protegendo a reputação do Instituto.
+
 ---
 
 ## 9. Comunicação e Avisos

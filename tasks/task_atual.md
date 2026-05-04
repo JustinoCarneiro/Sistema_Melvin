@@ -1,18 +1,12 @@
-# TASK_ATUAL - PASSO 9: TESTES E2E E DOCUMENTAÇÃO FINAL
+# TASK_ATUAL - PASSO 13.1: CORREÇÃO DE INFRAESTRUTURA DE LOGS
 
 ## OBJETIVO
-Garantir a integridade de ponta a ponta do fluxo de doações e atualizar os manuais técnicos do sistema.
+Garantir a pré-existência dos diretórios e arquivos de log no ambiente Linux para evitar falhas de leitura no terminal (`tail -f`).
 
 ## ESCOPO DA ETAPA
-1. **Cypress E2E**: Criar o arquivo `frontend/cypress/e2e/amigos_melvin.cy.js`.
-    - Testar navegação até `/amigos-do-melvin`.
-    - Testar seleção de planos e preenchimento do formulário de checkout.
-    - Simular falhas de validação no formulário.
-2. **Mock de Webhooks**: Documentar um script `curl` ou comando da `stripe-cli` para simular o `invoice.paid` em ambiente de staging.
-3. **README Técnico**: Atualizar o `README.md` principal do projeto com as novas variáveis de ambiente necessárias (`STRIPE_API_KEY`, `STRIPE_WEBHOOK_SECRET`, `SPRING_MAIL_*`).
-4. **Cleanup**: Remover logs de debug sensíveis (como tokens ou payloads brutos) que possam ter ficado nos Services.
+1. **Refatoração de Script**: Atualizar o arquivo `sistema/scripts/watch_logs.sh` (ou criá-lo, caso não exista) para incluir comandos de segurança que geram a pasta e o arquivo vazios antes de tentar escutá-los.
 
 ## CRITÉRIOS DE ACEITE
-- Os novos testes do Cypress devem passar em modo `headless`.
-- O `README.md` deve refletir a nova arquitetura de doações.
-- Build final limpa no Linux.
+- O script deve utilizar o comando `mkdir -p` para criar o diretório sem falhar se ele já existir.
+- O comando `touch` deve ser usado para garantir que o arquivo `payments.log` exista antes do `tail -f`.
+- O script deve manter a permissão de execução nativa do Linux (`chmod +x`).

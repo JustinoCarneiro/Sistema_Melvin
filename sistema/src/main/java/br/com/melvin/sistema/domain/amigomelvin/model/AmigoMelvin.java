@@ -48,4 +48,7 @@ public class AmigoMelvin {
     private Integer mesesContribuindo;
 
     private LocalDateTime dataInicio;
+
+    @Column(name = "last_processed_invoice_id")
+    private String lastProcessedInvoiceId;
 }

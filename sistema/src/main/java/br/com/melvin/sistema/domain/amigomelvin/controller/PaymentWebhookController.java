@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.slf4j.MDC;
 
 @RestController
 @RequestMapping("/api/v1/webhooks/payments")
@@ -36,9 +37,6 @@ public class PaymentWebhookController {
             if (endpointSecret != null && !endpointSecret.isEmpty() && sigHeader != null) {
                 event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
             } else {
-                // If the webhook secret is not set, we can parse it locally without verification.
-                // However, the criteria specifies 400 Bad Request on invalid signature.
-                // We'll throw an exception if secret is set but signature is invalid.
                 if (sigHeader == null && endpointSecret != null && !endpointSecret.isEmpty()) {
                     return ResponseEntity.badRequest().body("Missing Stripe signature header");
                 }
@@ -47,14 +45,45 @@ public class PaymentWebhookController {
 
             String eventType = event.getType();
 
-            if ("invoice.paid".equals(eventType)) {
-                com.stripe.model.Invoice invoice = (com.stripe.model.Invoice) event.getDataObjectDeserializer().getObject().orElse(null);
-                if (invoice != null && invoice.getSubscription() != null) {
-                    String subscriptionId = invoice.getSubscription();
-                    log.info("Invoice paid for subscription: {}", subscriptionId);
-                    amigoMelvinService.confirmarPagamento(subscriptionId);
+            if ("invoice.paid".equals(eventType) || "invoice.payment_failed".equals(eventType)) {
+                com.google.gson.JsonObject rootObject = com.stripe.model.Event.GSON.fromJson(payload, com.google.gson.JsonObject.class);
+                com.google.gson.JsonObject dataObject = rootObject.has("data") && !rootObject.get("data").isJsonNull() ? rootObject.getAsJsonObject("data") : null;
+                com.google.gson.JsonObject jsonObject = dataObject != null && dataObject.has("object") && !dataObject.get("object").isJsonNull() ? dataObject.getAsJsonObject("object") : null;
+                
+                String subscriptionId = jsonObject != null && jsonObject.has("subscription") && !jsonObject.get("subscription").isJsonNull() 
+                        ? jsonObject.get("subscription").getAsString() : null;
+                String invoiceId = jsonObject != null && jsonObject.has("id") && !jsonObject.get("id").isJsonNull() 
+                        ? jsonObject.get("id").getAsString() : null;
+                String customerId = jsonObject != null && jsonObject.has("customer") && !jsonObject.get("customer").isJsonNull() 
+                        ? jsonObject.get("customer").getAsString() : null;
+                
+                if (subscriptionId != null || customerId != null) {
+                    MDC.put("invoiceId", invoiceId);
+                    MDC.put("subscriptionId", subscriptionId != null ? subscriptionId : customerId);
+                    if ("invoice.paid".equals(eventType)) {
+                        log.info("Invoice paid for subscription: {}, invoiceId: {}, customerId: {}", subscriptionId, invoiceId, customerId);
+                        amigoMelvinService.confirmarPagamento(subscriptionId, invoiceId, customerId);
+                    } else {
+                        log.warn("Invoice payment FAILED for subscription: {}, customerId: {}", subscriptionId, customerId);
+                        amigoMelvinService.registrarFalhaPagamento(subscriptionId, customerId);
+                    }
                 } else {
-                    log.warn("Webhook received invoice.paid but no subscription ID was found.");
+                    log.warn("Webhook received {} but no subscription ID or customer ID was found in JSON payload.", eventType);
+                }
+            } else if ("customer.subscription.deleted".equals(eventType)) {
+                com.google.gson.JsonObject rootObject = com.stripe.model.Event.GSON.fromJson(payload, com.google.gson.JsonObject.class);
+                com.google.gson.JsonObject dataObject = rootObject.has("data") && !rootObject.get("data").isJsonNull() ? rootObject.getAsJsonObject("data") : null;
+                com.google.gson.JsonObject jsonObject = dataObject != null && dataObject.has("object") && !dataObject.get("object").isJsonNull() ? dataObject.getAsJsonObject("object") : null;
+                
+                String subscriptionId = jsonObject != null && jsonObject.has("id") && !jsonObject.get("id").isJsonNull() 
+                        ? jsonObject.get("id").getAsString() : null;
+                
+                if (subscriptionId != null) {
+                    MDC.put("subscriptionId", subscriptionId);
+                    log.info("Subscription cancelled: {}", subscriptionId);
+                    amigoMelvinService.cancelarAssinatura(subscriptionId);
+                } else {
+                    log.warn("Webhook received customer.subscription.deleted but no subscription ID was found in JSON payload.");
                 }
             } else {
                 log.info("Unhandled event type: {}", eventType);
@@ -67,6 +96,8 @@ public class PaymentWebhookController {
         } catch (Exception e) {
             log.error("Error processing webhook", e);
             return ResponseEntity.badRequest().body("Error processing webhook");
+        } finally {
+            MDC.clear();
         }
     }
 }

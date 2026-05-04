@@ -10,4 +10,5 @@ import br.com.melvin.sistema.domain.amigomelvin.model.AmigoMelvin;
 public interface AmigoMelvinRepository extends JpaRepository<AmigoMelvin, UUID>{
     AmigoMelvin findByNome(String nome);
     AmigoMelvin findBySubscriptionId(String subscriptionId);
+    AmigoMelvin findByStripeCustomerId(String stripeCustomerId);
 }

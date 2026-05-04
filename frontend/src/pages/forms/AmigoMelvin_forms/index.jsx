@@ -74,6 +74,18 @@ function AmigoMelvin_forms(){
         }
     };
 
+    const handleCancelSubscription = async () => {
+        if(window.confirm("Tem certeza que deseja cancelar a assinatura deste apoiador no Stripe?")) {
+            try {
+                await amigoMelvinService.cancelSubscription(id);
+                alert("Assinatura cancelada com sucesso!");
+                setFormDado((prev) => ({...prev, status: 'CANCELLED'}));
+            } catch (error) {
+                alert("Erro ao cancelar assinatura: " + error.message);
+            }
+        }
+    };
+
     return(
         <div className={styles.body}>
             <div className={styles.container}>
@@ -122,8 +134,11 @@ function AmigoMelvin_forms(){
                     </div>
 
                     {/* --- FOOTER --- */}
-                    <div className={styles.footerActions}>
+                    <div className={styles.footerActions} style={{ display: 'flex', gap: '1rem' }}>
                         {errorMessage && <div className={styles.errorMsg}>{errorMessage}</div>}
+                        {id && formDado.status !== 'CANCELLED' && formDado.status !== 'INACTIVE' && (
+                            <Botao nome="Cancelar Assinatura no Stripe" corFundo="#c62828" corBorda="#8e0000" type="button" onClick={handleCancelSubscription} />
+                        )}
                         <Botao nome="Salvar Dados" corFundo="#F29F05" corBorda="#8A6F3E" type="submit" />
                     </div>
                 </form>

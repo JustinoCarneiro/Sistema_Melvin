@@ -158,6 +158,16 @@ Cada linha representa: "o cargo X pode executar a ação Y". O backend valida is
 **Fluxo de Doação Única (OneTime):**
 - `OneTimeDonationDTO` permite doações avulsas sem criação de assinatura recorrente.
 
+**Fluxo de Cancelamento:**
+- **Autoatendimento:** O doador acessa o Stripe Customer Portal através de um link recebido por e-mail para gerenciar ou cancelar sua assinatura.
+- **Manual (Painel Admin):** O administrador clica em "Cancelar Assinatura no Stripe" na tela de edição do doador.
+- O backend (`AmigoMelvinService.cancelarAssinaturaManual`) se comunica com a Stripe via SDK (`stripeService.cancelSubscription`), atualiza o status no banco para `CANCELLED` e dispara um e-mail automático de encerramento.
+
+**Recursos Avançados Stripe Configurados:**
+- **Smart Retries:** Retentativas inteligentes de cobrança ativadas no Stripe Dashboard (até 8 tentativas em 2 semanas) antes de marcar como Inadimplente/Cancelado.
+- **Radar Antifraude:** Regras de bloqueio baseadas em score de risco, CVC e CEP ativadas.
+- **Notificações Automáticas:** Disparos nativos da Stripe para falhas de cartão e cartões expirando, com links seguros de atualização (Customer Portal).
+
 ### 4.4 Módulo de Frequência (Ponto Eletrônico)
 - **Alunos:** `Aluno_frequencia` — permite lançar presença/falta por sala e data, com código `P`/`F`/`FJ` para manhã e tarde.
 - **Voluntários:** `Voluntario_frequencia` — mesmo padrão.

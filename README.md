@@ -105,6 +105,9 @@ A segurança é tratada como prioridade no Sistema Melvin, utilizando padrões d
 - **E-mails Automáticos**: Disparos transacionais (`spring-boot-starter-mail`) configurados no background via `@Async` para não penalizar a performance.
 - **Validação Anti-Fraude**: Endpoints de Webhooks bloqueiam tentativas sem a assinatura validada (`Stripe-Signature`).
 
+- **Autoatendimento e Cancelamento**: Configuração ativa do *Stripe Customer Portal* para gestão independente pelo doador. Funcionalidade de cancelamento manual implementada no painel administrativo sincronizada via SDK com a Stripe (`AmigoMelvinService.cancelarAssinaturaManual`).
+- **Retentativas Inteligentes e Radar**: Painel Stripe configurado com Smart Retries (recuperação de receita) e regras antifraude Radar (validação de CVC e Risk Score).
+
 ---
 
 ## 🧪 Testes e Qualidade
