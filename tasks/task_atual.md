@@ -1,12 +1,14 @@
-# TASK_ATUAL - PASSO 13.1: CORREÇÃO DE INFRAESTRUTURA DE LOGS
+# TASK_ATUAL - PASSO 2: APLICAÇÃO DE TOKENS PREMIUM E NAVBAR
 
 ## OBJETIVO
-Garantir a pré-existência dos diretórios e arquivos de log no ambiente Linux para evitar falhas de leitura no terminal (`tail -f`).
+Injetar a nova paleta de cores corporativa/premium no arquivo global de estilos e refatorar o componente de Cabeçalho (Navbar).
 
 ## ESCOPO DA ETAPA
-1. **Refatoração de Script**: Atualizar o arquivo `sistema/scripts/watch_logs.sh` (ou criá-lo, caso não exista) para incluir comandos de segurança que geram a pasta e o arquivo vazios antes de tentar escutá-los.
+1. **Limpeza e Setup**: Substituir as variáveis `:root` atuais no arquivo de estilo global (`index.css` ou equivalente) pela nova paleta de Cores Premium e Tipografia definidas no documento `2_refatoracao_ui_base.md`.
+2. **Refatoração da Navbar**: Modificar a marcação do componente atual de Navbar para adotar a nova estrutura visual, aplicando as cores `--cor-primaria` e `--cor-texto-forte`.
+3. **Animações e Responsividade**: Aplicar a variável `--transition-suave` nos hovers dos links e botões da Navbar.
 
 ## CRITÉRIOS DE ACEITE
-- O script deve utilizar o comando `mkdir -p` para criar o diretório sem falhar se ele já existir.
-- O comando `touch` deve ser usado para garantir que o arquivo `payments.log` exista antes do `tail -f`.
-- O script deve manter a permissão de execução nativa do Linux (`chmod +x`).
+- A aplicação deve refletir imediatamente o novo fundo bege suave (`#FDFCF8`).
+- O azul e verde brilhantes antigos devem desaparecer dos botões da Navbar, substituídos pelos tons profundos e corporativos.
+- O roteamento e as ações dos botões (ex: "Doação") devem permanecer intactos.

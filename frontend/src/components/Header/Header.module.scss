@@ -9,26 +9,24 @@
   align-items: center;
   padding: 0.75rem 1.5rem;
   height: 4.5rem;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--glass-border);
+  background: var(--cor-bg-principal);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: var(--shadow-sm);
 }
 
 .menuIcon {
   font-size: 2.25rem;
-  color: var(--text-main);
+  color: var(--cor-texto-forte);
   cursor: pointer;
-  transition: var(--transition-fast);
+  transition: var(--transition-suave);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
 
   &:hover {
-    color: var(--accent-primary);
-    background: rgba(33, 115, 70, 0.05);
+    color: var(--cor-primaria);
+    background: rgba(26, 77, 128, 0.05);
     transform: scale(1.1);
   }
 
@@ -40,16 +38,12 @@
 .title {
   grid-column: 2;
   font-family: 'Outfit', sans-serif;
-  font-size: 1.5rem; // Slightly larger title
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: var(--text-main);
+  color: var(--cor-texto-forte);
   cursor: pointer;
   margin: 0;
-  background: linear-gradient(135deg, var(--text-main) 0%, var(--accent-primary) 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   text-align: center;
 }
 
@@ -59,10 +53,10 @@
   font-size: 0.875rem;
   font-weight: 500;
   padding: 0.35rem 1rem;
-  background: rgba(33, 115, 70, 0.05);
-  border: 1px solid rgba(33, 115, 70, 0.1);
+  background: rgba(26, 77, 128, 0.05);
+  border: 1px solid rgba(26, 77, 128, 0.1);
   border-radius: 9999px;
-  color: var(--accent-primary);
+  color: var(--cor-primaria);
 }
 
 .filtro {

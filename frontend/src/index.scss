@@ -19,29 +19,22 @@ $cor-fundo: #f5f5f5;
 $cor-erro: #C70039;
 
 :root {
-  /* Colors - Light Theme based on Melvin Logo */
-  --bg-color: #f1f5f9; // Light Slate
-  --surface-color: #ffffff;
-  --glass-bg: rgba(255, 255, 255, 0.8);
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --accent-primary: #217346; // Melvin Green
-  --accent-secondary: #F29F05; // Melvin Orange
-  --accent-red: #B11F24; // Melvin Red (Muted)
-  --accent-blue: #1b4f72; // Melvin Blue
-  --text-main: #0f172a; // Dark Navy for text
-  --text-muted: #64748b; // Slate 500
-  --error: #ef4444;
-  --success: #22c55e;
+  /* Paleta Premium - Instituto Melvin */
+  --cor-bg-principal: #FDFCF8;
+  --cor-bg-secundario: #F4F1EA;
+  --cor-texto-forte: #2A363B;
+  --cor-texto-corpo: #5A666B;
+  --cor-primaria: #1A4D80;
+  --cor-secundaria: #207556;
+  --cor-destaque: #E29421;
   
+  /* Micro-animações */
+  --transition-suave: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
   /* Shadows & Blurs */
-  --glass-blur: blur(10px);
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.06);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-
-  /* Transitions */
-  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   font-size: 16px;
 }
@@ -54,15 +47,17 @@ $cor-erro: #C70039;
 
 html, body, #root {
   min-height: 100%;
-  background-color: var(--bg-color);
-  color: var(--text-main);
+  background-color: var(--cor-bg-principal);
+  color: var(--cor-texto-corpo);
   font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Outfit', sans-serif;
-  font-weight: 600;
-  color: inherit;
+  font-weight: 700;
+  color: var(--cor-texto-forte);
 }
 
 @import './styles/glass';
