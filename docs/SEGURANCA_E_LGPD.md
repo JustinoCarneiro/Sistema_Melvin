@@ -42,7 +42,8 @@ A LGPD exige que o cidadão tenha o direito de ter seus dados apagados. Porém, 
 Desta forma, o Instituto obedece à LGPD, protegendo a criança, mas mantém vivo o histórico numérico ("Atendemos 100 alunos neste ano") para fins de prestação de contas governamental.
 
 ### ✅ Coleta de Consentimento Explícito (Amigos do Melvin)
-A área pública de doações exige o consentimento livre, inequívoco e informado do doador. Antes de avançar para a tela de pagamento, o usuário é obrigado, via sistema, a preencher uma caixa de seleção ("*checkbox*") que legaliza o uso de seus dados para contato institucional e indica claramente como ele pode revogar aquele consentimento no futuro (via WhatsApp). 
+A área pública de doações exige o consentimento livre, inequívoco e informado do doador. Antes de avançar para a tela de pagamento, o usuário é obrigado, via sistema, a preencher uma caixa de seleção ("*checkbox*") que legaliza a transação. O termo exato utilizado na plataforma é juridicamente blindado:
+> *"Autorizo a coleta e o tratamento dos meus dados pessoais pelo Instituto Social Melvin para a gestão da minha doação mensal e envio de comunicações do projeto, conforme a LGPD. Compreendo que os dados de pagamento são processados em ambiente seguro externo (Stripe) e que posso solicitar a exclusão dos meus dados ou o cancelamento da assinatura a qualquer momento pelo WhatsApp (85) 99924-3836."* 
 
 ---
 

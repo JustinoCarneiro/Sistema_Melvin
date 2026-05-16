@@ -255,7 +255,7 @@ const AmigosMelvin = () => {
                                         onChange={(e) => setAgreedToTerms(e.target.checked)}
                                     />
                                     <label htmlFor="terms" className="text-xs text-slate-500 leading-relaxed cursor-pointer">
-                                        Concordo com o uso dos meus dados para contato sobre o programa Amigos do Melvin. Para cancelamento da assinatura, entre em contato com o Instituto pelo WhatsApp (85) 99924-3836.
+                                        Autorizo a coleta e o tratamento dos meus dados pessoais pelo Instituto Social Melvin para a gestão da minha doação mensal e envio de comunicações do projeto, conforme a LGPD. Compreendo que os dados de pagamento são processados em ambiente seguro externo (Stripe) e que posso solicitar a exclusão dos meus dados ou o cancelamento da assinatura a qualquer momento pelo WhatsApp (85) 99924-3836.
                                     </label>
                                 </div>
 
