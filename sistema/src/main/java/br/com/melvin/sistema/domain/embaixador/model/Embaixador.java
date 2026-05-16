@@ -3,6 +3,7 @@ package br.com.melvin.sistema.domain.embaixador.model;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+
+import br.com.melvin.sistema.shared.security.SensitiveDataConverter;
 
 @Getter
 @Setter
@@ -23,11 +26,14 @@ public class Embaixador {
     @Column(nullable = false)
     private String nome;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String instagram;
 
     @Column(nullable = false)
+    @Convert(converter = SensitiveDataConverter.class)
     private String contato;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String email;
 
     @Column(nullable = false)

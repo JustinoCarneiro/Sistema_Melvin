@@ -174,15 +174,31 @@ public class DiscenteService {
         }
     }
 
-    // Método para remover discente
+    // Método para remover discente (Soft Delete / Anonimização para LGPD)
     public ResponseEntity<String> remover(String matricula){
         String resposta;
-        if(discenteRepository.findByMatricula(matricula)==null){
+        Discente existente = discenteRepository.findByMatricula(matricula);
+        if(existente == null){
             resposta = "Matricula não cadastrada!";
             return new ResponseEntity<String>(resposta, HttpStatus.NOT_FOUND);
         } else {
-            discenteRepository.deleteByMatricula(matricula);
-            resposta = "Discente removido com sucesso!";
+            existente.setStatus("false"); // Define como inativo
+            existente.setDoenca("Anonimizado");
+            existente.setMedicacao("Anonimizado");
+            existente.setTratamento("Anonimizado");
+            existente.setRemedio_instituto("Anonimizado");
+            existente.setContato("Anonimizado");
+            existente.setContato_pai("Anonimizado");
+            existente.setContato_mae("Anonimizado");
+            existente.setContato_trabalho_pai("Anonimizado");
+            existente.setContato_trabalho_mae("Anonimizado");
+            existente.setContato_saida("Anonimizado");
+            existente.setEndereco("Anonimizado");
+            existente.setBairro("Anonimizado");
+            existente.setRg("Anonimizado");
+            
+            discenteRepository.save(existente);
+            resposta = "Discente removido e dados sensíveis anonimizados com sucesso!";
             return new ResponseEntity<String>(resposta, HttpStatus.OK);
         }
     }

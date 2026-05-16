@@ -228,7 +228,11 @@ function Voluntarios({ modoDesativados = false }) {
                                 {/* Botão Adicionar (Apenas modo Ativos e sem filtro de espera) */}
                                 {!modoDesativados && podeGerenciarVoluntarios && !filtroEspera && (
                                     <tr className={styles.plus} onClick={handleCreateClick}>
-                                        <td colSpan="5"><FaPlus className={styles.icon_plus} /> Adicionar novo integrante</td>
+                                        <td colSpan="5">
+                                            <div className={styles.plusContent}>
+                                                <FaPlus className={styles.icon_plus} /> Adicionar novo integrante
+                                            </div>
+                                        </td>
                                     </tr>
                                 )}
                             </tbody>

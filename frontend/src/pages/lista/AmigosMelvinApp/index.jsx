@@ -107,17 +107,21 @@ function AmigosMelvinApp({ modoDesativados = false }){
                         <thead className={styles.thead}>
                             <tr className={styles.tr_head}>
                                 <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Contato</th>
                                 <th>Valor (R$)</th>
+                                <th>Dia Pref.</th>
                                 <th>Status</th>
                                 <th>Meses Ativos</th>
                                 <th>Data Início</th>
+                                <th>Mensagem</th>
                                 <th className={styles.edicao}>Ações</th>
                             </tr>
                         </thead>
                         <tbody className={styles.tbody}>
                             {loading ? (
                                 <tr>
-                                    <td colSpan="6" className={styles.empty}>Carregando...</td>
+                                    <td colSpan="10" className={styles.empty}>Carregando...</td>
                                 </tr>
                             ) : (
                                 amigosmelvinFiltrados.length > 0 ? (
@@ -129,8 +133,17 @@ function AmigosMelvinApp({ modoDesativados = false }){
                                                     <FaGift style={{ color: '#F29F05', marginLeft: '0.5rem' }} title="Elegível para recompensa!" />
                                                 )}
                                             </td>
+                                            <td data-label="E-mail">
+                                                {amigomelvin.email || 'N/A'}
+                                            </td>
+                                            <td data-label="Contato">
+                                                {amigomelvin.contato || 'N/A'}
+                                            </td>
                                             <td data-label="Valor">
                                                 {amigomelvin.valorMensal ? amigomelvin.valorMensal.toFixed(2) : 'N/A'}
+                                            </td>
+                                            <td data-label="Dia Pref.">
+                                                {amigomelvin.diaPreferido || 'N/A'}
                                             </td>
                                             <td data-label="Status">
                                                 {getStatusBadge(amigomelvin.status)}
@@ -140,6 +153,9 @@ function AmigosMelvinApp({ modoDesativados = false }){
                                             </td>
                                             <td data-label="Data">
                                                 {amigomelvin.dataInicio ? new Date(amigomelvin.dataInicio).toLocaleDateString('pt-BR') : 'N/A'}
+                                            </td>
+                                            <td data-label="Mensagem" title={amigomelvin.mensagem || ''}>
+                                                {amigomelvin.mensagem ? (amigomelvin.mensagem.length > 30 ? amigomelvin.mensagem.substring(0, 30) + '...' : amigomelvin.mensagem) : '—'}
                                             </td>
                                             <td className={styles.edicao} data-label="Ações">
                                                 {(isAdm || podeGerenciar) && (
@@ -156,7 +172,7 @@ function AmigosMelvinApp({ modoDesativados = false }){
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className={styles.empty}>Nenhum registro encontrado.</td>
+                                        <td colSpan="10" className={styles.empty}>Nenhum registro encontrado.</td>
                                     </tr>
                                 )
                             )}

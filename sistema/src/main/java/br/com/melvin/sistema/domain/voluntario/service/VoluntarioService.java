@@ -122,15 +122,23 @@ public class VoluntarioService {
         }
     }
 
-    // Método para remover voluntario
+    // Método para remover voluntario (Soft Delete / Anonimização para LGPD)
     public ResponseEntity<String> remover(String matricula){
         String resposta;
-        if(voluntarioRepository.findByMatricula(matricula)==null){
+        Voluntario existente = voluntarioRepository.findByMatricula(matricula);
+        if(existente == null){
             resposta = "Matricula não cadastrada!";
             return new ResponseEntity<String>(resposta, HttpStatus.NOT_FOUND);
         } else {
-            voluntarioRepository.deleteByMatricula(matricula);
-            resposta = "Voluntario removido com sucesso!";
+            existente.setStatus("false"); // Inativa
+            existente.setContato("Anonimizado");
+            existente.setEmail("anonimizado@melvin.org");
+            existente.setEndereco("Anonimizado");
+            existente.setBairro("Anonimizado");
+            existente.setRg("Anonimizado");
+            
+            voluntarioRepository.save(existente);
+            resposta = "Voluntario removido e dados sensíveis anonimizados com sucesso!";
             return new ResponseEntity<String>(resposta, HttpStatus.OK);
         }
     }

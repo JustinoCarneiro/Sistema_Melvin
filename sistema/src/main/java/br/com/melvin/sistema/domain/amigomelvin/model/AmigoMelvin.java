@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -14,6 +15,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+
+import br.com.melvin.sistema.shared.security.SensitiveDataConverter;
 
 @Getter
 @Setter
@@ -28,8 +31,10 @@ public class AmigoMelvin {
     private String nome;
 
     @Column(nullable = false)
+    @Convert(converter = SensitiveDataConverter.class)
     private String contato;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String email;
 
     @Column(nullable = false)
@@ -41,8 +46,10 @@ public class AmigoMelvin {
     @Enumerated(EnumType.STRING)
     private DonorStatus status;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String stripeCustomerId;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String subscriptionId;
 
     private Integer mesesContribuindo;
@@ -51,4 +58,9 @@ public class AmigoMelvin {
 
     @Column(name = "last_processed_invoice_id")
     private String lastProcessedInvoiceId;
+
+    private String diaPreferido;
+
+    @Column(columnDefinition = "TEXT")
+    private String mensagem;
 }

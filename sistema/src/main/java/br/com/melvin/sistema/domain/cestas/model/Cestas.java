@@ -3,6 +3,7 @@ package br.com.melvin.sistema.domain.cestas.model;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+
+import br.com.melvin.sistema.shared.security.SensitiveDataConverter;
 
 @Getter
 @Setter
@@ -22,7 +25,9 @@ public class Cestas {
 
     private String operacao;
     private String nome;
+    @Convert(converter = SensitiveDataConverter.class)
     private String cpf; 
+    @Convert(converter = SensitiveDataConverter.class)
     private String contato;
     
     private Boolean voluntario;

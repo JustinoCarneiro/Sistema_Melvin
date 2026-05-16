@@ -7,7 +7,7 @@
     display: flex;
     justify-content: center;
     padding: 3rem 2rem;
-    background-color: var(--bg-color);
+    background-color: #f0f5f1;
 
     @media (max-width: 768px) {
         padding: 1.5rem 1rem;
@@ -44,7 +44,7 @@
     }
 
     .pageSubtitle {
-        color: var(--text-muted);
+        color: white;
         font-size: 1.1rem;
     }
 }
@@ -54,7 +54,7 @@
     border-radius: 16px;
     box-shadow: var(--shadow-md);
     padding: 2rem;
-    border: 1px solid var(--glass-border);
+    border: 1px solid #d6e8da;
     transition: var(--transition-base);
 
     @media (max-width: 768px) {
@@ -67,7 +67,7 @@
     align-items: center;
     gap: 1rem;
     padding: 1.25rem;
-    border-radius: 12px;
+    border-radius: 16px;
     margin-bottom: 1rem;
     font-weight: 500;
     animation: slideDown 0.3s ease-out;
@@ -93,7 +93,7 @@
 .tableContainer {
     overflow-x: auto;
     margin-top: 1rem;
-    border-radius: 12px;
+    border-radius: 16px;
     border: 1px solid #eee;
 
     /* Sticky column logic */
@@ -117,8 +117,8 @@
     }
 
     th {
-        background-color: #f8fafc;
-        color: var(--text-muted);
+        background: linear-gradient(135deg, #217346 0%, #2a8f57 100%);
+        color: white;
         font-weight: 600;
         text-transform: uppercase;
         font-size: 0.75rem;
@@ -140,11 +140,11 @@
     }
 
     th:first-child {
-        background-color: #f8fafc;
+        background: linear-gradient(135deg, #217346 0%, #2a8f57 100%);
     }
 
     tr:hover td {
-        background-color: #f8fafc;
+        background: linear-gradient(135deg, #217346 0%, #2a8f57 100%);
     }
 
     .regraName {
@@ -167,7 +167,7 @@
 
 .regraCard {
     background: #f8fafc;
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 1.5rem;
     border: 1px solid #e2e8f0;
 
@@ -275,6 +275,6 @@
     justify-content: center;
     align-items: center;
     min-height: 400px;
-    color: var(--text-muted);
+    color: white;
     font-size: 1.25rem;
 }

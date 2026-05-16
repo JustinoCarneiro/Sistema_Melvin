@@ -27,8 +27,20 @@ describe('Frequências (Attendance)', () => {
   });
 
   it('should register student attendance and show alerts', () => {
+    // Force morning turn to ensure we see the correct student regardless of the time of day
+    cy.intercept('GET', '**/frequenciadiscente/alertas-faltas*', {
+      statusCode: 200,
+      body: [
+        { matricula: '2026001', quantidade: 5 },
+        { matricula: '2026002', quantidade: 5 }
+      ]
+    }).as('getAlertas');
+
     cy.visit('/#/app/frequencias/alunos');
     cy.wait(['@getAlunos', '@getAlertas']);
+    
+    // Select morning to be sure
+    cy.get('select').first().select('manha');
     
     // Verify alert exists for the student with 5 absences
     cy.get('[class*="tr_body"]').first().within(() => {
@@ -38,7 +50,11 @@ describe('Frequências (Attendance)', () => {
       cy.get('select').select('P');
     });
     
-    cy.intercept('**/frequenciadiscente', { statusCode: 200 }).as('saveFreq');
+    cy.intercept({
+      method: /POST|PUT/,
+      url: '**/frequenciadiscente'
+    }, { statusCode: 200 }).as('saveFreq');
+    
     cy.get('button').contains('Salvar Chamada').click();
     cy.wait('@saveFreq');
   });

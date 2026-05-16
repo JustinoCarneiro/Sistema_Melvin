@@ -91,7 +91,9 @@ A segurança é tratada como prioridade no Sistema Melvin, utilizando padrões d
     - Exportar Relatórios e Dados Sensíveis.
 - **Spring Security**: Filtros validam dinamicamente se o cargo do usuário possui a permissão necessária para o recurso solicitado.
 
-### 2. Proteção de Dados
+### 2. Proteção de Dados e Conformidade LGPD
+- **Minimização de Dados (DTOs)**: A API utiliza padrões de Data Transfer Objects (DTOs) estritos para listagens. Dados sensíveis de menores (prontuários, saúde, informações familiares) e dados financeiros (IDs do Stripe) não são trafegados em chamadas de listagem geral (apenas nos endpoints protegidos de edição), evitando o *over-fetching* e possíveis vazamentos massivos via DevTools.
+- **Direito ao Esquecimento (Soft Delete + Anonimização)**: O sistema não realiza *Hard Delete* (deleção permanente do banco) a fim de manter o histórico estatístico e auditorias institucionais. Em vez disso, ao remover um aluno ou voluntário, o registro sofre **Inativação (Soft Delete)** e passa por uma **Anonimização Irreversível** de campos críticos (contatos, doenças e endereços são sobrescritos).
 - **Hashing de Senhas (Argon2)**: As senhas são armazenadas utilizando o algoritmo **Argon2**, atualmente um dos mais robustos contra ataques de força bruta e rainbox tables.
 - **CORS (Cross-Origin Resource Sharing)**: Configurado de forma restrita para permitir apenas origens autorizadas (especificadas via variável de ambiente).
 - **Env Vars (Secrets)**: Nenhuma credencial ou segredo (como a `JWT_SECRET`) está *hardcoded*. Todas são injetadas via Docker através de um arquivo `.env` seguro.

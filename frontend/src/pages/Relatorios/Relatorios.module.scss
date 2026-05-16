@@ -6,20 +6,20 @@
     display: flex;
     justify-content: center;
     padding: 2rem;
-    background-color: $cor-fundo;
+    background-color: #f0f5f1;
 }
 
 .container {
     width: 100%;
     max-width: 1200px;
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(33, 115, 70, 0.06);
+    border: 1px solid #d6e8da;
     padding: 2rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    // Tenta criar um contexto de empilhamento local para que o menu (externo) ganhe
     position: relative;
     z-index: 0;
 }
@@ -29,7 +29,7 @@
     flex-direction: column;
     gap: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #d6e8da;
 
     .topHeader {
         display: flex;
@@ -45,19 +45,19 @@
         gap: 1rem;
 
         .title {
-            color: $cor-primaria;
-            font-size: 1.8rem;
-            font-weight: bold;
+            color: var(--text-main);
+            font-size: 2.8rem;
+            font-weight: 700;
             margin: 0;
         }
 
         .counterBadge {
-            background-color: #f0f0f0;
+            background-color: #f0f7f2;
             color: #555;
             padding: 0.3rem 0.8rem;
             border-radius: 12px;
             font-size: 0.9rem;
-            border: 1px solid #ddd;
+            border: 1px solid #d6e8da;
             white-space: nowrap;
 
             strong {
@@ -68,7 +68,7 @@
 
     .toggleContainer {
         display: flex;
-        background-color: #f0f0f0;
+        background-color: #f0f7f2;
         border-radius: 8px;
         padding: 4px;
         gap: 4px;
@@ -110,16 +110,16 @@
 .container_busca {
     display: flex;
     align-items: center;
-    background-color: #f0f0f0;
-    border-radius: 20px;
+    background-color: #f0f7f2;
+    border-radius: 12px;
     padding: 0.5rem 1rem;
     flex-grow: 1;
     min-width: 250px;
 
     .icon_busca {
-        color: #666;
-        font-size: 1.2rem;
-        margin-right: 0.5rem;
+        color: var(--text-muted);
+        font-size: 1.4rem;
+        margin-right: 0.75rem;
     }
 
     .busca {
@@ -128,43 +128,62 @@
         outline: none;
         width: 100%;
         font-size: 1rem;
+        color: var(--text-main);
+
+        &::placeholder {
+            color: var(--text-muted);
+        }
     }
 }
 
 .select_sala {
-    padding: 0.5rem;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: white;
-    font-size: 0.9rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 10px;
+    border: 1px solid #d6e8da;
+    background-color: #f0f7f2;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-main);
     cursor: pointer;
     min-width: 120px;
+    outline: none;
+    transition: all 0.15s ease;
+
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
     
     &:focus {
-        border-color: $cor-primaria;
-        outline: none;
+        border-color: var(--accent-primary);
+        background-color: white;
+    }
+
+    &:hover {
+        border-color: #b0d4b8;
     }
 }
 
 .tableResponsive {
     overflow-x: auto;
     width: 100%;
-    
-    // TENTATIVA DE ISOLAMENTO: 
-    // Isso diz ao navegador para resolver os z-indexes da tabela aqui dentro,
-    // antes de comparar com o menu lateral.
+    border-radius: 16px;
+    border: 1px solid #d6e8da;
     isolation: isolate; 
     
     &::-webkit-scrollbar {
         height: 10px;
     }
     &::-webkit-scrollbar-track {
-        background: #f1f1f1;
+        background: #f0f7f2;
     }
     &::-webkit-scrollbar-thumb {
-        background-color: #ccc;
+        background-color: #b0d4b8;
         border-radius: 4px;
-        border: 2px solid white;
+        border: 2px solid #f0f7f2;
     }
 }
 
@@ -175,22 +194,24 @@
     table-layout: auto; 
     
     .thead {
-        background-color: $cor-primaria;
-        color: white;
+        background: linear-gradient(135deg, #217346 0%, #2a8f57 100%);
         
         th {
-            padding: 1rem 0.5rem;
+            padding: 1.1rem 0.75rem;
             text-align: left;
-            font-weight: 600;
-            border-bottom: 1px solid #ddd; 
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            color: white;
+            border-bottom: none;
             white-space: nowrap;
 
-            // Largura mínima de 55px para as datas não ficarem espremidas
             &.thDate {
                 text-align: center;
                 min-width: 55px; 
-                padding: 0.5rem 0.2rem;
-                border-left: 1px solid rgba(255,255,255,0.2); 
+                padding: 0.75rem 0.3rem;
+                border-left: 1px solid rgba(255,255,255,0.15); 
             }
         }
     }
@@ -199,19 +220,24 @@
         .tr_body {
             transition: background-color 0.2s;
 
+            &:nth-child(even) {
+                background-color: #f0f7f2;
+            }
+
             &:hover {
-                background-color: #f9f9f9;
+                background-color: #e3f0e7;
             }
 
             td {
-                padding: 0.8rem 0.5rem;
-                color: #333;
-                border-bottom: 1px solid #eee;
+                padding: 1rem 0.75rem;
+                color: var(--text-main);
+                font-size: 0.95rem;
+                border-bottom: 1px solid #e6efe9;
             }
 
             .nomeAluno {
-                font-weight: 500;
-                color: $cor-secundaria;
+                font-weight: 600;
+                color: var(--accent-primary);
             }
 
             .emptyCell {
@@ -245,7 +271,7 @@
         width: 250px;      
         min-width: 250px;  
         max-width: 250px;  
-        border-right: 1px solid #e0e0e0;
+        border-right: 1px solid #d6e8da;
     }
     
     // Configuração RÍGIDA da segunda coluna (Matrícula)
@@ -254,7 +280,7 @@
         width: 120px;
         min-width: 120px;
         max-width: 120px;
-        box-shadow: 4px 0 5px -2px rgba(0,0,0,0.1); 
+        box-shadow: 4px 0 5px -2px rgba(33, 115, 70, 0.08); 
         clip-path: inset(0px -15px 0px 0px); 
     }
 }
@@ -262,8 +288,6 @@
 // Header fixo (acima do corpo)
 .thead .stickyCol {
     background-color: $cor-primaria;
-    // Z-INDEX MÍNIMO DO HEADER: Definido como 2.
-    // O menu precisa ser maior que 2.
     z-index: 2; 
     color: white;
 }
@@ -272,8 +296,12 @@
     background-color: white; 
 }
 
+.tr_body:nth-child(even) .stickyCol {
+    background-color: #f0f7f2;
+}
+
 .tr_body:hover .stickyCol {
-    background-color: #f9f9f9; 
+    background-color: #e3f0e7; 
 }
 
 .loading, .centeredMessage {
@@ -282,7 +310,7 @@
     align-items: center;
     padding: 2rem;
     font-size: 1.1rem;
-    color: #666;
+    color: var(--text-muted);
     
     &.error {
         color: $cor-erro;
@@ -322,9 +350,9 @@
         background-color: white;
         
         // ESTILO CARD
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        border: 1px solid #d6e8da;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(33, 115, 70, 0.05);
         padding: 0;
 
         &:hover {

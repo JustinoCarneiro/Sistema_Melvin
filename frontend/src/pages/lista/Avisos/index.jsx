@@ -148,7 +148,11 @@ function Avisos({ modoDesativados = false }){
                             {/* Botão Criar Novo (Apenas se NÃO for desativados e NÃO estiver carregando) */}
                             {!loading && !modoDesativados && (isAdm || podeGerenciar) && (
                                 <tr className={styles.plus} onClick={()=>navigate(`/app/avisos/criar`)}>
-                                    <td colSpan="4"><FaPlus className={styles.icon_plus}/> Criar novo aviso</td>
+                                    <td colSpan="4">
+                                        <div className={styles.plusContent}>
+                                            <FaPlus className={styles.icon_plus}/> Criar novo aviso
+                                        </div>
+                                    </td>
                                 </tr>
                             )}
                         </tbody>

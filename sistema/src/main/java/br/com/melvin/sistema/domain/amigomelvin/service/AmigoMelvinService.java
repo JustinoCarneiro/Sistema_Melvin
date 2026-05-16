@@ -68,6 +68,9 @@ public class AmigoMelvinService {
 
     public ResponseEntity<?> processarAssinatura(SubscriptionRequestDTO dto) {
         try {
+            if (dto.valor() == null || dto.valor().compareTo(new java.math.BigDecimal("30")) < 0) {
+                return new ResponseEntity<>("O valor mínimo para apoio mensal é de R$ 30,00.", HttpStatus.BAD_REQUEST);
+            }
             log.info("Processando assinatura para novo doador.");
 
             com.stripe.model.Customer customer = stripeService.createCustomer(dto.nome(), dto.email(),
@@ -93,6 +96,8 @@ public class AmigoMelvinService {
             amigo.setStatus(DonorStatus.PENDING);
             amigo.setMesesContribuindo(0);
             amigo.setDataInicio(java.time.LocalDateTime.now());
+            amigo.setDiaPreferido(dto.dia());
+            amigo.setMensagem(dto.mensagem());
 
             AmigoMelvin savedAmigoMelvin = repositorio.save(amigo);
 

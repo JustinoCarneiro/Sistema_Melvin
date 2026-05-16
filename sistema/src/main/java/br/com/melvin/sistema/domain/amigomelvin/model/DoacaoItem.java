@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import br.com.melvin.sistema.shared.security.SensitiveDataConverter;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ public class DoacaoItem {
     private String nome;
 
     @Column(nullable = false)
+    @Convert(converter = SensitiveDataConverter.class)
     private String telefone;
 
     @Column(nullable = false)

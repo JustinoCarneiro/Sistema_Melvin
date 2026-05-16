@@ -14,7 +14,7 @@ function AmigoMelvin_forms(){
     const [errorMessage, setErrorMessage] = useState('');
 
     const [formDado, setFormDado] = useState({
-        nome: '', email: '', contato: '', status: '', formaPagamento: 'Cartão', valorMensal: ''
+        nome: '', email: '', contato: '', status: '', formaPagamento: 'Cartão', valorMensal: '', mensagem: ''
     });
     
     useEffect(() => {
@@ -32,7 +32,8 @@ function AmigoMelvin_forms(){
                                 contato: amigo.contato || '',
                                 status: amigo.status || 'PENDING',
                                 formaPagamento: amigo.formaPagamento || 'Cartão',
-                                valorMensal: amigo.valorMensal || ''
+                                valorMensal: amigo.valorMensal || '',
+                                mensagem: amigo.mensagem || ''
                             });
                         }
                     }
@@ -103,9 +104,10 @@ function AmigoMelvin_forms(){
                     <h3 className={styles.sectionTitle}>Dados Pessoais</h3>
                     <div className={styles.gridContainer}>
                         <div className={styles.coluna}>
-                            <Input label="Nome Completo:" name="nome" value={formDado.nome} onChange={handleChange} comp="grande" prioridade="true" />
-                            <Input label="Email:" type="email" name="email" value={formDado.email} onChange={handleChange} comp="grande" prioridade="false" />
-                            <Input label="Contato:" type="tel" name="contato" value={formDado.contato} onChange={handleChange} comp="pequeno" placeholder="(00) 00000-0000" prioridade="true" />
+                            <Input label="Nome Completo:" name="nome" value={formDado.nome} disabled={true} comp="grande" prioridade="true" />
+                            <Input label="Email:" type="email" name="email" value={formDado.email} disabled={true} comp="grande" prioridade="false" />
+                            <Input label="Contato:" type="tel" name="contato" value={formDado.contato} disabled={true} comp="pequeno" placeholder="(00) 00000-0000" prioridade="true" />
+                            <Input label="Mensagem:" name="mensagem" value={formDado.mensagem} disabled={true} comp="grande" prioridade="false" />
                         </div>
 
                         {/* --- STATUS E CONTRIBUIÇÃO --- */}
@@ -113,7 +115,7 @@ function AmigoMelvin_forms(){
                             <div className={styles.linhaDupla}>
                                 <div className={styles.inputGroup}>
                                     <label>Status: <span className={styles.required}>*</span></label>
-                                    <select className={styles.select} name="status" value={formDado.status} onChange={handleChange}>
+                                    <select className={styles.select} name="status" value={formDado.status} disabled={true}>
                                         <option value="" hidden>Selecione...</option>
                                         <option value="ACTIVE">Ativo</option>
                                         <option value="PENDING">Pendente</option>
@@ -128,7 +130,7 @@ function AmigoMelvin_forms(){
                             </div>
 
                             <div className={styles.linhaDupla}>
-                                <Input label="Valor Mensal:" name="valorMensal" value={formDado.valorMensal} onChange={handleChange} comp="pequeno" placeholder="R$ 0,00" />
+                                <Input label="Valor Mensal:" name="valorMensal" value={formDado.valorMensal} disabled={true} comp="pequeno" placeholder="R$ 0,00" />
                             </div>
                         </div>
                     </div>

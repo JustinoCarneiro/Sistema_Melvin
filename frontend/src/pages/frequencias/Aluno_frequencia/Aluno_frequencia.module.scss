@@ -6,7 +6,7 @@
     display: flex;
     justify-content: center;
     padding: 2.5rem 1.5rem;
-    background-color: var(--bg-color);
+    background-color: #f0f5f1;
 
     @media (max-width: 768px) {
         padding: 1rem;
@@ -16,10 +16,10 @@
 .container {
     width: 100%;
     max-width: 1400px;
-    background-color: var(--surface-color);
-    border-radius: 20px;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--glass-border);
+    background-color: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(33, 115, 70, 0.06);
+    border: 1px solid #d6e8da;
     padding: 2.5rem;
     display: flex;
     flex-direction: column;
@@ -28,7 +28,7 @@
     @media (max-width: 768px) {
         padding: 1.25rem;
         gap: 1.5rem;
-        border-radius: 12px;
+        border-radius: 16px;
     }
 }
 
@@ -45,7 +45,7 @@
 
     .voltar {
         font-size: 2.25rem;
-        color: var(--text-muted);
+        color: white;
         cursor: pointer;
         transition: var(--transition-fast);
         
@@ -57,10 +57,9 @@
 
     .title {
         color: var(--text-main);
-        font-size: 2rem;
+        font-size: 2.8rem;
         font-weight: 700;
         margin: 0;
-        font-family: 'Outfit', sans-serif;
     }
 
     @media (max-width: 768px) {
@@ -84,9 +83,9 @@
 .container_busca {
     display: flex;
     align-items: center;
-    background-color: #f8fafc;
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
+    background-color: #f0f7f2;
+    border: 1px solid #d6e8da;
+    border-radius: 16px;
     padding: 0.75rem 1.25rem;
     flex-grow: 1;
     min-width: 300px;
@@ -131,8 +130,8 @@
     .select_modern, .input_data {
         padding: 0.75rem 1.25rem;
         border-radius: 10px;
-        border: 1px solid var(--glass-border);
-        background-color: #f8fafc;
+        border: 1px solid #d6e8da;
+        background-color: #f0f7f2;
         font-size: 0.95rem;
         font-weight: 500;
         color: var(--text-main);
@@ -181,8 +180,8 @@
 .tableResponsive {
     width: 100%;
     overflow-x: auto;
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    border: 1px solid #d6e8da;
 }
 
 .table {
@@ -192,7 +191,7 @@
     table-layout: fixed;
 
     .thead {
-        background-color: #f8fafc;
+        background: linear-gradient(135deg, #217346 0%, #2a8f57 100%);
         
         th {
             padding: 1.25rem 1rem;
@@ -201,8 +200,8 @@
             text-transform: uppercase;
             font-size: 0.75rem;
             letter-spacing: 0.05em;
-            color: var(--text-muted);
-            border-bottom: 2px solid var(--glass-border);
+            color: white;
+            border-bottom: none;
             
             &.th_center { text-align: center; }
         }
@@ -210,17 +209,21 @@
 
     .tbody {
         tr {
-            transition: var(--transition-fast);
+            transition: all 0.2s ease;
+
+            &:nth-child(even) {
+                background-color: #f0f7f2;
+            }
 
             &:hover {
-                background-color: rgba(33, 115, 70, 0.03);
+                background-color: #e3f0e7;
             }
 
             td {
                 padding: 1rem;
                 color: var(--text-main);
                 font-size: 0.95rem;
-                border-bottom: 1px solid var(--glass-border); 
+                border-bottom: 1px solid #e6efe9; 
                 word-wrap: break-word;
                 overflow-wrap: anywhere;
                 vertical-align: middle;
@@ -248,7 +251,7 @@
 .select_presenca {
     padding: 0.5rem;
     border-radius: 8px;
-    border: 1px solid var(--glass-border);
+    border: 1px solid #d6e8da;
     background-color: white;
     font-size: 0.95rem;
     font-weight: 600;
@@ -267,9 +270,9 @@
 .input_justificativa {
     width: 100%;
     padding: 0.6rem 1rem;
-    border: 1px solid var(--glass-border);
+    border: 1px solid #d6e8da;
     border-radius: 8px;
-    background-color: #f8fafc;
+    background-color: #f0f7f2;
     font-size: 0.9rem;
     transition: var(--transition-fast);
     outline: none;
@@ -315,14 +318,14 @@
     tr.tr_body {
         margin-bottom: 1.5rem; 
         background-color: white;
-        border: 1px solid var(--glass-border);
+        border: 1px solid #d6e8da;
         border-radius: 16px;
         box-shadow: var(--shadow-md);
         overflow: hidden;
 
         &:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 8px 32px rgba(33, 115, 70, 0.06);
         }
 
         td {
@@ -353,7 +356,7 @@
                 font-size: 1.1rem;
                 font-weight: 700;
                 color: var(--accent-primary);
-                background-color: #f8fafc;
+                background-color: #f0f7f2;
                 text-align: left;
                 
                 &::before { color: var(--accent-primary); }

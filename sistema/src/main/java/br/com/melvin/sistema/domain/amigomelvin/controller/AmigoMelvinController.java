@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.melvin.sistema.domain.amigomelvin.model.AmigoMelvin;
+import br.com.melvin.sistema.domain.amigomelvin.dto.AmigoMelvinListagemDTO;
+import java.util.stream.Collectors;
 import br.com.melvin.sistema.domain.amigomelvin.service.AmigoMelvinService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,9 +28,12 @@ public class AmigoMelvinController {
     @Autowired
     AmigoMelvinService service;
 
+    // MÉTODO 'listar' ATUALIZADO PARA LGPD
     @GetMapping
-    public List<AmigoMelvin> listar(){
-        return service.listar();
+    public List<AmigoMelvinListagemDTO> listar(){
+        return service.listar().stream()
+                .map(AmigoMelvinListagemDTO::new)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/stats")

@@ -50,17 +50,13 @@ describe('Configuração de Permissões', () => {
   });
 
   it('deve permitir alternar uma permissão e salvar', () => {
-    // Para a regra EDITAR_RENDIMENTO (primeira linha), desmarcar ADM (primeira coluna de roles)
-    // No mock, ADM já está marcado para EDITAR_RENDIMENTO
-    
     // Encontrar o checkbox para ADM na linha de EDITAR_RENDIMENTO
-    // O ROLES[0] é ADM. A primeira linha do corpo da tabela é EDITAR_RENDIMENTO.
-    cy.get('tbody tr').first().within(() => {
+    cy.contains('tr', 'Editar Rendimento/Notas').within(() => {
       cy.get('input[type="checkbox"]').first().should('be.checked').uncheck();
     });
 
     // Clicar em salvar
-    cy.get('button').contains('Salvar').click();
+    cy.get('button').contains('Salvar Alterações').click();
 
     // Deve chamar o mock de update (uma vez para cada regra no componente atual)
     // O componente percorre todas as permissões e chama atualizarRegra para cada uma.
@@ -75,7 +71,7 @@ describe('Configuração de Permissões', () => {
       body: { error: 'Internal Server Error' }
     }).as('updateError');
 
-    cy.get('button').contains('Salvar').click();
+    cy.get('button').contains('Salvar Alterações').click();
     cy.wait('@updateError');
     
     cy.contains('Erro ao salvar algumas configurações.').should('be.visible');

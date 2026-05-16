@@ -214,11 +214,13 @@ Cada linha representa: "o cargo X pode executar a ação Y". O backend valida is
 
 ---
 
-## 6. Segurança
+## 6. Segurança e LGPD
 
 | Mecanismo | Detalhe |
 |---|---|
 | Hashing de Senhas | Argon2 (resistente a GPU e rainbow tables) |
+| Minimização de Dados (LGPD) | Uso estrito de DTOs nas listagens para evitar tráfego massivo de prontuários, dados financeiros e contatos |
+| Soft Delete & Anonimização | Exclusão lógica (Inativação) combinada com anonimização ativa de dados de saúde e contatos (Art. 18, LGPD) |
 | Tokens de Sessão | JWT com expiração, assinado com `JWT_SECRET` via `.env` |
 | RBAC | Dupla validação: Frontend (hooks) + Backend (Spring Security filters) |
 | Webhooks | Assinatura validada via `Stripe-Signature` + `STRIPE_WEBHOOK_SECRET` |

@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-body text-melvin-text;
+    position: relative;
+    min-height: 100vh;
+    background-color: transparent;
+  }
+
+  /* Camada de Fundo Base (Solid) */
+  .site-bg-base {
+    position: fixed;
+    inset: 0;
+    background-color: hsla(40, 40%, 97%, 1);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Filtro de Textura de Papel Rugoso - Camada Superior */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.1;
+    z-index: 2;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+  }
+}
+
+@layer components {
+  .brush-stroke {
+    position: relative;
+    display: inline-block;
+  }
+  .brush-stroke::after {
+    content: '';
+    position: absolute;
+    bottom: 0.1em;
+    left: -0.1em;
+    right: -0.1em;
+    height: 0.4em;
+    background: currentColor;
+    z-index: -1;
+    opacity: 0.3;
+    border-radius: 60% 40% 55% 45%;
+    transform: rotate(-1.5deg);
+  }
+
+  .watercolor-card {
+    @apply bg-white/30 backdrop-blur-md border border-white/50 rounded-[3rem] p-10 shadow-xl;
+  }
+
+  .animate-slow-pulse {
+    animation: slow-pulse 10s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes slow-pulse {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.05); }
+  }
+
+  .watercolor-shadow-red {
+    box-shadow: 0 20px 50px -10px hsla(0, 85%, 55%, 0.3);
+  }
+  .watercolor-shadow-blue {
+    box-shadow: 0 20px 50px -10px hsla(217, 85%, 45%, 0.3);
+  }
+  .watercolor-shadow-green {
+    box-shadow: 0 20px 50px -10px hsla(100, 65%, 50%, 0.3);
+  }
+  .watercolor-shadow-yellow {
+    box-shadow: 0 20px 50px -10px hsla(45, 100%, 50%, 0.3);
+  }
+}

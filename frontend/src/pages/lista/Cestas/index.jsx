@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { IoMdSearch } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
-import { FaPlus, FaFileExcel, FaBoxOpen, FaWeightHanging, FaHandHoldingHeart } from "react-icons/fa6"; 
+import { FaPlus, FaFileExcel, FaBoxOpen, FaWeightHanging, FaHandHoldingHeart, FaArrowDown, FaArrowUp } from "react-icons/fa6"; 
 
 import cestaService from '../../../services/cestaService';
 import Botao from '../../../components/gerais/Botao'; 
@@ -184,9 +184,9 @@ function Cestas(){
                                 value={filtroOperacao}
                                 onChange={(e) => setFiltroOperacao(e.target.value)}
                             >
-                                <option value="todas">🔄 Entradas e Saídas</option>
-                                <option value="ENTRADA">📥 Apenas Entradas</option>
-                                <option value="SAIDA">📤 Apenas Saídas</option>
+                                <option value="todas">Todas as Operações</option>
+                                <option value="ENTRADA">Apenas Entradas</option>
+                                <option value="SAIDA">Apenas Saídas</option>
                             </select>
 
                             <select
@@ -313,8 +313,8 @@ function Cestas(){
                                         <tr key={item.id} className={styles.tr_body}>
                                             <td data-label="Operação" style={{textAlign: 'center'}}>
                                                 {item.operacao === 'ENTRADA' ? 
-                                                    <span title="Entrada" style={{fontSize: '1.2rem'}}>📥</span> : 
-                                                    <span title="Saída" style={{fontSize: '1.2rem'}}>📤</span>
+                                                    <span title="Entrada" style={{fontSize: '1.2rem', color: '#217346'}}><FaArrowDown /></span> : 
+                                                    <span title="Saída" style={{fontSize: '1.2rem', color: '#C70039'}}><FaArrowUp /></span>
                                                 }
                                             </td>
                                             <td data-label="Pessoa/Origem">
@@ -357,7 +357,11 @@ function Cestas(){
 
                             {(isAdm || podeGerenciar) && !loading && (
                                 <tr className={styles.plus} onClick={()=>navigate("/app/cestas/criar")}>
-                                    <td colSpan="7"><FaPlus className={styles.icon_plus}/> Novo Registro</td>
+                                    <td colSpan="7">
+                                        <div className={styles.plusContent}>
+                                            <FaPlus className={styles.icon_plus}/> Novo Registro
+                                        </div>
+                                    </td>
                                 </tr>
                             )}
                         </tbody>

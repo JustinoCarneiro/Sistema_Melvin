@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import br.com.melvin.sistema.domain.voluntario.dto.VoluntarioDTO;
+import br.com.melvin.sistema.domain.voluntario.dto.VoluntarioListagemDTO;
 import br.com.melvin.sistema.domain.voluntario.model.Voluntario;
+import java.util.stream.Collectors;
 import br.com.melvin.sistema.domain.voluntario.service.VoluntarioService;
 
 @RestController
@@ -17,9 +19,12 @@ public class VoluntarioController {
     @Autowired
     private VoluntarioService service;
 
+    // MÉTODO 'listar' ATUALIZADO PARA LGPD
     @GetMapping
-    public List<Voluntario> listar(@RequestParam(value = "search", required = false) String searchTerm) {
-        return service.searchVoluntarios(searchTerm);
+    public List<VoluntarioListagemDTO> listar(@RequestParam(value = "search", required = false) String searchTerm) {
+        return service.searchVoluntarios(searchTerm).stream()
+                      .map(VoluntarioListagemDTO::new)
+                      .collect(Collectors.toList());
     }
 
     @GetMapping("/nomesfuncoes")

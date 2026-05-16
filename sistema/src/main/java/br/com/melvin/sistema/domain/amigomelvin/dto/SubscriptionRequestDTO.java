@@ -7,6 +7,8 @@ public record SubscriptionRequestDTO(
     String email,
     String contato,
     BigDecimal valor,
-    String stripeToken
+    String stripeToken,
+    String dia,
+    String mensagem
 ) {
 }

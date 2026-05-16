@@ -35,15 +35,23 @@ A segurança dos dados das crianças e famílias atendidas é tratada como **pri
 ### 🔐 Acesso com Senha Pessoal
 Cada voluntário e coordenador tem sua própria matrícula e senha para entrar no sistema. Ninguém acessa o sistema sem autorização.
 
+### ⚖️ Adequação à LGPD (Minimização de Dados)
+O sistema foi desenhado para proteger rigorosamente os dados sensíveis das crianças (como prontuários de saúde, problemas familiares e endereço) e de voluntários. Nas listas gerais do sistema, apenas informações básicas (nome, matrícula e status) trafegam pela rede, blindando o Instituto contra vazamentos acidentais e exposição indevida.
+
+### 🗑️ Direito ao Esquecimento (Exclusão Segura)
+A pedido da família ou ao encerrar o vínculo, o sistema permite a inativação de um aluno ou voluntário substituindo **definitiva e irreversivelmente** informações confidenciais (doenças, remédios, contatos pessoais) pela palavra "Anonimizado". Assim, o Instituto cumpre a Lei Geral de Proteção de Dados (LGPD) e o Direito ao Esquecimento, mantendo no sistema apenas o histórico estatístico (quantos alunos atendeu no ano) para auditorias, sem arquivar dados de saúde ilegalmente.
+
 ### 🔒 Senhas Criptografadas (Nível Governamental)
 As senhas nunca são salvas como texto legível. O sistema usa um algoritmo de proteção de senhas chamado **Argon2** — o mesmo padrão recomendado por organismos de segurança internacionais — que torna as senhas ilegíveis mesmo para a equipe técnica.
+
+### 🛡️ Criptografia de Dados Pessoais (AES-256)
+Dados médicos, contatos pessoais e endereços não ficam gravados em texto claro. O banco de dados utiliza **Criptografia Transparente AES-256-GCM**. Embora a arquitetura de rede já proteja contra invasões externas, essa é uma barreira extra: as informações são guardadas de forma ilegível, garantindo total privacidade para o Instituto e prevenindo qualquer leitura indevida, mesmo em cenários altamente improváveis.
 
 ### 🛡️ Banco de Dados Isolado
 O banco de dados onde ficam os registros das crianças e famílias está em uma camada de rede completamente separada da internet. Um atacante externo não consegue alcançá-lo diretamente.
 
 ### 💾 Backup Automático Diário
 Um sistema automático gera cópias de segurança do banco de dados todos os dias. As cópias são mantidas por 30 dias, garantindo que o instituto nunca perca seu histórico em caso de falha de hardware.
-
 ---
 
 ## 3. Gestão de Alunos

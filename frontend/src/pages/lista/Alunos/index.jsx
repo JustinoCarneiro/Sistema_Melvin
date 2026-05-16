@@ -295,7 +295,11 @@ function Alunos({ modoDesativados = false }) {
                             {/* Botão Adicionar: Apenas se NÃO for modo desativados e NÃO estiver carregando */}
                             {!isLoading && !modoDesativados && podeCadastrarAluno && (
                                 <tr className={styles.plus} onClick={() => navigate("/app/aluno/criar")}>
-                                    <td colSpan="4"><FaPlus className={styles.icon_plus} /> Adicionar novo aluno</td>
+                                    <td colSpan="4">
+                                        <div className={styles.plusContent}>
+                                            <FaPlus className={styles.icon_plus} /> Adicionar novo aluno
+                                        </div>
+                                    </td>
                                 </tr>
                             )}
                         </tbody>

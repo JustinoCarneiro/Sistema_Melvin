@@ -2,15 +2,15 @@ import http from "./http";
 
 const permissaoService = {
     listarTodas: async () => {
-        return await http.get("/api/permissoes");
+        return await http.get("/permissoes");
     },
 
     atualizarRegra: async (nomeRegra, roles) => {
-        return await http.put(`/api/permissoes/${nomeRegra}`, roles);
+        return await http.put(`/permissoes/${nomeRegra}`, roles);
     },
 
     listarMinhas: async () => {
-        return await http.get("/api/permissoes/minhas");
+        return await http.get("/permissoes/minhas");
     },
 
     hasPermission: async (permissaoDesejada) => {

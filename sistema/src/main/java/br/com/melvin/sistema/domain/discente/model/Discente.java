@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+
+import br.com.melvin.sistema.shared.security.SensitiveDataConverter;
 
 //Define a classe como entidade, irá gerar uma tabela Discente
 @Table(name="discente")
@@ -33,8 +36,10 @@ public class Discente{
     @Column(nullable = false)
     private String nome;
 
+	@Convert(converter = SensitiveDataConverter.class)
 	private String email;
 
+	@Convert(converter = SensitiveDataConverter.class)
 	private String contato;
 
     private String sexo;
@@ -55,6 +60,7 @@ public class Discente{
     @Column(nullable = false)
     private String cidade;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String rg;
 
     @Column(nullable = false)
@@ -65,14 +71,17 @@ public class Discente{
 
     private String nome_pai;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String contato_pai;
 
     private String instrucao_pai;
 
     private String ocupacao_pai;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String local_trabalho_pai;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String contato_trabalho_pai;
 
     private String alfabetizacao_pai;
@@ -81,14 +90,17 @@ public class Discente{
 
     private String nome_mae;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String contato_mae;
 
     private String instrucao_mae;
 
     private String ocupacao_mae;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String local_trabalho_mae;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String contato_trabalho_mae;
 
     private String alfabetizacao_mae;
@@ -109,6 +121,7 @@ public class Discente{
 
     private String todos_moram_casa;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String renda_total;
 
     private String clt;
@@ -119,20 +132,30 @@ public class Discente{
 
     private String gostaria_congregar;
 
+    @Convert(converter = SensitiveDataConverter.class)
+    @Column(columnDefinition = "TEXT")
     private String doenca;
 
+    @Convert(converter = SensitiveDataConverter.class)
+    @Column(columnDefinition = "TEXT")
     private String medicacao;
 
+    @Convert(converter = SensitiveDataConverter.class)
+    @Column(columnDefinition = "TEXT")
     private String remedio_instituto;
 
+    @Convert(converter = SensitiveDataConverter.class)
+    @Column(columnDefinition = "TEXT")
     private String tratamento;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String horario_medicamento;
 
     private String esportes;
 
     private String saida_aluno;
 
+    @Convert(converter = SensitiveDataConverter.class)
     private String contato_saida;
 
     @Column(nullable = false)

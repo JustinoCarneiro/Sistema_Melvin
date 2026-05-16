@@ -2,6 +2,7 @@ import styles from './Cestas_forms.module.scss';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa6";
 import Botao from '../../../components/gerais/Botao';
 import Input from '../../../components/gerais/Input';
 
@@ -151,11 +152,11 @@ function CestasForms(){
                         <div className={styles.opcoesBox}>
                             <label className={styles.labelEntrada}>
                                 <input type="radio" name="operacao" value="ENTRADA" checked={isEntrada} onChange={handleChange} />
-                                📥 ENTRADA (Recebimento de Doação)
+                                <FaArrowDown style={{marginRight: '6px', color: '#217346'}} /> ENTRADA (Recebimento de Doação)
                             </label>
                             <label className={styles.labelSaida}>
                                 <input type="radio" name="operacao" value="SAIDA" checked={!isEntrada} onChange={handleChange} />
-                                📤 SAÍDA (Entrega para Beneficiário)
+                                <FaArrowUp style={{marginRight: '6px', color: '#C70039'}} /> SAÍDA (Entrega para Beneficiário)
                             </label>
                         </div>
                     </div>

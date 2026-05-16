@@ -17,6 +17,7 @@ public class EmailService {
     private final JavaMailSender emailSender;
 
     @Async
+    @SuppressWarnings("null")
     public void sendEmail(String to, String subject, String text) {
         try {
             MimeMessage message = emailSender.createMimeMessage();
@@ -34,30 +35,38 @@ public class EmailService {
                 "<html><head><meta charset=\"utf-8\">" +
                 "<style>" +
                 "  body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }" +
-                "  .wrapper { padding: 40px 20px; width: 100%; background-color: #f4f7f6; display: flex; justify-content: center; }" +
-                "  .container { max-width: 600px; width: 100%; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.08); margin: 0 auto; }" +
-                "  .header { background-color: #F29F05; padding: 35px 20px; text-align: center; border-bottom: 4px solid #d98d04; }" +
-                "  .header h1 { color: #ffffff; margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }" +
-                "  .content { padding: 45px 40px; line-height: 1.7; font-size: 16px; color: #444444; }" +
+                "  .wrapper { padding: 40px 20px; width: 100%; background-color: #f4f7f6; }" +
+                "  .container { max-width: 600px; width: 100%; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.08); margin: 0 auto; border-top: 8px solid #044D8C; }" +
+                "  .header { padding: 40px 20px 20px; text-align: center; }" +
+                "  .header h1 { color: #044D8C; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }" +
+                "  .header p { color: #7EA629; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; margin-top: 8px; }" +
+                "  .content { padding: 20px 45px 30px; line-height: 1.8; font-size: 16px; color: #444444; }" +
                 "  .content p { margin-bottom: 20px; }" +
-                "  .footer { background-color: #fcfcfc; padding: 25px 40px; text-align: center; font-size: 14px; color: #888888; border-top: 1px solid #eeeeee; }" +
-                "  .footer a { color: #F29F05; text-decoration: none; font-weight: bold; }" +
-                "  .btn { display: inline-block; padding: 12px 28px; background-color: #F29F05; color: #ffffff !important; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 15px; box-shadow: 0 4px 6px rgba(242, 159, 5, 0.25); }" +
+                "  .instagram-box { background-color: #fff9f0; padding: 30px 40px; text-align: center; border-top: 2px dashed #f2e2c4; border-bottom: 2px dashed #f2e2c4; margin: 10px 0; }" +
+                "  .instagram-box p { color: #666666; margin: 0 0 15px 0; font-size: 15px; font-weight: 500; }" +
+                "  .insta-btn { display: inline-block; padding: 12px 30px; background-color: #044D8C; color: #ffffff !important; text-decoration: none; border-radius: 30px; font-weight: bold; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(4, 77, 140, 0.3); transition: background-color 0.3s; }" +
+                "  .footer { background-color: #ffffff; padding: 30px 40px 40px; text-align: center; font-size: 13px; color: #888888; }" +
+                "  .footer a { color: #044D8C; text-decoration: none; font-weight: bold; }" +
                 "</style></head><body>" +
-                "<div class=\"wrapper\">" +
+                "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" class=\"wrapper\"><tr><td align=\"center\">" +
                 "  <div class=\"container\">" +
                 "    <div class=\"header\">" +
                 "      <h1>Instituto Melvin</h1>" +
+                "      <p>Transformando histórias com amor</p>" +
                 "    </div>" +
                 "    <div class=\"content\">" +
                 "      " + formattedText +
                 "    </div>" +
+                "    <div class=\"instagram-box\">" +
+                "      <p>Para acompanhar a diferença que você está fazendo, siga nosso Instagram:</p>" +
+                "      <a href=\"https://instagram.com/instituto_melvin\" class=\"insta-btn\">@instituto_melvin</a>" +
+                "    </div>" +
                 "    <div class=\"footer\">" +
-                "      <p>Obrigado por apoiar nossa causa!<br>" +
+                "      <p>Feito com amor em Fortaleza.<br><br>" +
                 "      <a href=\"https://institutomelvin.org\">institutomelvin.org</a></p>" +
                 "    </div>" +
                 "  </div>" +
-                "</div>" +
+                "</td></tr></table>" +
                 "</body></html>";
 
             helper.setText(htmlTemplate, true);

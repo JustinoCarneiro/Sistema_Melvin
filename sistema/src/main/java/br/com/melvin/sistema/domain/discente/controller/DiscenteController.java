@@ -10,8 +10,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException; 
 
 import br.com.melvin.sistema.domain.discente.dto.DiscenteAvaliacaoDTO;
+import br.com.melvin.sistema.domain.discente.dto.DiscenteListagemDTO;
 import br.com.melvin.sistema.domain.discente.model.Discente;
 import br.com.melvin.sistema.domain.discente.service.DiscenteService;
+import java.util.stream.Collectors;
 
 
 
@@ -23,19 +25,21 @@ public class DiscenteController {
     @Autowired
     private DiscenteService service;
 
-    // MÉTODO 'listar' ATUALIZADO
+    // MÉTODO 'listar' ATUALIZADO PARA LGPD
     @GetMapping
-    public List<Discente> listar(@RequestParam(value = "search", required = false) String searchTerm) {
+    public List<DiscenteListagemDTO> listar(@RequestParam(value = "search", required = false) String searchTerm) {
+        List<Discente> discentes;
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            return service.searchDiscentes(searchTerm);
+            discentes = service.searchDiscentes(searchTerm);
         } else {
-            return service.listar();
+            discentes = service.listar();
         }
+        return discentes.stream().map(DiscenteListagemDTO::new).collect(Collectors.toList());
     }
 
     @GetMapping("/sala/{sala}")
-    public List<Discente> listarPorSala(@PathVariable Integer sala) {
-        return service.listarPorSala(sala);
+    public List<DiscenteListagemDTO> listarPorSala(@PathVariable Integer sala) {
+        return service.listarPorSala(sala).stream().map(DiscenteListagemDTO::new).collect(Collectors.toList());
     }
     
     @GetMapping("/matricula/{matricula}")
