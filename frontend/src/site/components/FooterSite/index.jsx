@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LuMapPin, LuPhone, LuMail, LuInstagram, LuUser, LuAward } from 'react-icons/lu';
+import { LuMapPin, LuPhone, LuMail, LuInstagram, LuUser, LuAward, LuShieldCheck, LuLock, LuFileText } from 'react-icons/lu';
 import logo from '../../../docs/logo_institutomelvin_horizontal.png';
 
 const FooterSite = () => {
@@ -26,12 +26,25 @@ const FooterSite = () => {
                 <div className="lg:col-span-1">
                     <img src={logo} alt="Instituto Melvin" className="h-36 mb-2 object-contain object-left -mt-14" />
                     <p className="text-slate-600 text-xs leading-relaxed mb-2 font-normal">
-                        OSCIP reconhecida pelo Ministério da Justiça desde 2018.
-                        <br />
-                        <span className="text-melvin-text/60 text-xs">
-                            Lei Municipal Nº 11.170/21 · Lei Estadual Nº 17.960/22.
-                        </span>
+                        Organização da Sociedade Civil de Interesse Público - OSCIP reconhecida pelo Ministério da Justiça desde 2018.
                     </p>
+
+                    {/* Security Seals */}
+                    <div className="mt-6 pt-6 border-t border-slate-300/40 flex flex-wrap gap-4 items-center">
+                        <div className="flex items-center gap-1.5 text-melvin-green-dark/60 grayscale hover:grayscale-0 transition-all cursor-default" title="Ambiente Seguro e Criptografado">
+                            <LuShieldCheck className="w-5 h-5" />
+                            <span className="text-[10px] font-bold uppercase tracking-wider leading-none">Site<br/>Seguro</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-melvin-blue-dark/60 grayscale hover:grayscale-0 transition-all cursor-default" title="Conforme a LGPD">
+                            <LuLock className="w-5 h-5" />
+                            <span className="text-[10px] font-bold uppercase tracking-wider leading-none">Dados<br/>Protegidos</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-slate-500 grayscale hover:grayscale-0 transition-all cursor-default" title="Pagamentos processados pelo Stripe">
+                            <svg className="w-12 h-6" viewBox="0 0 40 16" fill="currentColor">
+                                <path d="M17.43 7.82c0-1.25.96-1.78 2.45-1.78 1.4 0 2.87.35 3.96.95l.43-3.05c-1.12-.5-2.6-.82-4.13-.82-3.48 0-5.74 1.83-5.74 5.04 0 3.32 2.65 4.3 4.8 4.88l.68.18c1.3.36 1.83.75 1.83 1.48 0 .86-.88 1.4-2.3 1.4-1.6 0-3.32-.47-4.63-1.2l-.5 3.12c1.4.67 3.33 1.02 5.07 1.02 3.6 0 5.95-1.73 5.95-4.8 0-3.53-2.65-4.52-5.07-5.18l-.63-.16c-1.12-.3-1.6-.72-1.6-1.06zm13.1-4.3l-2.9 1.15V.17L24.3 1.25v13.6h3.32V7.12l3.32-1.32v9.05h3.33V3.5h-3.75zM8.33 3.5c-2.3 0-3.9 1-4.7 2.2V3.75H.32v14.4h3.33V12c.8 1.1 2.4 2.1 4.67 2.1 3.53 0 6.13-2.62 6.13-5.3 0-2.68-2.6-5.3-6.13-5.3zm-.65 8.1c-1.8 0-3.05-1.25-3.05-2.8 0-1.55 1.25-2.8 3.05-2.8s3.05 1.25 3.05 2.8c0 1.55-1.25 2.8-3.05 2.8z"/>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Quick Contact */}

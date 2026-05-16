@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-@SuppressWarnings("null")
 public class EmbaixadorService {
     
     private final EmbaixadorRepository repositorio;
@@ -29,6 +28,9 @@ public class EmbaixadorService {
     }
 
     public ResponseEntity<?> adicionar(Embaixador embaixador){
+        if (embaixador == null) {
+            return new ResponseEntity<String>("Dados inválidos!", HttpStatus.BAD_REQUEST);
+        }
         log.info("Recebendo nova solicitação de embaixador: {}", embaixador.getNome());
         
         // Garante que novos cadastros via site comecem como não aprovados e não contatados
@@ -63,6 +65,9 @@ public class EmbaixadorService {
     }
 
     public ResponseEntity<?> alterar(Embaixador embaixador){
+        if (embaixador == null || embaixador.getNome() == null) {
+            return new ResponseEntity<String>("Dados inválidos!", HttpStatus.BAD_REQUEST);
+        }
         String resposta;
         Embaixador existente = repositorio.findByNome(embaixador.getNome());
         if (existente == null) {

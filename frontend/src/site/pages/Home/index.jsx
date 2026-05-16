@@ -15,9 +15,12 @@ import WatercolorBlob from '../../../components/melvin/WatercolorBlob';
 import foto_principal from "../../../docs/imagem_sobrenos.jpeg";
 import img_apoio_side from "../../../docs/imagem_principal.jpeg";
 import o1 from "../../../docs/01_1.png";
+import o2 from "../../../docs/02_0.png";
 import o3 from "../../../docs/03_0.png";
 import o4 from "../../../docs/04_0.png";
-import o16 from "../../../docs/16_0.png";
+import o5 from "../../../docs/05_0.png";
+import o8 from "../../../docs/08_0.png";
+import o15 from "../../../docs/15_0.png";
 import m1 from "../../../docs/momento_estudo.png";
 import m2 from "../../../docs/momento_arte.png";
 import m3 from "../../../docs/momento_familia.png";
@@ -178,7 +181,7 @@ const Home = () => {
             transition={{ duration: 1 }}
           >
             <div className="inline-flex items-center gap-2 bg-melvin-green/20 text-melvin-green-dark px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-8">
-              <LuLeaf className="w-4 h-4" /> OSCIP desde 2010
+              <LuLeaf className="w-4 h-4" /> Desde 2010
             </div>
 
             <h1 className="mb-4 sm:mb-8 leading-[1.05]">
@@ -286,7 +289,7 @@ const Home = () => {
             <span className="font-handwritten text-melvin-blue text-3xl mb-4 block">Quem somos</span>
             <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold text-melvin-text mb-6 sm:mb-10 leading-tight">Uma história de compaixão e dedicação</h2>
             <div className="space-y-4 sm:space-y-6 text-base sm:text-xl text-slate-700 font-normal leading-relaxed">
-              <p>O Instituto Melvin Edward Huber é uma organização da sociedade civil de interesse público e sem fins lucrativos, voltada ao auxílio e amparo de crianças, jovens, adultos e idosos em situação de vulnerabilidade social.</p>
+              <p>O Instituto Melvin Edward Huber é uma Organização da Sociedade Civil de Interesse Público - OSCIP e sem fins lucrativos, voltada ao auxílio e amparo de crianças, jovens, adultos e idosos em situação de vulnerabilidade social.</p>
               <p>Fundado em <span className="font-semibold text-melvin-text">23 de fevereiro de 2010</span> com 18 famílias, hoje atendemos <span className="font-semibold text-melvin-text">mais de 400 famílias</span>. Trabalhamos no contraturno escolar para fortalecer vínculos familiares e ativar potenciais por meio de oficinas de arte, esporte, cursos profissionalizantes, palestras, rodas de conversa e terapias de grupo.</p>
               <p>O nome homenageia o missionário norte-americano <span className="italic">Melvin Edward Huber</span> (1920-2008), que junto à esposa Catherine Von Tobel deixou os EUA em 1956 e serviu o Brasil por 52 anos.</p>
             </div>
@@ -297,7 +300,7 @@ const Home = () => {
               { title: "Missão", desc: "Promover o desenvolvimento integral de crianças, adolescentes e famílias com vista à plena cidadania.", color: "bg-melvin-red/20", icon: LuStar, iconColor: "text-melvin-red-dark", shadow: "shadow-[0_20px_40px_-15px_rgba(241,148,148,0.4)]" },
               { title: "Visão", desc: "Servir com responsabilidade e amor, fortalecendo o desenvolvimento físico, emocional e espiritual.", color: "bg-melvin-green/20", icon: LuSun, iconColor: "text-melvin-green-dark", shadow: "shadow-[0_20px_40px_-15px_rgba(168,230,186,0.4)]" },
               { title: "Valores", desc: "Amor, solidariedade, transparência, ética, amizade, compromisso e respeito ao próximo.", color: "bg-melvin-yellow/20", icon: LuHeart, iconColor: "text-melvin-yellow-dark", shadow: "shadow-[0_20px_40px_-15px_rgba(255,230,128,0.4)]" },
-              { title: "Reconhecimento", desc: "OSCIP MJ • Lei Municipal 11.170/21 • Lei Estadual 17.960/22.", color: "bg-melvin-blue/20", icon: LuLeaf, iconColor: "text-melvin-blue-dark", shadow: "shadow-[0_20px_40px_-15px_rgba(174,203,250,0.4)]" },
+              { title: "Reconhecimento", desc: "Organização da Sociedade Civil de Interesse Público - OSCIP.", color: "bg-melvin-blue/20", icon: LuLeaf, iconColor: "text-melvin-blue-dark", shadow: "shadow-[0_20px_40px_-15px_rgba(174,203,250,0.4)]" },
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -333,9 +336,12 @@ const Home = () => {
         <div className="container mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-12 max-w-6xl">
           {[
             { img: o1, label: "ERRADICAÇÃO DA POBREZA", shadow: "shadow-[0_20px_50px_rgba(242,139,130,0.3)]" },
+            { img: o2, label: "FOME ZERO", shadow: "shadow-[0_20px_50px_rgba(253,222,125,0.3)]" },
             { img: o3, label: "SAÚDE E BEM-ESTAR", shadow: "shadow-[0_20px_50px_rgba(168,218,181,0.3)]" },
             { img: o4, label: "EDUCAÇÃO DE QUALIDADE", shadow: "shadow-[0_20px_50px_rgba(253,222,125,0.3)]" },
-            { img: o16, label: "PAZ E JUSTIÇA", shadow: "shadow-[0_20px_50px_rgba(174,203,250,0.3)]" },
+            { img: o5, label: "IGUALDADE DE GÊNERO", shadow: "shadow-[0_20px_50px_rgba(242,139,130,0.3)]" },
+            { img: o8, label: "TRABALHO DECENTE", shadow: "shadow-[0_20px_50px_rgba(200,100,100,0.3)]" },
+            { img: o15, label: "VIDA TERRESTRE", shadow: "shadow-[0_20px_50px_rgba(168,230,186,0.3)]" },
           ].map((ods, i) => (
             <motion.div key={i} {...fadeIn} transition={{ delay: i * 0.1 }}>
               <div className={cn("w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-2xl mx-auto mb-4 sm:mb-8 flex items-center justify-center overflow-hidden transition-transform hover:scale-110 shadow-lg")}>
@@ -402,7 +408,7 @@ const Home = () => {
             { count: "400+", label: "Famílias atendidas", icon: LuHeart, color: "bg-melvin-red/10", iconColor: "text-melvin-red" },
             { count: "15", label: "Anos de história", icon: LuStar, color: "bg-melvin-yellow/10", iconColor: "text-melvin-yellow" },
             { count: "12", label: "Voluntários ativos", icon: LuUsers, color: "bg-melvin-green/10", iconColor: "text-melvin-green-dark" },
-            { count: "4", label: "ODS atuados", icon: LuLeaf, color: "bg-melvin-blue/10", iconColor: "text-melvin-blue" },
+            { count: "7", label: "ODS atuados", icon: LuLeaf, color: "bg-melvin-blue/10", iconColor: "text-melvin-blue" },
           ].map((stat, i) => (
             <motion.div
               key={i}
@@ -573,6 +579,11 @@ const Home = () => {
             <div className="text-base text-slate-700 space-y-1 text-center">
               <p className="font-bold text-melvin-text">Bradesco · Agência 2572 · CC 0160996-3</p>
               <p className="font-medium text-melvin-text/80">Chave CNPJ: 13.285.292/0001-06</p>
+            </div>
+
+            <div className="mt-8 flex items-center justify-center gap-2 text-melvin-green-dark/70 text-xs font-bold uppercase tracking-widest">
+              <LuShieldCheck className="w-5 h-5" />
+              <span>Ambiente 100% Seguro</span>
             </div>
 
             <button

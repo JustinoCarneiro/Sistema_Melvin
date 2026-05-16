@@ -1,4 +1,5 @@
 package br.com.melvin.sistema.shared.security;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,6 @@ public class EncryptExistingDataMigration implements CommandLineRunner {
         log.info("[Migração AES] Criptografia de dados existentes concluída.");
     }
 
-    @SuppressWarnings("null")
     private void migrateTable(String table, List<String> columns) {
         int totalMigrated = 0;
         for (String col : columns) {
@@ -87,8 +87,8 @@ public class EncryptExistingDataMigration implements CommandLineRunner {
                     "SELECT id, %s FROM %s WHERE %s IS NOT NULL AND %s != 'Anonimizado'",
                     col, table, col, col
                 );
-                @SuppressWarnings("null")
-                List<Map<String, Object>> rows = jdbc.queryForList(sql);
+                List<Map<String, Object>> rows = jdbc.queryForList(Objects.requireNonNull(sql));
+                if (rows == null || rows.isEmpty()) continue;
 
                 int colMigrated = 0;
                 for (Map<String, Object> row : rows) {
@@ -102,7 +102,7 @@ public class EncryptExistingDataMigration implements CommandLineRunner {
                     String updateSql = String.format("UPDATE %s SET %s = ? WHERE id = ?", table, col);
                     Object idValue = row.get("id");
                     if (idValue == null) continue;
-                    jdbc.update(updateSql, encrypted, idValue);
+                    jdbc.update(Objects.requireNonNull(updateSql), Objects.requireNonNull(encrypted), idValue);
                     colMigrated++;
                 }
                 totalMigrated += colMigrated;
