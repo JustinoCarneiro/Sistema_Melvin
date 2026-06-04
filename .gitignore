@@ -1,7 +1,39 @@
+# ─── Segredos e Ambiente ───
 .env
-backups/
+
+# ─── Dependências e Build ───
 node_modules/
 dist/
 target/
-.DS_Store
+
+# ─── Backups de Banco ───
+backups/
+
+# ─── Logs ───
 *.log
+logs/
+sistema/logs/
+
+# ─── Saída de Testes Cypress ───
+frontend/cypress_*.log
+frontend/cypress_*.json
+frontend/cypress/screenshots/
+frontend/cypress/videos/
+frontend/cypress/downloads/
+
+# ─── IDE (Eclipse / IntelliJ / VSCode) ───
+.classpath
+.factorypath
+.project
+.settings/
+*.iml
+.idea/
+
+# ─── OS ───
+.DS_Store
+Thumbs.db
+
+# ─── Arquivos temporários ───
+*.backup
+*.bak
+*.tmp

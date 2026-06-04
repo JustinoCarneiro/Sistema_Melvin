@@ -2,6 +2,21 @@
 
 Sistema de gestão de alunos, voluntários e recursos para o Instituto Social Melvin, desenvolvido com foco em segurança, escalabilidade e facilidade de uso.
 
+## 📋 Metodologia Onda-Dev
+
+Este projeto segue a **Metodologia Onda-Dev** (Playbook de Engenharia), um processo ágil otimizado para desenvolvedor solo com IA. Os artefatos fundacionais são:
+
+| Artefato | Descrição | Fase |
+|---|---|---|
+| [`CLAUDE.md`](./CLAUDE.md) | **Spec Viva** — Épicos, Histórias de Usuário e Critérios de Aceite | Fase 1 |
+| [`ROADMAP.md`](./ROADMAP.md) | **Blueprint** — Módulos com peso, contratos API-First (JSON) e estimativas | Fase 3 |
+| [`smoke_test.sh`](./smoke_test.sh) | **Smoke Test** — Validação automatizada pré-deploy | Fase 5 |
+| [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) | **CI/CD** — Pipeline de Integração Contínua (GitHub Actions) | Fase 4/5 |
+
+> **Ciclo TDD (Fase 4):** Novas features seguem Red → Green → Refactor com Mocks (JUnit 5 + Mockito).
+
+---
+
 ## 🚀 Tecnologias
 
 O projeto utiliza uma stack moderna e robusta:
@@ -165,6 +180,11 @@ O projeto inclui scripts em Bash para facilitar o dia a dia e o deploy:
 - **`backup.sh`**: Gestão de Backups:
     - Gera um dump compactado (`.sql.gz`) do banco de dados.
     - Mantém apenas os últimos 7 dias de backups automaticamente.
+- **`smoke_test.sh`**: Smoke Test Automatizado (Onda-Dev Fase 5):
+    - Valida presença dos artefatos (`CLAUDE.md`, `ROADMAP.md`, `.env`).
+    - Executa testes backend (JUnit 5) e build frontend (Vite).
+    - Verifica integridade do Docker Compose e segurança (segredos hardcoded).
+    - Retorna ✅ APROVADO ou ❌ FALHOU com contagem de checks.
 - **`monitor_melvin.sh`** (servidor): Monitoramento de saúde do backend:
     - Registra uso de memória do container a cada hora em `/var/log/melvin_monitor.log`.
     - Detecta ocorrências de `OutOfMemoryError` automaticamente.

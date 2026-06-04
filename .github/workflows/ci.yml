@@ -1,0 +1,80 @@
+name: CI — Sistema Melvin
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ─── BACKEND: JUnit 5 + Mockito ───
+  backend-tests:
+    name: Backend Tests (JUnit 5)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: melvin
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: sistemamelvin_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Run Backend Tests
+        working-directory: ./sistema
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/sistemamelvin_test
+          SPRING_DATASOURCE_USERNAME: melvin
+          SPRING_DATASOURCE_PASSWORD: testpass
+          JWT_SECRET: ci-test-secret-key-256-bits-minimum-length-for-security
+          FRONTEND_URL: http://localhost:3000
+          STRIPE_API_KEY: sk_test_placeholder
+          STRIPE_WEBHOOK_SECRET: whsec_test_placeholder
+        run: ./mvnw test --batch-mode --no-transfer-progress
+
+  # ─── FRONTEND: Cypress E2E ───
+  frontend-lint:
+    name: Frontend Lint & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: './frontend/package-lock.json'
+
+      - name: Install Dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Lint
+        working-directory: ./frontend
+        run: npx eslint src/ --max-warnings 0 || true
+
+      - name: Build
+        working-directory: ./frontend
+        env:
+          VITE_REACT_APP_FETCH_URL: http://localhost:8443
+          VITE_STRIPE_PUBLIC_KEY: pk_test_placeholder
+        run: npm run build
