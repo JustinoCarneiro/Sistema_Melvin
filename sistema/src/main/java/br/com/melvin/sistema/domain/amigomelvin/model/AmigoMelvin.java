@@ -46,10 +46,8 @@ public class AmigoMelvin {
     @Enumerated(EnumType.STRING)
     private DonorStatus status;
 
-    @Convert(converter = SensitiveDataConverter.class)
     private String stripeCustomerId;
 
-    @Convert(converter = SensitiveDataConverter.class)
     private String subscriptionId;
 
     private Integer mesesContribuindo;

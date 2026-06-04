@@ -146,8 +146,7 @@ const Home = () => {
           "bg-melvin-blue/20"
         ];
 
-        // Take maximum 8 volunteers to match the grid layout
-        const mappedData = (response.data || []).slice(0, 8).map((vol, index) => ({
+        const mappedData = (response.data || []).map((vol, index) => ({
           name: vol.nome,
           role: vol.funcao || 'Voluntário',
           initial: vol.nome ? vol.nome.charAt(0).toUpperCase() : 'V',
@@ -534,7 +533,7 @@ const Home = () => {
                 <div className={cn("w-12 h-12 sm:w-16 sm:h-16 rounded-[40%_60%_70%_30%/40%_40%_60%_60%] mx-auto mb-3 sm:mb-6 flex items-center justify-center text-2xl sm:text-3xl font-handwritten text-melvin-text/60 group-hover:scale-110 transition-transform duration-500", vol.color)}>
                   {vol.initial}
                 </div>
-                <h4 className="font-bold text-melvin-text text-sm sm:text-lg leading-tight mb-1">{vol.name}</h4>
+                <h4 className="font-bold text-melvin-text text-sm sm:text-lg leading-tight mb-1 uppercase">{vol.name}</h4>
                 <p className="text-[10px] sm:text-xs text-melvin-text/60 uppercase tracking-widest">{vol.role}</p>
               </motion.div>
             ))

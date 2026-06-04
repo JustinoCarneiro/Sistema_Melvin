@@ -61,9 +61,10 @@ public class EncryptExistingDataMigration implements CommandLineRunner {
         // Voluntario - campos sensíveis
         migrateTable("voluntario", List.of("email", "contato", "rg"));
 
-        // AmigoMelvin - campos sensíveis
+        // AmigoMelvin - campos sensíveis (stripe_customer_id e subscription_id NÃO são criptografados
+        // pois são IDs públicos do Stripe usados em queries de lookup nos webhooks)
         migrateTable("amigomelvin", List.of(
-            "contato", "email", "stripe_customer_id", "subscription_id"
+            "contato", "email"
         ));
 
         // Cestas - CPF e contato do beneficiário

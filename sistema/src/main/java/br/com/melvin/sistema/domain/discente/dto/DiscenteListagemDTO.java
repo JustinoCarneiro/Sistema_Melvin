@@ -17,6 +17,15 @@ public class DiscenteListagemDTO {
     private String nome_mae;
     private String status;
     private Integer sala;
+    private String turno;
+    private boolean ingles;
+    private boolean karate;
+    private boolean informatica;
+    private boolean musica;
+    private boolean teatro;
+    private boolean ballet;
+    private boolean futsal;
+    private boolean artesanato;
 
     public DiscenteListagemDTO(Discente discente) {
         this.matricula = discente.getMatricula();
@@ -25,5 +34,14 @@ public class DiscenteListagemDTO {
         this.nome_mae = discente.getNome_mae();
         this.status = discente.getStatus();
         this.sala = discente.getSala();
+        this.turno = discente.getTurno();
+        this.ingles = discente.isIngles();
+        this.karate = discente.isKarate();
+        this.informatica = discente.isInformatica();
+        this.musica = discente.isMusica();
+        this.teatro = discente.isTeatro();
+        this.ballet = discente.isBallet();
+        this.futsal = discente.isFutsal();
+        this.artesanato = discente.isArtesanato();
     }
 }

@@ -62,11 +62,11 @@ public class SecurityConfiguration {
                     // --- ROTAS AUTENTICADAS GERAIS ---
                     .requestMatchers(HttpMethod.GET, "/auth/role_{matricula}").authenticated()
                     .requestMatchers(HttpMethod.GET, "/dashboard/**").authenticated()
-                    .requestMatchers(HttpMethod.GET, "/api/permissoes/minhas").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/permissoes/minhas").authenticated()
                     .requestMatchers(HttpMethod.PUT, "/discente/{matricula}/avaliacoes").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "EDITAR_RENDIMENTO") || 
                                                  permissaoService.hasPermission(authentication.get(), "EDITAR_AVALIACAO_PSICO")))
-                    .requestMatchers("/api/permissoes/**").hasRole("ADM")
+                    .requestMatchers("/permissoes/**").hasRole("ADM")
 
                     // --- ROTAS ADMINISTRATIVAS (Registro de usuários, etc) ---
                     .requestMatchers(HttpMethod.POST,  "/auth/register", "/imagens/**", "/aviso/**").hasRole("ADM")
