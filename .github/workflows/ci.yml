@@ -12,21 +12,6 @@ jobs:
     name: Backend Tests (JUnit 5)
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: melvin
-          POSTGRES_PASSWORD: testpass
-          POSTGRES_DB: sistemamelvin_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - uses: actions/checkout@v4
 
@@ -40,9 +25,6 @@ jobs:
       - name: Run Backend Tests
         working-directory: ./sistema
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/sistemamelvin_test
-          SPRING_DATASOURCE_USERNAME: melvin
-          SPRING_DATASOURCE_PASSWORD: testpass
           JWT_SECRET: ci-test-secret-key-256-bits-minimum-length-for-security
           FRONTEND_URL: http://localhost:3000
           STRIPE_API_KEY: sk_test_placeholder
