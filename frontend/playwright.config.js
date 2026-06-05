@@ -17,6 +17,13 @@ export default defineConfig({
   workers: process.env.CI ? 1 : 2,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+  /* Build + serve the SPA on :3001 so the suite is self-contained (local & CI). */
+  webServer: {
+    command: 'npm run build && npx serve -s dist -p 3001',
+    url: 'http://localhost:3001',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
