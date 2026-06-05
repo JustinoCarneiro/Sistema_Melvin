@@ -6,6 +6,8 @@ import { IoMdSearch, IoMdArrowRoundBack } from "react-icons/io";
 import { FaPlus } from "react-icons/fa6";
 import { MdOutlineModeEdit } from "react-icons/md";
 
+import Botao from '@core/components/gerais/Botao';
+
 import avisoService from "../api/avisoService";
 import { usePermissions } from "@core/hooks/usePermissions";
 
@@ -97,6 +99,19 @@ function Avisos({ modoDesativados = false }){
                                 onChange={handleBuscaChange}
                             />
                         </div>
+                        {!modoDesativados && (isAdm || podeGerenciar) && (
+                            <div className={styles.botoes}>
+                                <Botao 
+                                    nome="Criar Aviso"
+                                    corFundo="#1A4D80"
+                                    corBorda="#0d2b4a"
+                                    type="button"
+                                    onClick={() => navigate(`/app/avisos/criar`)}
+                                >
+                                    <FaPlus />
+                                </Botao>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -146,16 +161,7 @@ function Avisos({ modoDesativados = false }){
                                 )
                             )}
                             
-                            {/* Botão Criar Novo (Apenas se NÃO for desativados e NÃO estiver carregando) */}
-                            {!loading && !modoDesativados && (isAdm || podeGerenciar) && (
-                                <tr className={styles.plus} onClick={()=>navigate(`/app/avisos/criar`)}>
-                                    <td colSpan="4">
-                                        <div className={styles.plusContent}>
-                                            <FaPlus className={styles.icon_plus}/> Criar novo aviso
-                                        </div>
-                                    </td>
-                                </tr>
-                            )}
+
                         </tbody>
                     </table>
                 </div>

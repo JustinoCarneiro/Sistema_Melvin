@@ -215,7 +215,7 @@ function Cestas(){
                             
                             {modoData === "especifica" && (
                                 <input
-                                    className={styles.select_sala}
+                                    className={styles.input_date}
                                     type="date"
                                     value={dataInicio}
                                     onChange={(e) => setDataInicio(e.target.value)}
@@ -225,14 +225,14 @@ function Cestas(){
                             {modoData === "intervalo" && (
                                 <div className={styles.intervaloContainer}>
                                     <input
-                                        className={styles.select_sala}
+                                        className={styles.input_date}
                                         type="date"
                                         value={dataInicio}
                                         onChange={(e) => setDataInicio(e.target.value)}
                                     />
                                     <span className={styles.ate}>até</span>
                                     <input
-                                        className={styles.select_sala}
+                                        className={styles.input_date}
                                         type="date"
                                         value={dataFim}
                                         onChange={(e) => setDataFim(e.target.value)}
@@ -249,6 +249,18 @@ function Cestas(){
                             >
                                 <FaFileExcel />
                             </Botao>
+
+                            {(isAdm || podeGerenciar) && (
+                                <Botao 
+                                    nome="Novo Registro"
+                                    corFundo="#1A4D80"
+                                    corBorda="#0d2b4a"
+                                    type="button"
+                                    onClick={()=>navigate("/app/cestas/criar")}
+                                >
+                                    <FaPlus />
+                                </Botao>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -355,15 +367,7 @@ function Cestas(){
                                 )
                             )}
 
-                            {(isAdm || podeGerenciar) && !loading && (
-                                <tr className={styles.plus} onClick={()=>navigate("/app/cestas/criar")}>
-                                    <td colSpan="7">
-                                        <div className={styles.plusContent}>
-                                            <FaPlus className={styles.icon_plus}/> Novo Registro
-                                        </div>
-                                    </td>
-                                </tr>
-                            )}
+
                         </tbody>
                     </table>
                 </div>

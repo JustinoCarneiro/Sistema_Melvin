@@ -112,11 +112,7 @@ export function useAlunos() {
         });
     }, [alunos, aula, filtroEspera, turnoSelecionado]);
 
-    useEffect(() => {
-        console.error("DEBUG ALUNOS:", alunos);
-        console.error("DEBUG FILTRADOS:", alunosFiltrados);
-        console.error("DEBUG PARAMS:", { aula, filtroEspera, turnoSelecionado, isAdm });
-    }, [alunos, alunosFiltrados, aula, filtroEspera, turnoSelecionado, isAdm]);
+
 
     return {
         busca, setBusca,

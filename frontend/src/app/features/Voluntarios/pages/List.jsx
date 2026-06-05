@@ -177,6 +177,18 @@ function Voluntarios({ modoDesativados = false }) {
                                         onClick={handleFrequenciasClick}
                                     />
                                 )}
+                                
+                                {podeGerenciarVoluntarios && !filtroEspera && (
+                                    <Botao 
+                                        nome="Adicionar Voluntário"
+                                        corFundo="#1A4D80"
+                                        corBorda="#0d2b4a"
+                                        type="button"
+                                        onClick={handleCreateClick}
+                                    >
+                                        <FaPlus />
+                                    </Botao>
+                                )}
                             </div>
                         )}
                     </div>
@@ -225,16 +237,7 @@ function Voluntarios({ modoDesativados = false }) {
                                     </tr>
                                 )}
                                 
-                                {/* Botão Adicionar (Apenas modo Ativos e sem filtro de espera) */}
-                                {!modoDesativados && podeGerenciarVoluntarios && !filtroEspera && (
-                                    <tr className={styles.plus} onClick={handleCreateClick}>
-                                        <td colSpan="5">
-                                            <div className={styles.plusContent}>
-                                                <FaPlus className={styles.icon_plus} /> Adicionar novo integrante
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )}
+
                             </tbody>
                         </table>
                     </div>

@@ -21,12 +21,12 @@ log_step() {
 
 log_pass() {
     echo -e "  ${GREEN}✅ $1${NC}"
-    ((PASS++))
+    PASS=$((PASS + 1))
 }
 
 log_fail() {
     echo -e "  ${RED}❌ $1${NC}"
-    ((FAIL++))
+    FAIL=$((FAIL + 1))
 }
 
 log_warn() {
