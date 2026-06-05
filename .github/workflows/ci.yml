@@ -49,7 +49,7 @@ jobs:
           STRIPE_WEBHOOK_SECRET: whsec_test_placeholder
         run: ./mvnw test --batch-mode --no-transfer-progress
 
-  # ─── FRONTEND: Cypress E2E ───
+  # ─── FRONTEND: Playwright E2E ───
   frontend-lint:
     name: Frontend Lint & Build
     runs-on: ubuntu-latest

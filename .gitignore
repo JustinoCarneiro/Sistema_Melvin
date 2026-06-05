@@ -14,12 +14,11 @@ backups/
 logs/
 sistema/logs/
 
-# ─── Saída de Testes Cypress ───
-frontend/cypress_*.log
-frontend/cypress_*.json
-frontend/cypress/screenshots/
-frontend/cypress/videos/
-frontend/cypress/downloads/
+# ─── Saída de Testes Playwright ───
+frontend/test-results/
+frontend/playwright-report/
+frontend/playwright/.cache/
+frontend/blob-report/
 
 # ─── IDE (Eclipse / IntelliJ / VSCode) ───
 .classpath
