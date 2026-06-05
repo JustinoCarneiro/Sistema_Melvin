@@ -1,0 +1,109 @@
+@import "../../../../index.scss";
+
+.body{
+    width: 100%;
+    color: white;
+}
+
+.faixa_um{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-block: 6rem;
+    background-color: #d9e8d1;
+}
+
+.faixa_dois{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-block: 6rem;
+    background-color: #214210;
+}
+
+.faixa_tres{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-block: 6rem;
+    background-color: #4b5645;
+}
+
+.img{
+    width: 20rem;
+    object-fit: contain;
+}
+
+.conteudo{
+    display: flex;
+    flex-direction: column;
+    width: 30rem;
+    gap: 1rem;
+    color: rgb(61, 96, 53);
+}
+
+.title{
+    font-weight: 600;
+    font-size: 2rem;
+}
+
+.texto{
+    text-align: justify;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.faixa_dois > *{
+    color: white;
+}
+
+.faixa_tres {
+    background-color: #a87b50;
+}
+
+.faixa_tres > *{
+    color: white;
+}
+
+.button{
+    all: unset;
+    font-size: 0.8rem;
+    color: black;
+    background-color: aliceblue;
+    padding-inline: 1rem;
+    padding-block: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: start;
+    color: rgb(61, 96, 53);;
+}
+
+@media (max-width: $size-f){
+    .img{
+        width: 20rem;
+        height: 12rem;
+    }
+}
+
+@media (max-width: $size-d){
+    .body > *{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .img{
+        margin-bottom: 2rem;
+    }
+
+    .conteudo{
+        order: 2;
+    }
+}
+
+@media (max-width: $size-c){
+    .conteudo{
+        width: 19rem;
+    }
+}

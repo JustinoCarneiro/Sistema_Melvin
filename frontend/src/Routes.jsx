@@ -1,43 +1,39 @@
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
-import HeaderSite from './site/components/HeaderSite';
-import FooterSite from './site/components/FooterSite';
-import Home from './site/pages/Home';
-import Embaixadores from './site/pages/Embaixadores';
-import AmigosMelvin from './site/pages/AmigosMelvin';
-import CadastroAmigo from './site/pages/CadastroAmigo';
-import Doacao from './site/pages/Doacao';
-import NotaValor from './site/pages/NotaValor';
+import HeaderSite from '@site/components/HeaderSite';
+import FooterSite from '@site/components/FooterSite';
+import Home from '@site/pages/Home';
+import Embaixadores from '@site/pages/Embaixadores';
+import AmigosMelvin from '@site/pages/AmigosMelvin';
+import CadastroAmigo from '@site/pages/CadastroAmigo';
+import Doacao from '@site/pages/Doacao';
+import NotaValor from '@site/pages/NotaValor';
 
-import Login from "./pages/Login";
-import HomeApp from "./pages/HomeApp";
-import PrivateRoute from "./services/PrivateRoute";
-import Header from "./components/Header";
-import Config from "./pages/Config";
-import Relatorios from './pages/Relatorios';
-import Rendimento from './pages/Rendimento';
-import ConfiguracoesPermissoes from './pages/ConfiguracoesPermissoes';
+import { Login } from "@features/Auth";
+import { HomeApp } from "@features/Dashboard";
+import PrivateRoute from "@core/services/PrivateRoute";
+import Header from "@core/components/Header";
+import { Config } from "@features/Config";
+import { Relatorios } from "@features/Relatorios";
+import { Rendimento } from "@features/Rendimento";
+import { ConfiguracoesPermissoes } from "@features/Permissoes";
+
+// --- FEATURE: ALUNOS ---
+import { Alunos, AlunoForms, AlunoFrequencia as Aluno_frequencia } from "@features/Alunos";
+
+// --- FEATURE: VOLUNTÁRIOS ---
+import { Voluntarios, VoluntarioForms, VoluntarioFrequencia as Voluntario_frequencia } from "@features/Voluntarios";
 
 // --- COMPONENTES DE LISTAGEM UNIFICADOS ---
-import Alunos from "./pages/lista/Alunos";
-import Voluntarios from "./pages/lista/Voluntarios";
-import EmbaixadoresApp from './pages/lista/EmbaixadoresApp';
-import AmigosMelvinApp from './pages/lista/AmigosMelvinApp';
-import Avisos from './pages/lista/Avisos';
-import Cestas from './pages/lista/Cestas';
+import { EmbaixadoresApp, EmbaixadorForms } from '@features/Embaixadores';
+import { AmigosMelvinApp, AmigoMelvinForms } from '@features/AmigosMelvin';
+import { Avisos, AvisoForms } from '@features/Avisos';
+import { Cestas, CestasForms } from '@features/Cestas';
 
 // --- FORMULÁRIOS ---
-import AlunoForms from "./pages/forms/Aluno_forms";
-import VoluntarioForms from "./pages/forms/Voluntario_forms";
-import EmbaixadorForms from './pages/forms/Embaixador_forms';
-import AmigoMelvinForms from './pages/forms/AmigoMelvin_forms';
-import AvisoForms from './pages/forms/Aviso_forms';
-import CestasForms from './pages/forms/Cestas_forms';
 
 // --- FREQUÊNCIAS ---
-import Aluno_frequencia from "./pages/frequencias/Aluno_frequencia";
-import Voluntario_frequencia from "./pages/frequencias/Voluntario_frequencia";
-import ScrollToTopRouter from './components/ScrollToTopRouter';
+import ScrollToTopRouter from '@core/components/ScrollToTopRouter';
 
 
 function AppRoutes() {
@@ -103,7 +99,6 @@ function AppContent() {
     const perfisEquipe = ['ADM', 'DIRE', 'COOR', 'PROF', 'PSICO', 'ASSIST', 'AUX', 'MARK', 'COZI', 'ZELA'];
 
     // Lista de perfis que podem acessar Doações (Cestas)
-    const perfisDoacao = ['ADM', 'DIRE', 'AUX'];
 
     return (
         <>

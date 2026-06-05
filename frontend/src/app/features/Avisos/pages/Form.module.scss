@@ -1,0 +1,176 @@
+@import '../../../../index.scss';
+
+.body {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background-color: #f0f5f1;
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* --- HEADER (ATUALIZADO COM ANIMAÇÃO) --- */
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 2rem;
+
+    .titleGroup {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .voltar {
+        font-size: 2.5rem; // Tamanho aumentado
+        color: #555;
+        cursor: pointer;
+        transition: all 0.2s; // Suavidade
+        
+        &:hover { 
+            color: $cor-primaria;
+            transform: translateX(-3px); // A ANIMAÇÃO DE RECUO
+        }
+    }
+
+    .title {
+        color: $cor-primaria;
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin: 0;
+    }
+}
+
+/* --- FORM --- */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.linhaDupla {
+    display: flex;
+    gap: 1rem;
+    
+    > * {
+        flex: 1;
+    }
+}
+
+/* --- INPUTS & SELECTS & TEXTAREA --- */
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    label {
+        font-size: 0.9rem;
+        color: #555;
+        font-weight: 500;
+    }
+
+    .select {
+        padding: 0.6rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background-color: #fff;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border 0.2s;
+        width: 100%;
+        cursor: pointer;
+
+        &:focus {
+            border-color: $cor-primaria;
+            box-shadow: 0 0 0 2px rgba($cor-primaria, 0.1);
+        }
+    }
+
+    .textarea {
+        padding: 0.8rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background-color: #fff;
+        font-size: 0.95rem;
+        font-family: inherit;
+        outline: none;
+        transition: border 0.2s;
+        width: 100%;
+        resize: vertical;
+        min-height: 120px;
+
+        &:focus {
+            border-color: $cor-primaria;
+            box-shadow: 0 0 0 2px rgba($cor-primaria, 0.1);
+        }
+    }
+}
+
+.required {
+    color: red;
+}
+
+/* --- FOOTER --- */
+.footerActions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.errorMsg {
+    color: #C70039;
+    background-color: #ffe6e6;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    text-align: center;
+    width: 100%;
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem;
+    }
+
+    .gridContainer {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .linhaDupla {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
