@@ -1,0 +1,319 @@
+@import '../../../../index.scss';
+
+.body {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background-color: #f0f5f1;
+}
+
+.container {
+    width: 100%;
+    max-width: 1000px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* --- HEADER --- */
+.headerForm {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap; // Permite quebra no mobile
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+    width: 100%;
+    gap: 1rem;
+
+    .voltar {
+        font-size: 1.8rem;
+        color: #666;
+        cursor: pointer;
+        transition: color 0.2s;
+        margin-right: 0.5rem;
+        flex-shrink: 0;
+        
+        &:hover { color: $cor-primaria; }
+    }
+
+    .titlePage {
+        color: $cor-primaria;
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin: 0;
+        line-height: 1.2;
+        margin-right: auto; // Empurra o botão para a direita no Desktop
+    }
+    
+    // Container do botão para garantir largura correta no mobile
+    .headerButton {
+        display: flex;
+        align-items: center;
+    }
+}
+
+/* --- ESTRUTURA FORM --- */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding-bottom: 3rem; // Espaço extra para garantir que nada na base seja cortado
+}
+
+.sectionTitle {
+    color: $cor-secundaria;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-left: 5px solid $cor-primaria;
+    padding-left: 1rem;
+    margin-bottom: 0.5rem;
+    margin-top: 1rem;
+    background-color: #fafafa;
+    padding-block: 0.5rem;
+    border-radius: 0 4px 4px 0;
+}
+
+.subSectionTitle {
+    color: #666;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    overflow: visible; // Garantir que dropzones e outros elementos não sejam clipados
+}
+
+.coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.linhaDupla {
+    display: flex;
+    gap: 1rem;
+    
+    > * {
+        flex: 1;
+    }
+}
+
+/* --- INPUTS & SELECTS --- */
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    label {
+        font-size: 0.9rem;
+        color: #555;
+        font-weight: 500;
+    }
+
+    .select {
+        padding: 0.6rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background-color: #fff;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border 0.2s;
+        width: 100%;
+
+        &:focus {
+            border-color: $cor-primaria;
+            box-shadow: 0 0 0 2px rgba($cor-primaria, 0.1);
+        }
+    }
+}
+
+.required {
+    color: red;
+}
+
+/* --- CHECKBOXES (Aulas) --- */
+.checkboxGroup {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    
+    p {
+        margin: 0 0 0.8rem 0;
+        font-weight: 600;
+        color: #444;
+    }
+
+    .checkboxGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 0.8rem;
+    }
+
+    .checkboxLabel {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: #555;
+        cursor: pointer;
+        
+        input {
+            accent-color: $cor-primaria;
+            width: 16px;
+            height: 16px;
+        }
+    }
+}
+
+/* --- UPLOAD AREA --- */
+.uploadArea {
+    margin-top: 1rem;
+    
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #555;
+    }
+}
+
+.dropzoneWrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dropzone {
+    flex-grow: 1;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fafafa;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 4rem; // Um pouco maior para garantir visibilidade
+    overflow: visible;
+
+    overflow: visible;
+
+    &:hover {
+        border-color: $cor-primaria;
+        background-color: #f0f8f0;
+    }
+}
+
+.filename {
+    font-size: 0.9rem;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.iconDoc {
+    color: #4285F4;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.btnDownload {
+    background-color: #eee;
+    border: none;
+    border-radius: 8px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.4rem;
+    color: #333;
+    transition: all 0.2s;
+    flex-shrink: 0;
+
+    &:hover {
+        background-color: $cor-primaria;
+        color: white;
+    }
+}
+
+/* --- FOOTER --- */
+.footerActions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.errorMsg {
+    color: #C70039;
+    background-color: #ffe6e6;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    text-align: center;
+    width: 100%;
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem;
+    }
+
+    .gridContainer {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .linhaDupla {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .headerForm {
+        // Alinhamento padrão flex (row wrap)
+        align-items: center;
+    }
+
+    .titlePage {
+        font-size: 1.4rem;
+        margin-right: auto;
+    }
+
+    // O botão (último filho do header) cai para baixo e ocupa 100%
+    .headerButton {
+        width: 100%;
+        margin-top: 0.5rem;
+        
+        button {
+            width: 100%; // Força o componente Botao a expandir
+            justify-content: center;
+        }
+    }
+}

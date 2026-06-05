@@ -227,6 +227,22 @@ Quando ele envia avaliacaoRendimento=4.5 e avaliacaoPsicologico=3.0,
 Então APENAS avaliacaoRendimento é atualizada; avaliacaoPsicologico permanece null.
 ```
 
+#### US-3.6: Retenção de Filtros na Listagem e Padronização de UI
+**Como** coordenador,
+**eu quero** que meus filtros na lista de alunos (busca, turno, sala) sejam preservados após edição e que o botão de adicionar seja padronizado no cabeçalho,
+**para que** eu não perca o contexto de navegação e tenha uma interface consistente.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que estou na lista de alunos e aplico o filtro de turno "Tarde",
+Quando eu clico para editar um aluno e depois retorno à lista,
+Então o filtro "Tarde" continua aplicado automaticamente (estado mantido via localStorage).
+
+Dado que possuo a permissão CADASTRAR_ALUNO,
+Quando abro a lista de alunos,
+Então vejo o botão "Adicionar" no cabeçalho da tabela, junto com outros botões de ação.
+```
+
 ---
 
 ### ÉPICO 4: GESTÃO DE VOLUNTÁRIOS
@@ -482,3 +498,4 @@ Então alerta de kit_especial aparece no dashboard admin.
 | Data | Mudança | Fase Retornada | Impacto |
 |---|---|---|---|
 | — | Projeto migrado para metodologia Onda-Dev (retroativo) | Todas | Criação de CLAUDE.md e ROADMAP.md |
+| 04/06/2026 | Refatoração do frontend para Arquitetura Orientada a Features (Screaming Architecture) | — (estrutural, sem retorno de fase) | Criação de `src/app/core/` (componentes/serviços/hooks compartilhados) e `src/app/features/` (Alunos, Voluntarios, Embaixadores, AmigosMelvin, Avisos, Cestas); aliases `@core`/`@features`/`@site` em Vite + jsconfig. Apenas pastas e caminhos de import alterados — zero mudança de UI, comportamento, rotas ou testes E2E. `src/site/` preservado. |
