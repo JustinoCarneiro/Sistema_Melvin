@@ -53,6 +53,9 @@ services:
       - "8443:8080"
     volumes:
       - ./sistema:/app/src
+      # Persiste a trilha de logs de pagamento entre recriações do container
+      # (antes era perdida a cada deploy, dificultando auditoria de doações).
+      - ./sistema/logs:/app/logs
       # Volumes para persistir arquivos
       - docs_diarios:/app/docs/diarios
       - docs_imagensembaixadores:/app/docs/imagens_embaixadores

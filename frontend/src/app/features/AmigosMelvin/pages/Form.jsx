@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IoMdArrowRoundBack } from "react-icons/io";
 import Botao from '@core/components/gerais/Botao';
 import Input from '@core/components/gerais/Input';
+import { formatCpf } from '@core/services/utils';
 
 import amigoMelvinService from '../api/amigoMelvinService';
 
@@ -14,7 +15,7 @@ function AmigoMelvin_forms(){
     const [errorMessage, setErrorMessage] = useState('');
 
     const [formDado, setFormDado] = useState({
-        nome: '', email: '', contato: '', status: '', formaPagamento: 'Cartão', valorMensal: '', mensagem: ''
+        nome: '', email: '', contato: '', cpf: '', status: '', formaPagamento: 'Cartão', valorMensal: '', mensagem: ''
     });
     
     useEffect(() => {
@@ -30,6 +31,7 @@ function AmigoMelvin_forms(){
                                 nome: amigo.nome || '',
                                 email: amigo.email || '',
                                 contato: amigo.contato || '',
+                                cpf: amigo.cpf || '',
                                 status: amigo.status || 'PENDING',
                                 formaPagamento: amigo.formaPagamento || 'Cartão',
                                 valorMensal: amigo.valorMensal || '',
@@ -102,6 +104,7 @@ function AmigoMelvin_forms(){
                             <Input label="Nome Completo:" name="nome" value={formDado.nome} disabled={true} comp="grande" prioridade="true" />
                             <Input label="Email:" type="email" name="email" value={formDado.email} disabled={true} comp="grande" prioridade="false" />
                             <Input label="Contato:" type="tel" name="contato" value={formDado.contato} disabled={true} comp="pequeno" placeholder="(00) 00000-0000" prioridade="true" />
+                            <Input label="CPF:" name="cpf" value={formDado.cpf} onChange={(e) => setFormDado(prev => ({ ...prev, cpf: formatCpf(e.target.value) }))} comp="pequeno" placeholder="000.000.000-00" prioridade="true" />
                             <Input label="Mensagem:" name="mensagem" value={formDado.mensagem} disabled={true} comp="grande" prioridade="false" />
                         </div>
 

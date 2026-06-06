@@ -37,6 +37,17 @@ public class AmigoMelvin {
     @Convert(converter = SensitiveDataConverter.class)
     private String email;
 
+    // Blind index (HMAC) do e-mail para permitir deduplicação sem descriptografar.
+    @Column(name = "email_hash")
+    private String emailHash;
+
+    @Convert(converter = SensitiveDataConverter.class)
+    private String cpf;
+
+    // Blind index (HMAC) do CPF (apenas dígitos) para deduplicação por doador.
+    @Column(name = "cpf_hash")
+    private String cpfHash;
+
     @Column(nullable = false)
     private String formaPagamento;
 

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import br.com.melvin.sistema.domain.amigomelvin.dto.SubscriptionRequestDTO;
 import br.com.melvin.sistema.domain.amigomelvin.dto.OneTimeDonationDTO;
 import br.com.melvin.sistema.domain.amigomelvin.dto.DoacaoItemDTO;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -47,7 +48,7 @@ public class AmigoMelvinController {
     }
     
     @PostMapping("/subscribe")
-    public ResponseEntity<?> assinar(@RequestBody SubscriptionRequestDTO dto) {
+    public ResponseEntity<?> assinar(@Valid @RequestBody SubscriptionRequestDTO dto) {
         return service.processarAssinatura(dto);
     }
     

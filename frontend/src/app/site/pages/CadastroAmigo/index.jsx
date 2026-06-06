@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { LuUser, LuPhone, LuMail, LuCreditCard, LuHeart, LuChevronLeft, LuCircleCheck } from 'react-icons/lu';
+import { LuUser, LuPhone, LuMail, LuIdCard, LuCreditCard, LuHeart, LuChevronLeft, LuCircleCheck } from 'react-icons/lu';
 import WatercolorBlob from '@core/components/melvin/WatercolorBlob';
+import { formatCpf } from '@core/services/utils';
 import { amigoMelvinService } from '@features/AmigosMelvin';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "pk_test_TYooMQauvdEDq54NiTphI7jx");
@@ -17,17 +18,27 @@ function CheckoutForm({ donationType, amount, initialData }) {
     const [nome, setNome] = useState(initialData?.nome || '');
     const [contato, setContato] = useState(initialData?.telefone || initialData?.contato || '');
     const [email, setEmail] = useState(initialData?.email || '');
+    const [cpf, setCpf] = useState(initialData?.cpf || '');
     const [isEditing, setIsEditing] = useState(!initialData?.nome);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [isCardComplete, setIsCardComplete] = useState(false);
 
+    // Trava de submissão em andamento: impede que duplo-clique ou um retry
+    // disparado antes do estado `loading` atualizar gere requisições duplicadas.
+    const submittingRef = useRef(false);
+    // Chave de idempotência estável por montagem do formulário: retries da
+    // mesma tentativa reaproveitam o mesmo Customer/Subscription no Stripe.
+    const idempotencyKeyRef = useRef(crypto.randomUUID());
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        if (!stripe || !elements) return;
 
+        if (!stripe || !elements) return;
+        if (submittingRef.current) return;
+
+        submittingRef.current = true;
         setLoading(true);
         setError(null);
 
@@ -56,10 +67,12 @@ function CheckoutForm({ donationType, amount, initialData }) {
                 nome,
                 email,
                 contato,
+                cpf: (cpf || '').replace(/\D/g, ''),
                 valor: amount,
                 stripeToken: stripeTokenObj.id,
                 dia: initialData?.dia || '',
-                mensagem: initialData?.mensagem || ''
+                mensagem: initialData?.mensagem || '',
+                idempotencyKey: idempotencyKeyRef.current
             };
 
             if (donationType === 'monthly') {
@@ -81,9 +94,22 @@ function CheckoutForm({ donationType, amount, initialData }) {
             }
         } catch (err) {
             console.error("Erro no checkout:", err);
-            setError('Ocorreu um erro ao processar sua doação. Tente novamente.');
+            const status = err?.response?.status;
+            const data = err?.response?.data;
+            const serverMsg = typeof data === 'string' ? data : null;
+            if (status === 409) {
+                // Backend detectou cadastro duplicado para este e-mail.
+                setError(serverMsg || 'Já existe uma assinatura ativa ou pendente para este e-mail.');
+            } else if (status >= 400 && status < 500) {
+                setError(serverMsg || 'Não foi possível processar sua doação. Verifique os dados informados e tente novamente.');
+            } else {
+                // Timeout / erro de rede: a doação PODE já ter sido registrada.
+                // Evita que o doador re-submeta cegamente e gere duplicidade.
+                setError('Não recebemos a confirmação do servidor. Antes de tentar de novo, verifique seu e-mail — sua doação pode já ter sido registrada. Em caso de dúvida, entre em contato conosco.');
+            }
         } finally {
             setLoading(false);
+            submittingRef.current = false;
         }
     };
 
@@ -156,6 +182,15 @@ function CheckoutForm({ donationType, amount, initialData }) {
                                         <p className="text-base text-slate-600">{contato}</p>
                                     </div>
                                 </div>
+                                <div className="flex items-start gap-4">
+                                    <div className="w-12 h-12 rounded-2xl bg-melvin-green/10 flex items-center justify-center shrink-0">
+                                        <LuIdCard className="text-melvin-green w-6 h-6" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">CPF</p>
+                                        <p className="text-base text-slate-600">{cpf}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </motion.div>
@@ -198,12 +233,27 @@ function CheckoutForm({ donationType, amount, initialData }) {
                                     <LuPhone className="text-melvin-green" /> Telefone
                                 </label>
                                 <input
-                                    className="w-full bg-white/60 border border-white/80 rounded-3xl px-8 py-4 outline-none focus:ring-4 focus:ring-melvin-green/10 focus:border-melvin-green/30 transition-all text-lg" 
+                                    className="w-full bg-white/60 border border-white/80 rounded-3xl px-8 py-4 outline-none focus:ring-4 focus:ring-melvin-green/10 focus:border-melvin-green/30 transition-all text-lg"
                                     type="text"
                                     required
                                     value={contato}
                                     onChange={(e) => setContato(e.target.value)}
                                     placeholder="(00) 00000-0000"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 ml-4">
+                                    <LuIdCard className="text-melvin-green" /> CPF
+                                </label>
+                                <input
+                                    className="w-full bg-white/60 border border-white/80 rounded-3xl px-8 py-4 outline-none focus:ring-4 focus:ring-melvin-green/10 focus:border-melvin-green/30 transition-all text-lg"
+                                    type="text"
+                                    required
+                                    inputMode="numeric"
+                                    maxLength={14}
+                                    value={cpf}
+                                    onChange={(e) => setCpf(formatCpf(e.target.value))}
+                                    placeholder="000.000.000-00"
                                 />
                             </div>
                         </div>
@@ -246,9 +296,9 @@ function CheckoutForm({ donationType, amount, initialData }) {
 
             <button 
                 type="submit" 
-                disabled={!stripe || loading || !nome || !email || !contato || !isCardComplete}
+                disabled={!stripe || loading || !nome || !email || !contato || !cpf || !isCardComplete}
                 className={`w-full text-white py-8 rounded-full text-2xl font-handwritten transition-all flex items-center justify-center gap-4 mt-8 ${
-                    (!stripe || loading || !nome || !email || !contato || !isCardComplete)
+                    (!stripe || loading || !nome || !email || !contato || !cpf || !isCardComplete)
                         ? "bg-slate-300 cursor-not-allowed shadow-none opacity-50"
                         : "bg-melvin-green hover:bg-melvin-green-dark hover:scale-[1.02] active:scale-95 shadow-2xl shadow-melvin-green/20"
                 }`}

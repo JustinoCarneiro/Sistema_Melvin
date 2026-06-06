@@ -15,7 +15,9 @@ import br.com.melvin.sistema.domain.amigomelvin.repository.DoacaoItemRepository;
 import br.com.melvin.sistema.domain.amigomelvin.dto.OneTimeDonationDTO;
 import br.com.melvin.sistema.domain.amigomelvin.dto.DoacaoItemDTO;
 import br.com.melvin.sistema.domain.amigomelvin.model.DoacaoItem;
+import br.com.melvin.sistema.shared.security.BlindIndex;
 import br.com.melvin.sistema.shared.service.EmailService;
+import br.com.melvin.sistema.shared.util.CpfUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ public class AmigoMelvinService {
     private final StripeService stripeService;
     private final DoacaoItemRepository doacaoItemRepository;
     private final EmailService emailService;
+    private final BlindIndex blindIndex;
 
     @org.springframework.beans.factory.annotation.Value("${stripe.price.id:price_dummy}")
     private String stripePriceId;
@@ -71,10 +74,55 @@ public class AmigoMelvinService {
             if (dto.valor() == null || dto.valor().compareTo(new java.math.BigDecimal("30")) < 0) {
                 return new ResponseEntity<>("O valor mínimo para apoio mensal é de R$ 30,00.", HttpStatus.BAD_REQUEST);
             }
+
+            // Idempotency key: usa a chave enviada pelo frontend (estável por
+            // tentativa) ou gera uma; retries com a mesma chave não duplicam.
+            String idempotencyKey = (dto.idempotencyKey() != null && !dto.idempotencyKey().isBlank())
+                    ? dto.idempotencyKey()
+                    : UUID.randomUUID().toString();
+
+            // Identidade do doador via CPF (blind index sobre os dígitos), pois o
+            // CPF é cifrado e não-pesquisável. E-mail também é indexado.
+            String cpfDigits = CpfUtils.onlyDigits(dto.cpf());
+            String cpfHash = blindIndex.hash(cpfDigits);
+            String emailHash = blindIndex.hash(dto.email());
+
+            // Deduplicação por CPF (ANTES de qualquer chamada ao Stripe):
+            //  - mesmo valor de assinatura ativa/pendente  -> bloqueia (409)
+            //  - valor diferente -> ATUALIZA a assinatura existente (não cria nova)
+            if (cpfHash != null) {
+                AmigoMelvin existente = repositorio.findFirstByCpfHashAndStatusIn(cpfHash,
+                        java.util.List.of(DonorStatus.PENDING, DonorStatus.ACTIVE));
+                if (existente != null) {
+                    if (existente.getValorMensal() != null
+                            && existente.getValorMensal().compareTo(dto.valor()) == 0) {
+                        log.warn("Cadastro duplicado bloqueado: CPF já possui assinatura nesse valor.");
+                        return new ResponseEntity<>("Você já possui uma assinatura ativa nesse valor.",
+                                HttpStatus.CONFLICT);
+                    }
+
+                    log.info("CPF já possui assinatura em outro valor. Atualizando a assinatura existente.");
+                    if (existente.getSubscriptionId() != null) {
+                        stripeService.updateSubscriptionAmount(
+                                existente.getSubscriptionId(),
+                                stripePriceId,
+                                dto.valor(),
+                                idempotencyKey + "-update-" + dto.valor().stripTrailingZeros().toPlainString());
+                    }
+                    existente.setValorMensal(dto.valor());
+                    existente.setDiaPreferido(dto.dia());
+                    if (dto.mensagem() != null && !dto.mensagem().isBlank()) {
+                        existente.setMensagem(dto.mensagem());
+                    }
+                    AmigoMelvin atualizado = repositorio.save(existente);
+                    return new ResponseEntity<>(atualizado, HttpStatus.OK);
+                }
+            }
+
             log.info("Processando assinatura para novo doador.");
 
             com.stripe.model.Customer customer = stripeService.createCustomer(dto.nome(), dto.email(),
-                    dto.stripeToken());
+                    dto.stripeToken(), idempotencyKey + "-customer");
             log.info("Customer criado no Stripe com sucesso.");
 
             // Utiliza o stripePriceId da .env como base para extrair o Product ID
@@ -82,12 +130,16 @@ public class AmigoMelvinService {
             com.stripe.model.Subscription subscription = stripeService.createSubscription(
                     customer.getId(),
                     stripePriceId,
-                    dto.valor());
+                    dto.valor(),
+                    idempotencyKey + "-subscription");
             log.info("Subscription criada no Stripe com sucesso com valor dinâmico.");
 
             AmigoMelvin amigo = new AmigoMelvin();
             amigo.setNome(dto.nome());
             amigo.setEmail(dto.email());
+            amigo.setEmailHash(emailHash);
+            amigo.setCpf(CpfUtils.format(dto.cpf()));
+            amigo.setCpfHash(cpfHash);
             amigo.setContato(dto.contato());
             amigo.setValorMensal(dto.valor());
             amigo.setFormaPagamento("CREDIT_CARD");
@@ -275,6 +327,13 @@ public class AmigoMelvinService {
             existente.setContato(amigomelvin.getContato());
             existente.setFormaPagamento(amigomelvin.getFormaPagamento());
             existente.setValorMensal(amigomelvin.getValorMensal());
+
+            // Permite preencher/corrigir o CPF pelo painel (cifrado + blind index),
+            // útil para doadores cadastrados antes do CPF ser obrigatório.
+            if (amigomelvin.getCpf() != null && !amigomelvin.getCpf().isBlank()) {
+                existente.setCpf(CpfUtils.format(amigomelvin.getCpf()));
+                existente.setCpfHash(blindIndex.hash(CpfUtils.onlyDigits(amigomelvin.getCpf())));
+            }
 
             existente.setId(id);
 

@@ -68,7 +68,7 @@ public class SecurityFilter extends OncePerRequestFilter{
         
         String token = this.recoverToken(request);
         if(token != null){
-            logger.info("Token found: {}", token);
+            logger.debug("Token found in request");
             var login = tokenService.validateToken(token);
             logger.info("Login extracted from token: {}", login);
             UserDetails user = userRepository.findByLogin(login);
@@ -92,7 +92,7 @@ public class SecurityFilter extends OncePerRequestFilter{
             logger.info("No Authorization header found");
             return null;
         }
-        logger.info("Authorization header found: {}", authHeader);
+        logger.debug("Authorization header found");
         return authHeader.replace("Bearer ", "");
     }
 

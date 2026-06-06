@@ -15,7 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.slf4j.MDC;
 
 @RestController
-@RequestMapping("/api/v1/webhooks/payments")
+// O nginx (host e container) faz proxy de `location /api/` removendo o prefixo
+// `/api/`. Logo, a URL pública https://institutomelvin.org/api/v1/webhooks/payments
+// chega ao backend como `/v1/webhooks/payments`. O mapeamento abaixo precisa
+// refletir o path JÁ SEM o `/api/`, senão o Stripe recebe 404 e o status do
+// doador nunca é reconciliado (fica preso em PENDING).
+@RequestMapping("/v1/webhooks/payments")
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentWebhookController {

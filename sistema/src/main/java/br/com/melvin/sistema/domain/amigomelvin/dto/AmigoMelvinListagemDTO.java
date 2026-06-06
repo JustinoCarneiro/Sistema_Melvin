@@ -20,6 +20,7 @@ public class AmigoMelvinListagemDTO {
     private String nome;
     private String contato;
     private String email;
+    private String cpf;
     private BigDecimal valorMensal;
     private DonorStatus status;
     private Integer mesesContribuindo;
@@ -32,6 +33,7 @@ public class AmigoMelvinListagemDTO {
         this.nome = amigomelvin.getNome();
         this.contato = amigomelvin.getContato();
         this.email = amigomelvin.getEmail();
+        this.cpf = amigomelvin.getCpf();
         this.valorMensal = amigomelvin.getValorMensal();
         this.status = amigomelvin.getStatus();
         this.mesesContribuindo = amigomelvin.getMesesContribuindo();

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { motion } from 'framer-motion';
-import { LuHeart, LuMessageSquare, LuPhone, LuMail, LuUser, LuCalendar } from 'react-icons/lu';
+import { LuHeart, LuMessageSquare, LuPhone, LuMail, LuUser, LuCalendar, LuIdCard } from 'react-icons/lu';
 import WatercolorBlob from '@core/components/melvin/WatercolorBlob';
-import { cn } from '@core/services/utils';
+import { cn, formatCpf } from '@core/services/utils';
 
 // Assets
 import img_hero from "../../../../docs/imagem_amigos_bola.png";
@@ -18,6 +18,7 @@ const AmigosMelvin = () => {
     const [formData, setFormData] = useState({
         nome: '',
         email: '',
+        cpf: '',
         telefone: '',
         dia: '',
         mensagem: ''
@@ -204,6 +205,21 @@ const AmigosMelvin = () => {
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-slate-500 flex items-center gap-2">
+                                            <LuIdCard className="text-melvin-red" /> CPF
+                                        </label>
+                                        <input
+                                            required
+                                            name="cpf"
+                                            value={formData.cpf}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, cpf: formatCpf(e.target.value) }))}
+                                            inputMode="numeric"
+                                            maxLength={14}
+                                            placeholder="000.000.000-00"
+                                            className="w-full bg-white border border-slate-100 rounded-2xl p-4 outline-none focus:border-melvin-red/50 transition-colors"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-slate-500 flex items-center gap-2">
                                             <LuPhone className="text-melvin-red" /> Telefone (WhatsApp)
                                         </label>
                                         <input
@@ -260,10 +276,10 @@ const AmigosMelvin = () => {
 
                                 <button
                                     type="submit"
-                                    disabled={!(agreedToTerms && formData.nome && formData.email && formData.telefone && formData.dia && (selectedPlan > 0 || customValue))}
+                                    disabled={!(agreedToTerms && formData.nome && formData.email && formData.cpf && formData.telefone && formData.dia && (selectedPlan > 0 || customValue))}
                                     className={cn(
                                         "w-full text-white py-6 rounded-full font-bold text-xl shadow-xl transition-all flex items-center justify-center gap-3",
-                                        (agreedToTerms && formData.nome && formData.email && formData.telefone && formData.dia && (selectedPlan > 0 || customValue)) 
+                                        (agreedToTerms && formData.nome && formData.email && formData.cpf && formData.telefone && formData.dia && (selectedPlan > 0 || customValue)) 
                                             ? "bg-melvin-red shadow-melvin-red/20 hover:scale-[1.02] active:scale-[0.98]" 
                                             : "bg-slate-300 cursor-not-allowed shadow-none opacity-50"
                                     )}

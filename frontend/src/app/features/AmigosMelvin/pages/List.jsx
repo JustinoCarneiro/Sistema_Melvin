@@ -108,6 +108,7 @@ function AmigosMelvinApp({ modoDesativados = false }){
                             <tr className={styles.tr_head}>
                                 <th>Nome</th>
                                 <th>E-mail</th>
+                                <th>CPF</th>
                                 <th>Contato</th>
                                 <th>Valor (R$)</th>
                                 <th>Dia Pref.</th>
@@ -121,7 +122,7 @@ function AmigosMelvinApp({ modoDesativados = false }){
                         <tbody className={styles.tbody}>
                             {loading ? (
                                 <tr>
-                                    <td colSpan="10" className={styles.empty}>Carregando...</td>
+                                    <td colSpan="11" className={styles.empty}>Carregando...</td>
                                 </tr>
                             ) : (
                                 amigosmelvinFiltrados.length > 0 ? (
@@ -135,6 +136,9 @@ function AmigosMelvinApp({ modoDesativados = false }){
                                             </td>
                                             <td data-label="E-mail">
                                                 {amigomelvin.email || 'N/A'}
+                                            </td>
+                                            <td data-label="CPF">
+                                                {amigomelvin.cpf || 'N/A'}
                                             </td>
                                             <td data-label="Contato">
                                                 {amigomelvin.contato || 'N/A'}
@@ -172,7 +176,7 @@ function AmigosMelvinApp({ modoDesativados = false }){
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="10" className={styles.empty}>Nenhum registro encontrado.</td>
+                                        <td colSpan="11" className={styles.empty}>Nenhum registro encontrado.</td>
                                     </tr>
                                 )
                             )}
