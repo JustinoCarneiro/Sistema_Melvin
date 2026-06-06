@@ -106,7 +106,9 @@ Campos: `matricula`, `nome`, `sala`, `data` (LocalDate), `presenca_manha` (`P`/`
 Chave de unicidade lógica: `matricula + data`. Operações de consulta e exclusão usam `findByMatriculaAndData` e `deleteByMatriculaAndData`.
 
 ### 3.4 AmigoMelvin (Doador)
-Campos: `id` (UUID), `nome`, `email`, `contato`, `formaPagamento`, `valorMensal`, `status` (enum `DonorStatus`: `PENDING`, `ACTIVE`, `INACTIVE`, `CANCELLED`), `contatado` (boolean).
+Campos: `id` (UUID), `nome`, `email` (cifrado), `cpf` (cifrado, armazenado como `xxx.xxx.xxx-xx`), `contato` (cifrado), `emailHash` / `cpfHash` (*blind index* HMAC para deduplicação sem descriptografar), `formaPagamento`, `valorMensal`, `status` (enum `DonorStatus`: `PENDING`, `ACTIVE`, `INACTIVE`, `CANCELLED`), `stripeCustomerId`, `subscriptionId`, `mesesContribuindo`, `dataInicio`, `lastProcessedInvoiceId` (idempotência de webhook), `diaPreferido`, `mensagem`.
+
+O **CPF é obrigatório** no cadastro (validação de dígitos via `@CPF`). A **deduplicação é por CPF**: mesmo CPF com assinatura ativa/pendente no **mesmo valor** retorna `409`; com **valor diferente**, a assinatura existente é **atualizada** no Stripe (não cria nova).
 
 **Subentidade DoacaoItem:** Registra individualmente cada cobrança/fatura Stripe vinculada a um doador.
 
@@ -148,12 +150,12 @@ Cada linha representa: "o cargo X pode executar a ação Y". O backend valida is
 **Fluxo de Assinatura Mensal:**
 1. Visitante preenche dados na landing page → escolhe valor mensal.
 2. Frontend envia token do cartão diretamente à Stripe (`pk_live/pk_test`). Dados do cartão **nunca** passam pelo backend Melvin.
-3. Backend recebe `SubscriptionRequestDTO` e chama `StripeService.createSubscription()`.
+3. Backend recebe `SubscriptionRequestDTO` (com **CPF obrigatório**), valida duplicidade por CPF e chama `StripeService.createCustomer()/createSubscription()` com **idempotency key**. O SDK Stripe usa timeouts explícitos (connect 10s / read 20s) para não estourar o gateway timeout do nginx.
 4. Doador é salvo no banco com `DonorStatus.PENDING`.
 5. Stripe processa a cobrança de forma assíncrona.
-6. Stripe envia `POST` para `/api/v1/webhooks/payments` com evento `invoice.paid`.
+6. Stripe envia `POST` para a URL pública `…/api/v1/webhooks/payments` com evento `invoice.paid`. **Atenção ao roteamento:** o nginx (host e container) faz `proxy_pass` removendo o prefixo `/api/`, então o controller é mapeado em `/v1/webhooks/payments` (e liberado nesse path no Spring Security).
 7. `PaymentWebhookController` valida assinatura via `Stripe-Signature` header + `STRIPE_WEBHOOK_SECRET`.
-8. Backend atualiza o doador para `DonorStatus.ACTIVE`. E-mail de confirmação é disparado via `@Async`.
+8. Backend atualiza o doador para `DonorStatus.ACTIVE` (idempotente via `lastProcessedInvoiceId`). E-mail de confirmação é disparado via `@Async`. O Instituto também é notificado por e-mail (`notifyInstituto`).
 
 **Fluxo de Doação Única (OneTime):**
 - `OneTimeDonationDTO` permite doações avulsas sem criação de assinatura recorrente.
@@ -161,12 +163,13 @@ Cada linha representa: "o cargo X pode executar a ação Y". O backend valida is
 **Fluxo de Cancelamento:**
 - **Autoatendimento:** O doador acessa o Stripe Customer Portal através de um link recebido por e-mail para gerenciar ou cancelar sua assinatura.
 - **Manual (Painel Admin):** O administrador clica em "Cancelar Assinatura no Stripe" na tela de edição do doador.
-- O backend (`AmigoMelvinService.cancelarAssinaturaManual`) se comunica com a Stripe via SDK (`stripeService.cancelSubscription`), atualiza o status no banco para `CANCELLED` e dispara um e-mail automático de encerramento.
+- O backend (`AmigoMelvinService.cancelarAssinaturaManual`) se comunica com a Stripe via SDK (`stripeService.cancelSubscription`), atualiza o status no banco para `CANCELLED`, dispara um e-mail automático de encerramento ao doador e notifica o Instituto.
 
 **Recursos Avançados Stripe Configurados:**
 - **Smart Retries:** Retentativas inteligentes de cobrança ativadas no Stripe Dashboard (até 8 tentativas em 2 semanas) antes de marcar como Inadimplente/Cancelado.
 - **Radar Antifraude:** Regras de bloqueio baseadas em score de risco, CVC e CEP ativadas.
 - **Notificações Automáticas:** Disparos nativos da Stripe para falhas de cartão e cartões expirando, com links seguros de atualização (Customer Portal).
+- **Notificações ao Instituto:** O sistema envia cópia de todos os eventos relevantes (novo doador, pagamento confirmado, falha de pagamento, cancelamento) para o e-mail administrativo via `EmailService.notifyInstituto()`. O e-mail admin é configurável via `app.admin-email` (default: `imeh@igrejadapaz.com.br`). **Remetente SMTP:** `imeh@igrejadapaz.com.br`.
 
 ### 4.4 Módulo de Frequência (Ponto Eletrônico)
 - **Alunos:** `Aluno_frequencia` — permite lançar presença/falta por sala e data, com código `P`/`F`/`FJ` para manhã e tarde.

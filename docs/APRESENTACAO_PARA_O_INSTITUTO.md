@@ -123,6 +123,7 @@ O programa de sustentabilidade do Instituto conta com um **motor financeiro auto
 - O sistema processa os pagamentos via **Stripe** — a maior processadora de pagamentos do mundo, usada por empresas como Amazon, Airbnb e Shopify.
 - **Os dados do cartão nunca passam pelo Instituto** — vão diretamente para os servidores seguros da Stripe.
 - Quando o banco aprova o pagamento, a Stripe avisa o sistema automaticamente. O doador é ativado e a confirmação é enviada por e-mail — **sem nenhuma intervenção manual** da equipe.
+- **O Instituto também recebe notificação por e-mail** sempre que um novo doador se cadastra, um pagamento é confirmado, um pagamento falha ou uma assinatura é cancelada — garantindo visibilidade total do ciclo de vida dos doadores.
 
 ### Autoatendimento e Cancelamento Descomplicado:
 - Se um doador precisar alterar o cartão ou cancelar a doação, ele não precisa enviar mensagem para a equipe. Ele mesmo faz isso através de um **Portal Seguro (Customer Portal)** acessado por um link recebido em seu e-mail.

@@ -310,16 +310,26 @@ Então o sistema retorna conflito (frequência já registrada).
 
 **Critérios de Aceite:**
 ```gherkin
-Dado que o visitante preencheu nome, email, contato, valor (R$20/50/100/custom) e stripeToken,
+Dado que o visitante preencheu nome, email, contato, CPF (obrigatório), valor (R$30/50/100/custom) e stripeToken,
 Quando ele submete o formulário,
-Então o backend cria a assinatura via Stripe SDK, salva o doador como PENDING e retorna 200 OK.
+Então o backend cria a assinatura via Stripe SDK (com idempotency key), salva o doador como PENDING e retorna 201 Created.
 Os dados do cartão NUNCA tocam o banco PostgreSQL (PCI-DSS compliance).
+
+Dado que já existe assinatura ativa/pendente para o mesmo CPF,
+Quando o visitante submete o formulário com o MESMO valor,
+Então o backend retorna 409 Conflict (sem criar nova assinatura).
+
+Dado que já existe assinatura ativa/pendente para o mesmo CPF,
+Quando o visitante submete com um VALOR DIFERENTE,
+Então o backend ATUALIZA a assinatura existente no Stripe (não cria uma nova) e retorna 200 OK.
 ```
+
+> **Notas de implementação:** CPF é obrigatório (validação `@CPF`), cifrado em repouso (AES-256-GCM) e indexado por *blind index* HMAC (assim como o e-mail) para deduplicação sem expor o dado. O webhook do Stripe é exposto publicamente em `…/api/v1/webhooks/payments`, mas o controller é mapeado em `/v1/webhooks/payments` porque o nginx remove o prefixo `/api/`.
 
 #### US-6.2: Confirmação de Pagamento via Webhook
 **Como** sistema (integração Stripe),
 **eu quero** que o webhook `invoice.paid` confirme o primeiro pagamento,
-**para que** o doador mude de PENDING para ACTIVE e receba e-mail de boas-vindas.
+**para que** o doador mude de PENDING para ACTIVE, receba e-mail de boas-vindas e o Instituto seja notificado.
 
 **Critérios de Aceite:**
 ```gherkin
@@ -335,7 +345,7 @@ Então o sistema retorna 400 "Invalid signature" (proteção antifraude).
 #### US-6.3: Registrar Falha de Pagamento
 **Como** sistema,
 **eu quero** que o webhook `invoice.payment_failed` registre inadimplência,
-**para que** o doador mude para INACTIVE e recompensas futuras sejam pausadas.
+**para que** o doador mude para INACTIVE, receba aviso por e-mail e o Instituto seja notificado da falha.
 
 #### US-6.4: Cancelar Assinatura
 **Como** administrador,
@@ -346,7 +356,7 @@ Então o sistema retorna 400 "Invalid signature" (proteção antifraude).
 ```gherkin
 Dado que o admin clica "Cancelar Assinatura" no doador ACTIVE,
 Quando o sistema processa a requisição,
-Então o Stripe cancela a subscription via SDK, o status muda para CANCELLED e um e-mail de encerramento é enviado.
+Então o Stripe cancela a subscription via SDK, o status muda para CANCELLED, um e-mail de encerramento é enviado ao doador e o Instituto é notificado.
 ```
 
 #### US-6.5: Doação Única (One-Time)
@@ -499,3 +509,5 @@ Então alerta de kit_especial aparece no dashboard admin.
 |---|---|---|---|
 | — | Projeto migrado para metodologia Onda-Dev (retroativo) | Todas | Criação de CLAUDE.md e ROADMAP.md |
 | 04/06/2026 | Refatoração do frontend para Arquitetura Orientada a Features (Screaming Architecture) | — (estrutural, sem retorno de fase) | Criação de `src/app/core/` (componentes/serviços/hooks compartilhados) e `src/app/features/` (Alunos, Voluntarios, Embaixadores, AmigosMelvin, Avisos, Cestas); aliases `@core`/`@features`/`@site` em Vite + jsconfig. Apenas pastas e caminhos de import alterados — zero mudança de UI, comportamento, rotas ou testes E2E. `src/site/` preservado. |
+| 06/06/2026 | Correção crítica do fluxo Amigos do Melvin + CPF | — (correção/evolução, sem retorno de fase) | **Incidente:** erro no cadastro com cobrança em dobro e webhook nunca reconciliando (`/api/v1/webhooks/payments` 404 por rewrite do nginx). **Correções:** webhook remapeado para `/v1/webhooks/payments`; idempotency key + timeouts no Stripe; `proxy_read_timeout` no nginx; trava de duplo-submit no frontend; volume de logs persistente; JWT removido dos logs. **Evolução:** CPF obrigatório (cifrado + blind index); deduplicação por CPF (bloqueia mesmo valor / atualiza em valor diferente); edição de CPF no painel admin. Migrations V6 (email_hash), V7 (cpf), V8 (cpf_hash). |
+| 06/06/2026 | Notificação ao Instituto para doações + correção de e-mail remetente | — (evolução, sem retorno de fase) | **E-mail remetente** corrigido de `contato@institutomelvin.org` (inexistente) para `imeh@igrejadapaz.com.br` (SMTP real). **Notificações ao Instituto:** adicionadas 5 notificações via `notifyInstituto()` — novo doador, pagamento confirmado, falha de pagamento, cancelamento por webhook e cancelamento manual. E-mail admin centralizado como `@Value("${app.admin-email}")` com default `imeh@igrejadapaz.com.br`. Embaixador já usava notificação ao Instituto, agora via método centralizado. |

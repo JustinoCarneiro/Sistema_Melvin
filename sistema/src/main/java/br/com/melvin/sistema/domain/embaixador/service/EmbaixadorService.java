@@ -50,8 +50,7 @@ public class EmbaixadorService {
         );
 
         // Notifica o Instituto (Admin)
-        emailService.sendEmail(
-            "contato@institutomelvin.org",
+        emailService.notifyInstituto(
             "Novo Candidato a Embaixador: " + embaixador.getNome(),
             "Uma nova solicitação de embaixador foi recebida pelo site.\n\n" +
             "Nome: " + embaixador.getNome() + "\n" +

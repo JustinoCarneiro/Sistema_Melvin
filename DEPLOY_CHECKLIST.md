@@ -45,7 +45,7 @@ Nenhuma credencial deve estar hardcoded no código ou no `application.properties
 |---|---|---|
 | `SPRING_MAIL_HOST` | `smtp.gmail.com` | ✅ |
 | `SPRING_MAIL_PORT` | `587` | ✅ |
-| `SPRING_MAIL_USERNAME` | `sistema@institutomelvin.org` | ✅ |
+| `SPRING_MAIL_USERNAME` | `imeh@igrejadapaz.com.br` | ✅ |
 | `SPRING_MAIL_PASSWORD` | `(senha de app)` | ✅ |
 
 ---

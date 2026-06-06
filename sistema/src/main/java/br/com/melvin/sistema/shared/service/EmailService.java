@@ -1,5 +1,6 @@
 package br.com.melvin.sistema.shared.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -16,6 +17,9 @@ public class EmailService {
 
     private final JavaMailSender emailSender;
 
+    @Value("${app.admin-email:imeh@igrejadapaz.com.br}")
+    private String adminEmail;
+
     @Async
     @SuppressWarnings("null")
     public void sendEmail(String to, String subject, String text) {
@@ -23,7 +27,7 @@ public class EmailService {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setFrom("contato@institutomelvin.org", "Instituto Social Melvin");
+            helper.setFrom("imeh@igrejadapaz.com.br", "Instituto Social Melvin");
             helper.setTo(to);
             helper.setSubject(subject);
 
@@ -76,5 +80,14 @@ public class EmailService {
         } catch (Exception e) {
             log.error("Falha ao enviar e-mail para: {}", to, e);
         }
+    }
+
+    /**
+     * Envia notificação interna para o Instituto (admin).
+     * Usa o e-mail configurado em app.admin-email.
+     */
+    @Async
+    public void notifyInstituto(String subject, String text) {
+        sendEmail(adminEmail, subject, text);
     }
 }

@@ -160,6 +160,16 @@ public class AmigoMelvinService {
                     "Olá " + amigo.getNome()
                             + "!\n\nMuito obrigado por se juntar aos Amigos do Melvin! Sua assinatura foi criada e o primeiro pagamento está em processamento.\nSua doação faz a diferença.");
 
+            // Notifica o Instituto sobre novo doador
+            emailService.notifyInstituto(
+                    "Novo Amigo do Melvin: " + amigo.getNome(),
+                    "Um novo doador se cadastrou como Amigo do Melvin!\n\n" +
+                    "Nome: " + amigo.getNome() + "\n" +
+                    "E-mail: " + amigo.getEmail() + "\n" +
+                    "Valor mensal: R$ " + amigo.getValorMensal() + "\n" +
+                    "Contato: " + amigo.getContato() + "\n\n" +
+                    "Acesse o painel administrativo para mais detalhes.");
+
             return new ResponseEntity<>(savedAmigoMelvin, HttpStatus.CREATED);
         } catch (com.stripe.exception.StripeException e) {
             log.error("Erro ao processar assinatura no Stripe", e);
@@ -203,6 +213,15 @@ public class AmigoMelvinService {
                     "Olá " + doador.getNome()
                             + "!\n\nSeu pagamento referente a este mês foi confirmado com sucesso. Agradecemos pelo apoio contínuo!");
 
+            // Notifica o Instituto sobre pagamento confirmado
+            emailService.notifyInstituto(
+                    "Pagamento Confirmado: " + doador.getNome(),
+                    "O pagamento mensal de um Amigo do Melvin foi confirmado.\n\n" +
+                    "Nome: " + doador.getNome() + "\n" +
+                    "Valor: R$ " + doador.getValorMensal() + "\n" +
+                    "Meses contribuindo: " + doador.getMesesContribuindo() + "\n" +
+                    "Subscription ID: " + subscriptionId);
+
             // Verifica recompensas
             int mesesAtual = doador.getMesesContribuindo();
             if (mesesAtual == 3 || mesesAtual == 6 || mesesAtual == 12) {
@@ -237,6 +256,16 @@ public class AmigoMelvinService {
                     "Atenção: Problema com seu pagamento - Amigos do Melvin",
                     "Olá " + doador.getNome()
                             + "!\n\nIdentificamos que houve um problema com o pagamento da sua assinatura mensal. Por favor, verifique os dados do seu cartão de crédito.\n\nCaso precise de ajuda, entre em contato conosco.");
+
+            // Notifica o Instituto sobre falha de pagamento
+            emailService.notifyInstituto(
+                    "⚠️ Falha de Pagamento: " + doador.getNome(),
+                    "Houve uma falha no pagamento de um Amigo do Melvin.\n\n" +
+                    "Nome: " + doador.getNome() + "\n" +
+                    "E-mail: " + doador.getEmail() + "\n" +
+                    "Valor: R$ " + doador.getValorMensal() + "\n" +
+                    "Subscription ID: " + subscriptionId + "\n\n" +
+                    "O doador foi notificado e marcado como INACTIVE.");
         } else {
             log.warn("Nenhum doador encontrado para registrar falha. subscriptionId: {}", subscriptionId);
         }
@@ -255,6 +284,15 @@ public class AmigoMelvinService {
                     "Assinatura Cancelada - Amigos do Melvin",
                     "Olá " + doador.getNome()
                             + "!\n\nSua assinatura como Amigo do Melvin foi cancelada. Sentiremos sua falta! Caso queira retornar, estamos de portas abertas.");
+
+            // Notifica o Instituto sobre cancelamento
+            emailService.notifyInstituto(
+                    "Assinatura Cancelada: " + doador.getNome(),
+                    "Um Amigo do Melvin cancelou sua assinatura.\n\n" +
+                    "Nome: " + doador.getNome() + "\n" +
+                    "E-mail: " + doador.getEmail() + "\n" +
+                    "Valor que era: R$ " + doador.getValorMensal() + "\n" +
+                    "Subscription ID: " + subscriptionId);
         } else {
             log.warn("Nenhum doador encontrado para cancelar. subscriptionId: {}", subscriptionId);
         }
@@ -278,6 +316,15 @@ public class AmigoMelvinService {
                     "Assinatura Cancelada - Amigos do Melvin",
                     "Olá " + doador.getNome()
                             + "!\n\nSua assinatura como Amigo do Melvin foi cancelada pelo nosso sistema. Caso tenha dúvidas, entre em contato conosco.");
+
+            // Notifica o Instituto sobre cancelamento manual
+            emailService.notifyInstituto(
+                    "Cancelamento Manual: " + doador.getNome(),
+                    "Uma assinatura foi cancelada manualmente pelo painel admin.\n\n" +
+                    "Nome: " + doador.getNome() + "\n" +
+                    "E-mail: " + doador.getEmail() + "\n" +
+                    "Valor que era: R$ " + doador.getValorMensal() + "\n" +
+                    "ID do doador: " + id);
 
             return new ResponseEntity<>("Assinatura cancelada com sucesso", HttpStatus.OK);
         } catch (Exception e) {
