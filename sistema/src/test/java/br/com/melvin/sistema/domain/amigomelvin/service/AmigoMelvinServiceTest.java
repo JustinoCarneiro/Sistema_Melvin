@@ -133,6 +133,30 @@ class AmigoMelvinServiceTest {
     }
 
     @Test
+    public void testProcessarAssinaturaDedupPorEmailQuandoCpfNaoCasa() throws Exception {
+        // Cobre o caso em que o CPF não identifica um existente (ex.: cadastro
+        // antigo sem CPF): o fallback por e-mail deve bloquear a duplicata.
+        SubscriptionRequestDTO dto = new SubscriptionRequestDTO(
+                "Maria", "maria@email.com", "85999999999", "52998224725", new BigDecimal("30"),
+                "tok_visa", "5", "Mensagem", "idem-key-3");
+
+        AmigoMelvin existente = new AmigoMelvin();
+        existente.setValorMensal(new BigDecimal("30"));
+        existente.setSubscriptionId("sub_email");
+        existente.setStatus(DonorStatus.ACTIVE);
+
+        when(blindIndex.hash(any())).thenReturn("hash-x");
+        when(repositorio.findFirstByCpfHashAndStatusIn(eq("hash-x"), any())).thenReturn(null);
+        when(repositorio.findFirstByEmailHashAndStatusIn(eq("hash-x"), any())).thenReturn(existente);
+
+        ResponseEntity<?> response = amigoMelvinService.processarAssinatura(dto);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        verify(stripeService, never()).createCustomer(any(), any(), any(), any());
+        verify(repositorio, never()).save(any(AmigoMelvin.class));
+    }
+
+    @Test
     public void testAlterarAmigoMelvinNaoEncontrado() {
         String nome = "Amigo Inexistente";
         AmigoMelvin atualizado = new AmigoMelvin();

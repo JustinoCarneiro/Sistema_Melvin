@@ -14,5 +14,5 @@ public interface AmigoMelvinRepository extends JpaRepository<AmigoMelvin, UUID>{
     AmigoMelvin findBySubscriptionId(String subscriptionId);
     AmigoMelvin findByStripeCustomerId(String stripeCustomerId);
     AmigoMelvin findFirstByCpfHashAndStatusIn(String cpfHash, Collection<DonorStatus> statuses);
-    AmigoMelvin findFirstByCpfHashOrderByDataInicioDesc(String cpfHash);
+    AmigoMelvin findFirstByEmailHashAndStatusIn(String emailHash, Collection<DonorStatus> statuses);
 }

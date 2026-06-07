@@ -87,46 +87,53 @@ public class AmigoMelvinService {
             String cpfHash = blindIndex.hash(cpfDigits);
             String emailHash = blindIndex.hash(dto.email());
 
-            // Deduplicação por CPF:
+            // Deduplicação do doador (ANTES de qualquer chamada ao Stripe):
             //  - ATIVA com mesmo valor -> bloqueia (409)
             //  - ATIVA com valor diferente -> ATUALIZA a assinatura existente
-            //  - PENDING -> Cancela a antiga e permite criar uma nova (para o caso de falha no 3D Secure ou troca de cartão)
+            //  - PENDING -> Cancela a antiga e permite criar uma nova (falha no 3D Secure / troca de cartão)
+            // Identifica primeiro por CPF (identidade principal) e, como fallback,
+            // por e-mail — cobre cadastros sem CPF, que escapavam da dedup por CPF.
+            AmigoMelvin existente = null;
             if (cpfHash != null) {
-                AmigoMelvin existente = repositorio.findFirstByCpfHashAndStatusIn(cpfHash,
+                existente = repositorio.findFirstByCpfHashAndStatusIn(cpfHash,
                         java.util.List.of(DonorStatus.PENDING, DonorStatus.ACTIVE));
-                if (existente != null) {
-                    if (DonorStatus.ACTIVE.equals(existente.getStatus())) {
-                        if (existente.getValorMensal() != null
-                                && existente.getValorMensal().compareTo(dto.valor()) == 0) {
-                            log.warn("Cadastro duplicado bloqueado: CPF já possui assinatura ATIVA nesse valor.");
-                            return new ResponseEntity<>("Você já possui uma assinatura ativa nesse valor.",
-                                    HttpStatus.CONFLICT);
-                        }
-
-                        log.info("CPF já possui assinatura ATIVA em outro valor. Atualizando a assinatura existente.");
-                        if (existente.getSubscriptionId() != null) {
-                            stripeService.updateSubscriptionAmount(
-                                    existente.getSubscriptionId(),
-                                    stripePriceId,
-                                    dto.valor(),
-                                    idempotencyKey + "-update-" + dto.valor().stripTrailingZeros().toPlainString());
-                        }
-                        existente.setValorMensal(dto.valor());
-                        existente.setDiaPreferido(dto.dia());
-                        if (dto.mensagem() != null && !dto.mensagem().isBlank()) {
-                            existente.setMensagem(dto.mensagem());
-                        }
-                        AmigoMelvin atualizado = repositorio.save(existente);
-                        return new ResponseEntity<>(atualizado, HttpStatus.OK);
-                    } else if (DonorStatus.PENDING.equals(existente.getStatus())) {
-                        log.info("Assinatura PENDING encontrada. Cancelando a antiga para permitir nova tentativa com novo cartão.");
-                        existente.setStatus(DonorStatus.CANCELLED);
-                        repositorio.save(existente);
-                        if (existente.getSubscriptionId() != null) {
-                            try { stripeService.cancelSubscription(existente.getSubscriptionId()); } catch (Exception e) { log.warn("Erro ao cancelar subscription antiga", e); }
-                        }
-                        // Deixa prosseguir para criar novo Customer e Subscription limpos
+            }
+            if (existente == null && emailHash != null) {
+                existente = repositorio.findFirstByEmailHashAndStatusIn(emailHash,
+                        java.util.List.of(DonorStatus.PENDING, DonorStatus.ACTIVE));
+            }
+            if (existente != null) {
+                if (DonorStatus.ACTIVE.equals(existente.getStatus())) {
+                    if (existente.getValorMensal() != null
+                            && existente.getValorMensal().compareTo(dto.valor()) == 0) {
+                        log.warn("Cadastro duplicado bloqueado: doador já possui assinatura ATIVA nesse valor.");
+                        return new ResponseEntity<>("Você já possui uma assinatura ativa nesse valor.",
+                                HttpStatus.CONFLICT);
                     }
+
+                    log.info("Doador já possui assinatura ATIVA em outro valor. Atualizando a assinatura existente.");
+                    if (existente.getSubscriptionId() != null) {
+                        stripeService.updateSubscriptionAmount(
+                                existente.getSubscriptionId(),
+                                stripePriceId,
+                                dto.valor(),
+                                idempotencyKey + "-update-" + dto.valor().stripTrailingZeros().toPlainString());
+                    }
+                    existente.setValorMensal(dto.valor());
+                    existente.setDiaPreferido(dto.dia());
+                    if (dto.mensagem() != null && !dto.mensagem().isBlank()) {
+                        existente.setMensagem(dto.mensagem());
+                    }
+                    AmigoMelvin atualizado = repositorio.save(existente);
+                    return new ResponseEntity<>(atualizado, HttpStatus.OK);
+                } else if (DonorStatus.PENDING.equals(existente.getStatus())) {
+                    log.info("Assinatura PENDING encontrada. Cancelando a antiga para permitir nova tentativa com novo cartão.");
+                    existente.setStatus(DonorStatus.CANCELLED);
+                    repositorio.save(existente);
+                    if (existente.getSubscriptionId() != null) {
+                        try { stripeService.cancelSubscription(existente.getSubscriptionId()); } catch (Exception e) { log.warn("Erro ao cancelar subscription antiga", e); }
+                    }
+                    // Deixa prosseguir para criar novo Customer e Subscription limpos
                 }
             }
 
