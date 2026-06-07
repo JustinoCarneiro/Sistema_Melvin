@@ -6,6 +6,7 @@ services:
     build:
       context: ./postgres
     container_name: postgresdb
+    restart: unless-stopped
     # Adicionando leitura do arquivo .env
     env_file:
       - .env
@@ -25,6 +26,7 @@ services:
     build:
       context: ./sistema
     container_name: backend-melvin # Nome fixo ajuda no debug
+    restart: unless-stopped
     env_file:
       - .env
     environment:
@@ -69,6 +71,7 @@ services:
 
   frontend:
     image: frontend-melvin
+    restart: unless-stopped
     build:
       context: ./frontend
       args: 
