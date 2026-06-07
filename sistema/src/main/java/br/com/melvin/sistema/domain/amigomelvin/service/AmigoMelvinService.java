@@ -69,6 +69,11 @@ public class AmigoMelvinService {
         return new ResponseEntity<AmigoMelvin>(savedAmigoMelvin, HttpStatus.CREATED);
     }
 
+    // Roda FORA de transação: as chamadas ao Stripe não devem ficar dentro de uma
+    // transação do banco. Assim cada repositorio.save() commita por conta própria,
+    // e uma violação da constraint única de CPF é lançada na hora do save (não no
+    // commit do método), permitindo cancelar a subscription órfã no Stripe.
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public ResponseEntity<?> processarAssinatura(SubscriptionRequestDTO dto) {
         try {
             if (dto.valor() == null || dto.valor().compareTo(new java.math.BigDecimal("30")) < 0) {
@@ -176,7 +181,22 @@ public class AmigoMelvinService {
             amigo.setMensagem(dto.mensagem());
             amigo.setClientSecret(clientSecret);
 
-            AmigoMelvin savedAmigoMelvin = repositorio.save(amigo);
+            AmigoMelvin savedAmigoMelvin;
+            try {
+                savedAmigoMelvin = repositorio.save(amigo);
+            } catch (org.springframework.dao.DataIntegrityViolationException dup) {
+                // Corrida: outro cadastro com o mesmo CPF venceu a constraint única
+                // (uq_amigomelvin_cpf_hash_ativo). Como o Stripe já criou a assinatura,
+                // cancela para não deixar uma cobrança órfã sem registro local.
+                log.warn("Insert rejeitado pela constraint de CPF (cadastro concorrente). Cancelando subscription órfã {} no Stripe.",
+                        subscription.getId());
+                try {
+                    stripeService.cancelSubscription(subscription.getId());
+                } catch (Exception e) {
+                    log.error("Falha ao cancelar subscription órfã {} no Stripe — verificar manualmente.", subscription.getId(), e);
+                }
+                return new ResponseEntity<>("Você já possui uma assinatura ativa nesse valor.", HttpStatus.CONFLICT);
+            }
 
             // Dispara e-mail de boas-vindas
             emailService.sendEmail(

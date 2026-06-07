@@ -157,6 +157,35 @@ class AmigoMelvinServiceTest {
     }
 
     @Test
+    public void testProcessarAssinaturaCancelaSubscriptionOrfaSeConstraintFalha() throws Exception {
+        // Corrida: o banco rejeita o insert pela constraint única de CPF DEPOIS
+        // que o Stripe já criou a assinatura. A app deve cancelar a subscription
+        // órfã no Stripe e retornar 409.
+        SubscriptionRequestDTO dto = new SubscriptionRequestDTO(
+                "Joao", "joao@email.com", "85988888888", "52998224725", new BigDecimal("30"),
+                "tok_visa", "5", "Mensagem", "idem-key-4");
+
+        when(blindIndex.hash(any())).thenReturn("hash-novo");
+        when(repositorio.findFirstByCpfHashAndStatusIn(any(), any())).thenReturn(null);
+        when(repositorio.findFirstByEmailHashAndStatusIn(any(), any())).thenReturn(null);
+
+        com.stripe.model.Customer customer = mock(com.stripe.model.Customer.class);
+        when(customer.getId()).thenReturn("cus_x");
+        com.stripe.model.Subscription sub = mock(com.stripe.model.Subscription.class);
+        when(sub.getId()).thenReturn("sub_orfa");
+        when(stripeService.createCustomer(any(), any(), any(), any())).thenReturn(customer);
+        when(stripeService.createSubscription(any(), any(), any(), any())).thenReturn(sub);
+
+        when(repositorio.save(any(AmigoMelvin.class)))
+                .thenThrow(new org.springframework.dao.DataIntegrityViolationException("dup"));
+
+        ResponseEntity<?> response = amigoMelvinService.processarAssinatura(dto);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        verify(stripeService, times(1)).cancelSubscription("sub_orfa");
+    }
+
+    @Test
     public void testAlterarAmigoMelvinNaoEncontrado() {
         String nome = "Amigo Inexistente";
         AmigoMelvin atualizado = new AmigoMelvin();
