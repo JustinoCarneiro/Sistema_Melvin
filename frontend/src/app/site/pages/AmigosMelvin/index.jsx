@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { motion } from 'framer-motion';
-import { LuHeart, LuMessageSquare, LuPhone, LuMail, LuUser, LuCalendar, LuIdCard } from 'react-icons/lu';
+import { LuHeart, LuMessageSquare, LuPhone, LuMail, LuUser, LuIdCard } from 'react-icons/lu';
 import WatercolorBlob from '@core/components/melvin/WatercolorBlob';
 import { cn, formatCpf } from '@core/services/utils';
 
@@ -20,7 +20,6 @@ const AmigosMelvin = () => {
         email: '',
         cpf: '',
         telefone: '',
-        dia: '',
         mensagem: ''
     });
 
@@ -239,22 +238,6 @@ const AmigosMelvin = () => {
                                             className="w-full bg-white border border-slate-100 rounded-2xl p-4 outline-none focus:border-melvin-red/50 transition-colors"
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-slate-500 flex items-center gap-2">
-                                            <LuCalendar className="text-melvin-red" /> Dia de preferência
-                                        </label>
-                                        <input
-                                            required
-                                            name="dia"
-                                            value={formData.dia}
-                                            onChange={handleInputChange}
-                                            placeholder="Ex: dia 5"
-                                            className="w-full bg-white border border-slate-100 rounded-2xl p-4 outline-none focus:border-melvin-red/50 transition-colors"
-                                        />
-                                        <p className="text-xs text-slate-400 leading-relaxed">
-                                            A primeira cobrança acontece hoje e as próximas se repetem a cada mês. O dia informado é uma referência para o nosso contato.
-                                        </p>
-                                    </div>
                                 </div>
 
                                 <div className="space-y-2">
@@ -287,10 +270,10 @@ const AmigosMelvin = () => {
 
                                 <button
                                     type="submit"
-                                    disabled={!(agreedToTerms && formData.nome && formData.email && formData.cpf && formData.telefone && formData.dia && (selectedPlan > 0 || customValue))}
+                                    disabled={!(agreedToTerms && formData.nome && formData.email && formData.cpf && formData.telefone && (selectedPlan > 0 || customValue))}
                                     className={cn(
                                         "w-full text-white py-6 rounded-full font-bold text-xl shadow-xl transition-all flex items-center justify-center gap-3",
-                                        (agreedToTerms && formData.nome && formData.email && formData.cpf && formData.telefone && formData.dia && (selectedPlan > 0 || customValue)) 
+                                        (agreedToTerms && formData.nome && formData.email && formData.cpf && formData.telefone && (selectedPlan > 0 || customValue)) 
                                             ? "bg-melvin-red shadow-melvin-red/20 hover:scale-[1.02] active:scale-[0.98]" 
                                             : "bg-slate-300 cursor-not-allowed shadow-none opacity-50"
                                     )}

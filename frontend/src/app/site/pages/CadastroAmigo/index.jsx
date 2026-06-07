@@ -77,7 +77,6 @@ function CheckoutForm({ donationType, amount, initialData }) {
                 cpf: (cpf || '').replace(/\D/g, ''),
                 valor: amount,
                 stripeToken: stripeTokenObj.id,
-                dia: initialData?.dia || '',
                 mensagem: initialData?.mensagem || '',
                 idempotencyKey: idempotencyKeyRef.current
             };
