@@ -65,9 +65,12 @@ const AmigosMelvin = () => {
             return;
         }
 
-        if (finalValue > 5000) {
-            alert('O valor máximo para apoio mensal é de R$ 5.000,00. Para contribuições maiores, fale conosco pelo WhatsApp (85) 99924-3836.');
-            return;
+        // Confirmação para valores altos: previne erro de digitação sem bloquear
+        // doadores legítimos. Os valores padrão (R$ 30/50/100) não disparam o aviso.
+        if (finalValue >= 500) {
+            const valorFmt = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(finalValue);
+            const confirmou = window.confirm(`Você está prestes a iniciar uma doação MENSAL de ${valorFmt}, cobrada todos os meses. Deseja confirmar este valor?`);
+            if (!confirmou) return;
         }
 
         // Pass selection to checkout

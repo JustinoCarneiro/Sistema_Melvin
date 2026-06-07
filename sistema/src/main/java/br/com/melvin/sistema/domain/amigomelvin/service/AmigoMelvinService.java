@@ -75,13 +75,6 @@ public class AmigoMelvinService {
                 return new ResponseEntity<>("O valor mínimo para apoio mensal é de R$ 30,00.", HttpStatus.BAD_REQUEST);
             }
 
-            // Teto de segurança: evita que um valor digitado por engano (ex.: faltou
-            // dividir por 100, ou casas a mais) vire uma assinatura recorrente absurda.
-            if (dto.valor().compareTo(new java.math.BigDecimal("5000")) > 0) {
-                return new ResponseEntity<>("O valor máximo para apoio mensal é de R$ 5.000,00. Para contribuições maiores, fale conosco.",
-                        HttpStatus.BAD_REQUEST);
-            }
-
             // Idempotency key: usa a chave enviada pelo frontend (estável por
             // tentativa) ou gera uma; retries com a mesma chave não duplicam.
             String idempotencyKey = (dto.idempotencyKey() != null && !dto.idempotencyKey().isBlank())
