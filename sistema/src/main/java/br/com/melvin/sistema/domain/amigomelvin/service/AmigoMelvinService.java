@@ -75,6 +75,13 @@ public class AmigoMelvinService {
                 return new ResponseEntity<>("O valor mínimo para apoio mensal é de R$ 30,00.", HttpStatus.BAD_REQUEST);
             }
 
+            // Teto de segurança: evita que um valor digitado por engano (ex.: faltou
+            // dividir por 100, ou casas a mais) vire uma assinatura recorrente absurda.
+            if (dto.valor().compareTo(new java.math.BigDecimal("5000")) > 0) {
+                return new ResponseEntity<>("O valor máximo para apoio mensal é de R$ 5.000,00. Para contribuições maiores, fale conosco.",
+                        HttpStatus.BAD_REQUEST);
+            }
+
             // Idempotency key: usa a chave enviada pelo frontend (estável por
             // tentativa) ou gera uma; retries com a mesma chave não duplicam.
             String idempotencyKey = (dto.idempotencyKey() != null && !dto.idempotencyKey().isBlank())
@@ -87,35 +94,46 @@ public class AmigoMelvinService {
             String cpfHash = blindIndex.hash(cpfDigits);
             String emailHash = blindIndex.hash(dto.email());
 
-            // Deduplicação por CPF (ANTES de qualquer chamada ao Stripe):
-            //  - mesmo valor de assinatura ativa/pendente  -> bloqueia (409)
-            //  - valor diferente -> ATUALIZA a assinatura existente (não cria nova)
+            // Deduplicação por CPF:
+            //  - ATIVA com mesmo valor -> bloqueia (409)
+            //  - ATIVA com valor diferente -> ATUALIZA a assinatura existente
+            //  - PENDING -> Cancela a antiga e permite criar uma nova (para o caso de falha no 3D Secure ou troca de cartão)
             if (cpfHash != null) {
                 AmigoMelvin existente = repositorio.findFirstByCpfHashAndStatusIn(cpfHash,
                         java.util.List.of(DonorStatus.PENDING, DonorStatus.ACTIVE));
                 if (existente != null) {
-                    if (existente.getValorMensal() != null
-                            && existente.getValorMensal().compareTo(dto.valor()) == 0) {
-                        log.warn("Cadastro duplicado bloqueado: CPF já possui assinatura nesse valor.");
-                        return new ResponseEntity<>("Você já possui uma assinatura ativa nesse valor.",
-                                HttpStatus.CONFLICT);
-                    }
+                    if (DonorStatus.ACTIVE.equals(existente.getStatus())) {
+                        if (existente.getValorMensal() != null
+                                && existente.getValorMensal().compareTo(dto.valor()) == 0) {
+                            log.warn("Cadastro duplicado bloqueado: CPF já possui assinatura ATIVA nesse valor.");
+                            return new ResponseEntity<>("Você já possui uma assinatura ativa nesse valor.",
+                                    HttpStatus.CONFLICT);
+                        }
 
-                    log.info("CPF já possui assinatura em outro valor. Atualizando a assinatura existente.");
-                    if (existente.getSubscriptionId() != null) {
-                        stripeService.updateSubscriptionAmount(
-                                existente.getSubscriptionId(),
-                                stripePriceId,
-                                dto.valor(),
-                                idempotencyKey + "-update-" + dto.valor().stripTrailingZeros().toPlainString());
+                        log.info("CPF já possui assinatura ATIVA em outro valor. Atualizando a assinatura existente.");
+                        if (existente.getSubscriptionId() != null) {
+                            stripeService.updateSubscriptionAmount(
+                                    existente.getSubscriptionId(),
+                                    stripePriceId,
+                                    dto.valor(),
+                                    idempotencyKey + "-update-" + dto.valor().stripTrailingZeros().toPlainString());
+                        }
+                        existente.setValorMensal(dto.valor());
+                        existente.setDiaPreferido(dto.dia());
+                        if (dto.mensagem() != null && !dto.mensagem().isBlank()) {
+                            existente.setMensagem(dto.mensagem());
+                        }
+                        AmigoMelvin atualizado = repositorio.save(existente);
+                        return new ResponseEntity<>(atualizado, HttpStatus.OK);
+                    } else if (DonorStatus.PENDING.equals(existente.getStatus())) {
+                        log.info("Assinatura PENDING encontrada. Cancelando a antiga para permitir nova tentativa com novo cartão.");
+                        existente.setStatus(DonorStatus.CANCELLED);
+                        repositorio.save(existente);
+                        if (existente.getSubscriptionId() != null) {
+                            try { stripeService.cancelSubscription(existente.getSubscriptionId()); } catch (Exception e) { log.warn("Erro ao cancelar subscription antiga", e); }
+                        }
+                        // Deixa prosseguir para criar novo Customer e Subscription limpos
                     }
-                    existente.setValorMensal(dto.valor());
-                    existente.setDiaPreferido(dto.dia());
-                    if (dto.mensagem() != null && !dto.mensagem().isBlank()) {
-                        existente.setMensagem(dto.mensagem());
-                    }
-                    AmigoMelvin atualizado = repositorio.save(existente);
-                    return new ResponseEntity<>(atualizado, HttpStatus.OK);
                 }
             }
 
@@ -134,6 +152,12 @@ public class AmigoMelvinService {
                     idempotencyKey + "-subscription");
             log.info("Subscription criada no Stripe com sucesso com valor dinâmico.");
 
+            // Extrai o client_secret para autenticação 3D Secure (SCA) no frontend
+            String clientSecret = null;
+            if (subscription.getLatestInvoiceObject() != null && subscription.getLatestInvoiceObject().getPaymentIntentObject() != null) {
+                clientSecret = subscription.getLatestInvoiceObject().getPaymentIntentObject().getClientSecret();
+            }
+
             AmigoMelvin amigo = new AmigoMelvin();
             amigo.setNome(dto.nome());
             amigo.setEmail(dto.email());
@@ -150,6 +174,7 @@ public class AmigoMelvinService {
             amigo.setDataInicio(java.time.LocalDateTime.now());
             amigo.setDiaPreferido(dto.dia());
             amigo.setMensagem(dto.mensagem());
+            amigo.setClientSecret(clientSecret);
 
             AmigoMelvin savedAmigoMelvin = repositorio.save(amigo);
 
@@ -160,10 +185,13 @@ public class AmigoMelvinService {
                     "Olá " + amigo.getNome()
                             + "!\n\nMuito obrigado por se juntar aos Amigos do Melvin! Sua assinatura foi criada e o primeiro pagamento está em processamento.\nSua doação faz a diferença.");
 
-            // Notifica o Instituto sobre novo doador
+            // Notifica o Instituto sobre novo CADASTRO (pagamento ainda em
+            // processamento). A confirmação efetiva (status ACTIVE) é notificada
+            // depois em confirmarPagamento(), via webhook invoice.paid — assim o
+            // Instituto não conta como doador quem ainda não teve o pagamento aprovado.
             emailService.notifyInstituto(
-                    "Novo Amigo do Melvin: " + amigo.getNome(),
-                    "Um novo doador se cadastrou como Amigo do Melvin!\n\n" +
+                    "Novo cadastro de Amigo do Melvin (pagamento em processamento): " + amigo.getNome(),
+                    "Um novo cadastro de Amigo do Melvin foi iniciado. O primeiro pagamento ainda está em processamento — você receberá uma confirmação separada assim que ele for aprovado.\n\n" +
                     "Nome: " + amigo.getNome() + "\n" +
                     "E-mail: " + amigo.getEmail() + "\n" +
                     "Valor mensal: R$ " + amigo.getValorMensal() + "\n" +

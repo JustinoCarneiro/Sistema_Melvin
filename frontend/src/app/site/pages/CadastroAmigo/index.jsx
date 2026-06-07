@@ -8,7 +8,14 @@ import WatercolorBlob from '@core/components/melvin/WatercolorBlob';
 import { formatCpf } from '@core/services/utils';
 import { amigoMelvinService } from '@features/AmigosMelvin';
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "pk_test_TYooMQauvdEDq54NiTphI7jx");
+// ATENÇÃO: VITE_STRIPE_PUBLIC_KEY precisa ser injetada como build arg (Dockerfile
+// -> docker-compose -> .env). Sem ela, o build cai SILENCIOSAMENTE na chave de
+// teste de demonstração e TODA assinatura mensal com clientSecret live falha.
+const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+if (!STRIPE_PUBLIC_KEY) {
+    console.error('[Amigos do Melvin] VITE_STRIPE_PUBLIC_KEY ausente no build — usando chave de TESTE. NÃO publique assim em produção.');
+}
+const stripePromise = loadStripe(STRIPE_PUBLIC_KEY || "pk_test_TYooMQauvdEDq54NiTphI7jx");
 
 function CheckoutForm({ donationType, amount, initialData }) {
     const stripe = useStripe();
@@ -76,8 +83,35 @@ function CheckoutForm({ donationType, amount, initialData }) {
             };
 
             if (donationType === 'monthly') {
-                await amigoMelvinService.subscribe(dados);
-                setSuccess(true);
+                const response = await amigoMelvinService.subscribe(dados);
+                const clientSecret = response.data && response.data.clientSecret;
+
+                if (clientSecret) {
+                    // Assinatura nova: confirma o 1º pagamento (com 3D Secure se exigido).
+                    const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(clientSecret);
+                    if (confirmError) {
+                        setError(confirmError.message);
+                        setLoading(false);
+                        return;
+                    }
+                    // Só mostra sucesso se o pagamento realmente avançou.
+                    if (paymentIntent && !['succeeded', 'processing'].includes(paymentIntent.status)) {
+                        setError('Não foi possível confirmar o pagamento do seu cartão. Tente novamente ou use outro cartão.');
+                        setLoading(false);
+                        return;
+                    }
+                    setSuccess(true);
+                } else if (response.status === 200) {
+                    // Doador já era ATIVO e apenas teve o valor mensal atualizado:
+                    // não há um novo pagamento a confirmar.
+                    setSuccess(true);
+                } else {
+                    // 201 sem clientSecret: a cobrança NÃO foi confirmada — não mostrar
+                    // sucesso definitivo para não gerar um falso positivo.
+                    setError('Recebemos seu cadastro, mas não conseguimos confirmar o pagamento automaticamente. Verifique seu e-mail nos próximos minutos — se não chegar a confirmação, fale conosco pelo WhatsApp (85) 99924-3836.');
+                    setLoading(false);
+                    return;
+                }
             } else {
                 const response = await amigoMelvinService.oneTimeDonation(dados);
                 const clientSecret = response.data;

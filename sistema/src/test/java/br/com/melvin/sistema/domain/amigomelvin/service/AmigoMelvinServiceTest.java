@@ -2,6 +2,7 @@ package br.com.melvin.sistema.domain.amigomelvin.service;
 
 import br.com.melvin.sistema.domain.amigomelvin.dto.SubscriptionRequestDTO;
 import br.com.melvin.sistema.domain.amigomelvin.model.AmigoMelvin;
+import br.com.melvin.sistema.domain.amigomelvin.model.DonorStatus;
 import br.com.melvin.sistema.domain.amigomelvin.repository.AmigoMelvinRepository;
 import br.com.melvin.sistema.shared.security.BlindIndex;
 import org.junit.jupiter.api.Test;
@@ -78,6 +79,9 @@ class AmigoMelvinServiceTest {
         AmigoMelvin existente = new AmigoMelvin();
         existente.setValorMensal(new BigDecimal("50"));
         existente.setSubscriptionId("sub_123");
+        // A query findFirstByCpfHashAndStatusIn só retorna linhas ATIVA/PENDING;
+        // o fixture precisa refletir isso para exercer o ramo de bloqueio.
+        existente.setStatus(DonorStatus.ACTIVE);
 
         when(blindIndex.hash(any())).thenReturn("hash-x");
         when(repositorio.findFirstByCpfHashAndStatusIn(eq("hash-x"), any())).thenReturn(existente);
@@ -100,6 +104,8 @@ class AmigoMelvinServiceTest {
         AmigoMelvin existente = new AmigoMelvin();
         existente.setValorMensal(new BigDecimal("30"));
         existente.setSubscriptionId("sub_123");
+        // Assinatura ATIVA em outro valor: deve ATUALIZAR (não criar nova).
+        existente.setStatus(DonorStatus.ACTIVE);
 
         when(blindIndex.hash(any())).thenReturn("hash-x");
         when(repositorio.findFirstByCpfHashAndStatusIn(eq("hash-x"), any())).thenReturn(existente);

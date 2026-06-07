@@ -6,10 +6,11 @@ const http = axios.create({
     headers: {
         'Content-Type': 'application/json'
     },
-    withCredentials: true
+    withCredentials: true,
+    // Evita requisições penduradas indefinidamente (ex.: backend lento durante o
+    // lançamento). 30s acomoda a latência do Stripe sem travar o usuário.
+    timeout: 30000
 });
-
-console.log(import.meta.env.VITE_REACT_APP_FETCH_URL);
 
 // Interceptor para adicionar o token no header de cada requisição
 http.interceptors.request.use(

@@ -6,9 +6,9 @@ import WatercolorBlob from '@core/components/melvin/WatercolorBlob';
 import { cn, formatCpf } from '@core/services/utils';
 
 // Assets
-import img_hero from "../../../../docs/imagem_amigos_bola.png";
-import img_form from "../../../../docs/imagem_amigo_form.png";
-import img_form_2 from "../../../../docs/imagem_amigo_hero.png";
+import img_hero from "../../../../docs/imagem_amigos_bola.jpeg";
+import img_form from "../../../../docs/imagem_amigo_form.jpg";
+import img_form_2 from "../../../../docs/imagem_amigo_hero.jpg";
 
 const AmigosMelvin = () => {
     const navigate = useNavigate();
@@ -62,6 +62,11 @@ const AmigosMelvin = () => {
 
         if (!finalValue || finalValue < 30) {
             alert('O valor mínimo para apoio mensal é de R$ 30,00.');
+            return;
+        }
+
+        if (finalValue > 5000) {
+            alert('O valor máximo para apoio mensal é de R$ 5.000,00. Para contribuições maiores, fale conosco pelo WhatsApp (85) 99924-3836.');
             return;
         }
 
@@ -233,7 +238,7 @@ const AmigosMelvin = () => {
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-slate-500 flex items-center gap-2">
-                                            <LuCalendar className="text-melvin-red" /> Melhor dia do mês
+                                            <LuCalendar className="text-melvin-red" /> Dia de preferência
                                         </label>
                                         <input
                                             required
@@ -243,6 +248,9 @@ const AmigosMelvin = () => {
                                             placeholder="Ex: dia 5"
                                             className="w-full bg-white border border-slate-100 rounded-2xl p-4 outline-none focus:border-melvin-red/50 transition-colors"
                                         />
+                                        <p className="text-xs text-slate-400 leading-relaxed">
+                                            A primeira cobrança acontece hoje e as próximas se repetem a cada mês. O dia informado é uma referência para o nosso contato.
+                                        </p>
                                     </div>
                                 </div>
 

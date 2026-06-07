@@ -70,6 +70,8 @@ public class StripeService {
                         )
                         .build()
                 )
+                .setPaymentBehavior(SubscriptionCreateParams.PaymentBehavior.DEFAULT_INCOMPLETE)
+                .addAllExpand(java.util.Arrays.asList("latest_invoice.payment_intent"))
                 .build();
 
         RequestOptions options = RequestOptions.builder()

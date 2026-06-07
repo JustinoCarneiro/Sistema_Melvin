@@ -39,14 +39,17 @@ public class PaymentWebhookController {
             log.info("Receiving Stripe webhook payload");
             Event event;
 
-            if (endpointSecret != null && !endpointSecret.isEmpty() && sigHeader != null) {
-                event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
-            } else {
-                if (sigHeader == null && endpointSecret != null && !endpointSecret.isEmpty()) {
-                    return ResponseEntity.badRequest().body("Missing Stripe signature header");
-                }
-                event = com.stripe.model.Event.GSON.fromJson(payload, Event.class);
+            // Fail-closed: sem o segredo de webhook configurado NÃO processamos o
+            // evento — caso contrário qualquer um poderia forjar invoice.paid
+            // (marcar doador como ACTIVE) ou customer.subscription.deleted (cancelar).
+            if (endpointSecret == null || endpointSecret.isEmpty()) {
+                log.error("STRIPE_WEBHOOK_SECRET não configurado — webhook recusado por segurança.");
+                return ResponseEntity.status(500).body("Webhook secret not configured");
             }
+            if (sigHeader == null) {
+                return ResponseEntity.badRequest().body("Missing Stripe signature header");
+            }
+            event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
 
             String eventType = event.getType();
 
