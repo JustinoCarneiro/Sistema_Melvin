@@ -274,6 +274,19 @@ const get = {
             return Promise.reject(new Error(errorMessage));
         }
     },
+    async diasNaoLetivos(mes, ano) {
+        let endpoint = "/dias-nao-letivos";
+        if (mes !== undefined && ano !== undefined) {
+            endpoint += `?mes=${mes}&ano=${ano}`;
+        }
+        try {
+            const response = await http.get(endpoint);
+            return response;
+        } catch (error) {
+            console.error('Erro ao obter dias não letivos:', error.response ? error.response.data : error.message);
+            return Promise.reject(error);
+        }
+    },
     async exportarFrequencia(mes, ano, sala, turno, busca) {
         // Ajuste: O backend espera Mês de 1 a 12, mas o JS usa 0 a 11. Vamos somar 1.
         const mesBackend = parseInt(mes) + 1;

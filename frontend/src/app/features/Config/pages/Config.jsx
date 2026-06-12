@@ -277,6 +277,12 @@ function Config(){
                                     corBorda="#4C1D95" 
                                     onClick={() => navigate('/app/config/permissoes')} 
                                 />
+                                <Botao 
+                                    nome="Calendário de Exceções" 
+                                    corFundo="#217346" 
+                                    corBorda="#107C41" 
+                                    onClick={() => navigate('/app/config/calendario')} 
+                                />
                             </div>
                         </div>
                     </section>

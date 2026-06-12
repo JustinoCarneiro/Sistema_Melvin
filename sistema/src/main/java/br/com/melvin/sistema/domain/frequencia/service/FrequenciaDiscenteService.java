@@ -34,7 +34,7 @@ public class FrequenciaDiscenteService {
     }
 
     public List<FaltaAlertaDTO> listarAlertasFaltas(LocalDate inicioMes, LocalDate fimMes){
-        return repository.findMatriculasComTresOuMaisFaltas(inicioMes, fimMes);
+        return repository.findMatriculasComQuatroOuMaisFaltasInjustificadas(inicioMes, fimMes);
     }
 
     public FrequenciaDiscente capturarFrequencia(String matricula, LocalDate data){

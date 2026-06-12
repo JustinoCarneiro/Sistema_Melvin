@@ -5,6 +5,7 @@ import br.com.melvin.sistema.domain.frequencia.model.FrequenciaDiscente;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -126,6 +127,9 @@ public class ExcelExportService {
         }
     }
     
+    @Autowired
+    private br.com.melvin.sistema.domain.calendario.repository.DiaNaoLetivoRepository diaNaoLetivoRepository;
+
     // MÉTODO NOVO PARA EXPORTAÇÃO DE FREQUÊNCIA
     public ByteArrayInputStream exportarFrequencia(List<Discente> discentes, List<FrequenciaDiscente> frequencias, int mes, int ano) throws IOException {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -134,6 +138,17 @@ public class ExcelExportService {
             // Determinar dias do mês
             YearMonth yearMonth = YearMonth.of(ano, mes);
             int diasNoMes = yearMonth.lengthOfMonth();
+            
+            // Buscar dias não letivos
+            LocalDate inicio = LocalDate.of(ano, mes, 1);
+            LocalDate fim = inicio.withDayOfMonth(diasNoMes);
+            List<br.com.melvin.sistema.domain.calendario.model.DiaNaoLetivo> diasNaoLetivos = diaNaoLetivoRepository.findByDataBetween(inicio, fim);
+            List<LocalDate> datasNaoLetivas = diasNaoLetivos.stream().map(br.com.melvin.sistema.domain.calendario.model.DiaNaoLetivo::getData).toList();
+
+            // Estilo para Finais de Semana / Feriados
+            CellStyle styleCinza = workbook.createCellStyle();
+            styleCinza.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            styleCinza.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
             // --- CABEÇALHO ---
             Row headerRow = sheet.createRow(0);
@@ -144,7 +159,12 @@ public class ExcelExportService {
 
             // Criar colunas para cada dia
             for (int dia = 1; dia <= diasNoMes; dia++) {
-                headerRow.createCell(3 + dia).setCellValue(dia + "/" + mes);
+                Cell cell = headerRow.createCell(3 + dia);
+                cell.setCellValue(dia + "/" + mes);
+                LocalDate dataAtual = LocalDate.of(ano, mes, dia);
+                if (dataAtual.getDayOfWeek() == java.time.DayOfWeek.SATURDAY || dataAtual.getDayOfWeek() == java.time.DayOfWeek.SUNDAY || datasNaoLetivas.contains(dataAtual)) {
+                    cell.setCellStyle(styleCinza);
+                }
             }
             
             // --- LINHAS (ALUNOS) ---
@@ -159,6 +179,16 @@ public class ExcelExportService {
                 // Preencher Presenças
                 for (int dia = 1; dia <= diasNoMes; dia++) {
                     LocalDate dataAtual = LocalDate.of(ano, mes, dia);
+                    Cell cell = row.createCell(3 + dia);
+                    
+                    boolean isFimDeSemana = dataAtual.getDayOfWeek() == java.time.DayOfWeek.SATURDAY || dataAtual.getDayOfWeek() == java.time.DayOfWeek.SUNDAY;
+                    boolean isFeriado = datasNaoLetivas.contains(dataAtual);
+
+                    if (isFimDeSemana || isFeriado) {
+                        cell.setCellStyle(styleCinza);
+                        cell.setCellValue(isFimDeSemana ? "FDS" : "FER");
+                        continue;
+                    }
                     
                     FrequenciaDiscente registro = frequencias.stream()
                         .filter(f -> f.getMatricula().equals(aluno.getMatricula()) && f.getData().isEqual(dataAtual))
@@ -178,7 +208,7 @@ public class ExcelExportService {
                             else if (valor.equalsIgnoreCase("J") || valor.equalsIgnoreCase("FJ") || valor.equalsIgnoreCase("JUSTIFICADA")) status = "FJ";
                         }
                     }
-                    row.createCell(3 + dia).setCellValue(status);
+                    cell.setCellValue(status);
                 }
             }
 

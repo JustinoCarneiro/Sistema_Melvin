@@ -16,6 +16,7 @@ function Relatorios() {
     
     const [frequencias, setFrequencias] = useState([]);
     const [loadingFreq, setLoadingFreq] = useState(false);
+    const [diasNaoLetivos, setDiasNaoLetivos] = useState([]);
     
     // Hooks e Estados do useAlunos
     const {
@@ -43,12 +44,21 @@ function Relatorios() {
     }, []);
 
     useEffect(() => {
-        if (view === 'frequencia' && frequencias.length === 0) {
-            setLoadingFreq(true);
-            get.frequenciadiscente()
-                .then(res => setFrequencias(res.data || []))
-                .catch(err => console.error("Erro ao buscar frequências", err))
-                .finally(() => setLoadingFreq(false));
+        if (view === 'frequencia') {
+            const fetches = [];
+            if (frequencias.length === 0) {
+                fetches.push(get.frequenciadiscente().then(res => setFrequencias(res.data || [])));
+            }
+            if (diasNaoLetivos.length === 0) {
+                fetches.push(get.diasNaoLetivos().then(res => setDiasNaoLetivos(res.data || [])));
+            }
+            
+            if (fetches.length > 0) {
+                setLoadingFreq(true);
+                Promise.all(fetches)
+                    .catch(err => console.error("Erro ao buscar dados para frequência", err))
+                    .finally(() => setLoadingFreq(false));
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [view]);
@@ -88,6 +98,13 @@ function Relatorios() {
             }
         });
 
+        const feriadosMap = {};
+        diasNaoLetivos.forEach(dnl => {
+            if (dnl.data) {
+                feriadosMap[dnl.data] = dnl.descricao;
+            }
+        });
+
         const linhas = listaAlunos.map(aluno => {
             const presencasAluno = freqsDoMes.filter(f => String(f.matricula) === String(aluno.matricula));
             const diasMap = {};
@@ -96,7 +113,16 @@ function Relatorios() {
                 const registro = presencasAluno.find(p => p.data === dia);
                 let cellData = { status: '-', just: null };
 
-                if (registro) {
+                const currentDate = new Date(dia + "T00:00:00");
+                const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6;
+                const isFeriado = !!feriadosMap[dia];
+
+                if (isFeriado) {
+                    cellData.status = 'FER';
+                    cellData.just = feriadosMap[dia];
+                } else if (isWeekend) {
+                    cellData.status = 'FDS';
+                } else if (registro) {
                     const turnoAluno = aluno.turno 
                         ? aluno.turno.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
                         : "";
@@ -121,7 +147,7 @@ function Relatorios() {
         });
 
         return { colunas: todosDiasDoMes, linhas };
-    }, [alunosFiltrados, frequencias, mesSelecionado, anoSelecionado, view]);
+    }, [alunosFiltrados, frequencias, diasNaoLetivos, mesSelecionado, anoSelecionado, view]);
 
     // Helpers
     const formatNota = (valor) => valor ? parseFloat(valor).toFixed(1) : '-';
@@ -137,6 +163,7 @@ function Relatorios() {
         if (status === 'P') return '#217346';
         if (status === 'F') return '#C70039';
         if (status === 'FJ') return '#F29F05';
+        if (status === 'FER' || status === 'FDS') return '#999';
         return '#ddd';
     };
 
@@ -363,10 +390,11 @@ function Relatorios() {
                                                                 style={{
                                                                     textAlign: 'center', 
                                                                     color: getCorPresenca(cell.status), 
+                                                                    backgroundColor: (cell.status === 'FER' || cell.status === 'FDS') ? '#f3f4f6' : 'transparent',
                                                                     fontWeight: 'bold',
-                                                                    cursor: cell.status === 'FJ' ? 'help' : 'default'
+                                                                    cursor: (cell.status === 'FJ' || cell.status === 'FER') ? 'help' : 'default'
                                                                 }}
-                                                                title={cell.just ? `Justificativa: ${cell.just}` : undefined}
+                                                                title={cell.just ? `${cell.status === 'FER' ? 'Feriado/Recesso' : 'Justificativa'}: ${cell.just}` : undefined}
                                                             >
                                                                 {cell.status}
                                                             </td>

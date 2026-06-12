@@ -145,6 +145,17 @@ const post = {
             const errorMessage = error.response?.data || error.message;
             return Promise.reject(new Error(errorMessage));
         }
+    },
+    async diasNaoLetivos(dados) {
+        const endpoint = "/dias-nao-letivos";
+        try {
+            const response = await http.post(endpoint, dados);
+            return response;
+        } catch (error) {
+            console.error('Erro ao registrar dia não letivo:', error.response ? error.response.data : error.message);
+            const errorMessage = error.response?.data || error.message;
+            return Promise.reject(new Error(errorMessage));
+        }
     }
 }
 

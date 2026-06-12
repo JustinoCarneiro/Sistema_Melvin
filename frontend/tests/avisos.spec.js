@@ -21,7 +21,7 @@ test.describe('Avisos (Notificações)', () => {
 
   test('should navigate to create aviso', async ({ page }) => {
     await page.goto('/#/app/avisos');
-    await page.locator('text=Criar novo aviso').first().click();
+    await page.locator('button', { hasText: 'Criar Aviso' }).click();
     await expect(page).toHaveURL(/.*\/app\/avisos\/criar/);
   });
 });

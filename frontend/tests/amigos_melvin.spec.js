@@ -23,7 +23,7 @@ test.describe('Amigos do Melvin - Fluxo de Doação', () => {
     await page.fill('input[name="nome"]', 'Teste Doador');
     await page.fill('input[name="email"]', 'teste@email.com');
     await page.fill('input[name="telefone"]', '85999999999');
-    await page.fill('input[name="dia"]', '5');
+    await page.fill('input[name="cpf"]', '00000000000');
 
     await page.locator('#terms').check({ force: true });
 
@@ -37,7 +37,7 @@ test.describe('Amigos do Melvin - Fluxo de Doação', () => {
     await page.fill('input[name="nome"]', 'Maria da Silva');
     await page.fill('input[name="email"]', 'maria@email.com');
     await page.fill('input[name="telefone"]', '85988887777');
-    await page.fill('input[name="dia"]', '10');
+    await page.fill('input[name="cpf"]', '11111111111');
 
     await page.locator('#terms').check({ force: true });
 
@@ -61,7 +61,7 @@ test.describe('Amigos do Melvin - Tela de Checkout', () => {
     await page.fill('input[name="nome"]', 'Doador Teste');
     await page.fill('input[name="email"]', 'teste@melvin.com');
     await page.fill('input[name="telefone"]', '85999999999');
-    await page.fill('input[name="dia"]', '5');
+    await page.fill('input[name="cpf"]', '00000000000');
     await page.locator('#terms').check({ force: true });
     
     await page.locator('button', { hasText: 'Quero ser amigo!' }).click();
@@ -72,8 +72,8 @@ test.describe('Amigos do Melvin - Tela de Checkout', () => {
 
   test('Deve exibir o botão Voltar e permitir retornar à página anterior', async ({ page }) => {
     await page.goto('/#/cadastroamigo');
-    await expect(page.locator('text=Voltar').first()).toBeVisible();
-    await page.locator('text=Voltar').first().click();
+    await expect(page.getByRole('button', { name: 'Voltar' })).toBeVisible();
+    await page.getByRole('button', { name: 'Voltar' }).click();
     await expect(page).toHaveURL(/.*\/amigos-do-melvin/);
   });
 });

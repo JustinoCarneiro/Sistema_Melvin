@@ -43,11 +43,11 @@ public class DashboardService {
 
         // Define o comparador com base no critério 'sortBy'
         Comparator<Discente> comparator = switch (sortBy) {
-            case "presenca" -> Comparator.comparing(Discente::getAvaliacaoPresenca, Comparator.nullsLast(Comparator.naturalOrder()));
-            case "participacao" -> Comparator.comparing(Discente::getAvaliacaoParticipacao, Comparator.nullsLast(Comparator.naturalOrder()));
-            case "comportamento" -> Comparator.comparing(Discente::getAvaliacaoComportamento, Comparator.nullsLast(Comparator.naturalOrder()));
-            case "rendimento" -> Comparator.comparing(Discente::getAvaliacaoRendimento, Comparator.nullsLast(Comparator.naturalOrder()));
-            case "psicologico" -> Comparator.comparing(Discente::getAvaliacaoPsicologico, Comparator.nullsLast(Comparator.naturalOrder()));
+            case "presenca" -> Comparator.comparing(Discente::getAvaliacaoPresenca, Comparator.nullsFirst(Comparator.naturalOrder()));
+            case "participacao" -> Comparator.comparing(Discente::getAvaliacaoParticipacao, Comparator.nullsFirst(Comparator.naturalOrder()));
+            case "comportamento" -> Comparator.comparing(Discente::getAvaliacaoComportamento, Comparator.nullsFirst(Comparator.naturalOrder()));
+            case "rendimento" -> Comparator.comparing(Discente::getAvaliacaoRendimento, Comparator.nullsFirst(Comparator.naturalOrder()));
+            case "psicologico" -> Comparator.comparing(Discente::getAvaliacaoPsicologico, Comparator.nullsFirst(Comparator.naturalOrder()));
             default -> null; // Será usado para a média geral
         };
 

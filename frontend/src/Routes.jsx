@@ -14,6 +14,7 @@ import { HomeApp } from "@features/Dashboard";
 import PrivateRoute from "@core/services/PrivateRoute";
 import Header from "@core/components/Header";
 import { Config } from "@features/Config";
+import Calendario from "@features/Config/pages/Calendario";
 import { Relatorios } from "@features/Relatorios";
 import { Rendimento } from "@features/Rendimento";
 import { ConfiguracoesPermissoes } from "@features/Permissoes";
@@ -175,6 +176,7 @@ function AppContent() {
 
                     {/* --- CONFIGURAÇÕES DE SEGURANÇA --- */}
                     <Route path="/config/permissoes" element={<PrivateRoute role="ADM" element={ConfiguracoesPermissoes} />} />
+                    <Route path="/config/calendario" element={<PrivateRoute role="ADM" element={Calendario} />} />
 
                 </Routes>
             </div>

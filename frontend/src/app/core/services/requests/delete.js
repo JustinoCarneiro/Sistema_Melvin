@@ -72,6 +72,18 @@ const del = {
             const errorMessage = error.response?.data || error.message;
             return Promise.reject(new Error(errorMessage));
         }
+    },
+
+    async diasNaoLetivos(id) {
+        const endpoint = `/dias-nao-letivos/${id}`;
+        try {
+            const response = await http.delete(endpoint);
+            return response;
+        } catch (error) {
+            console.error('Erro ao deletar dia não letivo:', error.response ? error.response.data : error.message);
+            const errorMessage = error.response?.data || error.message;
+            return Promise.reject(new Error(errorMessage));
+        }
     }
 }
 
