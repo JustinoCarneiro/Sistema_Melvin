@@ -20,6 +20,6 @@ public interface FrequenciaDiscenteRepository extends JpaRepository<FrequenciaDi
     @Query("SELECT COUNT(DISTINCT f.matricula) FROM FrequenciaDiscente f WHERE f.data = :data AND (f.presenca_manha = 'P' OR f.presenca_tarde = 'P')")
     Long countPresentesByData(@Param("data") LocalDate data);
 
-    @Query("SELECT new br.com.melvin.sistema.domain.frequencia.dto.FaltaAlertaDTO(f.matricula, COUNT(f.id)) FROM FrequenciaDiscente f WHERE f.data >= :inicioMes AND f.data <= :fimMes AND (f.presenca_manha = 'F' OR f.presenca_tarde = 'F') AND (f.justificativa IS NULL OR f.justificativa = '') GROUP BY f.matricula HAVING COUNT(f.id) >= 4")
+    @Query("SELECT new br.com.melvin.sistema.domain.frequencia.dto.FaltaAlertaDTO(f.matricula, f.nome, COUNT(f.id)) FROM FrequenciaDiscente f WHERE f.data >= :inicioMes AND f.data <= :fimMes AND (f.presenca_manha = 'F' OR f.presenca_tarde = 'F') AND (f.justificativa IS NULL OR f.justificativa = '') GROUP BY f.matricula, f.nome HAVING COUNT(f.id) >= 4")
     List<FaltaAlertaDTO> findMatriculasComQuatroOuMaisFaltasInjustificadas(@Param("inicioMes") LocalDate inicioMes, @Param("fimMes") LocalDate fimMes);
 }

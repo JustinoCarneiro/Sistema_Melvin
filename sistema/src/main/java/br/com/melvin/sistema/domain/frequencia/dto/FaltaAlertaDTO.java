@@ -11,5 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FaltaAlertaDTO {
     private String matricula;
+    private String nome;
     private Long quantidade;
 }

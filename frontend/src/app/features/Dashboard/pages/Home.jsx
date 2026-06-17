@@ -201,7 +201,7 @@ function Home() {
                                             <span className={styles.studentMatricula}>#{aluno.matricula}</span>
                                         </div>
                                         <div className={styles.scoreBadge} style={{ backgroundColor: '#e11d4822', color: '#e11d48' }}>
-                                            {aluno.quantidadeFaltas} faltas
+                                            {aluno.quantidade} faltas
                                         </div>
                                     </li>
                                 )) : (

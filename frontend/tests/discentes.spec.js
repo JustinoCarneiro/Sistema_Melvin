@@ -20,7 +20,7 @@ test.describe('Discentes Management', () => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify([{ matricula: '2026001', quantidade: 4 }])
+        body: JSON.stringify([{ matricula: '2026001', nome: 'João Silva', quantidade: 4 }])
       });
     });
   });

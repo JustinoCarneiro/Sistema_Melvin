@@ -20,8 +20,8 @@ test.describe('Frequências (Attendance)', () => {
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify([
-          { matricula: '2026001', quantidade: 5 },
-          { matricula: '2026002', quantidade: 5 }
+          { matricula: '2026001', nome: 'Aluno 1', quantidade: 5 },
+          { matricula: '2026002', nome: 'Aluno 2', quantidade: 5 }
         ])
       });
     });

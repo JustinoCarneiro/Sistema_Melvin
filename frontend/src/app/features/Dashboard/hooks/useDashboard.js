@@ -44,14 +44,7 @@ export function useDashboard() {
                 setRankingMelhores(ranking);
                 setRankingPiores([...ranking].sort((a, b) => a.mediaGeral - b.mediaGeral));
 
-                const alertasData = alertasRes.data || []; // Array de {matricula, quantidade}
-                const alunosComFaltas = ranking
-                    .filter(aluno => alertasData.some(a => a.matricula === aluno.matricula))
-                    .map(aluno => ({
-                        ...aluno,
-                        quantidadeFaltas: alertasData.find(a => a.matricula === aluno.matricula)?.quantidade
-                    }));
-                setAlertasFaltas(alunosComFaltas);
+                setAlertasFaltas(alertasRes.data || []);
 
             } catch (err) {
                 setError(err.message || 'Falha ao carregar o dashboard.');

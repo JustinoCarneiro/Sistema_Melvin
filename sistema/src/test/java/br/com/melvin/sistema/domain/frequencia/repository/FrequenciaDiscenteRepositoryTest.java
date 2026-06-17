@@ -47,6 +47,7 @@ public class FrequenciaDiscenteRepositoryTest {
 
         assertThat(resultado).hasSize(1);
         assertThat(resultado.get(0).getMatricula()).isEqualTo(matricula);
+        assertThat(resultado.get(0).getNome()).isEqualTo("Aluno Teste");
         assertThat(resultado.get(0).getQuantidade()).isEqualTo(4L);
     }
 

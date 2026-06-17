@@ -5,7 +5,7 @@ const RANKING_MOCK = [
   { matricula: '2026001', nome: 'Aluno Crítico', mediaGeral: 4.5 },
   { matricula: '2026002', nome: 'Aluno Top', mediaGeral: 9.5 },
 ];
-const ALERTAS_COM_FALTAS = [{ matricula: '2026001', quantidade: 6 }];
+const ALERTAS_COM_FALTAS = [{ matricula: '2026001', nome: 'Aluno Crítico', quantidade: 6 }];
 
 test.describe('Dashboard', () => {
   test.beforeEach(async ({ page }) => {
@@ -40,7 +40,6 @@ test.describe('Dashboard', () => {
     await page.goto('/#/app/adm');
 
     await expect(page.locator('h3', { hasText: 'Faltas Excessivas' })).toBeVisible();
-    // O aluno com faltas é enriquecido a partir do ranking (join por matrícula)
     await expect(page.locator('li', { hasText: 'Aluno Crítico' }).first()).toBeVisible();
     await expect(page.locator('text=6 faltas')).toBeVisible();
     // Aluno sem alerta NÃO deve aparecer no card de faltas
