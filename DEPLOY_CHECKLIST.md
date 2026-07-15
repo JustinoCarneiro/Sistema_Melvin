@@ -192,16 +192,16 @@ location /api/ {
 
 ## 7. Checklist Final
 
-- [ ] Arquivo `.env` preenchido com **todas** as variáveis acima
-- [ ] Chaves Stripe são `sk_live_` / `pk_live_` (não `test`)
-- [ ] Webhook configurado no Dashboard do Stripe com URL de produção
-- [ ] `STRIPE_WEBHOOK_SECRET` atualizado com o signing secret do webhook real
-- [ ] Flyway migrations executadas com sucesso na inicialização
-- [ ] Nginx configurado com `proxy_pass http://` (sem HTTPS interno)
-- [ ] Backup do banco executado antes do deploy (`./backup.sh`)
-- [ ] `docker stats` confirma memória dentro do limite (< 85% de 1GB)
-- [ ] Teste de fumaça: login funcional via `https://institutomelvin.org`
-- [ ] Logs limpos de PII (`docker logs backend-melvin | grep -i nome` retorna vazio)
+- [x] Arquivo `.env` preenchido com **todas** as variáveis acima
+- [x] Chaves Stripe são `sk_live_` / `pk_live_` (não `test`)
+- [x] Webhook configurado no Dashboard do Stripe com URL de produção
+- [x] `STRIPE_WEBHOOK_SECRET` atualizado com o signing secret do webhook real
+- [x] Flyway migrations executadas com sucesso na inicialização
+- [x] Nginx configurado com `proxy_pass http://` (sem HTTPS interno)
+- [x] Backup do banco executado antes do deploy (`./backup.sh`)
+- [x] `docker stats` confirma memória dentro do limite (< 85% de 1GB)
+- [x] Teste de fumaça: login funcional via `https://institutomelvin.org` (matrícula inexistente → 401 correto; ver correção do bug de `UsernameNotFoundException` nesta mesma atualização)
+- [x] Logs limpos de PII (`docker logs backend-melvin | grep -i nome` retorna vazio)
 
 ---
 
