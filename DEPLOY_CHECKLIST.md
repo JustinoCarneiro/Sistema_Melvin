@@ -90,7 +90,7 @@ Após configurar os Webhooks, acesse o painel da Stripe (em Modo Produção / Li
 4. **Stripe Radar (Proteção Antifraude)**
    - Vá em `Payments > Radar > Rules`.
    - Certifique-se de que a regra de *Block* para *CVC verification fails based on risk score* está **Enabled**.
-   - Para maior segurança no Brasil, ative a regra de bloqueio se a verificação de CEP (Postal Code) falhar.
+   - Regra de bloqueio por falha de CEP (Postal Code) **não se aplica**: o formulário de doação usa `hidePostalCode: true` no Stripe Elements ([CadastroAmigo/index.jsx](../frontend/src/app/site/pages/CadastroAmigo/index.jsx)) e nunca coleta o campo, então essa regra ficaria sempre inerte (nunca dispara). Só faz sentido ativá-la se o formulário passar a coletar CEP.
 
 5. **Branding e Ativação Legal**
    - Vá em `Settings > Business settings > Branding` e suba a Logomarca e a paleta de cores do Melvin.
