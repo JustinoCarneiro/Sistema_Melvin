@@ -157,8 +157,8 @@ O script valida:
 
 ### Verificação Pós-Deploy
 ```bash
-# Health check do backend
-curl -s -o /dev/null -w "%{http_code}" https://institutomelvin.org/api/v1/health
+# Health check do backend (Spring Boot Actuator, liberado no SecurityConfiguration)
+curl -s -o /dev/null -w "%{http_code}" https://institutomelvin.org/api/actuator/health
 
 # Verificar logs do container
 docker logs -f --tail 100 backend-melvin

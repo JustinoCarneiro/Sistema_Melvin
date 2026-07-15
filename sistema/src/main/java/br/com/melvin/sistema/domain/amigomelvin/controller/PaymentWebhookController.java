@@ -32,7 +32,7 @@ public class PaymentWebhookController {
 
     @PostMapping
     public ResponseEntity<String> handleStripeWebhook(
-            @RequestBody String payload,
+            @RequestBody(required = false) String payload,
             @RequestHeader(value = "Stripe-Signature", required = false) String sigHeader) {
         
         try {
