@@ -167,7 +167,7 @@ Cada linha representa: "o cargo X pode executar a ação Y". O backend valida is
 
 **Recursos Avançados Stripe Configurados:**
 - **Smart Retries:** Retentativas inteligentes de cobrança ativadas no Stripe Dashboard (até 8 tentativas em 2 semanas) antes de marcar como Inadimplente/Cancelado.
-- **Radar Antifraude:** Regras de bloqueio baseadas em score de risco, CVC e CEP ativadas.
+- **Radar Antifraude:** Regra de bloqueio por falha de CVC ativada. Regra de bloqueio por CEP **não** ativada — o formulário de doação usa `hidePostalCode: true` no Stripe Elements e nunca coleta o campo, então essa regra ficaria sempre inerte (ver `DEPLOY_CHECKLIST.md`, seção 2.1.4).
 - **Notificações Automáticas:** Disparos nativos da Stripe para falhas de cartão e cartões expirando, com links seguros de atualização (Customer Portal).
 - **Notificações ao Instituto:** O sistema envia cópia de todos os eventos relevantes (novo doador, pagamento confirmado, falha de pagamento, cancelamento) para o e-mail administrativo via `EmailService.notifyInstituto()`. O e-mail admin é configurável via `app.admin-email` (default: `imeh@igrejadapaz.com.br`). **Remetente SMTP:** `imeh@igrejadapaz.com.br`.
 
@@ -214,6 +214,7 @@ Cada linha representa: "o cargo X pode executar a ação Y". O backend valida is
 | `GET` | `/permissao` | Lista regras RBAC |
 | `POST` | `/permissao` | Cria/atualiza regra RBAC |
 | `GET` | `/dashboard` | Dados do painel principal |
+| `GET` | `/actuator/health` | Health check (Spring Boot Actuator, público) |
 
 ---
 
