@@ -21,6 +21,12 @@ frontend/playwright-report/
 frontend/playwright/.cache/
 frontend/blob-report/
 
+# ─── Obsidian (estado de UI local, não config compartilhada) ───
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/graph.json
+.obsidian/appearance.json
+
 # ─── IDE (Eclipse / IntelliJ / VSCode) ───
 .classpath
 .factorypath

@@ -503,7 +503,17 @@ Então alerta de kit_especial aparece no dashboard admin.
 
 ---
 
-## 6. CHANGELOG DE ESCOPO
+## 6. MEMÓRIA TÉCNICA (BUGS E DECISÕES)
+
+Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev: vault Obsidian em [`./memoria-tecnica/`](./memoria-tecnica/_index.md), dentro do próprio repo, com bugs cabeludos resolvidos (causa raiz, não só sintoma) e decisões técnicas tomadas fora desta spec.
+
+- **Antes de investigar um bug**, consultar `memoria-tecnica/bugs/` — pode já ter causa raiz documentada.
+- **Antes de tomar decisão de arquitetura**, consultar `memoria-tecnica/decisoes/` — pode já existir uma decisão ativa sobre o assunto.
+- **Ao resolver um bug não-trivial ou tomar uma decisão fora da spec**, registrar nota nova em `memoria-tecnica/` (templates em `memoria-tecnica/templates/`), linkando às notas relacionadas com a notação `[[nome-da-nota]]`.
+
+---
+
+## 7. CHANGELOG DE ESCOPO
 
 | Data | Mudança | Fase Retornada | Impacto |
 |---|---|---|---|

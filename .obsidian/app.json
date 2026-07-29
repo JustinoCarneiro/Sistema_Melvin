@@ -1,0 +1,19 @@
+{
+  "userIgnoreFilters": [
+    "frontend/node_modules",
+    "frontend/dist",
+    "frontend/test-results",
+    "frontend/playwright-report",
+    "frontend/public",
+    "sistema/target",
+    "sistema/logs",
+    "sistema/scripts",
+    "backups",
+    "postgres",
+    ".git",
+    ".github",
+    ".vscode",
+    ".agents",
+    ".claude"
+  ]
+}
