@@ -8,18 +8,24 @@
 
 ## Classificação de Módulos (Peso Onda-Dev)
 
+> Padronização de vocabulário (30/07/2026, seção 12 da metodologia): coluna **Status** usa
+> `✅ Concluído` — substituiu "COMPLETO", que era o termo usado aqui antes, pra ficar consistente
+> com o resto dos projetos da Onda. Datas por módulo não foram registradas incrementalmente
+> durante o desenvolvimento; a referência mais próxima é a "Última atualização" deste documento
+> (04/06/2026).
+
 | # | Módulo | Peso | Dias | Status |
 |---|---|---|---|---|
-| 1 | Autenticação & RBAC Dinâmico | 🔴 Grande | 5-7 | ✅ COMPLETO |
-| 2 | Gestão de Discentes (Alunos) | 🟡 Médio | 3-4 | ✅ COMPLETO |
-| 3 | Gestão de Voluntários | 🟡 Médio | 3-4 | ✅ COMPLETO |
-| 4 | Frequência (Ponto Eletrônico) | 🟡 Médio | 3-4 | ✅ COMPLETO |
-| 5 | Amigos do Melvin (Stripe) | 🔴 Grande | 5-7 | ✅ COMPLETO |
-| 6 | Cestas + Embaixadores + Avisos | 🟢 Pequeno | 1-2 | ✅ COMPLETO |
-| 7 | Dashboard + Relatórios | 🟢 Pequeno | 1-2 | ✅ COMPLETO |
-| 8 | Diário + Rendimento | 🟢 Pequeno | 1-2 | ✅ COMPLETO |
-| 9 | Site Institucional (Público) | 🟢 Pequeno | 1-2 | ✅ COMPLETO |
-| 10 | Imagens e Mídias | 🟢 Pequeno | 1-2 | ✅ COMPLETO |
+| 1 | Autenticação & RBAC Dinâmico | 🔴 Grande | 5-7 | ✅ Concluído |
+| 2 | Gestão de Discentes (Alunos) | 🟡 Médio | 3-4 | ✅ Concluído |
+| 3 | Gestão de Voluntários | 🟡 Médio | 3-4 | ✅ Concluído |
+| 4 | Frequência (Ponto Eletrônico) | 🟡 Médio | 3-4 | ✅ Concluído |
+| 5 | Amigos do Melvin (Stripe) | 🔴 Grande | 5-7 | ✅ Concluído |
+| 6 | Cestas + Embaixadores + Avisos | 🟢 Pequeno | 1-2 | ✅ Concluído |
+| 7 | Dashboard + Relatórios | 🟢 Pequeno | 1-2 | ✅ Concluído |
+| 8 | Diário + Rendimento | 🟢 Pequeno | 1-2 | ✅ Concluído |
+| 9 | Site Institucional (Público) | 🟢 Pequeno | 1-2 | ✅ Concluído |
+| 10 | Imagens e Mídias | 🟢 Pequeno | 1-2 | ✅ Concluído |
 
 ---
 
@@ -38,7 +44,7 @@ TOTAL:                      43 dias úteis
 ---
 
 ## MÓDULO 1: AUTENTICAÇÃO & RBAC DINÂMICO
-**Peso: 🔴 GRANDE (~5-7 dias) | Status: ✅ COMPLETO**
+**Peso: 🔴 GRANDE (~5-7 dias) | Status: ✅ Concluído**
 
 > Épicos de referência: [CLAUDE.md #Épico 1](./CLAUDE.md) e [CLAUDE.md #Épico 2](./CLAUDE.md)
 
@@ -141,7 +147,7 @@ TOTAL:                      43 dias úteis
 ---
 
 ## MÓDULO 2: GESTÃO DE DISCENTES (ALUNOS)
-**Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ COMPLETO**
+**Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ Concluído**
 
 > Épico de referência: [CLAUDE.md #Épico 3](./CLAUDE.md)
 
@@ -244,7 +250,7 @@ TOTAL:                      43 dias úteis
 ---
 
 ## MÓDULO 3: GESTÃO DE VOLUNTÁRIOS
-**Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ COMPLETO**
+**Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ Concluído**
 
 > Épico de referência: [CLAUDE.md #Épico 4](./CLAUDE.md)
 
@@ -288,7 +294,7 @@ TOTAL:                      43 dias úteis
 ---
 
 ## MÓDULO 4: FREQUÊNCIA (PONTO ELETRÔNICO)
-**Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ COMPLETO**
+**Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ Concluído**
 
 > Épico de referência: [CLAUDE.md #Épico 5](./CLAUDE.md)
 
@@ -345,7 +351,7 @@ TOTAL:                      43 dias úteis
 ---
 
 ## MÓDULO 5: AMIGOS DO MELVIN (DOAÇÕES — STRIPE)
-**Peso: 🔴 GRANDE (~5-7 dias) | Status: ✅ COMPLETO**
+**Peso: 🔴 GRANDE (~5-7 dias) | Status: ✅ Concluído**
 
 > Épico de referência: [CLAUDE.md #Épico 6](./CLAUDE.md)
 
@@ -452,7 +458,7 @@ TOTAL:                      43 dias úteis
 ---
 
 ## MÓDULO 6: CESTAS + EMBAIXADORES + AVISOS
-**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ COMPLETO**
+**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído**
 
 > Épico de referência: [CLAUDE.md #Épico 7](./CLAUDE.md)
 
@@ -483,7 +489,7 @@ TOTAL:                      43 dias úteis
 ---
 
 ## MÓDULO 7: DASHBOARD + RELATÓRIOS
-**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ COMPLETO**
+**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído**
 
 > Épico de referência: [CLAUDE.md #Épico 8](./CLAUDE.md)
 
@@ -508,7 +514,7 @@ TOTAL:                      43 dias úteis
 ---
 
 ## MÓDULO 8: DIÁRIO + RENDIMENTO
-**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ COMPLETO**
+**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído**
 
 > Épico de referência: [CLAUDE.md #Épico 9](./CLAUDE.md)
 
@@ -525,7 +531,7 @@ TOTAL:                      43 dias úteis
 ---
 
 ## MÓDULO 9: SITE INSTITUCIONAL (PÚBLICO)
-**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ COMPLETO**
+**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído**
 
 > Épico de referência: [CLAUDE.md #Épico 10](./CLAUDE.md)
 
@@ -540,7 +546,7 @@ Páginas públicas (sem autenticação):
 ---
 
 ## MÓDULO 10: IMAGENS E MÍDIAS
-**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ COMPLETO**
+**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído**
 
 ### Contratos API
 
