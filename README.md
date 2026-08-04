@@ -282,7 +282,9 @@ cat /var/log/melvin_monitor.log | tail -48
 ```
 
 ### ⚠️ Backup do Banco (Cuidado com Prune)
-O script de backup mensal (`/root/scripts/backup_postgres.sh`) **não deve** conter `docker system prune -a -f` ou `docker volume prune -f`, pois esses comandos podem remover imagens e volumes de containers em operação. A limpeza adequada é feita via `find` removendo apenas dumps antigos (> 30 dias).
+O script de backup diário (`/root/scripts/backup_postgres.sh`) **não deve** conter `docker system prune -a -f` ou `docker volume prune -f`, pois esses comandos podem remover imagens e volumes de containers em operação. A limpeza adequada é feita via `find` removendo apenas dumps antigos (> 30 dias).
+
+Desde 04/08/2026, o script roda diariamente às 02h (antes era mensal), gera o dump comprimido e **criptografado com AES-256** (chave em `/root/scripts/.backup_encryption_key`, `chmod 600`, root-only), envia uma cópia off-site pro Google Drive via `rclone` (remote `gdrive:sistema-melvin-backups`, escopo `drive.file`) e envia alerta por e-mail (reaproveitando o SMTP já configurado no `.env`) se o backup local ou o envio off-site falharem. Ver `memoria-tecnica/decisoes/backup-melvin-diario-criptografado.md` para o racional completo, o comando de restauração e um risco pendente de expiração de token OAuth (app Google em modo "Testando").
 
 ---
 
