@@ -53,7 +53,7 @@ const auth = {
             return response;
         } catch(error){
             console.error('1003:Erro ao obter role de usuário:', error.response ? error.response.data : error.message);
-            return { error: true, message: error.response ? error.response.data : error.message };
+            return { error: true, status: error.response ? error.response.status : null, message: error.response ? error.response.data : error.message };
         }
     },
 

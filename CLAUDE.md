@@ -1,6 +1,6 @@
 # 📘 CLAUDE.md — Especificação Viva do Sistema Melvin
 
-> **Última atualização:** 04/08/2026
+> **Última atualização:** 06/08/2026
 > **Fase atual:** Fase 5 (Produção)
 > **Metodologia:** Onda-Dev (Playbook de Engenharia)
 
@@ -23,7 +23,7 @@
 | **Pagamentos** | Stripe (SDK nativo + Webhooks) |
 | **E-mail** | Spring Boot Starter Mail (SMTP, @Async) |
 | **Infraestrutura** | Docker + Docker Compose + Nginx |
-| **Testes Frontend** | Cypress (E2E — 19 suítes) |
+| **Testes Frontend** | Playwright (E2E — 17 suítes) |
 | **Testes Backend** | JUnit 5 + Mockito (8 suítes) |
 | **Migrations** | Flyway |
 

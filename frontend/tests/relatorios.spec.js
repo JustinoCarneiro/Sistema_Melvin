@@ -106,6 +106,12 @@ test.describe('Relatórios', () => {
     await page.goto('/#/app/relatorios');
     await page.locator('button', { hasText: 'Frequência' }).click();
 
+    // Fixa mês/ano em Junho/2026: os dados mockados são desse período, mas a tela
+    // abre por padrão no mês/ano corrente (varia com a data real), então sem isso
+    // o teste quebra sozinho assim que o calendário sai de junho/2026.
+    await page.locator('select').filter({ hasText: 'Janeiro' }).selectOption({ value: '5' });
+    await page.locator('select').filter({ hasText: '2026' }).selectOption({ value: '2026' });
+
     const row = page.locator('tr[class*="tr_body"]').filter({ hasText: 'Aluno Relatório' });
     await expect(row).toBeVisible();
 
@@ -119,6 +125,10 @@ test.describe('Relatórios', () => {
   test('deve exibir FDS e FER nos dias não letivos omitindo a presença', async ({ page }) => {
     await page.goto('/#/app/relatorios');
     await page.locator('button', { hasText: 'Frequência' }).click();
+
+    // Mesmo motivo do teste anterior: fixa o mês/ano pra não depender da data real.
+    await page.locator('select').filter({ hasText: 'Janeiro' }).selectOption({ value: '5' });
+    await page.locator('select').filter({ hasText: '2026' }).selectOption({ value: '2026' });
 
     const row = page.locator('tr[class*="tr_body"]').filter({ hasText: 'Aluno Relatório' });
     await expect(row).toBeVisible();

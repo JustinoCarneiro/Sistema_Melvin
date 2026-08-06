@@ -14,6 +14,7 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev (avali
 - **Ao resolver um bug não-trivial** (que exigiu investigação real, causa raiz não óbvia a partir do código) ou **tomar uma decisão técnica fora da spec**, criar uma nota nova usando `templates/bug.md` ou `templates/decisao.md`, e linkar às notas relacionadas com a notação `[[nome-da-nota]]`.
 
 ## Bugs
+- [[logout-automatico-privateroute-qualquer-falha]]
 - [[webhook-stripe-404-prefixo-api-nginx]]
 - [[cobranca-em-dobro-corrida-timeout-stripe]]
 - [[heap-exhaustion-504-cronico]]
