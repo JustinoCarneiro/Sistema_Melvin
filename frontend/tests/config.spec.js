@@ -2,7 +2,7 @@ import { test, expect } from './fixtures';
 
 test.describe('Config & Profile', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('**/api/voluntario/matricula/*', route => {
+    await page.route('**/voluntario/matricula/*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({
         status: 200,

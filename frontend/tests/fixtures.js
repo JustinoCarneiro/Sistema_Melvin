@@ -25,21 +25,21 @@ export const test = base.extend({
     await page.route('https://maps.googleapis.com/**', route => route.fulfill({ status: 200, body: '' }));
 
     // Global intercepts
-    await page.route('**/api/dashboard/**', route => {
+    await page.route('**/dashboard/**', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({ status: 200, body: '[]' });
     });
-    await page.route('**/api/frequenciadiscente/**', route => {
+    await page.route('**/frequenciadiscente/**', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({ status: 200, body: '{}' });
     });
-    await page.route('**/api/aviso*', route => {
+    await page.route('**/aviso*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({ status: 200, body: '[]' });
     });
     
     // Dynamic Permissions
-    await page.route('**/api/permissoes/minhas*', route => {
+    await page.route('**/permissoes/minhas*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({
         status: 200,
@@ -53,7 +53,7 @@ export const test = base.extend({
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({ status: 200, body: 'ADM' });
     });
-    await page.route('**/api/auth/role_*', route => {
+    await page.route('**/auth/role_*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({ status: 200, body: 'ADM' });
     });

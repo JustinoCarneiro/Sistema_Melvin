@@ -2,7 +2,7 @@ import { test, expect } from './fixtures';
 
 test.describe('Frequências (Attendance)', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('**/api/discente*', route => {
+    await page.route('**/discente*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({
         status: 200,
@@ -14,7 +14,7 @@ test.describe('Frequências (Attendance)', () => {
       });
     });
     
-    await page.route('**/api/frequenciadiscente/alertas-faltas*', route => {
+    await page.route('**/frequenciadiscente/alertas-faltas*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({
         status: 200,
@@ -39,7 +39,7 @@ test.describe('Frequências (Attendance)', () => {
     
     await row.locator('select').selectOption({ label: 'P' }); // Or value: 'P'
 
-    await page.route('**/api/frequenciadiscente*', route => {
+    await page.route('**/frequenciadiscente*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       if (route.request().method() === 'POST' || route.request().method() === 'PUT') {
         route.fulfill({ status: 200, body: '{}' });

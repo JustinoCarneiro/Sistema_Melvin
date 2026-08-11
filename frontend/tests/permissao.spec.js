@@ -8,7 +8,7 @@ test.describe('Configuração de Permissões', () => {
   ];
 
   test.beforeEach(async ({ page }) => {
-    await page.route('**/api/permissoes', route => {
+    await page.route('**/permissoes', route => {
       if (route.request().url().includes('.js')) return route.continue();
       if (route.request().method() === 'GET') {
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockPermissoes) });
@@ -17,7 +17,7 @@ test.describe('Configuração de Permissões', () => {
       }
     });
 
-    await page.route('**/api/permissoes/*', route => {
+    await page.route('**/permissoes/*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       if (route.request().method() === 'PUT') {
         route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Updated' }) });
@@ -50,7 +50,7 @@ test.describe('Configuração de Permissões', () => {
   });
 
   test('deve exibir erro se falhar ao salvar', async ({ page }) => {
-    await page.route('**/api/permissoes/*', route => {
+    await page.route('**/permissoes/*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       if (route.request().method() === 'PUT') {
         route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ error: 'Internal Server Error' }) });

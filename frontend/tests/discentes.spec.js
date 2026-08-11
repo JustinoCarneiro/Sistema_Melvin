@@ -3,7 +3,7 @@ import { test, expect } from './fixtures';
 test.describe('Discentes Management', () => {
   test.beforeEach(async ({ page }) => {
     // Override specific students for this test
-    await page.route('**/api/discente*', route => {
+    await page.route('**/discente*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({
         status: 200,
@@ -15,7 +15,7 @@ test.describe('Discentes Management', () => {
       });
     });
 
-    await page.route('**/api/frequenciadiscente/alertas-faltas*', route => {
+    await page.route('**/frequenciadiscente/alertas-faltas*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({
         status: 200,
@@ -27,8 +27,8 @@ test.describe('Discentes Management', () => {
 
   test('should list students and show absence alerts', async ({ page }) => {
     // Start tracking the requests we want to wait for
-    const getAlunosPromise = page.waitForResponse(response => response.url().includes('/api/discente'));
-    const getAlertasPromise = page.waitForResponse(response => response.url().includes('/api/frequenciadiscente/alertas-faltas'));
+    const getAlunosPromise = page.waitForResponse(response => response.url().includes('/discente'));
+    const getAlertasPromise = page.waitForResponse(response => response.url().includes('/frequenciadiscente/alertas-faltas'));
 
     await page.goto('/#/app/alunos');
     

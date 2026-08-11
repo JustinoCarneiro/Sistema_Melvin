@@ -4,7 +4,7 @@ test.describe('Authentication & RBAC', () => {
   test.beforeEach(async ({ page, context }) => {
     await context.clearCookies();
     await page.route('https://maps.googleapis.com/**', route => route.fulfill({ status: 200, body: '' }));
-    await page.route('**/api/permissoes/minhas*', route => {
+    await page.route('**/permissoes/minhas*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
     });
@@ -31,7 +31,7 @@ test.describe('Authentication & RBAC', () => {
       route.fulfill({ status: 200, contentType: 'text/plain', body: role });
     });
     
-    await page.route('**/api/auth/role_*', route => {
+    await page.route('**/auth/role_*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({ status: 200, contentType: 'text/plain', body: role });
     });
@@ -88,7 +88,7 @@ test.describe('Authentication & RBAC', () => {
       route.fulfill({ status: 200, contentType: 'text/plain', body: 'ADM' });
     });
     
-    await page.route('**/api/voluntario/matricula/*', route => {
+    await page.route('**/voluntario/matricula/*', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ nome: 'Admin' }) });
     });

@@ -2,7 +2,7 @@ import { test, expect } from './fixtures';
 
 test.describe('Voluntários Management', () => {
   test.beforeEach(async ({ page }) => {
-    await page.route('**/api/voluntario', route => {
+    await page.route('**/voluntario', route => {
       if (route.request().url().includes('.js')) return route.continue();
       route.fulfill({
         status: 200,
