@@ -134,6 +134,12 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.DELETE, "/discente").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "CADASTRAR_ALUNO")))
                     
+                    // --- OCORRÊNCIAS (US-3.7) ---
+                    .requestMatchers(HttpMethod.POST, "/ocorrencias").access((authentication, context) ->
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_OCORRENCIA")))
+                    .requestMatchers(HttpMethod.GET, "/ocorrencias/**").access((authentication, context) ->
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_OCORRENCIA")))
+
                     // --- FREQUÊNCIA DISCENTE ---
                     .requestMatchers(HttpMethod.POST, "/frequenciadiscente").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_FREQUENCIA")))

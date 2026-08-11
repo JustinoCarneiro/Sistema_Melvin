@@ -1,5 +1,5 @@
 import styles from './Form.module.scss';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -11,6 +11,7 @@ import Input from '@core/components/gerais/Input';
 
 import discenteService from '../api/discenteService';
 import diarioService from '../api/diarioService';
+import ocorrenciaService from '../api/ocorrenciaService';
 import { usePermissions } from '@core/hooks/usePermissions';
 
 function Aluno_forms(){
@@ -20,6 +21,11 @@ function Aluno_forms(){
     
     const [diario, setDiario] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+
+    // US-3.7: registro de ocorrências do aluno
+    const [ocorrencias, setOcorrencias] = useState([]);
+    const [novaOcorrencia, setNovaOcorrencia] = useState({ categoria: 'COMPORTAMENTAL', descricao: '', data_ocorrencia: '' });
+    const [ocorrenciaErro, setOcorrenciaErro] = useState('');
 
     // Estado completo com TODOS os campos originais
     const [formDado, setFormDado] = useState({
@@ -72,6 +78,37 @@ function Aluno_forms(){
         
         fetchAluno();
     }, [matricula]);
+
+    const fetchOcorrencias = useCallback(async () => {
+        if (!matricula) return;
+        try {
+            const response = await ocorrenciaService.listarPorDiscente(matricula);
+            setOcorrencias(response.data || []);
+        } catch (error) {
+            console.warn('Aviso: não foi possível carregar ocorrências (sem permissão ou nenhuma registrada).');
+        }
+    }, [matricula]);
+
+    useEffect(() => {
+        fetchOcorrencias();
+    }, [fetchOcorrencias]);
+
+    const handleOcorrenciaChange = (event) => {
+        const { name, value } = event.target;
+        setNovaOcorrencia(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmitOcorrencia = async (e) => {
+        e.preventDefault();
+        setOcorrenciaErro('');
+        try {
+            await ocorrenciaService.create({ ...novaOcorrencia, matricula_discente: matricula });
+            setNovaOcorrencia({ categoria: 'COMPORTAMENTAL', descricao: '', data_ocorrencia: '' });
+            await fetchOcorrencias();
+        } catch (error) {
+            setOcorrenciaErro(error.message || 'Erro ao registrar ocorrência.');
+        }
+    };
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -377,6 +414,46 @@ function Aluno_forms(){
                         )}
                     </div>
                 </form>
+
+                {matricula && hasPermission('GERENCIAR_OCORRENCIA') && (
+                    <div className={styles.form}>
+                        <h3 className={styles.sectionTitle}>Ocorrências</h3>
+
+                        <form className={styles.gridContainer} onSubmit={handleSubmitOcorrencia}>
+                            <div className={styles.coluna}>
+                                <div className={styles.linhaDupla}>
+                                    <div className={styles.inputGroup}>
+                                        <label>Categoria:</label>
+                                        <select className={styles.select} name="categoria" value={novaOcorrencia.categoria} onChange={handleOcorrenciaChange}>
+                                            <option value="COMPORTAMENTAL">Comportamental</option>
+                                            <option value="PEDAGOGICA">Pedagógica</option>
+                                        </select>
+                                    </div>
+                                    <Input label="Data:" type="date" name="data_ocorrencia" value={novaOcorrencia.data_ocorrencia} onChange={handleOcorrenciaChange} comp="pequeno" />
+                                </div>
+                                <Input label="Descrição:" name="descricao" value={novaOcorrencia.descricao} onChange={handleOcorrenciaChange} comp="grande" placeholder="Descreva a observação..." />
+                            </div>
+                            <div className={styles.coluna}>
+                                {ocorrenciaErro && <div className={styles.errorMsg}>{ocorrenciaErro}</div>}
+                                <Botao nome="Registrar Ocorrência" corFundo="#F29F05" corBorda="#8A6F3E" type="submit" />
+                            </div>
+                        </form>
+
+                        <div className={styles.gridContainer}>
+                            {ocorrencias.length === 0 ? (
+                                <p>Nenhuma ocorrência registrada.</p>
+                            ) : (
+                                ocorrencias.map((oc) => (
+                                    <div key={oc.id} className={styles.coluna} style={{ marginBottom: '12px' }}>
+                                        <strong>{oc.categoria === 'COMPORTAMENTAL' ? 'Comportamental' : 'Pedagógica'}</strong>
+                                        {' — '}{oc.data_ocorrencia}{' — registrado por '}{oc.autor_login}
+                                        <p>{oc.descricao}</p>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

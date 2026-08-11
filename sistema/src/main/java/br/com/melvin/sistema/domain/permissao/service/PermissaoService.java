@@ -45,6 +45,7 @@ public class PermissaoService {
         createIfNotFound("GERENCIAR_AVISOS", "ADM");
         createIfNotFound("VISUALIZAR_ALUNOS", "PROF,ADM,DIRE,COOR,ASSIST,PSICO");
         createIfNotFound("VISUALIZAR_RELATORIOS", "PROF,ADM,DIRE,COOR,ASSIST,PSICO");
+        createIfNotFound("GERENCIAR_OCORRENCIA", "PROF,COOR,DIRE,ADM");
     }
 
     private void createIfNotFound(String regra, String defaultRoles) {
