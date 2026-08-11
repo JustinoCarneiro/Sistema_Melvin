@@ -1,10 +1,13 @@
 package br.com.melvin.sistema.domain.cestas.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -45,5 +48,22 @@ public class Cestas {
     private String frequencia;   
     
     // REMOVIDO: private Boolean status;
-    private LocalDate dataEntrega; 
+    private LocalDate dataEntrega;
+
+    // --- US-7.4: Solicitação com agendamento e check-in por QR Code ---
+    // status é null pra registros antigos (cadastro direto, sem fluxo de solicitação).
+    @Enumerated(EnumType.STRING)
+    private StatusCesta status;
+
+    // Quem preencheu o link público (pode ser qualquer nível da hierarquia,
+    // não só o supervisor de setor) e a célula/beneficiário continua identificado
+    // pelos campos já existentes (rede, lider_celula).
+    private String nomeSolicitante;
+
+    @Enumerated(EnumType.STRING)
+    private NivelHierarquico nivelSolicitante;
+
+    private LocalDate dataRetirada;
+    private String qrCodeToken;
+    private LocalDateTime entregueEm;
 }

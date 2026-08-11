@@ -1,19 +1,25 @@
 package br.com.melvin.sistema.domain.cestas.service;
 
 import br.com.melvin.sistema.domain.cestas.model.Cestas;
+import br.com.melvin.sistema.domain.cestas.model.NivelHierarquico;
+import br.com.melvin.sistema.domain.cestas.model.StatusCesta;
 import br.com.melvin.sistema.domain.cestas.repository.CestasRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -106,5 +112,170 @@ public class CestasServiceTest {
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Doação não encontrada!", response.getBody());
+    }
+
+    // ============ US-7.4: Solicitação de Cesta ============
+
+    private Cestas createSolicitacao() {
+        Cestas c = new Cestas();
+        c.setNomeSolicitante("Maria Líder");
+        c.setNivelSolicitante(NivelHierarquico.SETOR);
+        c.setLider_celula("João da Célula 3");
+        c.setRede("Rede Norte");
+        return c;
+    }
+
+    @Test
+    public void testSolicitarComDadosValidosCriaComStatusSolicitada() {
+        Cestas solicitacao = createSolicitacao();
+        when(repositorio.save(any(Cestas.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ResponseEntity<?> response = cestasService.solicitar(solicitacao);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        ArgumentCaptor<Cestas> captor = ArgumentCaptor.forClass(Cestas.class);
+        verify(repositorio, times(1)).save(captor.capture());
+        assertEquals(StatusCesta.SOLICITADA, captor.getValue().getStatus());
+        assertNull(captor.getValue().getId());
+        assertNull(captor.getValue().getQrCodeToken());
+    }
+
+    @Test
+    public void testSolicitarSemNomeSolicitanteRetorna400() {
+        Cestas solicitacao = createSolicitacao();
+        solicitacao.setNomeSolicitante(null);
+
+        ResponseEntity<?> response = cestasService.solicitar(solicitacao);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        verify(repositorio, never()).save(any(Cestas.class));
+    }
+
+    @Test
+    public void testSolicitarSemNivelHierarquicoRetorna400() {
+        Cestas solicitacao = createSolicitacao();
+        solicitacao.setNivelSolicitante(null);
+
+        ResponseEntity<?> response = cestasService.solicitar(solicitacao);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        verify(repositorio, never()).save(any(Cestas.class));
+    }
+
+    @Test
+    public void testSolicitarIgnoraCamposDeFluxoInternoEnviadosNoPayload() {
+        // Requisitante mal-intencionado (ou bug de frontend) não deve conseguir
+        // criar uma solicitação já ENTREGUE/com token só preenchendo o payload.
+        Cestas solicitacao = createSolicitacao();
+        solicitacao.setStatus(StatusCesta.ENTREGUE);
+        solicitacao.setQrCodeToken("token-forjado");
+        solicitacao.setEntregueEm(LocalDateTime.now());
+        when(repositorio.save(any(Cestas.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        cestasService.solicitar(solicitacao);
+
+        ArgumentCaptor<Cestas> captor = ArgumentCaptor.forClass(Cestas.class);
+        verify(repositorio).save(captor.capture());
+        assertEquals(StatusCesta.SOLICITADA, captor.getValue().getStatus());
+        assertNull(captor.getValue().getQrCodeToken());
+        assertNull(captor.getValue().getEntregueEm());
+    }
+
+    @Test
+    public void testListarSolicitacoesDelegaParaRepositorioFiltrandoPorStatus() {
+        when(repositorio.findAllByStatus(StatusCesta.SOLICITADA)).thenReturn(List.of(new Cestas()));
+
+        List<Cestas> resultado = cestasService.listarSolicitacoes();
+
+        assertEquals(1, resultado.size());
+        verify(repositorio, times(1)).findAllByStatus(StatusCesta.SOLICITADA);
+    }
+
+    @Test
+    public void testValidarSolicitacaoPendenteGeraTokenEAgenda() {
+        UUID id = UUID.randomUUID();
+        Cestas existente = createSolicitacao();
+        existente.setId(id);
+        existente.setStatus(StatusCesta.SOLICITADA);
+        LocalDate dataRetirada = LocalDate.now().plusDays(3);
+
+        when(repositorio.findById(id)).thenReturn(Optional.of(existente));
+        when(repositorio.save(any(Cestas.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ResponseEntity<?> response = cestasService.validar(id, dataRetirada);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Cestas resultado = (Cestas) response.getBody();
+        assertEquals(StatusCesta.AGENDADA, resultado.getStatus());
+        assertEquals(dataRetirada, resultado.getDataRetirada());
+        assertNotNull(resultado.getQrCodeToken());
+    }
+
+    @Test
+    public void testValidarSolicitacaoInexistenteRetorna404() {
+        UUID id = UUID.randomUUID();
+        when(repositorio.findById(id)).thenReturn(Optional.empty());
+
+        ResponseEntity<?> response = cestasService.validar(id, LocalDate.now());
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testValidarSolicitacaoJaAgendadaRetorna409() {
+        UUID id = UUID.randomUUID();
+        Cestas existente = createSolicitacao();
+        existente.setId(id);
+        existente.setStatus(StatusCesta.AGENDADA);
+
+        when(repositorio.findById(id)).thenReturn(Optional.of(existente));
+
+        ResponseEntity<?> response = cestasService.validar(id, LocalDate.now());
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        verify(repositorio, never()).save(any(Cestas.class));
+    }
+
+    @Test
+    public void testCheckinComTokenAgendadoMarcaEntregue() {
+        Cestas existente = createSolicitacao();
+        existente.setStatus(StatusCesta.AGENDADA);
+        existente.setQrCodeToken("token-valido");
+
+        when(repositorio.findByQrCodeToken("token-valido")).thenReturn(existente);
+        when(repositorio.save(any(Cestas.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ResponseEntity<?> response = cestasService.checkin("token-valido");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Cestas resultado = (Cestas) response.getBody();
+        assertEquals(StatusCesta.ENTREGUE, resultado.getStatus());
+        assertNotNull(resultado.getEntregueEm());
+    }
+
+    @Test
+    public void testCheckinComTokenInexistenteRetorna404() {
+        when(repositorio.findByQrCodeToken("token-invalido")).thenReturn(null);
+
+        ResponseEntity<?> response = cestasService.checkin("token-invalido");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testCheckinComTokenJaEntregueRetorna409ENaoAlteraEntregueEm() {
+        LocalDateTime entregueOriginal = LocalDateTime.now().minusDays(1);
+        Cestas existente = createSolicitacao();
+        existente.setStatus(StatusCesta.ENTREGUE);
+        existente.setQrCodeToken("token-usado");
+        existente.setEntregueEm(entregueOriginal);
+
+        when(repositorio.findByQrCodeToken("token-usado")).thenReturn(existente);
+
+        ResponseEntity<?> response = cestasService.checkin("token-usado");
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals(entregueOriginal, existente.getEntregueEm());
+        verify(repositorio, never()).save(any(Cestas.class));
     }
 }

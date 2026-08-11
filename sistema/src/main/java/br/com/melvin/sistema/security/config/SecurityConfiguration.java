@@ -38,6 +38,9 @@ public class SecurityConfiguration {
     SecurityFilter securityFilter;
 
     @Autowired
+    br.com.melvin.sistema.domain.cestas.config.CestasSolicitacaoRateLimitFilter cestasRateLimitFilter;
+
+    @Autowired
     UrlFrontend urlFrontend;
     
     @Autowired
@@ -56,7 +59,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                     // --- ROTAS PÚBLICAS (Login e leituras abertas) ---
                     .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/frequenciavoluntario/**", "/frequenciadiscente/**", "/imagens/**", "/embaixador/**", "/app/docs/imagens_embaixadores/**", "/app/docs/diarios/**", "/app/docs/imagens_avisos/**", "/aviso", "/amigomelvin/stats", "/actuator/health").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/auth/login", "/frequenciavoluntario/**", "/embaixador/**", "/amigomelvin", "/amigomelvin/subscribe", "/amigomelvin/one-time", "/amigomelvin/items", "/v1/webhooks/payments").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/auth/login", "/frequenciavoluntario/**", "/embaixador/**", "/amigomelvin", "/amigomelvin/subscribe", "/amigomelvin/one-time", "/amigomelvin/items", "/v1/webhooks/payments", "/cestas/solicitacao").permitAll()
                     .requestMatchers(HttpMethod.PUT, "/frequenciavoluntario/**").permitAll()
 
                     // --- ROTAS AUTENTICADAS GERAIS ---
@@ -73,7 +76,15 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.PUT, "/auth/alterar_senha").hasRole("ADM")
 
                     // --- CESTAS E IMAGENS (Adicionado AUX) ---
-                    .requestMatchers(HttpMethod.POST, "/cestas").access((authentication, context) -> 
+                    .requestMatchers(HttpMethod.POST, "/cestas").access((authentication, context) ->
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
+
+                    // --- SOLICITAÇÃO DE CESTAS (US-7.4) — validação/check-in ficam com quem já gerencia cestas ---
+                    .requestMatchers(HttpMethod.GET, "/cestas/solicitacoes", "/cestas/qrcode/**").access((authentication, context) ->
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
+                    .requestMatchers(HttpMethod.PUT, "/cestas/solicitacao/**").access((authentication, context) ->
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
+                    .requestMatchers(HttpMethod.POST, "/cestas/checkin/**").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
                     .requestMatchers(HttpMethod.POST, "/imagens/**").hasAnyRole("ADM", "DIRE") // Imagens mantive restrito, mas pode abrir se precisar
                     
@@ -151,6 +162,7 @@ public class SecurityConfiguration {
                     .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(cestasRateLimitFilter, SecurityFilter.class)
                 .build();
     }
 

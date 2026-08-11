@@ -8,6 +8,7 @@ import AmigosMelvin from '@site/pages/AmigosMelvin';
 import CadastroAmigo from '@site/pages/CadastroAmigo';
 import Doacao from '@site/pages/Doacao';
 import NotaValor from '@site/pages/NotaValor';
+import SolicitarCesta from '@site/pages/SolicitarCesta';
 
 import { Login } from "@features/Auth";
 import { HomeApp } from "@features/Dashboard";
@@ -29,7 +30,7 @@ import { Voluntarios, VoluntarioForms, VoluntarioFrequencia as Voluntario_freque
 import { EmbaixadoresApp, EmbaixadorForms } from '@features/Embaixadores';
 import { AmigosMelvinApp, AmigoMelvinForms } from '@features/AmigosMelvin';
 import { Avisos, AvisoForms } from '@features/Avisos';
-import { Cestas, CestasForms } from '@features/Cestas';
+import { Cestas, CestasForms, SolicitacoesCestas } from '@features/Cestas';
 
 // --- FORMULÁRIOS ---
 
@@ -86,6 +87,7 @@ function SiteContent() {
                     <Route path="/cadastroamigo" element={<CadastroAmigo />} />
                     <Route path="/doacoes" element={<Doacao />} />
                     <Route path="/notatemvalor" element={<NotaValor />} />
+                    <Route path="/solicitarcesta" element={<SolicitarCesta />} />
                 </Routes>
             </main>
             <FooterSite />
@@ -145,6 +147,7 @@ function AppContent() {
                     <Route path="/cestas" element={<PrivateRoute role={perfisEquipe} element={Cestas} />} />
                     <Route path="/cestas/criar" element={<PrivateRoute role={perfisEquipe} element={CestasForms} />} />
                     <Route path="/cestas/editar/:id" element={<PrivateRoute role={perfisEquipe} element={CestasForms} />} />
+                    <Route path="/cestas/solicitacoes" element={<PrivateRoute role={perfisEquipe} element={SolicitacoesCestas} />} />
 
                     {/* --- OUTROS --- */}
                     <Route path="/rendimento_aluno/:matricula" element={<PrivateRoute role={perfisGerais} element={Rendimento} />} />
