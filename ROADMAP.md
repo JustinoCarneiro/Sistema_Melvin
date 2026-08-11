@@ -1,6 +1,6 @@
 # 🗺️ ROADMAP.md — Blueprint de Arquitetura e Contratos
 
-> **Última atualização:** 04/06/2026
+> **Última atualização:** 10/08/2026 (adição dos Módulos 11-13, Backlog)
 > **Metodologia:** Onda-Dev (Fase 3 — Blueprint)
 > **Referência:** [CLAUDE.md](./CLAUDE.md)
 
@@ -26,6 +26,9 @@
 | 8 | Diário + Rendimento | 🟢 Pequeno | 1-2 | ✅ Concluído |
 | 9 | Site Institucional (Público) | 🟢 Pequeno | 1-2 | ✅ Concluído |
 | 10 | Imagens e Mídias | 🟢 Pequeno | 1-2 | ✅ Concluído |
+| 11 | Notificação de Falta ao Responsável | 🟢 Pequeno | 1-2 | ✅ Concluído |
+| 12 | Registro de Ocorrências do Aluno | 🟡 Médio | 3-4 | 🔲 Backlog |
+| 13 | Solicitação de Cestas + Check-in QR Code | 🔴 Grande | 5-7 | 🔲 Backlog |
 
 ---
 
@@ -561,6 +564,74 @@ Tipos suportados: `embaixador`, `aviso`.
 
 ---
 
+## MÓDULO 11: NOTIFICAÇÃO DE FALTA AO RESPONSÁVEL
+**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído (10/08/2026)**
+
+> Épico de referência: [CLAUDE.md #Épico 5 — US-5.5](./CLAUDE.md)
+
+### Mudança de modelo
+`Discente` ganha campo novo `email_responsavel` (cifrado, `SensitiveDataConverter`) — nome snake_case pra seguir a convenção já usada em `contato_pai`/`contato_mae`/`contato_saida` no mesmo arquivo (não `emailResponsavel`, como a spec inicial cogitava). Migration `V12__Add_email_responsavel_to_discente.sql`.
+
+### Fluxo
+`FrequenciaDiscenteService.cadastrar()` passa a, ao salvar presença `F` em qualquer turno (manhã e/ou tarde), chamar `EmailService.sendEmail()` de forma assíncrona (best-effort — `EmailService` já engole falha de envio internamente, não derruba o cadastro de frequência). Sem `email_responsavel` cadastrado, a frequência é salva normalmente e nenhum envio é tentado. Sem contrato de API novo (é efeito colateral do `POST /frequenciadiscente` já existente).
+
+### Entrega (TDD)
+4 testes novos em `FrequenciaDiscenteServiceTest` (falta manhã, falta tarde, sem falta, falta sem e-mail cadastrado) — RED confirmado (erro de compilação por método inexistente) antes da implementação, GREEN depois. Suíte completa do backend: 50/50 verde. Campo "E-mail do Responsável" adicionado ao formulário de Aluno (frontend) — sem esse campo de UI a coluna nova nunca seria preenchida.
+
+---
+
+## MÓDULO 12: REGISTRO DE OCORRÊNCIAS DO ALUNO
+**Peso: 🟡 MÉDIO (~3-4 dias) | Status: 🔲 Backlog**
+
+> Épico de referência: [CLAUDE.md #Épico 3 — US-3.7](./CLAUDE.md)
+
+### Novo modelo: `Ocorrencia`
+| Campo | Tipo | Observação |
+|---|---|---|
+| `id` | UUID | PK |
+| `matriculaDiscente` | string | FK lógica pra `Discente` |
+| `categoria` | enum | `COMPORTAMENTAL`, `PEDAGOGICA` |
+| `descricao` | text (cifrado) | `SensitiveDataConverter` |
+| `autorId` | UUID | FK pra `User` (professor logado) |
+| `dataOcorrencia` | LocalDate | |
+| `criadoEm` | LocalDateTime | |
+
+### Contratos API (proposta)
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `POST` | `/ocorrencias` | Cria ocorrência (permissão `GERENCIAR_OCORRENCIA`) |
+| `GET` | `/ocorrencias/discente/{matricula}` | Histórico cronológico do aluno |
+| `DELETE` | `/ocorrencias/{id}` | Remove ocorrência (só autor ou ADM/DIRE) |
+
+Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, ADM]`.
+
+---
+
+## MÓDULO 13: SOLICITAÇÃO DE CESTAS + CHECK-IN QR CODE
+**Peso: 🔴 GRANDE (~5-7 dias) | Status: 🔲 Backlog**
+
+> Épico de referência: [CLAUDE.md #Épico 7 — US-7.4](./CLAUDE.md)
+
+### Mudança de modelo
+`Cestas` ganha máquina de estados nova: campo `status` (enum `SOLICITADA`, `AGENDADA`, `ENTREGUE`, `CANCELADA` — reintroduz um campo de status que havia sido removido do modelo atual), `dataRetirada` (LocalDate, definida na validação — distinto do `dataEntrega` atual, que vira a confirmação real do check-in), `qrCodeToken` (string única, gerada na transição pra `AGENDADA`) e `entregueEm` (LocalDateTime, preenchido no check-in).
+
+**Hierarquia da igreja (esclarecida pelo cliente, 10/08/2026):** célula → **setor** (liderado pelo *supervisor*) → área → distrito → rede. **Correção de escopo (mesma data):** qualquer nível da hierarquia pode ser o solicitante, não só o supervisor — o pedido é sempre *para um membro de uma célula específica*, mas quem preenche o link pode estar em qualquer nível acima dela. Por isso o modelo não ganha um campo fixo por nível (ex. só `setor`); ganha dois campos genéricos: `nomeSolicitante` (string) e `nivelSolicitante` (enum `CELULA`, `SETOR`, `AREA`, `DISTRITO`, `REDE`). O beneficiário/célula de destino da cesta continua identificado pelos campos que já existem (`liderCelula`, `rede`) — a mudança é só em *quem pede*, não em *pra quem é*.
+
+### Contratos API (proposta)
+| Método | Endpoint | Auth | Descrição |
+|---|---|---|---|
+| `POST` | `/cestas/solicitacao` | Público (`permitAll`) | Líder de qualquer nível cria solicitação (`nomeSolicitante` + `nivelSolicitante` + dados do beneficiário/célula) → status `SOLICITADA` |
+| `GET` | `/cestas/solicitacoes` | `GERENCIAR_CESTAS` | Lista solicitações pendentes de validação |
+| `PUT` | `/cestas/solicitacao/{id}/validar` | `GERENCIAR_CESTAS` | Define `dataRetirada` → status `AGENDADA`, gera `qrCodeToken` e o QR Code (imagem) |
+| `POST` | `/cestas/checkin/{qrCodeToken}` | `GERENCIAR_CESTAS` | Escaneamento no ato da entrega → status `ENTREGUE`. Retorna 409 se já estava `ENTREGUE` |
+
+### Riscos técnicos a mitigar antes de iniciar
+- Endpoint público novo (`/cestas/solicitacao`) sem qualquer proteção antiabuso — hoje **nenhum** endpoint `permitAll` do sistema tem rate limit/captcha; como este dispara um fluxo de validação interna (diferente de só salvar intenção de doação), recomenda-se pelo menos rate-limit básico por IP. Esse risco aumenta com a correção de escopo: como qualquer nível pode solicitar (sem exigir cadastro prévio de quem preenche), o link fica mais aberto do que a versão original (que cogitava restringir a supervisores cadastrados).
+- Geração/leitura de QR Code é capacidade nova no projeto — nenhuma lib hoje (nem backend nem frontend). Avaliar biblioteca de geração (Java) e leitor de câmera (frontend) antes de estimar o módulo com precisão.
+- Nova permissão dinâmica `SOLICITAR_CESTA` a criar — dado que agora qualquer nível pode solicitar, essa permissão provavelmente não serve mais pra restringir quem *acessa* o link (fica público pra qualquer líder), mas pode ainda ser útil pra uma eventual tela interna de acompanhamento das solicitações pelo próprio solicitante.
+
+---
+
 ## Modelagem de Dados (Resumo)
 
 | Entidade | Chave Primária | Campos Notáveis |
@@ -573,11 +644,12 @@ Tipos suportados: `embaixador`, `aviso`.
 | `FrequenciaVoluntario` | `id` | Mesma estrutura que FrequenciaDiscente |
 | `AmigoMelvin` | `id` (UUID) | `email`, `valorMensal`, `status` (DonorStatus), `mesesContribuindo`, `stripeCustomerId`, `stripeSubscriptionId` |
 | `DoacaoItem` | `id` | `nome`, `telefone`, `tipoItem`, `observacao` |
-| `Cestas` | `id` (UUID) | `nome`, `contato`, `rede`, `lider_celula`, `dataEntrega` |
+| `Cestas` | `id` (UUID) | `nome`, `contato`, `rede`, `lider_celula`, `dataEntrega`, *+ Backlog: `status`, `dataRetirada`, `qrCodeToken`, `entregueEm` (Módulo 13)* |
 | `Embaixador` | `id` (UUID) | `nome`, `apelido`, `descricao`, `instagram`, `status` |
 | `Aviso` | `id` (UUID) | `titulo`, `corpo`, `status`, `data_inicio`, `data_final` |
 | `Diario` | `id` | `matriculaAtrelada` (única), `fileName`, `filePath` |
 | `Imagem` | `id` | `idAtrelado`, `tipo`, `fileName`, `filePath` |
+| `Ocorrencia` *(Backlog, Módulo 12)* | `id` (UUID) | `matriculaDiscente`, `categoria`, `descricao` (cifrado), `autorId`, `dataOcorrencia` |
 
 ---
 
@@ -590,3 +662,4 @@ Tipos suportados: `embaixador`, `aviso`.
 | V3 | Refatoração AmigoMelvin para suportar assinaturas Stripe |
 | V4 | Criação tabela DoacaoItem |
 | V5 | Adição de campos dia/mensagem em AmigoMelvin |
+| *(a definir)* | **Backlog:** `emailResponsavel` em Discente (Módulo 11); tabela `Ocorrencia` (Módulo 12); `status`/`dataRetirada`/`qrCodeToken`/`entregueEm` em Cestas (Módulo 13) |

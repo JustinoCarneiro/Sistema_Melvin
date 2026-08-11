@@ -243,6 +243,30 @@ Quando abro a lista de alunos,
 Então vejo o botão "Adicionar" no cabeçalho da tabela, junto com outros botões de ação.
 ```
 
+#### US-3.7: Registrar Ocorrências do Aluno
+**Status:** 🔲 Backlog — aprovado pelo cliente em 10/08/2026 (ver ROADMAP.md), ainda não desenvolvido.
+
+**Como** professor,
+**eu quero** registrar observações comportamentais e pedagógicas pontuais sobre um aluno,
+**para que** o histórico fique documentado e não dependa só da minha memória.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o professor está na ficha do aluno,
+Quando ele registra uma ocorrência com categoria (comportamental/pedagógica), descrição e data,
+Então a ocorrência é salva vinculada à matrícula do aluno e ao autor (professor), com timestamp.
+
+Dado que existem múltiplas ocorrências para um aluno,
+Quando um coordenador ou diretor abre a ficha do aluno,
+Então vê o histórico completo em ordem cronológica (mais recente primeiro).
+
+Dado que um usuário sem a permissão GERENCIAR_OCORRENCIA tenta registrar uma ocorrência,
+Quando ele submete a requisição,
+Então o backend retorna 403 Forbidden.
+```
+
+> **Nota de implementação:** nova entidade (`Ocorrencia`), seguindo o padrão de `Aviso`/`Imagem` já existentes. Campo de descrição deve ser cifrado (`SensitiveDataConverter`) por conter observação comportamental de menor — mesmo tratamento dos demais dados sensíveis do Discente. **Nunca** deve aparecer em `DiscenteListagemDTO` (LGPD, US-3.2). Nova permissão dinâmica `GERENCIAR_OCORRENCIA`, default sugerido `[PROF, COOR, DIRE, ADM]`.
+
 ---
 
 ### ÉPICO 4: GESTÃO DE VOLUNTÁRIOS
@@ -296,6 +320,31 @@ Então o sistema retorna conflito (frequência já registrada).
 **Como** coordenador,
 **eu quero** exportar a frequência filtrada por mês, sala e turno em `.xlsx`,
 **para que** relatórios impressos sejam gerados para reuniões.
+
+#### US-5.5: Notificação Automática de Falta ao Responsável
+**Status:** ✅ Concluído (10/08/2026, ver ROADMAP.md Módulo 11).
+
+**Como** coordenador,
+**eu quero** que o responsável pelo aluno receba um aviso automático assim que uma falta é registrada,
+**para que** a família seja informada no mesmo dia, sem a coordenação precisar ligar — ajudando a identificar cedo sinais de vulnerabilidade da família.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que um professor registra presencaManha="F" ou presencaTarde="F" para um aluno com e-mail de responsável cadastrado,
+Quando o registro de frequência é salvo,
+Então um e-mail assíncrono é disparado ao responsável no mesmo dia, informando data e turno da falta.
+
+Dado que o aluno não possui e-mail de responsável cadastrado,
+Quando a falta é registrada,
+Então a frequência é salva normalmente (sem quebrar o fluxo) e nenhum e-mail é enviado.
+```
+
+> **Nota de implementação (atualizada na entrega):** campo novo `email_responsavel` em `Discente` (cifrado via `SensitiveDataConverter`) — nome em snake_case pra seguir a convenção real do arquivo (`contato_pai`/`contato_mae`/`contato_saida`), não `emailResponsavel` como cogitado inicialmente. Migration `V12__Add_email_responsavel_to_discente.sql`. Reaproveitado `EmailService.sendEmail()` (`shared/service/EmailService.java`), chamado a partir de `FrequenciaDiscenteService.cadastrar()`. Campo adicionado também ao formulário de Aluno (frontend), seção "Contexto Familiar" — sem isso a coluna nova nunca seria preenchida por ninguém.
+>
+> **Nota de escopo (pendente de decisão):** o cliente perguntou se esse aviso "daria pra ser no WhatsApp". Isso é um item à parte, maior — a proposta original já previa "Notificações via WhatsApp" como item 🔴 Grande. Levantamento de custo real (10/08/2026, ver `memoria-tecnica/decisoes/` a criar):
+> - **Via API oficial (Meta/WhatsApp Business Platform):** não é gratuita, mas também não é cara por mensagem — notificação de falta se enquadra em categoria "utilidade" (mensagem transacional ligada a um evento), tabelada em ~R$0,04–0,09 por envio no Brasil em 2026. O custo que realmente pesa não é a Meta, é a **mensalidade de um provedor/BSP** (Twilio, Zenvia, 360dialog etc.) — na faixa de R$200–1.200/mês no Brasil — necessária pra acessar a API oficial. Pro volume baixo do Instituto (poucas faltas/dia), o custo por mensagem seria irrisório, mas a mensalidade fixa do BSP pode não compensar.
+> - **Via biblioteca não-oficial** (ex. Baileys/whatsapp-web.js, que simulam o WhatsApp Web): sem mensalidade nem custo por mensagem, mas **violam os Termos de Uso do WhatsApp** — risco real de banimento do número usado, sem suporte oficial, quebra quando o WhatsApp muda o protocolo. Não recomendado pra uso institucional sério sem deixar esse risco explícito pro cliente.
+> Esta US cobre só a versão e-mail (🟢 Pequeno, como aprovado). Antes de comprometer prazo, alinhar com o cliente com esses números na mão se ele quer orçar o módulo de WhatsApp (provavelmente 🟡 Médio pela integração, não 🔴 só pelo custo por mensagem) ou seguir só com e-mail por ora.
 
 ---
 
@@ -406,6 +455,44 @@ Então alerta de kit_especial aparece no dashboard admin.
 **Como** coordenador,
 **eu quero** publicar avisos com título, corpo, imagem e período de exibição,
 **para que** voluntários e equipe sejam informados de comunicados importantes.
+
+#### US-7.4: Solicitar Cesta Básica com Agendamento e Check-in por QR Code
+**Status:** 🔲 Backlog — aprovado pelo cliente em 10/08/2026 (ver ROADMAP.md), ainda não desenvolvido. Substitui, no pedido do cliente, o item originalmente proposto como "Confirmação de leitura em avisos" — motivado por problemas reais na entrega de cestas.
+
+**Como** líder de qualquer nível da hierarquia da igreja (célula, setor, área, distrito ou rede),
+**eu quero** solicitar uma cesta básica em nome de um membro de célula, através de um link, sem precisar ligar ou ir pessoalmente até o instituto,
+**para que** o pedido chegue formalizado até a coordenação para validação, não importa em qual nível eu esteja na hierarquia.
+
+> **Hierarquia do Instituto (explicada pelo cliente, 10/08/2026):** o Instituto Melvin faz parte de uma igreja organizada em pequenos grupos (células). A estrutura, do menor pro maior nível, é: **pequeno grupo/célula → setor (liderado pelo *supervisor*) → área → distrito → rede**. "Supervisor" não é sinônimo de "líder de célula" nem de "rede" — é especificamente o líder de um *setor* (um nível acima da célula, um nível abaixo da área).
+>
+> **Correção de escopo (10/08/2026):** o cliente esclareceu que **qualquer nível pode solicitar**, não só o supervisor — o pedido é sempre *para um membro de uma célula específica*, mas quem preenche o link pode ser o próprio líder da célula, o supervisor do setor dela, ou alguém ainda mais acima (área/distrito/rede). O link não deve travar em um nível fixo; a solicitação precisa registrar **quem** pediu e **de qual nível**, além de qual célula/beneficiário é o destino da cesta.
+
+**Como** coordenador,
+**eu quero** validar as solicitações recebidas, definir a data de retirada e confirmar a entrega escaneando um QR Code,
+**para que** o instituto tenha rastreabilidade real de quem retirou cada cesta — resolvendo a falta de controle na entrega relatada pelo cliente.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que um líder (de qualquer nível: célula, setor, área, distrito ou rede) acessa o link público de solicitação de cesta,
+Quando ele informa seu nome, seu nível na hierarquia, e os dados do beneficiário/célula, e envia,
+Então a solicitação é criada com status SOLICITADA e a coordenação é notificada.
+
+Dado que uma solicitação está com status SOLICITADA,
+Quando o coordenador valida e define a data de retirada,
+Então o status muda para AGENDADA e um QR Code único é gerado para aquela solicitação.
+
+Dado que o beneficiário comparece no dia agendado para retirar a cesta,
+Quando a equipe do instituto escaneia o QR Code da solicitação,
+Então o status muda para ENTREGUE, com data/hora do check-in registrada.
+
+Dado que uma solicitação já está ENTREGUE,
+Quando alguém tenta escanear o mesmo QR Code novamente,
+Então o sistema recusa a ação e exibe "já retirada em [data/hora]" (evita dupla contagem de entrega).
+```
+
+> **Nota de implementação:** introduz máquina de estados nova (`SOLICITADA → AGENDADA → ENTREGUE`, com `CANCELADA` como saída em qualquer ponto) sobre `Cestas` — hoje é cadastro direto sem status (o campo `status` foi removido no passado do modelo atual). O link de solicitação é endpoint público (`permitAll`, mesmo padrão de `/amigomelvin`); **nenhum endpoint público do sistema hoje tem proteção antiabuso** (sem rate limit/captcha) — recomenda-se pelo menos um rate-limit básico antes de abrir esse link, já que ele passa a disparar um fluxo de validação interna. QR Code é capacidade nova no projeto (não existe hoje geração nem leitura) — sugestão: biblioteca de geração no backend (Java, ex. ZXing) + leitor de câmera no frontend para a equipe escanear no ato da entrega. Nova permissão dinâmica sugerida: `SOLICITAR_CESTA` (link público controlado) — validação e check-in reaproveitam `GERENCIAR_CESTAS` já existente.
+>
+> **Gap de modelagem encontrado (10/08/2026, revisado após correção de escopo):** o `Cestas` atual só tem campos fixos pra dois extremos da hierarquia (`rede`, `pastorRede` no topo; `liderCelula` na base) — modelo insuficiente agora que qualquer nível pode ser o solicitante. A nova solicitação precisa de dois campos genéricos, não um campo fixo por nível: `nomeSolicitante` (string) e `nivelSolicitante` (enum `CELULA`, `SETOR`, `AREA`, `DISTRITO`, `REDE`). O beneficiário/célula de destino da cesta continua identificado pelos campos que já existem (`liderCelula`, `rede`), como hoje — a mudança é só em *quem está pedindo*, não em *pra quem é a cesta*. Evitar tabela normalizada separada de área/distrito/rede (escopo maior do que o pedido); o enum resolve sem precisar disso.
 
 ---
 
@@ -523,6 +610,7 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev: vault
 | 06/06/2026 | Notificação ao Instituto para doações + correção de e-mail remetente | — (evolução, sem retorno de fase) | **E-mail remetente** corrigido de `contato@institutomelvin.org` (inexistente) para `imeh@igrejadapaz.com.br` (SMTP real). **Notificações ao Instituto:** adicionadas 5 notificações via `notifyInstituto()` — novo doador, pagamento confirmado, falha de pagamento, cancelamento por webhook e cancelamento manual. E-mail admin centralizado como `@Value("${app.admin-email}")` com default `imeh@igrejadapaz.com.br`. Embaixador já usava notificação ao Instituto, agora via método centralizado. |
 | 15/07/2026 | Auditoria de produção: 3 bugs de erro 500 corrigidos + configuração operacional Stripe finalizada | — (correção/evolução, sem retorno de fase) | **Correções de código:** (1) health check documentado (`/api/v1/health`) nunca existiu, retornava 403 — exposto `/actuator/health` (só status) e liberado no `SecurityConfiguration`; (2) webhook de pagamentos (`PaymentWebhookController`) vazava 500 com stack trace quando a requisição chegava sem corpo — `@RequestBody` tornado opcional, cai no tratamento 400 já existente; (3) login com matrícula inexistente retornava 500 em vez do 401 documentado na US-1.1 — `AuthorizationService.loadUserByUsername` repassava `null` de `findByLogin`, violando o contrato de `UserDetailsService`; agora lança `UsernameNotFoundException`. **Operacional (Stripe Dashboard):** Customer Portal configurado (cancelamento fim-de-ciclo + troca de cartão), e-mails automáticos de cartão expirando/falha ativados, Radar CVC ativado, logo/ícone do Instituto subidos em Branding. Radar CEP **não** ativado (formulário usa `hidePostalCode: true`, regra ficaria inerte — decisão documentada no `DEPLOY_CHECKLIST.md`). Backup do banco e checklist final de deploy verificados e marcados. |
 | 04/08/2026 | Auditoria de backup em produção: divergência entre o documentado (diário + criptografado) e o real (mensal + texto puro) corrigida, incluindo cópia off-site | — (correção, sem retorno de fase) | **Achado:** `docs/SEGURANCA_E_LGPD.md` e `docs/APRESENTACAO_PARA_O_INSTITUTO.md` prometiam backup diário e criptografado; o cron real (`/root/scripts/backup_postgres.sh`) rodava só 1x/mês, gerava `.sql` em texto puro, e mantinha só 1 backup por vez (retenção 30 dias + cadência mensal). Script também tinha senha do Postgres em texto puro num arquivo `755` (variável morta, nunca usada pelo `pg_dump`). **Correção:** cron alterado para diário (02h); dump agora passa por `gzip \| openssl enc -aes-256-cbc` antes de gravar (chave em `/root/scripts/.backup_encryption_key`, `chmod 600`); alerta por e-mail em falha via SMTP já existente (`SPRING_MAIL_*` do `.env`); senha morta removida; script `chmod 700`. Retenção de 30 dias agora mantém ~30 backups distintos (era 1). **Off-site:** `rclone` instalado no servidor com remote próprio (`gdrive:`, escopo `drive.file`, OAuth client dedicado no Google Cloud pra evitar rate-limit da chave compartilhada), enviando o dump cifrado pra `justinocarneiro161@gmail.com` ao final de cada execução, com retenção espelhada (30 dias) no remoto. Testado ponta a ponta com sucesso (dump → cifra → local → off-site → limpeza). Detalhes, comando de restauração e riscos pendentes (token OAuth em modo "Testando" expira em 7 dias; chave de criptografia só existe no servidor) em `memoria-tecnica/decisoes/backup-melvin-diario-criptografado.md`. **Extensão pro Sistema Lucas (mesmo dia):** o mesmo remote `gdrive:` foi reaproveitado pro backup do Lucas (projeto/repo separado, também neste servidor) — dump agora criptografado (chave própria, distinta da do Melvin) e enviado pra `gdrive:sistema-lucas-backups/`, alerta usando o SMTP do próprio Lucas (não o do Instituto). Aplicado só na cópia do script já implantada no servidor (backup do original em `backup.sh.bak_pre_20260804`) — o repositório-fonte do Lucas está fora do alcance desta sessão, então uma reimplantação futura sem essa mesma mudança reverteria o comportamento. App OAuth publicado em produção no mesmo dia (sem exigir verificação do Google, escopo `drive.file`), eliminando o risco de expiração em 7 dias. **Pendente:** estender off-site pro SAW HUB também (infra já existe, reaproveitável). |
+| 10/08/2026 | Cliente aprovou 3 evoluções de escopo pós-produção (proposta de benchmark enviada, resposta do cliente via WhatsApp) | — (evolução, sem retorno de fase) | Adicionadas US-5.5 (notificação automática de falta ao responsável, 🟢 Pequeno — versão e-mail; pergunta do cliente sobre WhatsApp registrada como nota de escopo separada, não aprovada ainda), US-3.7 (registro de ocorrências do aluno, 🟡 Médio) e US-7.4 (solicitação de cesta básica com agendamento e check-in por QR Code, 🔴 Grande — substituiu no pedido do cliente o item originalmente proposto de "confirmação de leitura em avisos"; motivado por problema real relatado na entrega de cestas, sem rastreabilidade de quem retirou). Todas as 3 em status Backlog, ainda não desenvolvidas — ver ROADMAP.md Módulos 11-13. Cards espelhados no Trello (Sistema Melvin, lista Backlog). Aprovações equivalentes de Sistema Lucas (NPS pós-consulta, lembrete WhatsApp, lista de espera) ficam fora do escopo deste CLAUDE.md — projeto/repo separado — mas foram espelhadas no Trello do Lucas nesta mesma sessão. |
 
 
 ## Diretivas de Gestão (Regra de Ouro do Trello)
