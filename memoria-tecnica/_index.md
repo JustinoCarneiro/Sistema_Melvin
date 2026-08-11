@@ -22,6 +22,7 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev (avali
 - [[webhook-500-stacktrace-sem-body]]
 - [[login-500-em-vez-de-401]]
 - [[campo-novo-opcional-nao-persiste-nem-aceita-null]]
+- [[rate-limit-burlavel-por-x-forwarded-for-forjado]]
 
 ## Decisões
 - [[idempotencia-dedup-pagamentos-stripe]]

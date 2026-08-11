@@ -78,8 +78,17 @@ public class FrequenciaDiscenteService {
     // US-5.5: notifica o responsável por e-mail quando falta em qualquer turno é registrada.
     // Best-effort — EmailService já engole falha de envio internamente (não deve derrubar o cadastro de frequência).
     private void notificarFaltaResponsavel(FrequenciaDiscente frequencia, Discente discente) {
-        boolean faltouManha = "F".equals(frequencia.getPresenca_manha());
-        boolean faltouTarde = "F".equals(frequencia.getPresenca_tarde());
+        notificarFaltaResponsavel(frequencia, discente, null, null);
+    }
+
+    // Variante para edição: `manhaAnterior`/`tardeAnterior` trazem o estado antes da
+    // alteração, para notificar só a falta NOVA. Sem isso, ou a falta lançada em uma
+    // segunda gravação do mesmo dia nunca avisa (fluxo real da tela de chamada, que
+    // manda PUT quando matrícula+data já existem), ou reenvia o aviso a cada gravação.
+    private void notificarFaltaResponsavel(FrequenciaDiscente frequencia, Discente discente,
+                                           String manhaAnterior, String tardeAnterior) {
+        boolean faltouManha = "F".equals(frequencia.getPresenca_manha()) && !"F".equals(manhaAnterior);
+        boolean faltouTarde = "F".equals(frequencia.getPresenca_tarde()) && !"F".equals(tardeAnterior);
         if (!faltouManha && !faltouTarde) {
             return;
         }
@@ -107,6 +116,10 @@ public class FrequenciaDiscenteService {
         } else {
             UUID id = existente.getId();
 
+            // Estado anterior guardado ANTES da sobrescrita, para saber se a falta é nova (US-5.5).
+            String manhaAnterior = existente.getPresenca_manha();
+            String tardeAnterior = existente.getPresenca_tarde();
+
             existente.setNome(frequencia.getNome());
             existente.setPresenca_manha(frequencia.getPresenca_manha());
             existente.setPresenca_tarde(frequencia.getPresenca_tarde());
@@ -115,7 +128,14 @@ public class FrequenciaDiscenteService {
 
             existente.setId(id);
 
-            return new ResponseEntity<FrequenciaDiscente>(repository.save(existente), HttpStatus.OK);
+            FrequenciaDiscente salva = repository.save(existente);
+
+            Discente discente = repositoryDiscente.findByMatricula(salva.getMatricula());
+            if (discente != null) {
+                notificarFaltaResponsavel(salva, discente, manhaAnterior, tardeAnterior);
+            }
+
+            return new ResponseEntity<FrequenciaDiscente>(salva, HttpStatus.OK);
         }
     }
 

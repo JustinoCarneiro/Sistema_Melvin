@@ -22,6 +22,7 @@ function NavBar({ close }) {
         { show: isAdm || isDire || hasPermission('GERENCIAR_EMBAIXADORES'), to: "/app/embaixadores", icon: <TbSocial />, label: "Embaixadores" },
         { show: isAdm || isDire || hasPermission('GERENCIAR_AMIGOS'), to: "/app/amigosmelvin", icon: <LuHeartHandshake />, label: "Amigos Melvin" },
         { show: (isAdm || isDire || isAux || hasPermission('GERENCIAR_CESTAS')), to: "/app/cestas", icon: <IoBasket />, label: "Doações" },
+        { show: (isAdm || isDire || isAux || hasPermission('GERENCIAR_CESTAS')), to: "/app/cestas/solicitacoes", icon: <IoBasket />, label: "Solicitações de Cesta" },
         { show: isAdm || hasPermission('GERENCIAR_AVISOS'), to: "/app/avisos", icon: <GoAlertFill />, label: "Avisos" },
     ];
 

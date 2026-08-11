@@ -30,6 +30,7 @@ public class CestasSolicitacaoRateLimitFilter extends OncePerRequestFilter {
     private static final String PATH = "/cestas/solicitacao";
     private static final int CAPACIDADE = 5;
     private static final Duration JANELA = Duration.ofHours(1);
+    private static final int MAX_IPS_MONITORADOS = 10_000;
 
     private final ConcurrentMap<String, Bucket> buckets = new ConcurrentHashMap<>();
 
@@ -42,6 +43,15 @@ public class CestasSolicitacaoRateLimitFilter extends OncePerRequestFilter {
         }
 
         String ip = extrairIp(request);
+
+        // Teto de segurança: o mapa vive em memória e nunca expira sozinho. Com o heap
+        // limitado a 512m (ver memoria-tecnica/bugs/heap-exhaustion-504-cronico.md), um
+        // volume atípico de IPs distintos não pode crescer sem limite. Ao encher, zera —
+        // é preferível reabrir a janela de alguns IPs a arriscar a memória do processo.
+        if (buckets.size() >= MAX_IPS_MONITORADOS && !buckets.containsKey(ip)) {
+            buckets.clear();
+        }
+
         Bucket bucket = buckets.computeIfAbsent(ip, k -> criarBucket());
 
         if (bucket.tryConsume(1)) {
@@ -58,11 +68,26 @@ public class CestasSolicitacaoRateLimitFilter extends OncePerRequestFilter {
         return Bucket.builder().addLimit(limite).build();
     }
 
+    /**
+     * A chave do limite precisa ser um valor que o cliente NÃO controle.
+     * `X-Real-IP` é sobrescrito pelo nginx com `$remote_addr` (o IP da conexão TCP),
+     * então é confiável. Já `X-Forwarded-For` chega como "<valor do cliente>, <ip real>"
+     * por causa do `$proxy_add_x_forwarded_for` — usar o começo dele deixaria o próprio
+     * cliente escolher a chave, burlando o limite e criando um bucket por valor forjado.
+     * Por isso, no fallback, vale o ÚLTIMO elemento (o que o nginx anexou).
+     */
     private String extrairIp(HttpServletRequest request) {
+        String realIp = request.getHeader("X-Real-IP");
+        if (realIp != null && !realIp.isBlank()) {
+            return realIp.trim();
+        }
+
         String forwarded = request.getHeader("X-Forwarded-For");
         if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
+            String[] partes = forwarded.split(",");
+            return partes[partes.length - 1].trim();
         }
+
         return request.getRemoteAddr();
     }
 }

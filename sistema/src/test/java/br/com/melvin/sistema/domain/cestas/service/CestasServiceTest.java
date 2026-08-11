@@ -4,6 +4,7 @@ import br.com.melvin.sistema.domain.cestas.model.Cestas;
 import br.com.melvin.sistema.domain.cestas.model.NivelHierarquico;
 import br.com.melvin.sistema.domain.cestas.model.StatusCesta;
 import br.com.melvin.sistema.domain.cestas.repository.CestasRepository;
+import br.com.melvin.sistema.shared.service.EmailService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,6 +31,9 @@ public class CestasServiceTest {
 
     @Mock
     private CestasRepository repositorio;
+
+    @Mock
+    private EmailService emailService;
 
     @InjectMocks
     private CestasService cestasService;
@@ -139,6 +144,30 @@ public class CestasServiceTest {
         assertEquals(StatusCesta.SOLICITADA, captor.getValue().getStatus());
         assertNull(captor.getValue().getId());
         assertNull(captor.getValue().getQrCodeToken());
+    }
+
+    @Test
+    public void testSolicitarNotificaCoordenacao() {
+        // Critério de aceite da US-7.4: "a solicitação é criada com status
+        // SOLICITADA E A COORDENAÇÃO É NOTIFICADA". Sem isso o pedido entra no
+        // sistema e ninguém fica sabendo — a coordenação teria que ficar abrindo
+        // a tela pra conferir, o que derrota o propósito do fluxo.
+        Cestas solicitacao = createSolicitacao();
+        when(repositorio.save(any(Cestas.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        cestasService.solicitar(solicitacao);
+
+        verify(emailService, times(1)).notifyInstituto(anyString(), anyString());
+    }
+
+    @Test
+    public void testSolicitacaoInvalidaNaoNotificaCoordenacao() {
+        Cestas solicitacao = createSolicitacao();
+        solicitacao.setNomeSolicitante(null);
+
+        cestasService.solicitar(solicitacao);
+
+        verify(emailService, never()).notifyInstituto(anyString(), anyString());
     }
 
     @Test

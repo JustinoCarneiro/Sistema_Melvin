@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import br.com.melvin.sistema.domain.cestas.model.Cestas;
 import br.com.melvin.sistema.domain.cestas.model.StatusCesta;
 import br.com.melvin.sistema.domain.cestas.repository.CestasRepository;
+import br.com.melvin.sistema.shared.service.EmailService;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -24,6 +25,9 @@ public class CestasService {
     
     @Autowired
     CestasRepository repositorio;
+
+    @Autowired
+    EmailService emailService;
 
     public List<Cestas> listar(){
         return repositorio.findAll();
@@ -107,7 +111,23 @@ public class CestasService {
         solicitacao.setEntregueEm(null);
 
         Cestas salva = repositorio.save(solicitacao);
+        notificarCoordenacao(salva);
         return new ResponseEntity<Cestas>(salva, HttpStatus.CREATED);
+    }
+
+    // US-7.4: sem este aviso a solicitação entra no sistema e ninguém fica sabendo —
+    // a coordenação precisaria abrir a tela periodicamente pra descobrir. Best-effort:
+    // EmailService já engole falha de envio, não derruba a criação da solicitação.
+    private void notificarCoordenacao(Cestas solicitacao) {
+        String corpo = "Uma nova solicitação de cesta básica foi recebida.\n\n"
+                + "Solicitante: " + solicitacao.getNomeSolicitante()
+                + " (" + solicitacao.getNivelSolicitante() + ")\n"
+                + "Beneficiário: " + solicitacao.getNome() + "\n"
+                + "Célula: " + (solicitacao.getLider_celula() != null ? solicitacao.getLider_celula() : "-") + "\n"
+                + "Rede: " + (solicitacao.getRede() != null ? solicitacao.getRede() : "-") + "\n\n"
+                + "Acesse o painel para validar e agendar a retirada.";
+
+        emailService.notifyInstituto("Nova solicitação de cesta básica", corpo);
     }
 
     public List<Cestas> listarSolicitacoes() {

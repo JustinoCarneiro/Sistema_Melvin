@@ -99,6 +99,53 @@ class FrequenciaDiscenteServiceTest {
     }
 
     @Test
+    public void testAlterarQueIntroduzFaltaDisparaNotificacao() {
+        // Caso real: o professor salva a chamada da manhã (cria o registro do dia) e
+        // só depois lança o turno da tarde. Como matrícula+data já existem, o frontend
+        // manda PUT — se o alterar() não notificar, faltas da tarde nunca avisam ninguém.
+        FrequenciaDiscente existente = createFrequencia("2026001", "P", "P");
+        FrequenciaDiscente atualizada = createFrequencia("2026001", "P", "F");
+        Discente discente = createDiscente("2026001", "responsavel@email.com");
+
+        when(repository.findByMatriculaAndData(eq("2026001"), any())).thenReturn(existente);
+        when(repositoryDiscente.findByMatricula("2026001")).thenReturn(discente);
+        when(repository.save(any(FrequenciaDiscente.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        service.alterar(atualizada);
+
+        verify(emailService, times(1)).sendEmail(eq("responsavel@email.com"), anyString(), anyString());
+    }
+
+    @Test
+    public void testAlterarQueMantemFaltaJaExistenteNaoReenviaEmail() {
+        // Salvar a mesma chamada de novo não pode gerar um segundo aviso para a família.
+        FrequenciaDiscente existente = createFrequencia("2026001", "F", "P");
+        FrequenciaDiscente atualizada = createFrequencia("2026001", "F", "P");
+        Discente discente = createDiscente("2026001", "responsavel@email.com");
+
+        when(repository.findByMatriculaAndData(eq("2026001"), any())).thenReturn(existente);
+        when(repository.save(any(FrequenciaDiscente.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        service.alterar(atualizada);
+
+        verify(emailService, never()).sendEmail(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void testAlterarQueCorrigeFaltaParaPresencaNaoDisparaEmail() {
+        FrequenciaDiscente existente = createFrequencia("2026001", "F", "P");
+        FrequenciaDiscente atualizada = createFrequencia("2026001", "P", "P");
+        Discente discente = createDiscente("2026001", "responsavel@email.com");
+
+        when(repository.findByMatriculaAndData(eq("2026001"), any())).thenReturn(existente);
+        when(repository.save(any(FrequenciaDiscente.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        service.alterar(atualizada);
+
+        verify(emailService, never()).sendEmail(anyString(), anyString(), anyString());
+    }
+
+    @Test
     public void testFaltaSemEmailResponsavelNaoQuebraFluxoNemDisparaEmail() {
         FrequenciaDiscente frequencia = createFrequencia("2026001", "F", "P");
         Discente discente = createDiscente("2026001", null);

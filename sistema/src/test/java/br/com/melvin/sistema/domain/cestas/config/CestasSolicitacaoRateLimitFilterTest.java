@@ -72,6 +72,28 @@ class CestasSolicitacaoRateLimitFilterTest {
     }
 
     @Test
+    void naoAceitaXForwardedForForjadoParaBurlarOLimite() throws Exception {
+        // O nginx usa $proxy_add_x_forwarded_for, que ANEXA o IP real ao que o cliente
+        // mandou. Se a chave sair do começo do header, o cliente escolhe a própria chave:
+        // troca o valor a cada request e o limite nunca fecha — além de criar um bucket
+        // novo por valor forjado (vazamento de memória, com histórico de 504 no projeto).
+        FilterChain chain = mock(FilterChain.class);
+
+        for (int i = 0; i < 6; i++) {
+            MockHttpServletRequest req = solicitacaoRequest("7.7.7.7");
+            req.addHeader("X-Forwarded-For", "1.2.3." + i + ", 7.7.7.7");
+            filter.doFilterInternal(req, new MockHttpServletResponse(), chain);
+        }
+
+        MockHttpServletResponse resposta = new MockHttpServletResponse();
+        MockHttpServletRequest req = solicitacaoRequest("7.7.7.7");
+        req.addHeader("X-Forwarded-For", "9.9.9.9, 7.7.7.7");
+        filter.doFilterInternal(req, resposta, chain);
+
+        assertEquals(429, resposta.getStatus());
+    }
+
+    @Test
     void naoMisturaLimitesDeIpsDiferentes() throws Exception {
         FilterChain chain = mock(FilterChain.class);
 
