@@ -457,7 +457,7 @@ Então alerta de kit_especial aparece no dashboard admin.
 **para que** voluntários e equipe sejam informados de comunicados importantes.
 
 #### US-7.4: Solicitar Cesta Básica com Agendamento e Check-in por QR Code
-**Status:** 🔲 Backlog — aprovado pelo cliente em 10/08/2026 (ver ROADMAP.md), ainda não desenvolvido. Substitui, no pedido do cliente, o item originalmente proposto como "Confirmação de leitura em avisos" — motivado por problemas reais na entrega de cestas.
+**Status:** ✅ Concluído (10/08/2026, ver ROADMAP.md Módulo 13). Substitui, no pedido do cliente, o item originalmente proposto como "Confirmação de leitura em avisos" — motivado por problemas reais na entrega de cestas.
 
 **Como** líder de qualquer nível da hierarquia da igreja (célula, setor, área, distrito ou rede),
 **eu quero** solicitar uma cesta básica em nome de um membro de célula, através de um link, sem precisar ligar ou ir pessoalmente até o instituto,
@@ -490,9 +490,13 @@ Quando alguém tenta escanear o mesmo QR Code novamente,
 Então o sistema recusa a ação e exibe "já retirada em [data/hora]" (evita dupla contagem de entrega).
 ```
 
-> **Nota de implementação:** introduz máquina de estados nova (`SOLICITADA → AGENDADA → ENTREGUE`, com `CANCELADA` como saída em qualquer ponto) sobre `Cestas` — hoje é cadastro direto sem status (o campo `status` foi removido no passado do modelo atual). O link de solicitação é endpoint público (`permitAll`, mesmo padrão de `/amigomelvin`); **nenhum endpoint público do sistema hoje tem proteção antiabuso** (sem rate limit/captcha) — recomenda-se pelo menos um rate-limit básico antes de abrir esse link, já que ele passa a disparar um fluxo de validação interna. QR Code é capacidade nova no projeto (não existe hoje geração nem leitura) — sugestão: biblioteca de geração no backend (Java, ex. ZXing) + leitor de câmera no frontend para a equipe escanear no ato da entrega. Nova permissão dinâmica sugerida: `SOLICITAR_CESTA` (link público controlado) — validação e check-in reaproveitam `GERENCIAR_CESTAS` já existente.
+> **Nota de implementação (atualizada na entrega):** máquina de estados nova (`SOLICITADA → AGENDADA → ENTREGUE`, com `CANCELADA` previsto no enum como saída) sobre `Cestas`, reintroduzindo o campo `status` — nullable, para que os cadastros diretos já existentes (sem fluxo de solicitação) fiquem com `status` NULL e sigam distinguíveis das solicitações reais. Campos do solicitante genéricos (`nomeSolicitante` + `nivelSolicitante`, enum `CELULA/SETOR/AREA/DISTRITO/REDE`), não um campo fixo por nível — o beneficiário/célula continua identificado por `lider_celula`/`rede`, que já existiam. Migration `V14`.
 >
-> **Gap de modelagem encontrado (10/08/2026, revisado após correção de escopo):** o `Cestas` atual só tem campos fixos pra dois extremos da hierarquia (`rede`, `pastorRede` no topo; `liderCelula` na base) — modelo insuficiente agora que qualquer nível pode ser o solicitante. A nova solicitação precisa de dois campos genéricos, não um campo fixo por nível: `nomeSolicitante` (string) e `nivelSolicitante` (enum `CELULA`, `SETOR`, `AREA`, `DISTRITO`, `REDE`). O beneficiário/célula de destino da cesta continua identificado pelos campos que já existem (`liderCelula`, `rede`), como hoje — a mudança é só em *quem está pedindo*, não em *pra quem é a cesta*. Evitar tabela normalizada separada de área/distrito/rede (escopo maior do que o pedido); o enum resolve sem precisar disso.
+> **Segurança do endpoint público:** `POST /cestas/solicitacao` é `permitAll` (mesmo padrão de `/amigomelvin`), mas — diferente dos demais endpoints públicos — recebeu **rate limit** (5 solicitações/hora por IP, Bucket4j), por ser o único que dispara um fluxo de trabalho interno da coordenação. Decisão e trade-offs em `memoria-tecnica/decisoes/rate-limit-apenas-solicitacao-cesta.md`. O service **ignora campos de fluxo interno vindos no payload** (`status`, `qrCodeToken`, `entregueEm`, `id`): a solicitação sempre nasce em `SOLICITADA`, sem token — payload público não consegue forjar uma cesta já entregue.
+>
+> **QR Code:** capacidade nova no projeto, via ZXing (`core` + `javase`). Token é um UUID gerado na transição para `AGENDADA` (único no banco); `GET /cestas/qrcode/{token}` devolve o PNG e é **autenticado** (`GERENCIAR_CESTAS`) — o QR é gerado para a equipe imprimir/enviar, não é página pública. A leitura no ato da entrega é feita colando/escaneando o token na tela de solicitações; **não** foi implementado leitor de câmera no navegador (ver "Fora do escopo" no ROADMAP).
+>
+> **Permissões:** validação, check-in e geração de QR reaproveitam `GERENCIAR_CESTAS` (já existente). A permissão `SOLICITAR_CESTA` cogitada na especificação **não foi criada** — perdeu o sentido quando o cliente esclareceu que qualquer nível da hierarquia pode solicitar, sem cadastro prévio no sistema (o link é aberto, protegido por rate limit em vez de permissão).
 
 ---
 

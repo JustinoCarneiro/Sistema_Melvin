@@ -28,7 +28,7 @@
 | 10 | Imagens e Mídias | 🟢 Pequeno | 1-2 | ✅ Concluído |
 | 11 | Notificação de Falta ao Responsável | 🟢 Pequeno | 1-2 | ✅ Concluído |
 | 12 | Registro de Ocorrências do Aluno | 🟡 Médio | 3-4 | ✅ Concluído |
-| 13 | Solicitação de Cestas + Check-in QR Code | 🔴 Grande | 5-7 | 🔲 Backlog |
+| 13 | Solicitação de Cestas + Check-in QR Code | 🔴 Grande | 5-7 | ✅ Concluído |
 
 ---
 
@@ -614,7 +614,7 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 ---
 
 ## MÓDULO 13: SOLICITAÇÃO DE CESTAS + CHECK-IN QR CODE
-**Peso: 🔴 GRANDE (~5-7 dias) | Status: 🔲 Backlog**
+**Peso: 🔴 GRANDE (~5-7 dias) | Status: ✅ Concluído (10/08/2026)**
 
 > Épico de referência: [CLAUDE.md #Épico 7 — US-7.4](./CLAUDE.md)
 
@@ -631,10 +631,21 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 | `PUT` | `/cestas/solicitacao/{id}/validar` | `GERENCIAR_CESTAS` | Define `dataRetirada` → status `AGENDADA`, gera `qrCodeToken` e o QR Code (imagem) |
 | `POST` | `/cestas/checkin/{qrCodeToken}` | `GERENCIAR_CESTAS` | Escaneamento no ato da entrega → status `ENTREGUE`. Retorna 409 se já estava `ENTREGUE` |
 
-### Riscos técnicos a mitigar antes de iniciar
-- Endpoint público novo (`/cestas/solicitacao`) sem qualquer proteção antiabuso — hoje **nenhum** endpoint `permitAll` do sistema tem rate limit/captcha; como este dispara um fluxo de validação interna (diferente de só salvar intenção de doação), recomenda-se pelo menos rate-limit básico por IP. Esse risco aumenta com a correção de escopo: como qualquer nível pode solicitar (sem exigir cadastro prévio de quem preenche), o link fica mais aberto do que a versão original (que cogitava restringir a supervisores cadastrados).
-- Geração/leitura de QR Code é capacidade nova no projeto — nenhuma lib hoje (nem backend nem frontend). Avaliar biblioteca de geração (Java) e leitor de câmera (frontend) antes de estimar o módulo com precisão.
-- Nova permissão dinâmica `SOLICITAR_CESTA` a criar — dado que agora qualquer nível pode solicitar, essa permissão provavelmente não serve mais pra restringir quem *acessa* o link (fica público pra qualquer líder), mas pode ainda ser útil pra uma eventual tela interna de acompanhamento das solicitações pelo próprio solicitante.
+### Riscos técnicos — como ficaram na entrega
+- **Endpoint público sem proteção antiabuso → resolvido.** `POST /cestas/solicitacao` recebeu rate limit de 5 solicitações/hora por IP (`CestasSolicitacaoRateLimitFilter`, Bucket4j 8.19.0), com IP lido de `X-Forwarded-For` por causa do nginx. Escopo deliberadamente cirúrgico: só este endpoint, não os demais públicos (que seguem sem proteção). Decisão, calibragem e armadilha de ordem de registro do filtro em `memoria-tecnica/decisoes/rate-limit-apenas-solicitacao-cesta.md`.
+- **Payload público não pode forjar estado.** `solicitar()` zera `id`, `status`, `dataRetirada`, `qrCodeToken` e `entregueEm` antes de salvar — sem isso, um POST manual criaria uma cesta já `ENTREGUE` com token escolhido pelo atacante. Coberto por teste.
+- **QR Code → ZXing** (`core` + `javase`, 3.5.4). Token = UUID gerado na transição para `AGENDADA`, único no banco. `GET /cestas/qrcode/{token}` devolve PNG e é **autenticado** (`GERENCIAR_CESTAS`) — o QR é material da equipe, não página pública.
+- **Permissão `SOLICITAR_CESTA` não foi criada** — perdeu o sentido com a correção de escopo (qualquer nível solicita, sem cadastro prévio). Validação, check-in e QR reaproveitam `GERENCIAR_CESTAS`.
+
+### Fora do escopo desta entrega
+- **Leitor de câmera no navegador.** A tela de solicitações aceita o token colado/escaneado por leitor externo, mas não abre a câmera via `getUserMedia`. Exigiria lib de leitura no frontend + HTTPS + permissão de câmera; os critérios de aceite falam em "escanear o QR Code", o que um leitor de código de barras/celular já atende. Item natural de evolução se a equipe pedir.
+- **Notificação automática à coordenação** quando chega solicitação nova (o critério de aceite menciona "a coordenação é notificada"): hoje a coordenação vê a fila na tela de solicitações. O disparo de e-mail via `EmailService.notifyInstituto()` é plugável no `solicitar()` — não foi incluído pra não ampliar a entrega sem alinhamento sobre volume de e-mail.
+- **Transição `CANCELADA`** existe no enum mas não tem endpoint que a acione.
+
+### Entrega (TDD)
+15 testes novos: `CestasServiceTest` passou de 6 para 17 (11 novos cobrindo solicitar/validar/checkin, incluindo os 409 de dupla retirada e de validação repetida, e o teste de payload forjado) + `CestasSolicitacaoRateLimitFilterTest` (4 — passa em outras rotas, respeita o limite, bloqueia com 429, não mistura IPs). Suíte completa do backend: **70/70 verde**, incluindo `SistemaApplicationTests` (que pegou de verdade um erro de ordem de registro do filtro). Frontend: página pública `/solicitarcesta` + tela interna `/app/cestas/solicitacoes`, lint limpo nos arquivos novos e `npm run build` OK.
+
+> ⚠️ **Migration V14 não pôde ser validada contra Postgres real nesta sessão** (Docker local inativo; o perfil de teste usa H2 com Flyway desabilitado, então nenhuma migration do projeto é exercida em teste). A sintaxe segue precedentes já em produção no próprio projeto: `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` (V7) e `CREATE UNIQUE INDEX IF NOT EXISTS` (V9). Vale conferir o log do Flyway no primeiro deploy.
 
 ---
 
@@ -650,7 +661,7 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 | `FrequenciaVoluntario` | `id` | Mesma estrutura que FrequenciaDiscente |
 | `AmigoMelvin` | `id` (UUID) | `email`, `valorMensal`, `status` (DonorStatus), `mesesContribuindo`, `stripeCustomerId`, `stripeSubscriptionId` |
 | `DoacaoItem` | `id` | `nome`, `telefone`, `tipoItem`, `observacao` |
-| `Cestas` | `id` (UUID) | `nome`, `contato`, `rede`, `lider_celula`, `dataEntrega`, *+ Backlog: `status`, `dataRetirada`, `qrCodeToken`, `entregueEm` (Módulo 13)* |
+| `Cestas` | `id` (UUID) | `nome`, `contato`, `rede`, `lider_celula`, `dataEntrega`, `status` (StatusCesta, null nos cadastros diretos antigos), `nomeSolicitante`, `nivelSolicitante` (NivelHierarquico), `dataRetirada`, `qrCodeToken`, `entregueEm` |
 | `Embaixador` | `id` (UUID) | `nome`, `apelido`, `descricao`, `instagram`, `status` |
 | `Aviso` | `id` (UUID) | `titulo`, `corpo`, `status`, `data_inicio`, `data_final` |
 | `Diario` | `id` | `matriculaAtrelada` (única), `fileName`, `filePath` |
@@ -670,4 +681,4 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 | V5 | Adição de campos dia/mensagem em AmigoMelvin |
 | V12 | `email_responsavel` em Discente (Módulo 11 — notificação de falta) |
 | V13 | Criação da tabela `Ocorrencia` (Módulo 12 — registro de ocorrências) |
-| *(a definir)* | **Backlog:** `status`/`dataRetirada`/`qrCodeToken`/`entregueEm` em Cestas (Módulo 13) |
+| V14 | Campos de solicitação/agendamento/check-in em Cestas (Módulo 13 — solicitação com QR Code) |

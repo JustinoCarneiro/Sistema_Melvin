@@ -27,3 +27,4 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev (avali
 - [[cpf-obrigatorio-cifrado-blind-index]]
 - [[radar-cep-nao-ativado]]
 - [[backup-melvin-diario-criptografado]]
+- [[rate-limit-apenas-solicitacao-cesta]]
