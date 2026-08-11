@@ -244,7 +244,7 @@ Então vejo o botão "Adicionar" no cabeçalho da tabela, junto com outros botõ
 ```
 
 #### US-3.7: Registrar Ocorrências do Aluno
-**Status:** 🔲 Backlog — aprovado pelo cliente em 10/08/2026 (ver ROADMAP.md), ainda não desenvolvido.
+**Status:** ✅ Concluído (10/08/2026, ver ROADMAP.md Módulo 12).
 
 **Como** professor,
 **eu quero** registrar observações comportamentais e pedagógicas pontuais sobre um aluno,
@@ -265,7 +265,7 @@ Quando ele submete a requisição,
 Então o backend retorna 403 Forbidden.
 ```
 
-> **Nota de implementação:** nova entidade (`Ocorrencia`), seguindo o padrão de `Aviso`/`Imagem` já existentes. Campo de descrição deve ser cifrado (`SensitiveDataConverter`) por conter observação comportamental de menor — mesmo tratamento dos demais dados sensíveis do Discente. **Nunca** deve aparecer em `DiscenteListagemDTO` (LGPD, US-3.2). Nova permissão dinâmica `GERENCIAR_OCORRENCIA`, default sugerido `[PROF, COOR, DIRE, ADM]`.
+> **Nota de implementação (atualizada na entrega):** entidade `Ocorrencia` nova (`matricula_discente`, `categoria` enum `COMPORTAMENTAL`/`PEDAGOGICA`, `descricao` cifrada via `SensitiveDataConverter`, `autor_login`, `data_ocorrencia`, `criado_em`). Autor identificado pelo `login` (matrícula) do usuário autenticado, não por UUID — evita join só pra exibir "quem registrou". Ordenação cronológica feita via `@Query` JPQL explícita (não método derivado), mesmo padrão já usado em `FrequenciaDiscenteRepository` para campos com underscore no nome. Endpoint `POST /ocorrencias` + `GET /ocorrencias/discente/{matricula}`, ambos atrás da permissão dinâmica `GERENCIAR_OCORRENCIA` (`[PROF, COOR, DIRE, ADM]`) — inclusive a leitura, mais restrita que `VISUALIZAR_ALUNOS` (que também libera ASSIST/PSICO), decisão deliberada dado o teor comportamental sensível do dado. Sem endpoint de tela dedicada "ficha do aluno" no sistema — a seção de Ocorrências foi anexada à própria tela de edição de Aluno (`Form.jsx`), que já cumpre esse papel hoje.
 
 ---
 

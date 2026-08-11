@@ -27,7 +27,7 @@
 | 9 | Site Institucional (Público) | 🟢 Pequeno | 1-2 | ✅ Concluído |
 | 10 | Imagens e Mídias | 🟢 Pequeno | 1-2 | ✅ Concluído |
 | 11 | Notificação de Falta ao Responsável | 🟢 Pequeno | 1-2 | ✅ Concluído |
-| 12 | Registro de Ocorrências do Aluno | 🟡 Médio | 3-4 | 🔲 Backlog |
+| 12 | Registro de Ocorrências do Aluno | 🟡 Médio | 3-4 | ✅ Concluído |
 | 13 | Solicitação de Cestas + Check-in QR Code | 🔴 Grande | 5-7 | 🔲 Backlog |
 
 ---
@@ -581,29 +581,35 @@ Tipos suportados: `embaixador`, `aviso`.
 ---
 
 ## MÓDULO 12: REGISTRO DE OCORRÊNCIAS DO ALUNO
-**Peso: 🟡 MÉDIO (~3-4 dias) | Status: 🔲 Backlog**
+**Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ Concluído (10/08/2026)**
 
 > Épico de referência: [CLAUDE.md #Épico 3 — US-3.7](./CLAUDE.md)
 
-### Novo modelo: `Ocorrencia`
+### Modelo: `Ocorrencia` (entregue)
 | Campo | Tipo | Observação |
 |---|---|---|
 | `id` | UUID | PK |
-| `matriculaDiscente` | string | FK lógica pra `Discente` |
+| `matricula_discente` | string | FK lógica pra `Discente` |
 | `categoria` | enum | `COMPORTAMENTAL`, `PEDAGOGICA` |
 | `descricao` | text (cifrado) | `SensitiveDataConverter` |
-| `autorId` | UUID | FK pra `User` (professor logado) |
-| `dataOcorrencia` | LocalDate | |
-| `criadoEm` | LocalDateTime | |
+| `autor_login` | string | login/matrícula do usuário autenticado (não UUID — evita join só pra exibir quem registrou; revisado em relação à proposta inicial `autorId`) |
+| `data_ocorrencia` | LocalDate | |
+| `criado_em` | LocalDateTime | |
 
-### Contratos API (proposta)
+Migration `V13__Create_Ocorrencia_Table.sql`.
+
+### Contratos API (entregue)
 | Método | Endpoint | Descrição |
 |---|---|---|
-| `POST` | `/ocorrencias` | Cria ocorrência (permissão `GERENCIAR_OCORRENCIA`) |
-| `GET` | `/ocorrencias/discente/{matricula}` | Histórico cronológico do aluno |
-| `DELETE` | `/ocorrencias/{id}` | Remove ocorrência (só autor ou ADM/DIRE) |
+| `POST` | `/ocorrencias` | Cria ocorrência (permissão `GERENCIAR_OCORRENCIA`); autor extraído do token, não do payload |
+| `GET` | `/ocorrencias/discente/{matricula}` | Histórico ordenado por data desc (`GERENCIAR_OCORRENCIA` — mais restrito que `VISUALIZAR_ALUNOS`) |
+
+**Não implementado nesta entrega:** `DELETE /ocorrencias/{id}` — não fazia parte dos critérios de aceite aprovados (CLAUDE.md US-3.7 só cobre criar e listar); ficou de fora pra não expandir escopo além do combinado. Considerar como item futuro se o cliente pedir.
 
 Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, ADM]`.
+
+### Entrega (TDD)
+7 testes novos: `OcorrenciaServiceTest` (3 — cadastro válido/matrícula inexistente/listagem) + `OcorrenciaRepositoryTest` (2, `@DataJpaTest` contra H2 — valida a ordenação cronológica de verdade, incluindo desempate por `criado_em`) + verificação de build/lint do frontend. Seção "Ocorrências" anexada ao `Form.jsx` de Aluno (não existe tela dedicada de "ficha do aluno" no sistema hoje — `Form.jsx` já cumpre esse papel). Suíte completa do backend: 55/55 verde, incluindo o teste de boot do contexto Spring completo (`SistemaApplicationTests`).
 
 ---
 
@@ -649,7 +655,7 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 | `Aviso` | `id` (UUID) | `titulo`, `corpo`, `status`, `data_inicio`, `data_final` |
 | `Diario` | `id` | `matriculaAtrelada` (única), `fileName`, `filePath` |
 | `Imagem` | `id` | `idAtrelado`, `tipo`, `fileName`, `filePath` |
-| `Ocorrencia` *(Backlog, Módulo 12)* | `id` (UUID) | `matriculaDiscente`, `categoria`, `descricao` (cifrado), `autorId`, `dataOcorrencia` |
+| `Ocorrencia` | `id` (UUID) | `matricula_discente`, `categoria`, `descricao` (cifrado), `autor_login`, `data_ocorrencia`, `criado_em` |
 
 ---
 
@@ -662,4 +668,6 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 | V3 | Refatoração AmigoMelvin para suportar assinaturas Stripe |
 | V4 | Criação tabela DoacaoItem |
 | V5 | Adição de campos dia/mensagem em AmigoMelvin |
-| *(a definir)* | **Backlog:** `emailResponsavel` em Discente (Módulo 11); tabela `Ocorrencia` (Módulo 12); `status`/`dataRetirada`/`qrCodeToken`/`entregueEm` em Cestas (Módulo 13) |
+| V12 | `email_responsavel` em Discente (Módulo 11 — notificação de falta) |
+| V13 | Criação da tabela `Ocorrencia` (Módulo 12 — registro de ocorrências) |
+| *(a definir)* | **Backlog:** `status`/`dataRetirada`/`qrCodeToken`/`entregueEm` em Cestas (Módulo 13) |
