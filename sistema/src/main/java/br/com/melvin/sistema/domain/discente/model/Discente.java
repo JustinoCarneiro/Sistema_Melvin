@@ -158,6 +158,10 @@ public class Discente{
     @Convert(converter = SensitiveDataConverter.class)
     private String contato_saida;
 
+    // E-mail do responsável, usado para notificação automática de falta (US-5.5).
+    @Convert(converter = SensitiveDataConverter.class)
+    private String email_responsavel;
+
     @Column(nullable = false)
     private String status;
 

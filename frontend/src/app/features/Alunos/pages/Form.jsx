@@ -27,7 +27,7 @@ function Aluno_forms(){
         endereco: '', bairro: '', cidade: '', rg: '', sala: '', turno: '', 
         nome_pai: '', contato_pai: '', instrucao_pai: '', ocupacao_pai: '', local_trabalho_pai: '', contato_trabalho_pai: '', alfabetizacao_pai: '', estado_civil_pai: '', 
         nome_mae: '', contato_mae: '', instrucao_mae: '', ocupacao_mae: '', local_trabalho_mae: '', contato_trabalho_mae: '', alfabetizacao_mae: '', estado_civil_mae: '', 
-        qtd_filho: '', beneficio_governo: '', meio_transporte: '', qtd_transporte: '', mora_familiar: '', outro_familiar: '', todos_moram_casa: '', renda_total: '', clt: '', autonomo: '', familia_congrega: '', gostaria_congregar: '', 
+        qtd_filho: '', beneficio_governo: '', meio_transporte: '', qtd_transporte: '', mora_familiar: '', outro_familiar: '', todos_moram_casa: '', renda_total: '', clt: '', autonomo: '', familia_congrega: '', gostaria_congregar: '', email_responsavel: '',
         doenca: '', medicacao: '', remedio_instituto: '', tratamento: '', horario_medicamento: '', esportes: '', status: '',
         karate: false, ballet: false, informatica: false, musica: false, artesanato: false, futsal: false, ingles: false
     });
@@ -271,6 +271,7 @@ function Aluno_forms(){
                     <h4 className={styles.subSectionTitle}>Contexto Familiar</h4>
                     <div className={styles.gridContainer}>
                         <div className={styles.coluna}>
+                            <Input label="E-mail do Responsável (aviso automático de falta):" name="email_responsavel" value={formDado.email_responsavel} onChange={handleChange} comp="grande" disabled={isDisabled} />
                             <div className={styles.linhaDupla}>
                                 <Input label="Qtd. Filhos:" name="qtd_filho" value={formDado.qtd_filho} onChange={handleChange} comp="pequeno" disabled={isDisabled} />
                                 <Input label="Benefício Gov.:" name="beneficio_governo" value={formDado.beneficio_governo} onChange={handleChange} comp="pequeno" disabled={isDisabled} />
