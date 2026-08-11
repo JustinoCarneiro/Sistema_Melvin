@@ -52,6 +52,30 @@ public class DiscenteServiceTest {
     }
 
     @Test
+    public void testAlterarPersisteEmailDoResponsavel() {
+        // US-5.5: alterar() copia campo a campo; se o e-mail do responsável ficar de
+        // fora da cópia, a edição de um aluno JÁ EXISTENTE descarta o campo em
+        // silêncio e a notificação de falta nunca dispara (todo aluno em produção
+        // já existe, então esse é o caminho real de preenchimento).
+        Discente existente = new Discente();
+        existente.setMatricula("2026001");
+        existente.setNome("Aluno");
+
+        Discente atualizado = new Discente();
+        atualizado.setMatricula("2026001");
+        atualizado.setNome("Aluno");
+        atualizado.setEmail_responsavel("responsavel@email.com");
+
+        when(discenteRepository.findByMatricula("2026001")).thenReturn(existente);
+        when(discenteRepository.save(org.mockito.ArgumentMatchers.any(Discente.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
+
+        discenteService.alterar(atualizado);
+
+        assertEquals("responsavel@email.com", existente.getEmail_responsavel());
+    }
+
+    @Test
     public void testRemoverDiscenteNaoExistente() {
         when(discenteRepository.findByMatricula("9999")).thenReturn(null);
 

@@ -21,6 +21,7 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev (avali
 - [[health-check-403-endpoint-inexistente]]
 - [[webhook-500-stacktrace-sem-body]]
 - [[login-500-em-vez-de-401]]
+- [[campo-novo-opcional-nao-persiste-nem-aceita-null]]
 
 ## Decisões
 - [[idempotencia-dedup-pagamentos-stripe]]

@@ -83,7 +83,10 @@ function Aluno_forms(){
         if (!matricula) return;
         try {
             const response = await ocorrenciaService.listarPorDiscente(matricula);
-            setOcorrencias(response.data || []);
+            // Guarda de tipo (mesmo padrão das outras listagens): sem ela, uma
+            // resposta que não seja array — ex.: o index.html devolvido por um
+            // SPA fallback — derruba a tela inteira no .map abaixo.
+            setOcorrencias(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.warn('Aviso: não foi possível carregar ocorrências (sem permissão ou nenhuma registrada).');
         }

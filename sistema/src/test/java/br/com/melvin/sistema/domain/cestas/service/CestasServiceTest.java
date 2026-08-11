@@ -119,6 +119,7 @@ public class CestasServiceTest {
     private Cestas createSolicitacao() {
         Cestas c = new Cestas();
         c.setNomeSolicitante("Maria Líder");
+        c.setNome("José Beneficiário");
         c.setNivelSolicitante(NivelHierarquico.SETOR);
         c.setLider_celula("João da Célula 3");
         c.setRede("Rede Norte");
@@ -144,6 +145,19 @@ public class CestasServiceTest {
     public void testSolicitarSemNomeSolicitanteRetorna400() {
         Cestas solicitacao = createSolicitacao();
         solicitacao.setNomeSolicitante(null);
+
+        ResponseEntity<?> response = cestasService.solicitar(solicitacao);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        verify(repositorio, never()).save(any(Cestas.class));
+    }
+
+    @Test
+    public void testSolicitarSemNomeDoBeneficiarioRetorna400() {
+        // `nome` é NOT NULL no banco (herdado do cadastro direto): sem essa
+        // validação o insert estoura 500 em vez de devolver erro tratado.
+        Cestas solicitacao = createSolicitacao();
+        solicitacao.setNome(null);
 
         ResponseEntity<?> response = cestasService.solicitar(solicitacao);
 

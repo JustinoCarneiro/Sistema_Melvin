@@ -32,7 +32,9 @@ function SolicitacoesCestas() {
         setLoading(true);
         try {
             const response = await cestaService.listarSolicitacoes();
-            setSolicitacoes(response.data || []);
+            // Guarda de tipo (mesmo padrão das outras listagens): resposta que não
+            // seja array derrubaria a tela inteira no .map da tabela.
+            setSolicitacoes(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             setMensagem({ tipo: 'erro', texto: 'Não foi possível carregar as solicitações.' });
         } finally {

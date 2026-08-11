@@ -88,10 +88,14 @@ public class CestasService {
     // ============ US-7.4: Solicitação de Cesta (link público) ============
 
     public ResponseEntity<?> solicitar(Cestas solicitacao) {
+        // `nome` (do beneficiário) entra na validação porque é NOT NULL no banco,
+        // herdado do cadastro direto — sem isso o insert estoura 500 em vez de 400.
         if (solicitacao.getNomeSolicitante() == null || solicitacao.getNomeSolicitante().isEmpty()
-                || solicitacao.getNivelSolicitante() == null) {
+                || solicitacao.getNivelSolicitante() == null
+                || solicitacao.getNome() == null || solicitacao.getNome().isEmpty()) {
             return new ResponseEntity<String>(
-                    "Nome do solicitante e nível na hierarquia são obrigatórios!", HttpStatus.BAD_REQUEST);
+                    "Nome do solicitante, nível na hierarquia e nome do beneficiário são obrigatórios!",
+                    HttpStatus.BAD_REQUEST);
         }
 
         // Nunca confiar em campos de fluxo interno vindos do payload público —

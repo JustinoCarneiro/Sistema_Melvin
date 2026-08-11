@@ -129,6 +129,9 @@ public class DiscenteService {
             existente.setContato_trabalho_pai(discente.getContato_trabalho_pai());
             existente.setEstado_civil_pai(discente.getEstado_civil_pai());
             existente.setLocal_trabalho_pai(discente.getLocal_trabalho_pai());
+            // US-5.5: sem esta linha a edição de aluno já existente descarta o
+            // e-mail do responsável e a notificação de falta nunca dispara.
+            existente.setEmail_responsavel(discente.getEmail_responsavel());
             existente.setNome_mae(discente.getNome_mae());
             existente.setContato_mae(discente.getContato_mae());
             existente.setInstrucao_mae(discente.getInstrucao_mae());
