@@ -645,7 +645,7 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 ### Entrega (TDD)
 15 testes novos: `CestasServiceTest` passou de 6 para 17 (11 novos cobrindo solicitar/validar/checkin, incluindo os 409 de dupla retirada e de validação repetida, e o teste de payload forjado) + `CestasSolicitacaoRateLimitFilterTest` (4 — passa em outras rotas, respeita o limite, bloqueia com 429, não mistura IPs). Suíte completa do backend: **70/70 verde**, incluindo `SistemaApplicationTests` (que pegou de verdade um erro de ordem de registro do filtro). Frontend: página pública `/solicitarcesta` + tela interna `/app/cestas/solicitacoes`, lint limpo nos arquivos novos e `npm run build` OK.
 
-> ⚠️ **Migration V14 não pôde ser validada contra Postgres real nesta sessão** (Docker local inativo; o perfil de teste usa H2 com Flyway desabilitado, então nenhuma migration do projeto é exercida em teste). A sintaxe segue precedentes já em produção no próprio projeto: `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` (V7) e `CREATE UNIQUE INDEX IF NOT EXISTS` (V9). Vale conferir o log do Flyway no primeiro deploy.
+> ✅ **Migration V14 validada na homologação (Fase 5, 10/08/2026)** contra uma cópia do schema real de produção (`pg_dump --schema-only`, sem dados) restaurada em Postgres 14 local, com o histórico Flyway real de produção (V1-V11, checksums conferidos). As três migrations novas (V12/V13/V14) aplicaram limpo e a aplicação subiu em cima. A homologação revelou que `cestas.data_entrega` era `NOT NULL` no banco — divergindo da entidade, que a declara nullable —, o que fazia todo `POST /cestas/solicitacao` estourar 500; a V14 ganhou o `DROP NOT NULL` correspondente. Ver `memoria-tecnica/bugs/campo-novo-opcional-nao-persiste-nem-aceita-null.md`.
 
 ---
 
