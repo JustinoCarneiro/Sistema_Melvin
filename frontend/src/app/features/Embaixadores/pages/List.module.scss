@@ -179,7 +179,8 @@
 
 .icon_editar {
     font-size: 2.5rem;
-    color: white;
+    // Era `white` — mesmo bug do rótulo acima, sem fundo escuro atrás.
+    color: var(--text-muted);
     cursor: pointer;
     transition: var(--transition-fast);
     padding: 0.5rem;
@@ -224,7 +225,9 @@
             &::before {
                 content: attr(data-label);
                 font-weight: 700;
-                color: white;
+                // Era `white` sobre `.tr_body { background-color: white }` (linha 205) —
+                // rótulo invisível no card mobile.
+                color: var(--text-muted);
                 text-transform: uppercase;
                 font-size: 0.7rem;
                 letter-spacing: 0.05em;

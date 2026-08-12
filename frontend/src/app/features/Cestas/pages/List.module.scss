@@ -446,7 +446,9 @@
             &::before {
                 content: attr(data-label);
                 font-weight: 700;
-                color: white;
+                // Era `white` sobre `.tr_body { background-color: white }` (linha 424) —
+                // rótulo invisível no card mobile.
+                color: var(--text-muted);
                 text-transform: uppercase;
                 font-size: 0.7rem;
                 margin-right: 1.5rem;

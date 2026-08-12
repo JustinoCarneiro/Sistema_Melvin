@@ -252,7 +252,10 @@
 
 .icon_editar {
     font-size: 2.5rem;
-    color: white;
+    // Era `white` — sem fundo escuro atrás (as linhas da tabela são
+    // brancas/verde-clarinho), o ícone ficava quase invisível. Mesmo tom
+    // já usado em Cestas/Alunos para este mesmo ícone.
+    color: var(--text-muted);
     cursor: pointer;
     transition: var(--transition-fast);
     padding: 0.5rem;
@@ -324,7 +327,9 @@
             &::before {
                 content: attr(data-label);
                 font-weight: 700;
-                color: white;
+                // Era `white` sobre `.tr_body { background-color: white }` (linha 308) —
+                // rótulo invisível no card mobile. Mesmo bug do .icon_editar acima.
+                color: var(--text-muted);
                 text-transform: uppercase;
                 font-size: 0.7rem;
                 letter-spacing: 0.05em;
