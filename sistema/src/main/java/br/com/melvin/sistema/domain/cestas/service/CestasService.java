@@ -107,7 +107,6 @@ public class CestasService {
         solicitacao.setId(null);
         solicitacao.setStatus(StatusCesta.SOLICITADA);
         solicitacao.setDataRetirada(null);
-        solicitacao.setQrCodeToken(null);
         solicitacao.setEntregueEm(null);
 
         Cestas salva = repositorio.save(solicitacao);
@@ -123,8 +122,10 @@ public class CestasService {
                 + "Solicitante: " + solicitacao.getNomeSolicitante()
                 + " (" + solicitacao.getNivelSolicitante() + ")\n"
                 + "Beneficiário: " + solicitacao.getNome() + "\n"
+                + "Contato: " + (solicitacao.getContato() != null ? solicitacao.getContato() : "-") + "\n"
                 + "Célula: " + (solicitacao.getLider_celula() != null ? solicitacao.getLider_celula() : "-") + "\n"
-                + "Rede: " + (solicitacao.getRede() != null ? solicitacao.getRede() : "-") + "\n\n"
+                + "Rede: " + (solicitacao.getRede() != null ? solicitacao.getRede() : "-") + "\n"
+                + "Observações: " + (solicitacao.getItens_doados() != null ? solicitacao.getItens_doados() : "-") + "\n\n"
                 + "Acesse o painel para validar e agendar a retirada.";
 
         emailService.notifyInstituto("Nova solicitação de cesta básica", corpo);
@@ -149,22 +150,30 @@ public class CestasService {
 
         existente.setStatus(StatusCesta.AGENDADA);
         existente.setDataRetirada(dataRetirada);
-        existente.setQrCodeToken(UUID.randomUUID().toString());
 
         return new ResponseEntity<Cestas>(repositorio.save(existente), HttpStatus.OK);
     }
 
-    public ResponseEntity<?> checkin(String qrCodeToken) {
-        Cestas existente = repositorio.findByQrCodeToken(qrCodeToken);
-        if (existente == null) {
-            return new ResponseEntity<String>("QR Code inválido.", HttpStatus.NOT_FOUND);
+    public List<Cestas> listarAgendadas() {
+        return repositorio.findAllByStatus(StatusCesta.AGENDADA);
+    }
+
+    // US-7.4 (revisado 12/08/2026): confirmação de entrega é manual, direto pelo ID —
+    // sem QR Code. A coordenação vê a solicitação na lista de agendadas e confirma
+    // quando o beneficiário retira a cesta.
+    public ResponseEntity<?> confirmarEntrega(UUID id) {
+        Optional<Cestas> existenteOpt = repositorio.findById(id);
+        if (existenteOpt.isEmpty()) {
+            return new ResponseEntity<String>("Solicitação não encontrada!", HttpStatus.NOT_FOUND);
         }
+
+        Cestas existente = existenteOpt.get();
 
         if (existente.getStatus() == StatusCesta.ENTREGUE) {
             String dataFormatada = existente.getEntregueEm()
                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
             return new ResponseEntity<String>(
-                    "Esta cesta já foi retirada em " + dataFormatada + ".", HttpStatus.CONFLICT);
+                    "Esta cesta já foi confirmada como entregue em " + dataFormatada + ".", HttpStatus.CONFLICT);
         }
 
         if (existente.getStatus() != StatusCesta.AGENDADA) {

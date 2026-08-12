@@ -149,3 +149,48 @@
     color: var(--text-muted);
     font-style: italic;
 }
+
+/* --- RESPONSIVO (mesmo padrão de Cestas/List: linhas viram cards) --- */
+@media (max-width: 768px) {
+    .header .title { font-size: 1.75rem; }
+
+    .checkinBox {
+        flex-direction: column;
+        align-items: stretch;
+
+        .input { min-width: 0; }
+    }
+
+    .tableResponsive { overflow: visible; }
+    .table thead { display: none; }
+    .table, .table tbody, .table tr, .table td { display: block; width: 100%; }
+
+    .tr_body {
+        margin-bottom: 1rem;
+        border: 1px solid #d6e8da;
+        border-radius: 16px;
+        overflow: hidden;
+
+        td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            text-align: right;
+            border-bottom: 1px solid #e8f0ea;
+
+            &::before {
+                content: attr(data-label);
+                font-weight: 700;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                font-size: 0.7rem;
+                text-align: left;
+            }
+
+            &:last-child { border-bottom: none; }
+
+            .input { min-width: 0; }
+        }
+    }
+}

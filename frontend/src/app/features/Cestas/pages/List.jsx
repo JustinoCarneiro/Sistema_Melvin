@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { IoMdSearch } from "react-icons/io";
 import { MdOutlineModeEdit } from "react-icons/md";
-import { FaPlus, FaFileExcel, FaBoxOpen, FaWeightHanging, FaHandHoldingHeart, FaArrowDown, FaArrowUp } from "react-icons/fa6"; 
+import { FaPlus, FaFileExcel, FaBoxOpen, FaWeightHanging, FaHandHoldingHeart, FaArrowDown, FaArrowUp, FaClipboardList } from "react-icons/fa6";
 
 import cestaService from '../api/cestaService';
 import Botao from '@core/components/gerais/Botao'; 
@@ -251,7 +251,19 @@ function Cestas(){
                             </Botao>
 
                             {(isAdm || podeGerenciar) && (
-                                <Botao 
+                                <Botao
+                                    nome="Solicitações"
+                                    corFundo="#8A6F3E"
+                                    corBorda="#5c491f"
+                                    type="button"
+                                    onClick={()=>navigate("/app/cestas/solicitacoes")}
+                                >
+                                    <FaClipboardList />
+                                </Botao>
+                            )}
+
+                            {(isAdm || podeGerenciar) && (
+                                <Botao
                                     nome="Novo Registro"
                                     corFundo="#1A4D80"
                                     corBorda="#0d2b4a"

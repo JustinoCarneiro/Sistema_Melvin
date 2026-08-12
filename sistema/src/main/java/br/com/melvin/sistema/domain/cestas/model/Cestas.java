@@ -50,7 +50,7 @@ public class Cestas {
     // REMOVIDO: private Boolean status;
     private LocalDate dataEntrega;
 
-    // --- US-7.4: Solicitação com agendamento e check-in por QR Code ---
+    // --- US-7.4: Solicitação com agendamento e confirmação manual de entrega ---
     // status é null pra registros antigos (cadastro direto, sem fluxo de solicitação).
     @Enumerated(EnumType.STRING)
     private StatusCesta status;
@@ -64,6 +64,5 @@ public class Cestas {
     private NivelHierarquico nivelSolicitante;
 
     private LocalDate dataRetirada;
-    private String qrCodeToken;
     private LocalDateTime entregueEm;
 }

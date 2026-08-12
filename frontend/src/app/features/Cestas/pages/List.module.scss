@@ -359,6 +359,10 @@
 }
 
 .badge {
+    // `tipo` é texto livre no cadastro (ex.: "Cesta Básica", "Cesta Completa"),
+    // não um enum fixo — sem essa cor padrão, qualquer valor fora da lista abaixo
+    // (que só cobre alguns tipos históricos, em maiúsculas exatas) cai sem
+    // background nenhum, texto branco em fundo branco, ilegível.
     padding: 6px 12px;
     border-radius: 8px;
     font-size: 0.7rem;
@@ -367,13 +371,14 @@
     color: white;
     white-space: nowrap;
     letter-spacing: 0.05em;
+    background-color: #64748b;
 
-    &.ALIMENTO { background-color: #217346; } 
-    &.VESTUARIO { background-color: #9333ea; } 
-    &.HIGIENE { background-color: #2563eb; } 
-    &.MOVEIS { background-color: #d97706; } 
-    &.BRINQUEDOS { background-color: #eab308; color: #1e293b; } 
-    &.OUTROS { background-color: #64748b; } 
+    &.ALIMENTO { background-color: #217346; }
+    &.VESTUARIO { background-color: #9333ea; }
+    &.HIGIENE { background-color: #2563eb; }
+    &.MOVEIS { background-color: #d97706; }
+    &.BRINQUEDOS { background-color: #eab308; color: #1e293b; }
+    &.OUTROS { background-color: #64748b; }
 }
 
 .icon_editar {

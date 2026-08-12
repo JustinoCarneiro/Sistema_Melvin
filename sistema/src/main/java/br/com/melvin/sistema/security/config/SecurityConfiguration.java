@@ -79,12 +79,12 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.POST, "/cestas").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
 
-                    // --- SOLICITAÇÃO DE CESTAS (US-7.4) — validação/check-in ficam com quem já gerencia cestas ---
-                    .requestMatchers(HttpMethod.GET, "/cestas/solicitacoes", "/cestas/qrcode/**").access((authentication, context) ->
+                    // --- SOLICITAÇÃO DE CESTAS (US-7.4) — validação/confirmação de entrega ficam com quem já gerencia cestas ---
+                    .requestMatchers(HttpMethod.GET, "/cestas/solicitacoes", "/cestas/solicitacoes/**").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
                     .requestMatchers(HttpMethod.PUT, "/cestas/solicitacao/**").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
-                    .requestMatchers(HttpMethod.POST, "/cestas/checkin/**").access((authentication, context) ->
+                    .requestMatchers(HttpMethod.POST, "/cestas/solicitacao/**").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
                     .requestMatchers(HttpMethod.POST, "/imagens/**").hasAnyRole("ADM", "DIRE") // Imagens mantive restrito, mas pode abrir se precisar
                     

@@ -30,3 +30,4 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev (avali
 - [[radar-cep-nao-ativado]]
 - [[backup-melvin-diario-criptografado]]
 - [[rate-limit-apenas-solicitacao-cesta]]
+- [[qr-code-removido-confirmacao-manual]]

@@ -143,7 +143,6 @@ public class CestasServiceTest {
         verify(repositorio, times(1)).save(captor.capture());
         assertEquals(StatusCesta.SOLICITADA, captor.getValue().getStatus());
         assertNull(captor.getValue().getId());
-        assertNull(captor.getValue().getQrCodeToken());
     }
 
     @Test
@@ -208,10 +207,9 @@ public class CestasServiceTest {
     @Test
     public void testSolicitarIgnoraCamposDeFluxoInternoEnviadosNoPayload() {
         // Requisitante mal-intencionado (ou bug de frontend) não deve conseguir
-        // criar uma solicitação já ENTREGUE/com token só preenchendo o payload.
+        // criar uma solicitação já ENTREGUE só preenchendo o payload.
         Cestas solicitacao = createSolicitacao();
         solicitacao.setStatus(StatusCesta.ENTREGUE);
-        solicitacao.setQrCodeToken("token-forjado");
         solicitacao.setEntregueEm(LocalDateTime.now());
         when(repositorio.save(any(Cestas.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -220,7 +218,6 @@ public class CestasServiceTest {
         ArgumentCaptor<Cestas> captor = ArgumentCaptor.forClass(Cestas.class);
         verify(repositorio).save(captor.capture());
         assertEquals(StatusCesta.SOLICITADA, captor.getValue().getStatus());
-        assertNull(captor.getValue().getQrCodeToken());
         assertNull(captor.getValue().getEntregueEm());
     }
 
@@ -235,7 +232,9 @@ public class CestasServiceTest {
     }
 
     @Test
-    public void testValidarSolicitacaoPendenteGeraTokenEAgenda() {
+    public void testValidarSolicitacaoPendenteAgenda() {
+        // Decisão do cliente (12/08/2026): sem QR Code no check-in — a confirmação
+        // de entrega é manual, pelo ID, direto na tela de solicitações.
         UUID id = UUID.randomUUID();
         Cestas existente = createSolicitacao();
         existente.setId(id);
@@ -251,7 +250,6 @@ public class CestasServiceTest {
         Cestas resultado = (Cestas) response.getBody();
         assertEquals(StatusCesta.AGENDADA, resultado.getStatus());
         assertEquals(dataRetirada, resultado.getDataRetirada());
-        assertNotNull(resultado.getQrCodeToken());
     }
 
     @Test
@@ -280,15 +278,26 @@ public class CestasServiceTest {
     }
 
     @Test
-    public void testCheckinComTokenAgendadoMarcaEntregue() {
-        Cestas existente = createSolicitacao();
-        existente.setStatus(StatusCesta.AGENDADA);
-        existente.setQrCodeToken("token-valido");
+    public void testListarAgendadasDelegaParaRepositorioFiltrandoPorStatus() {
+        when(repositorio.findAllByStatus(StatusCesta.AGENDADA)).thenReturn(List.of(new Cestas()));
 
-        when(repositorio.findByQrCodeToken("token-valido")).thenReturn(existente);
+        List<Cestas> resultado = cestasService.listarAgendadas();
+
+        assertEquals(1, resultado.size());
+        verify(repositorio, times(1)).findAllByStatus(StatusCesta.AGENDADA);
+    }
+
+    @Test
+    public void testConfirmarEntregaDeSolicitacaoAgendadaMarcaEntregue() {
+        UUID id = UUID.randomUUID();
+        Cestas existente = createSolicitacao();
+        existente.setId(id);
+        existente.setStatus(StatusCesta.AGENDADA);
+
+        when(repositorio.findById(id)).thenReturn(Optional.of(existente));
         when(repositorio.save(any(Cestas.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        ResponseEntity<?> response = cestasService.checkin("token-valido");
+        ResponseEntity<?> response = cestasService.confirmarEntrega(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         Cestas resultado = (Cestas) response.getBody();
@@ -297,28 +306,45 @@ public class CestasServiceTest {
     }
 
     @Test
-    public void testCheckinComTokenInexistenteRetorna404() {
-        when(repositorio.findByQrCodeToken("token-invalido")).thenReturn(null);
+    public void testConfirmarEntregaDeSolicitacaoInexistenteRetorna404() {
+        UUID id = UUID.randomUUID();
+        when(repositorio.findById(id)).thenReturn(Optional.empty());
 
-        ResponseEntity<?> response = cestasService.checkin("token-invalido");
+        ResponseEntity<?> response = cestasService.confirmarEntrega(id);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    public void testCheckinComTokenJaEntregueRetorna409ENaoAlteraEntregueEm() {
+    public void testConfirmarEntregaJaEntregueRetorna409ENaoAlteraEntregueEm() {
         LocalDateTime entregueOriginal = LocalDateTime.now().minusDays(1);
+        UUID id = UUID.randomUUID();
         Cestas existente = createSolicitacao();
+        existente.setId(id);
         existente.setStatus(StatusCesta.ENTREGUE);
-        existente.setQrCodeToken("token-usado");
         existente.setEntregueEm(entregueOriginal);
 
-        when(repositorio.findByQrCodeToken("token-usado")).thenReturn(existente);
+        when(repositorio.findById(id)).thenReturn(Optional.of(existente));
 
-        ResponseEntity<?> response = cestasService.checkin("token-usado");
+        ResponseEntity<?> response = cestasService.confirmarEntrega(id);
 
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertEquals(entregueOriginal, existente.getEntregueEm());
+        verify(repositorio, never()).save(any(Cestas.class));
+    }
+
+    @Test
+    public void testConfirmarEntregaDeSolicitacaoAindaNaoAgendadaRetorna409() {
+        UUID id = UUID.randomUUID();
+        Cestas existente = createSolicitacao();
+        existente.setId(id);
+        existente.setStatus(StatusCesta.SOLICITADA);
+
+        when(repositorio.findById(id)).thenReturn(Optional.of(existente));
+
+        ResponseEntity<?> response = cestasService.confirmarEntrega(id);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         verify(repositorio, never()).save(any(Cestas.class));
     }
 }

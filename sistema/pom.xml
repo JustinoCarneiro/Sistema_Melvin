@@ -138,18 +138,6 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
-		<!-- US-7.4: geração de QR Code para check-in de retirada de cestas -->
-		<dependency>
-			<groupId>com.google.zxing</groupId>
-			<artifactId>core</artifactId>
-			<version>3.5.4</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.zxing</groupId>
-			<artifactId>javase</artifactId>
-			<version>3.5.4</version>
-		</dependency>
-
 		<!-- US-7.4: rate limiting no endpoint público de solicitação de cesta -->
 		<dependency>
 			<groupId>com.bucket4j</groupId>

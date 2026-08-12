@@ -422,21 +422,35 @@ function Aluno_forms(){
                     <div className={styles.form}>
                         <h3 className={styles.sectionTitle}>Ocorrências</h3>
 
-                        <form className={styles.gridContainer} onSubmit={handleSubmitOcorrencia}>
-                            <div className={styles.coluna}>
-                                <div className={styles.linhaDupla}>
-                                    <div className={styles.inputGroup}>
-                                        <label>Categoria:</label>
-                                        <select className={styles.select} name="categoria" value={novaOcorrencia.categoria} onChange={handleOcorrenciaChange}>
-                                            <option value="COMPORTAMENTAL">Comportamental</option>
-                                            <option value="PEDAGOGICA">Pedagógica</option>
-                                        </select>
+                        <form onSubmit={handleSubmitOcorrencia}>
+                            <div className={styles.gridContainer}>
+                                <div className={styles.coluna}>
+                                    <div className={styles.linhaDupla}>
+                                        <div className={styles.inputGroup}>
+                                            <label>Categoria:</label>
+                                            <select className={styles.select} name="categoria" value={novaOcorrencia.categoria} onChange={handleOcorrenciaChange}>
+                                                <option value="COMPORTAMENTAL">Comportamental</option>
+                                                <option value="PEDAGOGICA">Pedagógica</option>
+                                            </select>
+                                        </div>
+                                        <Input label="Data:" type="date" name="data_ocorrencia" value={novaOcorrencia.data_ocorrencia} onChange={handleOcorrenciaChange} comp="pequeno" />
                                     </div>
-                                    <Input label="Data:" type="date" name="data_ocorrencia" value={novaOcorrencia.data_ocorrencia} onChange={handleOcorrenciaChange} comp="pequeno" />
                                 </div>
-                                <Input label="Descrição:" name="descricao" value={novaOcorrencia.descricao} onChange={handleOcorrenciaChange} comp="grande" placeholder="Descreva a observação..." />
+                                <div className={styles.coluna}>
+                                    <div className={styles.inputGroup}>
+                                        <label>Descrição:</label>
+                                        <textarea
+                                            className={styles.textarea}
+                                            name="descricao"
+                                            value={novaOcorrencia.descricao}
+                                            onChange={handleOcorrenciaChange}
+                                            rows="5"
+                                            placeholder="Descreva a observação..."
+                                        ></textarea>
+                                    </div>
+                                </div>
                             </div>
-                            <div className={styles.coluna}>
+                            <div className={styles.footerActions}>
                                 {ocorrenciaErro && <div className={styles.errorMsg}>{ocorrenciaErro}</div>}
                                 <Botao nome="Registrar Ocorrência" corFundo="#F29F05" corBorda="#8A6F3E" type="submit" />
                             </div>
@@ -449,7 +463,7 @@ function Aluno_forms(){
                                 ocorrencias.map((oc) => (
                                     <div key={oc.id} className={styles.coluna} style={{ marginBottom: '12px' }}>
                                         <strong>{oc.categoria === 'COMPORTAMENTAL' ? 'Comportamental' : 'Pedagógica'}</strong>
-                                        {' — '}{oc.data_ocorrencia}{' — registrado por '}{oc.autor_login}
+                                        {' — '}{oc.data_ocorrencia ? new Date(oc.data_ocorrencia + 'T00:00:00').toLocaleDateString('pt-BR') : '-'}{' — registrado por '}{oc.autor_login}
                                         <p>{oc.descricao}</p>
                                     </div>
                                 ))

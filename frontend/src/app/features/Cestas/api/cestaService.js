@@ -45,7 +45,7 @@ const cestaService = {
         }
     },
 
-    // --- US-7.4: Solicitação com agendamento e check-in por QR Code ---
+    // --- US-7.4: Solicitação com agendamento e confirmação manual de entrega ---
 
     // Endpoint público — usado pelo link que o líder recebe, sem autenticação.
     async solicitar(dados) {
@@ -81,27 +81,25 @@ const cestaService = {
         }
     },
 
-    async checkin(qrCodeToken) {
-        const endpoint = `/cestas/checkin/${qrCodeToken}`;
+    async listarAgendadas() {
+        const endpoint = "/cestas/solicitacoes/agendadas";
+        try {
+            const response = await http.get(endpoint);
+            return response;
+        } catch (error) {
+            console.error('Erro ao obter cestas agendadas:', error.response?.data || error.message);
+            return Promise.reject(new Error(error.response?.data?.message || error.message));
+        }
+    },
+
+    async confirmarEntrega(id) {
+        const endpoint = `/cestas/solicitacao/${id}/confirmar-entrega`;
         try {
             const response = await http.post(endpoint);
             return response;
         } catch (error) {
-            console.error('Erro ao fazer check-in da cesta:', error.response?.data || error.message);
+            console.error('Erro ao confirmar entrega da cesta:', error.response?.data || error.message);
             return Promise.reject(new Error(error.response?.data || error.message));
-        }
-    },
-
-    // Busca o PNG do QR Code autenticado e devolve como object URL (o <img> não
-    // consegue mandar o header Authorization sozinho).
-    async getQrCodeUrl(qrCodeToken) {
-        const endpoint = `/cestas/qrcode/${qrCodeToken}`;
-        try {
-            const response = await http.get(endpoint, { responseType: 'blob' });
-            return window.URL.createObjectURL(response.data);
-        } catch (error) {
-            console.error('Erro ao gerar QR Code:', error.response?.data || error.message);
-            return Promise.reject(new Error('Falha ao gerar QR Code.'));
         }
     }
 };

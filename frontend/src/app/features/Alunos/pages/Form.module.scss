@@ -140,6 +140,24 @@
             box-shadow: 0 0 0 2px rgba($cor-primaria, 0.1);
         }
     }
+
+    .textarea {
+        padding: 0.6rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        background-color: #fff;
+        font-size: 0.95rem;
+        font-family: inherit;
+        outline: none;
+        resize: vertical;
+        transition: border 0.2s;
+        width: 100%;
+
+        &:focus {
+            border-color: $cor-primaria;
+            box-shadow: 0 0 0 2px rgba($cor-primaria, 0.1);
+        }
+    }
 }
 
 .required {

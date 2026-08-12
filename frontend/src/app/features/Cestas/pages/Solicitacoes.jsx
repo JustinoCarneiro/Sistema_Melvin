@@ -16,25 +16,30 @@ const ROTULO_NIVEL = {
     REDE: 'Pastor de Rede'
 };
 
+const formatarData = (data) => data ? new Date(data + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+
 function SolicitacoesCestas() {
     const navigate = useNavigate();
     const { hasPermission, loading: loadingPerms } = usePermissions();
     const podeGerenciar = hasPermission('GERENCIAR_CESTAS');
 
     const [solicitacoes, setSolicitacoes] = useState([]);
+    const [agendadas, setAgendadas] = useState([]);
     const [datasRetirada, setDatasRetirada] = useState({});
-    const [qrCodes, setQrCodes] = useState({});
-    const [tokenCheckin, setTokenCheckin] = useState('');
     const [mensagem, setMensagem] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const fetchSolicitacoes = useCallback(async () => {
+    const fetchTudo = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await cestaService.listarSolicitacoes();
+            const [respSolicitadas, respAgendadas] = await Promise.all([
+                cestaService.listarSolicitacoes(),
+                cestaService.listarAgendadas()
+            ]);
             // Guarda de tipo (mesmo padrão das outras listagens): resposta que não
             // seja array derrubaria a tela inteira no .map da tabela.
-            setSolicitacoes(Array.isArray(response.data) ? response.data : []);
+            setSolicitacoes(Array.isArray(respSolicitadas.data) ? respSolicitadas.data : []);
+            setAgendadas(Array.isArray(respAgendadas.data) ? respAgendadas.data : []);
         } catch (error) {
             setMensagem({ tipo: 'erro', texto: 'Não foi possível carregar as solicitações.' });
         } finally {
@@ -43,8 +48,8 @@ function SolicitacoesCestas() {
     }, []);
 
     useEffect(() => {
-        fetchSolicitacoes();
-    }, [fetchSolicitacoes]);
+        fetchTudo();
+    }, [fetchTudo]);
 
     const handleValidar = async (id) => {
         const dataRetirada = datasRetirada[id];
@@ -55,27 +60,20 @@ function SolicitacoesCestas() {
 
         setMensagem(null);
         try {
-            const response = await cestaService.validar(id, dataRetirada);
-            const token = response.data.qrCodeToken;
-            const url = await cestaService.getQrCodeUrl(token);
-            setQrCodes(prev => ({ ...prev, [id]: { url, token } }));
-            setMensagem({ tipo: 'sucesso', texto: 'Solicitação agendada. QR Code gerado abaixo.' });
-            await fetchSolicitacoes();
+            await cestaService.validar(id, dataRetirada);
+            setMensagem({ tipo: 'sucesso', texto: 'Solicitação agendada. Já aparece na lista de aguardando retirada.' });
+            await fetchTudo();
         } catch (error) {
             setMensagem({ tipo: 'erro', texto: error.message || 'Erro ao validar solicitação.' });
         }
     };
 
-    const handleCheckin = async (e) => {
-        e.preventDefault();
+    const handleConfirmarEntrega = async (id, nomeBeneficiario) => {
         setMensagem(null);
         try {
-            const response = await cestaService.checkin(tokenCheckin.trim());
-            setMensagem({
-                tipo: 'sucesso',
-                texto: `Entrega confirmada para ${response.data.nome || 'beneficiário'}.`
-            });
-            setTokenCheckin('');
+            await cestaService.confirmarEntrega(id);
+            setMensagem({ tipo: 'sucesso', texto: `Entrega confirmada para ${nomeBeneficiario}.` });
+            await fetchTudo();
         } catch (error) {
             setMensagem({ tipo: 'erro', texto: error.message || 'Não foi possível confirmar a entrega.' });
         }
@@ -99,20 +97,6 @@ function SolicitacoesCestas() {
                 )}
 
                 <div className={styles.secao}>
-                    <h3 className={styles.subtitulo}>Confirmar entrega (check-in)</h3>
-                    <form className={styles.checkinBox} onSubmit={handleCheckin}>
-                        <input
-                            className={styles.input}
-                            type="text"
-                            value={tokenCheckin}
-                            onChange={(e) => setTokenCheckin(e.target.value)}
-                            placeholder="Escaneie o QR Code ou cole o código aqui"
-                        />
-                        <Botao nome="Confirmar Entrega" corFundo="#207556" corBorda="#155c42" type="submit" />
-                    </form>
-                </div>
-
-                <div className={styles.secao}>
                     <h3 className={styles.subtitulo}>Pendentes de validação</h3>
 
                     {loading ? (
@@ -134,12 +118,12 @@ function SolicitacoesCestas() {
                                 </thead>
                                 <tbody>
                                     {solicitacoes.map((s) => (
-                                        <tr key={s.id}>
-                                            <td>{s.nomeSolicitante}</td>
-                                            <td>{ROTULO_NIVEL[s.nivelSolicitante] || s.nivelSolicitante}</td>
-                                            <td>{s.nome}</td>
-                                            <td>{[s.lider_celula, s.rede].filter(Boolean).join(' / ')}</td>
-                                            <td>
+                                        <tr key={s.id} className={styles.tr_body}>
+                                            <td data-label="Solicitante">{s.nomeSolicitante}</td>
+                                            <td data-label="Liderança">{ROTULO_NIVEL[s.nivelSolicitante] || s.nivelSolicitante}</td>
+                                            <td data-label="Beneficiário">{s.nome}</td>
+                                            <td data-label="Célula / Rede">{[s.lider_celula, s.rede].filter(Boolean).join(' / ')}</td>
+                                            <td data-label="Data de retirada">
                                                 <input
                                                     className={styles.input}
                                                     type="date"
@@ -147,7 +131,7 @@ function SolicitacoesCestas() {
                                                     onChange={(e) => setDatasRetirada(prev => ({ ...prev, [s.id]: e.target.value }))}
                                                 />
                                             </td>
-                                            <td>
+                                            <td data-label="Ação">
                                                 <Botao
                                                     nome="Validar"
                                                     corFundo="#F29F05"
@@ -163,14 +147,47 @@ function SolicitacoesCestas() {
                     )}
                 </div>
 
-                {Object.entries(qrCodes).map(([id, qr]) => (
-                    <div key={id} className={styles.qrCodeArea}>
-                        <h3 className={styles.subtitulo}>QR Code da retirada</h3>
-                        <img src={qr.url} alt="QR Code da solicitação" />
-                        <p>Código: {qr.token}</p>
-                        <p className={styles.vazio}>Imprima ou envie para o beneficiário apresentar na retirada.</p>
-                    </div>
-                ))}
+                <div className={styles.secao}>
+                    <h3 className={styles.subtitulo}>Aguardando retirada</h3>
+
+                    {loading ? (
+                        <p className={styles.vazio}>Carregando...</p>
+                    ) : agendadas.length === 0 ? (
+                        <p className={styles.vazio}>Nenhuma cesta agendada aguardando retirada.</p>
+                    ) : (
+                        <div className={styles.tableResponsive}>
+                            <table className={styles.table}>
+                                <thead>
+                                    <tr>
+                                        <th>Beneficiário</th>
+                                        <th>Célula / Rede</th>
+                                        <th>Solicitante</th>
+                                        <th>Data de retirada</th>
+                                        <th>Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {agendadas.map((s) => (
+                                        <tr key={s.id} className={styles.tr_body}>
+                                            <td data-label="Beneficiário">{s.nome}</td>
+                                            <td data-label="Célula / Rede">{[s.lider_celula, s.rede].filter(Boolean).join(' / ')}</td>
+                                            <td data-label="Solicitante">{s.nomeSolicitante}</td>
+                                            <td data-label="Data de retirada">{formatarData(s.dataRetirada)}</td>
+                                            <td data-label="Ação">
+                                                <Botao
+                                                    nome="Confirmar Entrega"
+                                                    corFundo="#207556"
+                                                    corBorda="#155c42"
+                                                    onClick={() => handleConfirmarEntrega(s.id, s.nome)}
+                                                />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

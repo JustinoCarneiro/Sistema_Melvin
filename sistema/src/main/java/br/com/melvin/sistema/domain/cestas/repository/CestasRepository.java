@@ -16,6 +16,4 @@ public interface CestasRepository extends JpaRepository<Cestas, UUID>{
 
     // US-7.4
     List<Cestas> findAllByStatus(StatusCesta status);
-
-    Cestas findByQrCodeToken(String qrCodeToken);
 }

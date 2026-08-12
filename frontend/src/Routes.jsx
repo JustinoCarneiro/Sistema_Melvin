@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import HeaderSite from '@site/components/HeaderSite';
 import FooterSite from '@site/components/FooterSite';
@@ -38,11 +38,43 @@ import ScrollToTopRouter from '@core/components/ScrollToTopRouter';
 
 
 function AppRoutes() {
+    // Formulário público de solicitação de cesta é renderizado FORA do
+    // HashRouter para que a URL fique limpa (sem #), facilitando o uso
+    // em QR Codes e links compartilhados por supervisores/líderes.
+    if (window.location.pathname === '/solicitarcesta') {
+        return <SolicitarCestaPublica />;
+    }
+
     return (
         <Router>
             <ScrollToTopRouter />
             <MainLayout />
         </Router>
+    );
+}
+
+// Layout do site institucional com fundo de aquarela, header e footer —
+// mesma estrutura de SiteContent, mas fora do HashRouter.
+function SolicitarCestaPublica() {
+    return (
+        <BrowserRouter>
+        <div className="site-layout relative min-h-screen">
+            <div className="site-bg-base" />
+            <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-[1]">
+                <div className="absolute top-[-15%] left-[-15%] w-[80vw] h-[80vw] rounded-full animate-slow-pulse"
+                    style={{ background: 'radial-gradient(circle, hsla(210, 90%, 55%, 0.4) 0%, transparent 75%)', filter: 'blur(80px)' }} />
+                <div className="absolute top-[-10%] right-[-15%] w-[70vw] h-[70vw] rounded-full animate-slow-pulse"
+                    style={{ background: 'radial-gradient(circle, hsla(217, 85%, 45%, 0.35) 0%, transparent 75%)', filter: 'blur(80px)', animationDelay: '2s' }} />
+                <div className="absolute bottom-[-15%] left-[15%] w-[90vw] h-[90vw] rounded-full animate-slow-pulse"
+                    style={{ background: 'radial-gradient(circle, hsla(45, 100%, 50%, 0.4) 0%, transparent 75%)', filter: 'blur(120px)', animationDelay: '4s' }} />
+            </div>
+            <HeaderSite />
+            <main className="site-content relative z-10">
+                <SolicitarCesta />
+            </main>
+            <FooterSite />
+        </div>
+        </BrowserRouter>
     );
 }
 
@@ -86,7 +118,7 @@ function SiteContent() {
                     <Route path="/cadastroamigo" element={<CadastroAmigo />} />
                     <Route path="/doacoes" element={<Doacao />} />
                     <Route path="/notatemvalor" element={<NotaValor />} />
-                    <Route path="/solicitarcesta" element={<SolicitarCesta />} />
+                    {/* /solicitarcesta é renderizado fora do HashRouter (ver AppRoutes) */}
                 </Routes>
             </main>
             <FooterSite />
