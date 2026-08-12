@@ -158,6 +158,10 @@ public class DiscenteService {
             existente.setTratamento(discente.getTratamento());
             existente.setHorario_medicamento(discente.getHorario_medicamento());
             existente.setSaida_aluno(discente.getSaida_aluno());
+            // Dado de segurança (quem está autorizado a retirar a criança) — é
+            // editável no formulário, mas ficava de fora da cópia e era descartado
+            // em silêncio (achado na auditoria pré-deploy de 11/08/2026).
+            existente.setContato_saida(discente.getContato_saida());
             existente.setEsportes(discente.getEsportes());
             existente.setStatus(discente.getStatus());
             existente.setKarate(discente.isKarate());

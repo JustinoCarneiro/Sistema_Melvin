@@ -29,6 +29,7 @@
 | 11 | Notificação de Falta ao Responsável | 🟢 Pequeno | 1-2 | ✅ Concluído |
 | 12 | Registro de Ocorrências do Aluno | 🟡 Médio | 3-4 | ✅ Concluído |
 | 13 | Solicitação de Cestas + Check-in QR Code | 🔴 Grande | 5-7 | ✅ Concluído |
+| 14 | Notificação de Falta via WhatsApp | 🟡 Médio | 3-4 | 🔲 Backlog |
 
 ---
 
@@ -632,20 +633,39 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 | `POST` | `/cestas/checkin/{qrCodeToken}` | `GERENCIAR_CESTAS` | Escaneamento no ato da entrega → status `ENTREGUE`. Retorna 409 se já estava `ENTREGUE` |
 
 ### Riscos técnicos — como ficaram na entrega
-- **Endpoint público sem proteção antiabuso → resolvido.** `POST /cestas/solicitacao` recebeu rate limit de 5 solicitações/hora por IP (`CestasSolicitacaoRateLimitFilter`, Bucket4j 8.19.0), com IP lido de `X-Forwarded-For` por causa do nginx. Escopo deliberadamente cirúrgico: só este endpoint, não os demais públicos (que seguem sem proteção). Decisão, calibragem e armadilha de ordem de registro do filtro em `memoria-tecnica/decisoes/rate-limit-apenas-solicitacao-cesta.md`.
+- **Endpoint público sem proteção antiabuso → resolvido.** `POST /cestas/solicitacao` recebeu rate limit de 5 solicitações/hora por IP (`CestasSolicitacaoRateLimitFilter`, Bucket4j 8.19.0). Escopo deliberadamente cirúrgico: só este endpoint, não os demais públicos (que seguem sem proteção). Decisão, calibragem e armadilha de ordem de registro do filtro em `memoria-tecnica/decisoes/rate-limit-apenas-solicitacao-cesta.md`.
+  **Correção de segurança (auditoria pré-deploy, 11/08/2026):** a chave do limite lia o primeiro elemento de `X-Forwarded-For`, que o nginx (`$proxy_add_x_forwarded_for`) **anexa** ao valor mandado pelo cliente — ou seja, o começo do header é a parte que o próprio cliente controla. O limite era burlável variando o header, e cada valor forjado abria uma entrada nova no mapa em memória (vazamento explorável, heap de 512m). Corrigido: chave agora sai de `X-Real-IP` (sobrescrito pelo nginx), fallback lê o *último* elemento do `X-Forwarded-For`, e o mapa tem teto de 10k entradas. Ver `memoria-tecnica/bugs/rate-limit-burlavel-por-x-forwarded-for-forjado.md`.
 - **Payload público não pode forjar estado.** `solicitar()` zera `id`, `status`, `dataRetirada`, `qrCodeToken` e `entregueEm` antes de salvar — sem isso, um POST manual criaria uma cesta já `ENTREGUE` com token escolhido pelo atacante. Coberto por teste.
 - **QR Code → ZXing** (`core` + `javase`, 3.5.4). Token = UUID gerado na transição para `AGENDADA`, único no banco. `GET /cestas/qrcode/{token}` devolve PNG e é **autenticado** (`GERENCIAR_CESTAS`) — o QR é material da equipe, não página pública.
 - **Permissão `SOLICITAR_CESTA` não foi criada** — perdeu o sentido com a correção de escopo (qualquer nível solicita, sem cadastro prévio). Validação, check-in e QR reaproveitam `GERENCIAR_CESTAS`.
 
 ### Fora do escopo desta entrega
 - **Leitor de câmera no navegador.** A tela de solicitações aceita o token colado/escaneado por leitor externo, mas não abre a câmera via `getUserMedia`. Exigiria lib de leitura no frontend + HTTPS + permissão de câmera; os critérios de aceite falam em "escanear o QR Code", o que um leitor de código de barras/celular já atende. Item natural de evolução se a equipe pedir.
-- **Notificação automática à coordenação** quando chega solicitação nova (o critério de aceite menciona "a coordenação é notificada"): hoje a coordenação vê a fila na tela de solicitações. O disparo de e-mail via `EmailService.notifyInstituto()` é plugável no `solicitar()` — não foi incluído pra não ampliar a entrega sem alinhamento sobre volume de e-mail.
 - **Transição `CANCELADA`** existe no enum mas não tem endpoint que a acione.
 
 ### Entrega (TDD)
-15 testes novos: `CestasServiceTest` passou de 6 para 17 (11 novos cobrindo solicitar/validar/checkin, incluindo os 409 de dupla retirada e de validação repetida, e o teste de payload forjado) + `CestasSolicitacaoRateLimitFilterTest` (4 — passa em outras rotas, respeita o limite, bloqueia com 429, não mistura IPs). Suíte completa do backend: **70/70 verde**, incluindo `SistemaApplicationTests` (que pegou de verdade um erro de ordem de registro do filtro). Frontend: página pública `/solicitarcesta` + tela interna `/app/cestas/solicitacoes`, lint limpo nos arquivos novos e `npm run build` OK.
+20 testes: `CestasServiceTest` passou de 6 para 20 (14 novos cobrindo solicitar/validar/checkin, incluindo os 409 de dupla retirada e de validação repetida, o teste de payload forjado e o de notificação à coordenação) + `CestasSolicitacaoRateLimitFilterTest` (5 — passa em outras rotas, respeita o limite, bloqueia com 429, não mistura IPs, resiste a `X-Forwarded-For` forjado). Suíte completa do backend: **79/79 verde**, incluindo `SistemaApplicationTests`. Frontend: página pública `/solicitarcesta` + tela interna `/app/cestas/solicitacoes` (agora com item no menu — a tela ficou órfã na primeira entrega), lint limpo e `npm run build` OK.
+
+> **Achado na auditoria pré-deploy (11/08/2026):** o critério de aceite "a coordenação é notificada" não tinha sido implementado na entrega original — a lista acima chegou a listar isso como "fora do escopo", decisão revertida na auditoria porque é um critério de aceite aprovado, não um nice-to-have. `solicitar()` agora chama `emailService.notifyInstituto()` com solicitante, nível, beneficiário e célula. Ver `memoria-tecnica/decisoes/` (a criar, se o volume de e-mail virar problema real) e o commit `406f7f9`.
 
 > ✅ **Migration V14 validada na homologação (Fase 5, 10/08/2026)** contra uma cópia do schema real de produção (`pg_dump --schema-only`, sem dados) restaurada em Postgres 14 local, com o histórico Flyway real de produção (V1-V11, checksums conferidos). As três migrations novas (V12/V13/V14) aplicaram limpo e a aplicação subiu em cima. A homologação revelou que `cestas.data_entrega` era `NOT NULL` no banco — divergindo da entidade, que a declara nullable —, o que fazia todo `POST /cestas/solicitacao` estourar 500; a V14 ganhou o `DROP NOT NULL` correspondente. Ver `memoria-tecnica/bugs/campo-novo-opcional-nao-persiste-nem-aceita-null.md`.
+
+---
+
+## MÓDULO 14: NOTIFICAÇÃO DE FALTA VIA WHATSAPP
+**Peso: 🟡 MÉDIO (~3-4 dias, estimativa) | Status: 🔲 Backlog**
+
+> Épico de referência: [CLAUDE.md #Épico 5 — US-5.6](./CLAUDE.md)
+
+Decisão do cliente (11/08/2026): fica formalmente registrado como Backlog, não priorizado agora.
+Sem contrato de API novo — plugaria no mesmo gatilho que a US-5.5 já criou em
+`FrequenciaDiscenteService` (`cadastrar()` e `alterar()`), como canal adicional ao lado do
+`EmailService`, nunca no lugar dele (falha no WhatsApp não pode derrubar o e-mail que já funciona).
+
+**Decisão de produto pendente antes de estimar com precisão:** qual provedor/BSP contratar. O
+custo por mensagem (~R$0,04–0,09, categoria "utilidade") é irrelevante pro volume do Instituto —
+o que decide é a mensalidade do BSP (R$200–1.200/mês). Levantamento completo em CLAUDE.md
+(Épico 5, US-5.6).
 
 ---
 

@@ -76,6 +76,28 @@ public class DiscenteServiceTest {
     }
 
     @Test
+    public void testAlterarPersisteContatoDeSaida() {
+        // `contato_saida` é quem está autorizado a retirar a criança do Instituto —
+        // dado de segurança. O campo é editável no formulário, mas ficava de fora da
+        // cópia do alterar(), então a alteração era descartada em silêncio (PUT 200).
+        Discente existente = new Discente();
+        existente.setMatricula("2026001");
+        existente.setContato_saida("85911110000");
+
+        Discente atualizado = new Discente();
+        atualizado.setMatricula("2026001");
+        atualizado.setContato_saida("85922223333");
+
+        when(discenteRepository.findByMatricula("2026001")).thenReturn(existente);
+        when(discenteRepository.save(org.mockito.ArgumentMatchers.any(Discente.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
+
+        discenteService.alterar(atualizado);
+
+        assertEquals("85922223333", existente.getContato_saida());
+    }
+
+    @Test
     public void testRemoverDiscenteNaoExistente() {
         when(discenteRepository.findByMatricula("9999")).thenReturn(null);
 

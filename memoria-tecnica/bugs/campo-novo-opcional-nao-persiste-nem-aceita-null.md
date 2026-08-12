@@ -50,10 +50,14 @@ São dois sintomas do mesmo tema — **o banco e o service não acompanham a ent
   ```bash
   # compara os `private <tipo> campo;` da entidade com os `existente.setX(` do service
   ```
-  Na data desta nota, seguem **de fora** (pré-existentes, não corrigidos aqui):
-  `contato_saida` — que **aparece no formulário** e portanto também é descartado ao editar — e
-  `teatro`. Os `avaliacao*` ficam de fora de propósito (têm endpoint próprio com permissão
-  granular, US-3.5).
+  `contato_saida` — dado de segurança (quem está autorizado a retirar a criança), **aparece no
+  formulário** e por isso também era descartado ao editar — foi corrigido em 11/08/2026 (auditoria
+  pré-deploy) pelo mesmo padrão: `existente.setContato_saida(...)` adicionado ao `alterar()`,
+  coberto por teste.
+  `teatro` segue de fora **deliberadamente**: não tem input no formulário (não é editável hoje),
+  então não há dado sendo perdido — mexer nele seria risco sem benefício, fora do escopo de um
+  bugfix. Os `avaliacao*` ficam de fora de propósito (têm endpoint próprio com permissão granular,
+  US-3.5).
 - Suíte unitária verde **não** cobre esta classe de defeito. O que pegou foi a Fase 5 com schema
   real; vale repetir esse passo sempre que uma US mexer em entidade antiga.
 
