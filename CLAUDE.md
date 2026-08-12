@@ -477,8 +477,9 @@ Então alerta de kit_especial aparece no dashboard admin.
 **eu quero** publicar avisos com título, corpo, imagem e período de exibição,
 **para que** voluntários e equipe sejam informados de comunicados importantes.
 
-#### US-7.4: Solicitar Cesta Básica com Agendamento e Check-in por QR Code
+#### US-7.4: Solicitar Cesta Básica com Agendamento e Confirmação de Entrega
 **Status:** ✅ Concluído (10/08/2026, ver ROADMAP.md Módulo 13). Substitui, no pedido do cliente, o item originalmente proposto como "Confirmação de leitura em avisos" — motivado por problemas reais na entrega de cestas.
+**Revisado em 12/08/2026:** cliente pediu para tirar o check-in por QR Code do escopo — a confirmação de entrega virou manual, direto na tela de solicitações. Ver nota de implementação atualizada abaixo.
 
 **Como** líder de qualquer nível da hierarquia da igreja (célula, setor, área, distrito ou rede),
 **eu quero** solicitar uma cesta básica em nome de um membro de célula, através de um link, sem precisar ligar ou ir pessoalmente até o instituto,
@@ -489,33 +490,35 @@ Então alerta de kit_especial aparece no dashboard admin.
 > **Correção de escopo (10/08/2026):** o cliente esclareceu que **qualquer nível pode solicitar**, não só o supervisor — o pedido é sempre *para um membro de uma célula específica*, mas quem preenche o link pode ser o próprio líder da célula, o supervisor do setor dela, ou alguém ainda mais acima (área/distrito/rede). O link não deve travar em um nível fixo; a solicitação precisa registrar **quem** pediu e **de qual nível**, além de qual célula/beneficiário é o destino da cesta.
 
 **Como** coordenador,
-**eu quero** validar as solicitações recebidas, definir a data de retirada e confirmar a entrega escaneando um QR Code,
+**eu quero** validar as solicitações recebidas, definir a data de retirada e confirmar a entrega quando o beneficiário retira a cesta,
 **para que** o instituto tenha rastreabilidade real de quem retirou cada cesta — resolvendo a falta de controle na entrega relatada pelo cliente.
 
 **Critérios de Aceite:**
 ```gherkin
 Dado que um líder (de qualquer nível: célula, setor, área, distrito ou rede) acessa o link público de solicitação de cesta,
 Quando ele informa seu nome, seu nível na hierarquia, e os dados do beneficiário/célula, e envia,
-Então a solicitação é criada com status SOLICITADA e a coordenação é notificada.
+Então a solicitação é criada com status SOLICITADA e a coordenação é notificada por e-mail (com todos os dados do pedido, inclusive contato do beneficiário e observações).
 
 Dado que uma solicitação está com status SOLICITADA,
 Quando o coordenador valida e define a data de retirada,
-Então o status muda para AGENDADA e um QR Code único é gerado para aquela solicitação.
+Então o status muda para AGENDADA e a solicitação passa a aparecer na lista "Aguardando retirada".
 
 Dado que o beneficiário comparece no dia agendado para retirar a cesta,
-Quando a equipe do instituto escaneia o QR Code da solicitação,
-Então o status muda para ENTREGUE, com data/hora do check-in registrada.
+Quando a equipe do instituto clica em "Confirmar Entrega" na solicitação correspondente,
+Então o status muda para ENTREGUE, com data/hora da confirmação registrada.
 
 Dado que uma solicitação já está ENTREGUE,
-Quando alguém tenta escanear o mesmo QR Code novamente,
-Então o sistema recusa a ação e exibe "já retirada em [data/hora]" (evita dupla contagem de entrega).
+Quando alguém tenta confirmar a entrega dela de novo,
+Então o sistema recusa a ação e exibe "já foi confirmada como entregue em [data/hora]" (evita dupla contagem de entrega).
 ```
 
 > **Nota de implementação (atualizada na entrega):** máquina de estados nova (`SOLICITADA → AGENDADA → ENTREGUE`, com `CANCELADA` previsto no enum como saída) sobre `Cestas`, reintroduzindo o campo `status` — nullable, para que os cadastros diretos já existentes (sem fluxo de solicitação) fiquem com `status` NULL e sigam distinguíveis das solicitações reais. Campos do solicitante genéricos (`nomeSolicitante` + `nivelSolicitante`, enum `CELULA/SETOR/AREA/DISTRITO/REDE`), não um campo fixo por nível — o beneficiário/célula continua identificado por `lider_celula`/`rede`, que já existiam. Migration `V14`.
 >
-> **Segurança do endpoint público:** `POST /cestas/solicitacao` é `permitAll` (mesmo padrão de `/amigomelvin`), mas — diferente dos demais endpoints públicos — recebeu **rate limit** (5 solicitações/hora por IP, Bucket4j), por ser o único que dispara um fluxo de trabalho interno da coordenação. Decisão e trade-offs em `memoria-tecnica/decisoes/rate-limit-apenas-solicitacao-cesta.md`. O service **ignora campos de fluxo interno vindos no payload** (`status`, `qrCodeToken`, `entregueEm`, `id`): a solicitação sempre nasce em `SOLICITADA`, sem token — payload público não consegue forjar uma cesta já entregue.
+> **Segurança do endpoint público:** `POST /cestas/solicitacao` é `permitAll` (mesmo padrão de `/amigomelvin`), mas — diferente dos demais endpoints públicos — recebeu **rate limit** (5 solicitações/hora por IP, Bucket4j), por ser o único que dispara um fluxo de trabalho interno da coordenação. Decisão e trade-offs em `memoria-tecnica/decisoes/rate-limit-apenas-solicitacao-cesta.md`. O service **ignora campos de fluxo interno vindos no payload** (`status`, `entregueEm`, `id`): a solicitação sempre nasce em `SOLICITADA` — payload público não consegue forjar uma cesta já entregue.
 >
-> **QR Code:** capacidade nova no projeto, via ZXing (`core` + `javase`). Token é um UUID gerado na transição para `AGENDADA` (único no banco); `GET /cestas/qrcode/{token}` devolve o PNG e é **autenticado** (`GERENCIAR_CESTAS`) — o QR é gerado para a equipe imprimir/enviar, não é página pública. A leitura no ato da entrega é feita colando/escaneando o token na tela de solicitações; **não** foi implementado leitor de câmera no navegador (ver "Fora do escopo" no ROADMAP).
+> **QR Code removido do escopo (12/08/2026, decisão do cliente):** a versão original desta US previa gerar um QR Code na validação (`AGENDADA`) e confirmar a entrega escaneando-o (via ZXing). O cliente pediu para simplificar: confirmação de entrega passou a ser manual — a coordenação vê a solicitação agendada na tela e clica em "Confirmar Entrega", sem token nem leitura de QR. `QrCodeService`, a dependência ZXing e a coluna `qr_code_token` foram removidos (a migration `V14` nunca tinha ido a produção, então foi editada em vez de compensada com uma V15). Endpoints atuais: `GET /cestas/solicitacoes/agendadas` (lista quem está aguardando retirada) e `POST /cestas/solicitacao/{id}/confirmar-entrega`.
+>
+> **Link público sem `#` (12/08/2026):** para uso em QR Codes/links compartilhados com supervisores e líderes externos, `/solicitarcesta` passou a ser renderizado fora do `HashRouter` que o resto do app usa (que produz URLs com `/#/`) — acessível como `institutomelvin.org/solicitarcesta`, uma URL limpa. O Nginx de produção já tinha fallback de SPA (`try_files ... /index.html`) configurado, então isso não exigiu mudança de infraestrutura.
 >
 > **Permissões:** validação, check-in e geração de QR reaproveitam `GERENCIAR_CESTAS` (já existente). A permissão `SOLICITAR_CESTA` cogitada na especificação **não foi criada** — perdeu o sentido quando o cliente esclareceu que qualquer nível da hierarquia pode solicitar, sem cadastro prévio no sistema (o link é aberto, protegido por rate limit em vez de permissão).
 
