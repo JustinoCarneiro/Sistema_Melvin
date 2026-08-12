@@ -104,6 +104,13 @@
     gap: 1rem;
 }
 
+.descricaoOcorrencia {
+    // Texto livre (professor pode digitar sem espaços, ex.: link colado) —
+    // sem isso, uma "palavra" sem espaço estoura a largura do card em vez de quebrar.
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
 .linhaDupla {
     display: flex;
     gap: 1rem;

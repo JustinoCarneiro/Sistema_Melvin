@@ -464,7 +464,7 @@ function Aluno_forms(){
                                     <div key={oc.id} className={styles.coluna} style={{ marginBottom: '12px' }}>
                                         <strong>{oc.categoria === 'COMPORTAMENTAL' ? 'Comportamental' : 'Pedagógica'}</strong>
                                         {' — '}{oc.data_ocorrencia ? new Date(oc.data_ocorrencia + 'T00:00:00').toLocaleDateString('pt-BR') : '-'}{' — registrado por '}{oc.autor_login}
-                                        <p>{oc.descricao}</p>
+                                        <p className={styles.descricaoOcorrencia}>{oc.descricao}</p>
                                     </div>
                                 ))
                             )}
