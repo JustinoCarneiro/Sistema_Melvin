@@ -67,7 +67,7 @@ function SolicitarCesta() {
 
     if (success) {
         return (
-            <div className="py-24 max-w-2xl mx-auto px-4">
+            <div className="pt-32 sm:pt-40 pb-24 max-w-2xl mx-auto px-4">
                 <motion.div {...fadeIn} className="bg-white/40 backdrop-blur-xl p-8 md:p-12 rounded-[4rem] border border-white/60 shadow-2xl relative text-center">
                     <WatercolorBlob color="green" size="w-32 h-32" className="-top-10 -right-10 opacity-20" />
 
@@ -89,7 +89,7 @@ function SolicitarCesta() {
     }
 
     return (
-        <div className="py-24 max-w-2xl mx-auto px-4">
+        <div className="pt-32 sm:pt-40 pb-24 max-w-2xl mx-auto px-4">
             <motion.div {...fadeIn} className="text-center mb-16">
                 <h1 className="text-5xl md:text-6xl text-melvin-text mb-6">
                     Solicitar <span className="text-melvin-yellow brush-stroke">Cesta Básica</span>
