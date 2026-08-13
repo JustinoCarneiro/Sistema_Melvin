@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,18 +17,24 @@ import br.com.melvin.sistema.domain.cestas.model.Cestas;
 import br.com.melvin.sistema.domain.cestas.model.StatusCesta;
 import br.com.melvin.sistema.domain.cestas.repository.CestasRepository;
 import br.com.melvin.sistema.shared.service.EmailService;
+import br.com.melvin.sistema.shared.service.QrCodeService;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
 @SuppressWarnings("null")
+@Slf4j
 public class CestasService {
-    
+
     @Autowired
     CestasRepository repositorio;
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    QrCodeService qrCodeService;
 
     public List<Cestas> listar(){
         return repositorio.findAll();
@@ -121,6 +128,7 @@ public class CestasService {
         String corpo = "Uma nova solicitação de cesta básica foi recebida.\n\n"
                 + "Solicitante: " + solicitacao.getNomeSolicitante()
                 + " (" + solicitacao.getNivelSolicitante() + ")\n"
+                + "E-mail do solicitante: " + (solicitacao.getEmailSolicitante() != null ? solicitacao.getEmailSolicitante() : "-") + "\n"
                 + "Beneficiário: " + solicitacao.getNome() + "\n"
                 + "Contato: " + (solicitacao.getContato() != null ? solicitacao.getContato() : "-") + "\n"
                 + "Célula: " + (solicitacao.getLider_celula() != null ? solicitacao.getLider_celula() : "-") + "\n"
@@ -150,25 +158,65 @@ public class CestasService {
 
         existente.setStatus(StatusCesta.AGENDADA);
         existente.setDataRetirada(dataRetirada);
+        // Gerado sempre (não só quando há e-mail): a coordenação pode ver/baixar o QR
+        // manualmente pela tela mesmo sem envio automático.
+        existente.setQrCodeToken(UUID.randomUUID().toString());
 
-        return new ResponseEntity<Cestas>(repositorio.save(existente), HttpStatus.OK);
+        Cestas salva = repositorio.save(existente);
+
+        if (salva.getEmailSolicitante() != null && !salva.getEmailSolicitante().isBlank()) {
+            enviarQrCodePorEmail(salva);
+        }
+
+        return new ResponseEntity<Cestas>(salva, HttpStatus.OK);
+    }
+
+    // Best-effort: falha no envio do e-mail não derruba a validação, que já
+    // aconteceu e foi persistida. O botão "Confirmar Entrega" continua funcionando
+    // mesmo se o e-mail nunca sair.
+    private void enviarQrCodePorEmail(Cestas cesta) {
+        try {
+            byte[] qrPng = qrCodeService.gerarPng(cesta.getQrCodeToken());
+            String dataFormatada = cesta.getDataRetirada().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            String corpo = "Olá, " + cesta.getNomeSolicitante() + "!\n\n"
+                    + "A solicitação de cesta básica para " + cesta.getNome() + " foi agendada.\n"
+                    + "Data de retirada: " + dataFormatada + "\n\n"
+                    + "Leve o QR Code em anexo (impresso ou no celular) no dia da retirada — "
+                    + "ele agiliza a confirmação na entrega. Se não for possível levá-lo, "
+                    + "a equipe do Instituto também consegue confirmar manualmente pelo nome.";
+
+            emailService.sendEmailComAnexo(cesta.getEmailSolicitante(), "Cesta básica agendada — Instituto Melvin",
+                    corpo, "qrcode-retirada.png", qrPng, "image/png");
+        } catch (Exception e) {
+            log.error("Falha ao gerar/enviar QR Code por e-mail para solicitação {}", cesta.getId(), e);
+        }
     }
 
     public List<Cestas> listarAgendadas() {
         return repositorio.findAllByStatus(StatusCesta.AGENDADA);
     }
 
-    // US-7.4 (revisado 12/08/2026): confirmação de entrega é manual, direto pelo ID —
-    // sem QR Code. A coordenação vê a solicitação na lista de agendadas e confirma
-    // quando o beneficiário retira a cesta.
+    // US-7.4 (reintroduzido): confirmação de entrega manual, direto pelo ID — caminho
+    // ALTERNATIVO, pra quando o QR Code não estiver disponível/legível.
     public ResponseEntity<?> confirmarEntrega(UUID id) {
         Optional<Cestas> existenteOpt = repositorio.findById(id);
         if (existenteOpt.isEmpty()) {
             return new ResponseEntity<String>("Solicitação não encontrada!", HttpStatus.NOT_FOUND);
         }
+        return confirmarEntregaInterno(existenteOpt.get());
+    }
 
-        Cestas existente = existenteOpt.get();
+    // US-7.4 (reintroduzido): confirmação de entrega por scan de QR Code — caminho
+    // PRINCIPAL. O token não é adivinhável (UUID aleatório gerado na validação).
+    public ResponseEntity<?> confirmarEntregaPorToken(String token) {
+        Cestas existente = repositorio.findByQrCodeToken(token);
+        if (existente == null) {
+            return new ResponseEntity<String>("QR Code inválido ou não reconhecido.", HttpStatus.NOT_FOUND);
+        }
+        return confirmarEntregaInterno(existente);
+    }
 
+    private ResponseEntity<?> confirmarEntregaInterno(Cestas existente) {
         if (existente.getStatus() == StatusCesta.ENTREGUE) {
             String dataFormatada = existente.getEntregueEm()
                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
@@ -186,5 +234,22 @@ public class CestasService {
         existente.setEntregueEm(LocalDateTime.now());
 
         return new ResponseEntity<Cestas>(repositorio.save(existente), HttpStatus.OK);
+    }
+
+    // US-7.4 (reintroduzido): permite à coordenação ver/baixar o QR Code manualmente
+    // (ex.: e-mail não foi cadastrado, ou se perdeu) — não depende do envio automático.
+    public ResponseEntity<byte[]> obterQrCode(UUID id) {
+        Optional<Cestas> existenteOpt = repositorio.findById(id);
+        if (existenteOpt.isEmpty() || existenteOpt.get().getQrCodeToken() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        try {
+            byte[] png = qrCodeService.gerarPng(existenteOpt.get().getQrCodeToken());
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(png);
+        } catch (Exception e) {
+            log.error("Falha ao gerar QR Code para solicitação {}", id, e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

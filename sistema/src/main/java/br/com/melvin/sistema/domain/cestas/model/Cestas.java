@@ -65,4 +65,12 @@ public class Cestas {
 
     private LocalDate dataRetirada;
     private LocalDateTime entregueEm;
+
+    // --- US-7.4 (reintroduzido): check-in por QR Code como caminho principal,
+    // com a confirmação manual por ID (acima) mantida como caminho alternativo.
+    // E-mail cifrado igual aos demais contatos pessoais do sistema (LGPD).
+    @Convert(converter = SensitiveDataConverter.class)
+    private String emailSolicitante;
+
+    private String qrCodeToken;
 }

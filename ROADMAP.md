@@ -1,6 +1,6 @@
 # 🗺️ ROADMAP.md — Blueprint de Arquitetura e Contratos
 
-> **Última atualização:** 10/08/2026 (adição dos Módulos 11-13, Backlog)
+> **Última atualização:** 12/08/2026 (Módulo 13 — QR Code reintroduzido como caminho principal)
 > **Metodologia:** Onda-Dev (Fase 3 — Blueprint)
 > **Referência:** [CLAUDE.md](./CLAUDE.md)
 
@@ -615,14 +615,14 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 ---
 
 ## MÓDULO 13: SOLICITAÇÃO DE CESTAS + CONFIRMAÇÃO DE ENTREGA
-**Peso: 🔴 GRANDE (~5-7 dias) | Status: ✅ Concluído (10/08/2026, revisado 12/08/2026)**
+**Peso: 🔴 GRANDE (~5-7 dias) | Status: ✅ Concluído (10/08/2026, revisado 12/08/2026 — duas vezes)**
 
 > Épico de referência: [CLAUDE.md #Épico 7 — US-7.4](./CLAUDE.md)
 
-> ⚠️ **QR Code removido do escopo em 12/08/2026** (decisão do cliente, antes do deploy). A entrega original (abaixo, seção "Entrega (TDD)") tinha check-in por QR Code via ZXing; o cliente pediu simplificação — confirmação manual pelo coordenador, sem escanear nada. Esta seção foi atualizada para refletir o estado final; a nota de auditoria com o histórico do QR Code foi mantida mais abaixo para rastreabilidade.
+> ✅ **QR Code: removido e reintroduzido no mesmo dia (12/08/2026).** Primeira revisão removeu o check-in por QR Code do escopo. Horas depois, esclarecido que essa remoção não tinha vindo de um pedido real do cliente — o pedido original sempre incluiu QR Code. Reintroduzido como **caminho principal** de confirmação de entrega, com a confirmação manual (construída na primeira revisão) virando o **caminho alternativo**. Esta seção reflete o estado final; o histórico completo das duas revisões está na nota mais abaixo.
 
 ### Mudança de modelo
-`Cestas` ganha máquina de estados nova: campo `status` (enum `SOLICITADA`, `AGENDADA`, `ENTREGUE`, `CANCELADA` — reintroduz um campo de status que havia sido removido do modelo atual), `dataRetirada` (LocalDate, definida na validação — distinto do `dataEntrega` atual) e `entregueEm` (LocalDateTime, preenchido na confirmação manual de entrega).
+`Cestas` ganha máquina de estados nova: campo `status` (enum `SOLICITADA`, `AGENDADA`, `ENTREGUE`, `CANCELADA` — reintroduz um campo de status que havia sido removido do modelo atual), `dataRetirada` (LocalDate, definida na validação — distinto do `dataEntrega` atual) e `entregueEm` (LocalDateTime, preenchido na confirmação de entrega, manual ou por QR Code). Reintroduzido também (migration V15): `emailSolicitante` (cifrado, opcional) e `qrCodeToken` (UUID gerado na validação).
 
 **Hierarquia da igreja (esclarecida pelo cliente, 10/08/2026):** célula → **setor** (liderado pelo *supervisor*) → área → distrito → rede. **Correção de escopo (mesma data):** qualquer nível da hierarquia pode ser o solicitante, não só o supervisor — o pedido é sempre *para um membro de uma célula específica*, mas quem preenche o link pode estar em qualquer nível acima dela. Por isso o modelo não ganha um campo fixo por nível (ex. só `setor`); ganha dois campos genéricos: `nomeSolicitante` (string) e `nivelSolicitante` (enum `CELULA`, `SETOR`, `AREA`, `DISTRITO`, `REDE`). O beneficiário/célula de destino da cesta continua identificado pelos campos que já existem (`liderCelula`, `rede`) — a mudança é só em *quem pede*, não em *pra quem é*.
 
@@ -633,7 +633,9 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 | `GET` | `/cestas/solicitacoes` | `GERENCIAR_CESTAS` | Lista solicitações pendentes de validação (status `SOLICITADA`) |
 | `PUT` | `/cestas/solicitacao/{id}/validar` | `GERENCIAR_CESTAS` | Define `dataRetirada` → status `AGENDADA` |
 | `GET` | `/cestas/solicitacoes/agendadas` | `GERENCIAR_CESTAS` | Lista solicitações aguardando retirada (status `AGENDADA`) |
-| `POST` | `/cestas/solicitacao/{id}/confirmar-entrega` | `GERENCIAR_CESTAS` | Confirmação manual, pelo ID → status `ENTREGUE`. Retorna 409 se já estava `ENTREGUE` ou se ainda não foi `AGENDADA` |
+| `POST` | `/cestas/solicitacao/{id}/confirmar-entrega` | `GERENCIAR_CESTAS` | Caminho **alternativo**: confirmação manual, pelo ID → status `ENTREGUE`. Retorna 409 se já estava `ENTREGUE` ou se ainda não foi `AGENDADA` |
+| `POST` | `/cestas/solicitacao/checkin/{token}` | `GERENCIAR_CESTAS` | Caminho **principal**: confirmação por token de QR Code (escaneado ou colado) → mesma lógica/mesmos 409 do endpoint acima |
+| `GET` | `/cestas/solicitacoes/{id}/qrcode` | `GERENCIAR_CESTAS` | Imagem PNG do QR Code da solicitação (pra coordenação ver/baixar manualmente, mesmo sem e-mail cadastrado) |
 
 ### Riscos técnicos — como ficaram na entrega
 - **Endpoint público sem proteção antiabuso → resolvido.** `POST /cestas/solicitacao` recebeu rate limit de 5 solicitações/hora por IP (`CestasSolicitacaoRateLimitFilter`, Bucket4j 8.19.0). Escopo deliberadamente cirúrgico: só este endpoint, não os demais públicos (que seguem sem proteção). Decisão, calibragem e armadilha de ordem de registro do filtro em `memoria-tecnica/decisoes/rate-limit-apenas-solicitacao-cesta.md`.
@@ -642,19 +644,24 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 - **Permissão `SOLICITAR_CESTA` não foi criada** — perdeu o sentido com a correção de escopo (qualquer nível solicita, sem cadastro prévio). Validação e confirmação de entrega reaproveitam `GERENCIAR_CESTAS`.
 
 ### Fora do escopo desta entrega
-- **QR Code** — chegou a ser implementado (ver nota de auditoria abaixo) e foi removido por decisão do cliente em 12/08/2026. Se o instituto quiser reintroduzir rastreabilidade por leitura futuramente, o ponto de partida é o histórico do commit que fez a remoção.
 - **Transição `CANCELADA`** existe no enum mas não tem endpoint que a acione.
+- **Envio de QR Code por WhatsApp** — só por e-mail nesta entrega (mesma limitação da US-5.5/US-5.6: WhatsApp automatizado ainda não foi implementado no sistema).
 
 ### Entrega (TDD)
-Backend: `CestasServiceTest` com 22 testes (solicitar/validar/listarAgendadas/confirmarEntrega, incluindo os 409 de dupla confirmação e de confirmação antes de agendar, o teste de payload forjado e o de notificação à coordenação) + `CestasSolicitacaoRateLimitFilterTest` (5 — passa em outras rotas, respeita o limite, bloqueia com 429, não mistura IPs, resiste a `X-Forwarded-For` forjado). Suíte completa do backend: **81/81 verde**, incluindo `SistemaApplicationTests`. Frontend: página pública `/solicitarcesta` (fora do `HashRouter`, URL limpa) + tela interna `/app/cestas/solicitacoes` com duas listas ("Pendentes de validação" e "Aguardando retirada") + botão de acesso direto na tela de Cestas (a versão com item no menu lateral ficou redundante e foi removida). E2E: **49/49 verde**. Lint e `npm run build` OK.
+Backend: `CestasServiceTest` com 33 testes (os 22 da entrega original — solicitar/validar/listarAgendadas/confirmarEntrega, os 409 de dupla confirmação e de confirmação antes de agendar, payload forjado, notificação à coordenação — mais 11 novos da reintrodução do QR Code: geração de token na validação, envio de e-mail com anexo quando há `emailSolicitante`, falha de envio não derruba a validação, confirmação por token — sucesso/404/409/equivalência com o caminho por ID —, obtenção do QR Code — sucesso/sem token/inexistente) + `CestasSolicitacaoRateLimitFilterTest` (5). Suíte completa do backend verde. Frontend: página pública `/solicitarcesta` (fora do `HashRouter`, URL limpa, com campo de e-mail do solicitante) + tela interna `/app/cestas/solicitacoes` com três blocos ("Pendentes de validação", "Confirmar entrega via QR Code" — scanner de câmera embutido ou colar o código — e "Aguardando retirada", com botões "Ver QR Code" e "Confirmar Entrega"). E2E (suíte mockada): 49/49 verde, sem regressão. Verificação viva adicional via Docker com envio real de e-mail (QR Code em anexo confirmado no log do `EmailService` e na imagem renderizada). Lint e `npm run build` OK.
 
 > **Achado na auditoria pré-deploy (11/08/2026):** o critério de aceite "a coordenação é notificada" não tinha sido implementado na entrega original — a lista acima chegou a listar isso como "fora do escopo", decisão revertida na auditoria porque é um critério de aceite aprovado, não um nice-to-have. `solicitar()` agora chama `emailService.notifyInstituto()` com solicitante, nível, beneficiário, contato, célula, rede e observações. Ver commit `406f7f9`.
 
-> **Histórico do QR Code (implementado 10/08, removido 12/08/2026):** a entrega original gerava um token UUID na transição pra `AGENDADA` (`GET /cestas/qrcode/{token}` devolvia um PNG via ZXing `core`+`javase`, `POST /cestas/checkin/{token}` fazia o check-in por leitura). O cliente pediu simplificação antes do deploy: confirmação manual pelo ID, sem token nem geração de imagem. Removidos: `QrCodeService`, dependências ZXing do `pom.xml`, coluna `qr_code_token` (a migration V14 nunca tinha ido a produção, foi editada em vez de compensada com uma V15), método `findByQrCodeToken`. `checkin(token)` virou `confirmarEntrega(id)`; `GET /cestas/qrcode/{token}` foi removido sem substituto (não há mais artefato pra gerar).
+> **Histórico do QR Code — três capítulos, todos em 12/08/2026:**
+> 1. **Implementado (10/08, na entrega original):** token UUID gerado na transição pra `AGENDADA`, `GET /cestas/qrcode/{token}` devolvia PNG via ZXing, `POST /cestas/checkin/{token}` fazia o check-in por leitura.
+> 2. **Removido (antes do deploy):** decisão tomada nesta sessão pra simplificar — confirmação manual pelo ID, sem token nem geração de imagem. `QrCodeService`, dependências ZXing e a coluna `qr_code_token` foram removidos; `checkin(token)` virou `confirmarEntrega(id)`.
+> 3. **Reintroduzido (horas depois, mesmo dia):** esclarecido que a remoção do passo 2 não correspondia a um pedido real do cliente — o pedido original sempre incluiu QR Code. Reimplementado com um desenho mais completo que o original: `qrCodeToken` volta a ser gerado (sempre, na validação — não só quando há e-mail), `email_solicitante` novo (cifrado, opcional) permite envio automático do QR Code em anexo, `POST /cestas/solicitacao/checkin/{token}` (path reorganizado pra caber na regra de segurança já existente do `/cestas/solicitacao/**`) e `GET /cestas/solicitacoes/{id}/qrcode` pra visualização manual. A confirmação manual por ID (construída no passo 2) **não foi descartada** — virou o caminho alternativo permanente. Migration `V15` (a `V14` já estava em produção entre os passos 2 e 3, não podia mais ser editada).
+>
+> **Por que e-mail do solicitante, não do beneficiário:** o beneficiário nunca faz login no sistema — só é citado no formulário público. O solicitante (o líder que preencheu o pedido) tem relação contínua com o beneficiário e repassa/imprime o QR Code antes da retirada.
 >
 > **Link público sem `#` (12/08/2026):** `/solicitarcesta` é a única rota do app renderizada fora do `HashRouter` compartilhado — necessário para uma URL limpa (`institutomelvin.org/solicitarcesta`) utilizável em QR Codes/links impressos para supervisores e líderes externos. O restante do app (área logada + demais páginas do site) continua em `HashRouter`; migrar tudo para `BrowserRouter` seria uma mudança maior, não feita aqui. O Nginx de produção (`nginx.conf` do frontend) já tinha `try_files $uri $uri/ /index.html;`, então o fallback de SPA para essa URL limpa não exigiu mudança de infraestrutura — validado direto contra o Nginx real do container, não só contra o dev server.
 >
-> **Nota de processo (12/08/2026):** parte desta revisão (remoção do QR Code, redesign visual de `/solicitarcesta`, extração do `HashRouter`, correção do rótulo "Você é líder de:", ajuste de contraste dos badges de Cestas) foi feita por um agente de IA diferente (Gemini/Antigravity), rodando em paralelo no mesmo diretório de trabalho enquanto esta sessão também editava os mesmos arquivos (`CestasService.java` entre eles). As duas edições foram conferidas depois — sem conflito de fato (linhas diferentes do mesmo método), suíte completa revalidada (backend 81/81, E2E 49/49) e testada de ponta a ponta via Docker antes de aceitar o resultado como correto.
+> **Nota de processo (12/08/2026):** parte da revisão do passo 2 acima (redesign visual de `/solicitarcesta`, extração do `HashRouter`, correção do rótulo "Você é líder de:", ajuste de contraste dos badges de Cestas) foi feita por um agente de IA diferente (Gemini/Antigravity), rodando em paralelo no mesmo diretório de trabalho enquanto esta sessão também editava os mesmos arquivos (`CestasService.java` entre eles). As duas edições foram conferidas depois — sem conflito de fato (linhas diferentes do mesmo método), suíte completa revalidada e testada de ponta a ponta via Docker antes de aceitar o resultado como correto.
 
 > ✅ **Migration V14 validada na homologação (Fase 5, 10/08/2026)** contra uma cópia do schema real de produção (`pg_dump --schema-only`, sem dados) restaurada em Postgres 14 local, com o histórico Flyway real de produção (V1-V11, checksums conferidos). As três migrations novas (V12/V13/V14) aplicaram limpo e a aplicação subiu em cima. A homologação revelou que `cestas.data_entrega` era `NOT NULL` no banco — divergindo da entidade, que a declara nullable —, o que fazia todo `POST /cestas/solicitacao` estourar 500; a V14 ganhou o `DROP NOT NULL` correspondente. Ver `memoria-tecnica/bugs/campo-novo-opcional-nao-persiste-nem-aceita-null.md`.
 
@@ -710,3 +717,4 @@ o que decide é a mensalidade do BSP (R$200–1.200/mês). Levantamento completo
 | V12 | `email_responsavel` em Discente (Módulo 11 — notificação de falta) |
 | V13 | Criação da tabela `Ocorrencia` (Módulo 12 — registro de ocorrências) |
 | V14 | Campos de solicitação/agendamento/entrega em Cestas (Módulo 13) |
+| V15 | `email_solicitante` + `qr_code_token` em Cestas (Módulo 13 — QR Code reintroduzido) |

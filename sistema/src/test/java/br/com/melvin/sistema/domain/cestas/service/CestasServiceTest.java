@@ -5,6 +5,7 @@ import br.com.melvin.sistema.domain.cestas.model.NivelHierarquico;
 import br.com.melvin.sistema.domain.cestas.model.StatusCesta;
 import br.com.melvin.sistema.domain.cestas.repository.CestasRepository;
 import br.com.melvin.sistema.shared.service.EmailService;
+import br.com.melvin.sistema.shared.service.QrCodeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -23,6 +24,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +36,9 @@ public class CestasServiceTest {
 
     @Mock
     private EmailService emailService;
+
+    @Mock
+    private QrCodeService qrCodeService;
 
     @InjectMocks
     private CestasService cestasService;
@@ -232,9 +237,10 @@ public class CestasServiceTest {
     }
 
     @Test
-    public void testValidarSolicitacaoPendenteAgenda() {
-        // Decisão do cliente (12/08/2026): sem QR Code no check-in — a confirmação
-        // de entrega é manual, pelo ID, direto na tela de solicitações.
+    public void testValidarSolicitacaoPendenteAgendaEGeraTokenDeQrCode() {
+        // Reintroduzido: check-in por QR Code é o caminho principal, mas o token
+        // é sempre gerado (mesmo sem e-mail) pra coordenação poder ver/baixar
+        // manualmente — e a confirmação por ID continua como caminho alternativo.
         UUID id = UUID.randomUUID();
         Cestas existente = createSolicitacao();
         existente.setId(id);
@@ -250,6 +256,50 @@ public class CestasServiceTest {
         Cestas resultado = (Cestas) response.getBody();
         assertEquals(StatusCesta.AGENDADA, resultado.getStatus());
         assertEquals(dataRetirada, resultado.getDataRetirada());
+        assertNotNull(resultado.getQrCodeToken());
+        // Sem e-mail do solicitante cadastrado: não tenta enviar nada.
+        verify(emailService, never()).sendEmailComAnexo(anyString(), anyString(), anyString(), anyString(), any(byte[].class), anyString());
+    }
+
+    @Test
+    public void testValidarComEmailSolicitanteEnviaQrCodePorEmail() throws Exception {
+        UUID id = UUID.randomUUID();
+        Cestas existente = createSolicitacao();
+        existente.setId(id);
+        existente.setStatus(StatusCesta.SOLICITADA);
+        existente.setEmailSolicitante("lider@example.com");
+        LocalDate dataRetirada = LocalDate.now().plusDays(3);
+
+        when(repositorio.findById(id)).thenReturn(Optional.of(existente));
+        when(repositorio.save(any(Cestas.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(qrCodeService.gerarPng(anyString())).thenReturn(new byte[] { 1, 2, 3 });
+
+        ResponseEntity<?> response = cestasService.validar(id, dataRetirada);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(emailService, times(1)).sendEmailComAnexo(
+                eq("lider@example.com"), anyString(), anyString(), anyString(), any(byte[].class), eq("image/png"));
+    }
+
+    @Test
+    public void testValidarComEmailFalhaAoGerarQrCodeNaoDerrubaValidacao() throws Exception {
+        // Best-effort: se a geração/envio do QR Code falhar, a validação (já
+        // persistida) continua valendo — o botão manual sempre funciona.
+        UUID id = UUID.randomUUID();
+        Cestas existente = createSolicitacao();
+        existente.setId(id);
+        existente.setStatus(StatusCesta.SOLICITADA);
+        existente.setEmailSolicitante("lider@example.com");
+
+        when(repositorio.findById(id)).thenReturn(Optional.of(existente));
+        when(repositorio.save(any(Cestas.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(qrCodeService.gerarPng(anyString())).thenThrow(new RuntimeException("falha simulada"));
+
+        ResponseEntity<?> response = cestasService.validar(id, LocalDate.now().plusDays(3));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Cestas resultado = (Cestas) response.getBody();
+        assertEquals(StatusCesta.AGENDADA, resultado.getStatus());
     }
 
     @Test
@@ -346,5 +396,114 @@ public class CestasServiceTest {
 
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         verify(repositorio, never()).save(any(Cestas.class));
+    }
+
+    // ============ US-7.4 (reintroduzido): check-in por QR Code (caminho principal) ============
+
+    @Test
+    public void testConfirmarEntregaPorTokenValidoMarcaEntregue() {
+        UUID id = UUID.randomUUID();
+        Cestas existente = createSolicitacao();
+        existente.setId(id);
+        existente.setStatus(StatusCesta.AGENDADA);
+        existente.setQrCodeToken("token-valido");
+
+        when(repositorio.findByQrCodeToken("token-valido")).thenReturn(existente);
+        when(repositorio.save(any(Cestas.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ResponseEntity<?> response = cestasService.confirmarEntregaPorToken("token-valido");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Cestas resultado = (Cestas) response.getBody();
+        assertEquals(StatusCesta.ENTREGUE, resultado.getStatus());
+        assertNotNull(resultado.getEntregueEm());
+    }
+
+    @Test
+    public void testConfirmarEntregaPorTokenInexistenteRetorna404() {
+        when(repositorio.findByQrCodeToken("token-invalido")).thenReturn(null);
+
+        ResponseEntity<?> response = cestasService.confirmarEntregaPorToken("token-invalido");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(repositorio, never()).save(any(Cestas.class));
+    }
+
+    @Test
+    public void testConfirmarEntregaPorTokenJaEntregueRetorna409ENaoAlteraEntregueEm() {
+        LocalDateTime entregueOriginal = LocalDateTime.now().minusDays(1);
+        Cestas existente = createSolicitacao();
+        existente.setId(UUID.randomUUID());
+        existente.setStatus(StatusCesta.ENTREGUE);
+        existente.setEntregueEm(entregueOriginal);
+        existente.setQrCodeToken("token-usado");
+
+        when(repositorio.findByQrCodeToken("token-usado")).thenReturn(existente);
+
+        ResponseEntity<?> response = cestasService.confirmarEntregaPorToken("token-usado");
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals(entregueOriginal, existente.getEntregueEm());
+        verify(repositorio, never()).save(any(Cestas.class));
+    }
+
+    @Test
+    public void testConfirmarEntregaPorTokenEPorIdSaoIntercambiaveis() {
+        // Um mesmo pedido pode ser confirmado por qualquer um dos dois caminhos —
+        // não pode haver bug de "já entregue" que só um dos dois enxerga.
+        UUID id = UUID.randomUUID();
+        Cestas existente = createSolicitacao();
+        existente.setId(id);
+        existente.setStatus(StatusCesta.ENTREGUE);
+        existente.setEntregueEm(LocalDateTime.now());
+        existente.setQrCodeToken("token-x");
+
+        when(repositorio.findByQrCodeToken("token-x")).thenReturn(existente);
+
+        ResponseEntity<?> viaToken = cestasService.confirmarEntregaPorToken("token-x");
+
+        assertEquals(HttpStatus.CONFLICT, viaToken.getStatusCode());
+    }
+
+    // ============ US-7.4 (reintroduzido): ver/baixar QR Code manualmente ============
+
+    @Test
+    public void testObterQrCodeRetornaImagemQuandoSolicitacaoTemToken() throws Exception {
+        UUID id = UUID.randomUUID();
+        Cestas existente = createSolicitacao();
+        existente.setId(id);
+        existente.setQrCodeToken("token-abc");
+
+        when(repositorio.findById(id)).thenReturn(Optional.of(existente));
+        when(qrCodeService.gerarPng("token-abc")).thenReturn(new byte[] { 9, 9, 9 });
+
+        ResponseEntity<byte[]> response = cestasService.obterQrCode(id);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertArrayEquals(new byte[] { 9, 9, 9 }, response.getBody());
+    }
+
+    @Test
+    public void testObterQrCodeRetorna404QuandoSolicitacaoNaoTemToken() {
+        UUID id = UUID.randomUUID();
+        Cestas existente = createSolicitacao();
+        existente.setId(id);
+        existente.setQrCodeToken(null);
+
+        when(repositorio.findById(id)).thenReturn(Optional.of(existente));
+
+        ResponseEntity<byte[]> response = cestasService.obterQrCode(id);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testObterQrCodeRetorna404QuandoSolicitacaoNaoExiste() {
+        UUID id = UUID.randomUUID();
+        when(repositorio.findById(id)).thenReturn(Optional.empty());
+
+        ResponseEntity<byte[]> response = cestasService.obterQrCode(id);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

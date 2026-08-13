@@ -101,6 +101,32 @@ const cestaService = {
             console.error('Erro ao confirmar entrega da cesta:', error.response?.data || error.message);
             return Promise.reject(new Error(error.response?.data || error.message));
         }
+    },
+
+    // Caminho principal (reintroduzido): confirmação por scan de QR Code.
+    async confirmarEntregaPorToken(token) {
+        const endpoint = `/cestas/solicitacao/checkin/${encodeURIComponent(token)}`;
+        try {
+            const response = await http.post(endpoint);
+            return response;
+        } catch (error) {
+            console.error('Erro ao confirmar entrega por QR Code:', error.response?.data || error.message);
+            return Promise.reject(new Error(error.response?.data || error.message));
+        }
+    },
+
+    // Imagem do QR Code, pra coordenação ver/baixar manualmente. Precisa ir como
+    // blob (não <img src> direto) porque o endpoint exige autenticação — uma tag
+    // <img> não manda o header Authorization que o interceptor do http.js injeta.
+    async obterQrCode(id) {
+        const endpoint = `/cestas/solicitacoes/${id}/qrcode`;
+        try {
+            const response = await http.get(endpoint, { responseType: 'blob' });
+            return response;
+        } catch (error) {
+            console.error('Erro ao obter QR Code:', error.response?.data || error.message);
+            return Promise.reject(new Error(error.message));
+        }
     }
 };
 

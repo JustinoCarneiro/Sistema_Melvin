@@ -57,6 +57,18 @@ public class CestasController {
         return service.confirmarEntrega(id);
     }
 
+    // Caminho principal: staff escaneia o QR Code (dentro do app, autenticado) e
+    // o token decodificado é enviado aqui.
+    @PostMapping("/solicitacao/checkin/{token}")
+    public ResponseEntity<?> confirmarEntregaPorToken(@PathVariable String token) {
+        return service.confirmarEntregaPorToken(token);
+    }
+
+    @GetMapping("/solicitacoes/{id}/qrcode")
+    public ResponseEntity<byte[]> obterQrCode(@PathVariable UUID id) {
+        return service.obterQrCode(id);
+    }
+
     @PostMapping
     public ResponseEntity<?> adicionar(@RequestBody Cestas cesta){
         return service.adicionar(cesta);

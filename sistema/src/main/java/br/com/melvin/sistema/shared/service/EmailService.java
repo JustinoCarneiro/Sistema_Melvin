@@ -1,6 +1,7 @@
 package br.com.melvin.sistema.shared.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -24,18 +25,42 @@ public class EmailService {
     @SuppressWarnings("null")
     public void sendEmail(String to, String subject, String text) {
         try {
-            MimeMessage message = emailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            MimeMessageHelper helper = montarMensagem(to, subject, text);
+            emailSender.send(helper.getMimeMessage());
+            log.info("E-mail HTML enviado com sucesso para: {}", to);
+        } catch (Exception e) {
+            log.error("Falha ao enviar e-mail para: {}", to, e);
+        }
+    }
 
-            helper.setFrom("imeh@igrejadapaz.com.br", "Instituto Social Melvin");
-            helper.setTo(to);
-            helper.setSubject(subject);
+    // US-7.4: QR Code de retirada de cesta enviado como anexo PNG.
+    @Async
+    @SuppressWarnings("null")
+    public void sendEmailComAnexo(String to, String subject, String text, String nomeAnexo, byte[] conteudoAnexo, String tipoConteudo) {
+        try {
+            MimeMessageHelper helper = montarMensagem(to, subject, text);
+            helper.addAttachment(nomeAnexo, new ByteArrayResource(conteudoAnexo), tipoConteudo);
+            emailSender.send(helper.getMimeMessage());
+            log.info("E-mail HTML com anexo enviado com sucesso para: {}", to);
+        } catch (Exception e) {
+            log.error("Falha ao enviar e-mail com anexo para: {}", to, e);
+        }
+    }
 
-            // Transforma as quebras de linha em <br> para manter a formatação no HTML
-            String formattedText = text.replace("\n", "<br>");
+    @SuppressWarnings("null")
+    private MimeMessageHelper montarMensagem(String to, String subject, String text) throws Exception {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            // Template HTML elegante com as cores do Melvin
-            String htmlTemplate = "<!DOCTYPE html>" +
+        helper.setFrom("imeh@igrejadapaz.com.br", "Instituto Social Melvin");
+        helper.setTo(to);
+        helper.setSubject(subject);
+
+        // Transforma as quebras de linha em <br> para manter a formatação no HTML
+        String formattedText = text.replace("\n", "<br>");
+
+        // Template HTML elegante com as cores do Melvin
+        String htmlTemplate = "<!DOCTYPE html>" +
                 "<html><head><meta charset=\"utf-8\">" +
                 "<style>" +
                 "  body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }" +
@@ -73,13 +98,9 @@ public class EmailService {
                 "</td></tr></table>" +
                 "</body></html>";
 
-            helper.setText(htmlTemplate, true);
-            
-            emailSender.send(message);
-            log.info("E-mail HTML enviado com sucesso para: {}", to);
-        } catch (Exception e) {
-            log.error("Falha ao enviar e-mail para: {}", to, e);
-        }
+        helper.setText(htmlTemplate, true);
+
+        return helper;
     }
 
     /**

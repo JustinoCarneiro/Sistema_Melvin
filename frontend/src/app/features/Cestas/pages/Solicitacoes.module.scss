@@ -145,6 +145,72 @@
     border-radius: 16px;
 }
 
+.scannerArea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+}
+
+.scannerBox {
+    width: 100%;
+    max-width: 400px;
+
+    // A lib desenha o <video> dela mesma dentro desta div — só damos moldura.
+    border: 2px solid #1A4D80;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.acoes {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1.5rem;
+}
+
+.lightboxConteudo {
+    position: relative;
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    img {
+        max-width: 280px;
+        width: 100%;
+    }
+}
+
+.lightboxFechar {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.4rem;
+    color: var(--text-muted);
+    cursor: pointer;
+
+    &:hover { color: var(--accent-primary); }
+}
+
 .vazio {
     color: var(--text-muted);
     font-style: italic;

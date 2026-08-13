@@ -144,6 +144,18 @@
 			<artifactId>bucket4j_jdk17-core</artifactId>
 			<version>8.19.0</version>
 		</dependency>
+
+		<!-- US-7.4: geração de QR Code pro check-in de retirada de cesta -->
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+			<version>3.5.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>3.5.4</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

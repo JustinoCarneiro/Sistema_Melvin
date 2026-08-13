@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { LuUser, LuPhone, LuUsers, LuNetwork, LuFileText, LuSend, LuCircleCheck, LuShieldCheck } from 'react-icons/lu';
+import { LuUser, LuPhone, LuUsers, LuNetwork, LuFileText, LuSend, LuCircleCheck, LuShieldCheck, LuMail } from 'react-icons/lu';
 import WatercolorBlob from '@core/components/melvin/WatercolorBlob';
 
 import { cestaService } from '@features/Cestas';
@@ -27,6 +27,7 @@ function SolicitarCesta() {
     const [form, setForm] = useState({
         nomeSolicitante: '',
         nivelSolicitante: '',
+        emailSolicitante: '',
         nome: '',
         contato: '',
         lider_celula: '',
@@ -141,6 +142,23 @@ function SolicitarCesta() {
                                 <option key={nivel.valor} value={nivel.valor}>{nivel.rotulo}</option>
                             ))}
                         </select>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className={labelClassName}>
+                            <LuMail className="text-melvin-yellow" /> Seu e-mail (opcional)
+                        </label>
+                        <input
+                            className={inputClassName}
+                            type="email"
+                            name="emailSolicitante"
+                            value={form.emailSolicitante}
+                            onChange={handleChange}
+                            placeholder="seuemail@exemplo.com"
+                        />
+                        <p className="text-sm text-slate-500 ml-4">
+                            Se informado, você recebe por e-mail o QR Code pra agilizar a retirada quando a coordenação agendar a data.
+                        </p>
                     </div>
 
                     {/* Dados do beneficiário */}
