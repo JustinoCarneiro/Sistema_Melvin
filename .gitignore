@@ -43,3 +43,4 @@ Thumbs.db
 *.backup
 *.bak
 *.tmp
+.env.jira
