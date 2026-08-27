@@ -589,6 +589,38 @@ Então o sistema recusa a ação e exibe "já foi confirmada como entregue em [d
 
 ---
 
+### ÉPICO 11: CENTRAL DE AJUDA (MANUAL DO SISTEMA)
+
+**Escopo:** Documentação de uso do sistema, acessível de dentro da área logada, para os voluntários de qualquer cargo.
+
+#### US-11.1: Consultar Manual do Sistema
+**Como** voluntário de qualquer cargo (COOR, PROF, AUX, COZI, DIRE, ADM, MARK, ZELA, PSICO, ASSIST),
+**eu quero** acessar, a partir da tela de Configurações, um manual explicando cada funcionalidade do sistema com prints das telas reais,
+**para que** eu aprenda a usar o sistema sem depender de suporte humano, respeitando o que meu cargo tem permissão para ver e fazer.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o usuário está autenticado com qualquer cargo,
+Quando ele acessa a tela de Configurações (/app/config),
+Então vê o botão "Manual do Sistema" disponível para todos os cargos (não apenas ADM).
+
+Dado que o usuário clica no botão "Manual do Sistema",
+Quando a navegação ocorre,
+Então o sistema abre /app/manual com o conteúdo organizado por funcionalidade (Perfis de Acesso, Alunos, Voluntários, Frequência, Cestas, Avisos, Embaixadores, Amigos do Melvin, Relatórios, Permissões, Administração).
+
+Dado que o usuário está lendo uma seção do manual,
+Quando a seção descreve um passo que corresponde a uma tela do sistema,
+Então esse passo exibe um print real dessa tela, não apenas texto.
+
+Dado que uma seção documenta uma funcionalidade restrita a determinados cargos (ex: Permissões, exclusiva de ADM),
+Quando qualquer usuário lê essa seção,
+Então o texto indica explicitamente quais cargos têm acesso a ela, mesmo que o leitor não seja um deles.
+```
+
+> **Nota de implementação:** rota `/app/manual` reaproveita o mesmo array de cargos (`perfisEquipe`) usado nas demais rotas internas — não é uma permissão dinâmica nova, é documentação, então todo mundo com login no sistema pode ler, independente do que pode *fazer*. Botão adicionado em `Config.jsx` fora do bloco `{isAdm && (...)}`, como primeiro card da página (antes de "Meu Perfil"), para ficar visível a qualquer cargo assim que a tela carrega. Prints capturados via Playwright (mesmo mecanismo de mock de autenticação/API já usado nas suítes E2E, `frontend/tests/fixtures.js`) para refletir a UI real sem expor dados de alunos/voluntários/doadores reais — todo o conteúdo das telas capturadas usa dados fictícios de exemplo.
+
+---
+
 ## 4. DIRETRIZES DE SINTAXE E PADRÕES
 
 ### Backend

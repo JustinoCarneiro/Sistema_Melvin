@@ -30,6 +30,7 @@
 | 12 | Registro de Ocorrências do Aluno | 🟡 Médio | 3-4 | ✅ Concluído |
 | 13 | Solicitação de Cestas + Confirmação de Entrega | 🔴 Grande | 5-7 | ✅ Concluído |
 | 14 | Notificação de Falta via WhatsApp | 🟡 Médio | 3-4 | 🔲 Backlog |
+| 15 | Central de Ajuda (Manual do Sistema) | 🟢 Pequeno | 1-2 | ✅ Concluído |
 
 ---
 
@@ -681,6 +682,24 @@ Sem contrato de API novo — plugaria no mesmo gatilho que a US-5.5 já criou em
 custo por mensagem (~R$0,04–0,09, categoria "utilidade") é irrelevante pro volume do Instituto —
 o que decide é a mensalidade do BSP (R$200–1.200/mês). Levantamento completo em CLAUDE.md
 (Épico 5, US-5.6).
+
+---
+
+## MÓDULO 15: CENTRAL DE AJUDA (MANUAL DO SISTEMA)
+**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído (26/08/2026)**
+
+> Épico de referência: [CLAUDE.md #Épico 11 — US-11.1](./CLAUDE.md)
+
+### Sem contrato de API novo
+Feature 100% frontend — nenhuma entidade, endpoint ou migration nova. Conteúdo estático (texto + prints) empacotado no bundle da SPA.
+
+### Frontend
+Nova feature folder `frontend/src/app/features/Manual/` (mesmo padrão de barrel `index.js` das demais features): `pages/Manual.jsx` + `Manual.module.scss`, conteúdo organizado em seções (Perfis de Acesso, Meu Perfil/Auto Frequência, Alunos, Voluntários, Frequência, Cestas Básicas, Avisos, Embaixadores, Amigos do Melvin, Relatórios/Rendimento, Permissões, Administração), navegação por abas laterais/pills, reaproveitando os tokens visuais já definidos em `index.scss` (`$cor-primaria`, `$cor-secundaria`, padrão de `.card`).
+
+Rota `/app/manual` registrada em `Routes.jsx` com `role={perfisEquipe}` (mesmo array de 10 cargos já usado em Alunos/Voluntários/etc.) — não é uma permissão dinâmica nova, é leitura liberada a qualquer cargo autenticado. Botão "Manual do Sistema" adicionado em `Config.jsx` como primeiro card da página, fora do bloco condicional `{isAdm && (...)}`, visível a todos os cargos.
+
+### Prints das telas
+Capturados via Playwright, reaproveitando o mesmo mecanismo de mock de cookies/API já usado nas suítes E2E (`frontend/tests/fixtures.js` injeta `token`/`role`/`login` e intercepta chamadas de API) — sem depender de backend/Postgres rodando. Dados fictícios de exemplo em todas as telas capturadas (nenhum dado real de aluno, voluntário ou doador). Script de captura em `frontend/scripts/capture-manual-screenshots.mjs` (não faz parte da suíte de testes — é uma ferramenta de geração de assets, roda sob demanda).
 
 ---
 

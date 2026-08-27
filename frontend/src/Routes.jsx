@@ -15,6 +15,7 @@ import { HomeApp } from "@features/Dashboard";
 import PrivateRoute from "@core/services/PrivateRoute";
 import Header from "@core/components/Header";
 import { Config, Calendario } from "@features/Config";
+import { Manual } from "@features/Manual";
 import { Relatorios } from "@features/Relatorios";
 import { Rendimento } from "@features/Rendimento";
 import { ConfiguracoesPermissoes } from "@features/Permissoes";
@@ -186,6 +187,9 @@ function AppContent() {
 
                     {/* Config apenas para ADM e DIRE (ou ajuste conforme necessidade) */}
                     <Route path="/config" element={<PrivateRoute role={['ADM', 'DIRE', 'COOR', 'AUX', 'PROF', 'PSICO', 'ASSIST', 'COZI', 'ZELA', 'MARK']} element={Config} />} />
+
+                    {/* --- MANUAL DO SISTEMA (US-11.1) --- */}
+                    <Route path="/manual" element={<PrivateRoute role={perfisEquipe} element={Manual} />} />
 
                     {/* --- FREQUÊNCIAS --- */}
                     <Route path="/frequencias/alunos" element={<PrivateRoute role={perfisGerais} element={Aluno_frequencia} />} />

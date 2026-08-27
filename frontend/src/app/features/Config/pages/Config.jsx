@@ -1,7 +1,7 @@
 import styles from "./Config.module.scss";
 import { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUserCog, FaCalendarCheck, FaTools } from "react-icons/fa";
+import { FaUserCog, FaCalendarCheck, FaTools, FaBook } from "react-icons/fa";
 import Cookies from "js-cookie";
 
 import { voluntarioService } from "@features/Voluntarios";
@@ -141,6 +141,22 @@ function Config(){
         <div className={styles.body}>
             <div className={styles.mainContent}>
                 <h1 className={styles.pageTitle}>Configurações</h1>
+
+                {/* --- CARD 0: MANUAL DO SISTEMA (US-11.1, visível a todos os cargos) --- */}
+                <section className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <FaBook className={styles.icon}/>
+                        <h3>Precisa de ajuda?</h3>
+                    </div>
+                    <div className={styles.shortcutsGrid}>
+                        <Botao
+                            nome="Manual do Sistema"
+                            corFundo="#1A4D80"
+                            corBorda="#12365B"
+                            onClick={() => navigate('/app/manual')}
+                        />
+                    </div>
+                </section>
 
                 {/* --- CARD 1: PERFIL --- */}
                 <section className={styles.card}>

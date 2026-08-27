@@ -1,0 +1,228 @@
+@import "../../../../index.scss";
+
+.body {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #f0f5f1;
+}
+
+.mainContent {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.pageTitle {
+    color: $cor-primaria;
+    font-size: 2rem;
+    font-weight: 700;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.pageSubtitle {
+    color: #666;
+    margin-bottom: 1.5rem;
+    max-width: 760px;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.nav {
+    position: sticky;
+    top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 0.75rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.navItem {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-align: left;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    transition: var(--transition-fast);
+
+    &:hover {
+        background-color: #f0f5f1;
+    }
+}
+
+.navItemActive {
+    background-color: $cor-primaria;
+    color: white;
+
+    &:hover {
+        background-color: $cor-primaria;
+    }
+}
+
+.navIcon {
+    display: flex;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+}
+
+/* --- CARD PADRÃO --- */
+.card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+
+    .icon {
+        font-size: 1.5rem;
+        color: $cor-primaria;
+        flex-shrink: 0;
+        margin-top: 0.15rem;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+        color: #333;
+        margin: 0 0 0.25rem 0;
+        overflow-wrap: anywhere;
+    }
+}
+
+.quemUsa {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $cor-secundaria;
+    text-transform: uppercase;
+}
+
+.resumo {
+    color: #555;
+    line-height: 1.55;
+}
+
+/* --- TABELA DE CARGOS (seção Perfis de Acesso) --- */
+.tabelaCargos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.cargoRow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.9rem 1rem;
+    background-color: #f9f9f7;
+    border-left: 4px solid $cor-primaria;
+    border-radius: 6px;
+}
+
+.cargoNome {
+    font-weight: 700;
+    color: $cor-primaria;
+}
+
+.cargoResumo {
+    color: #555;
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+/* --- PASSO A PASSO --- */
+.passos {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-left: 1.4rem;
+}
+
+.passo {
+    color: #333;
+    line-height: 1.55;
+
+    p {
+        margin: 0 0 0.75rem 0;
+    }
+}
+
+.figura {
+    margin: 0;
+
+    img {
+        display: block;
+        width: 100%;
+        max-width: 780px;
+        border-radius: 10px;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    figcaption {
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: #888;
+        font-style: italic;
+    }
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 900px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .nav {
+        position: static;
+        flex-direction: row;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .navItem {
+        flex-shrink: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .body {
+        padding: 1rem;
+    }
+
+    .card {
+        padding: 1.25rem;
+    }
+}
