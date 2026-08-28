@@ -54,7 +54,8 @@ public class PermissaoService {
         espelharAdmParaTech();
     }
 
-    private void espelharAdmParaTech() {
+    // Visibilidade de pacote (não private) para permitir teste direto em PermissaoServiceTest.
+    void espelharAdmParaTech() {
         for (PermissaoRegra regra : repository.findAll()) {
             List<String> roles = new java.util.ArrayList<>(Arrays.asList(regra.getRolesPermitidas().split(",")));
             if (roles.contains("ADM") && !roles.contains("TECH")) {

@@ -119,4 +119,66 @@ public class PermissaoServiceTest {
         assertEquals("ADM,PROF", regla.getRolesPermitidas());
         verify(repository).save(regla);
     }
+
+    @Test
+    public void testHasPermission_TechHasPermission() {
+        // TECH (US-1.5) tem acesso equivalente ao ADM em qualquer regra que já libere ADM.
+        String reglaName = "GERENCIAR_VOLUNTARIOS";
+        User user = new User();
+        user.setRole(UserRole.TECH);
+
+        Authentication auth = mock(Authentication.class);
+        when(auth.isAuthenticated()).thenReturn(true);
+        when(auth.getPrincipal()).thenReturn(user);
+
+        PermissaoRegra regla = new PermissaoRegra();
+        regla.setNomeRegra(reglaName);
+        regla.setRolesPermitidas("ADM,TECH");
+
+        when(repository.findByNomeRegra(reglaName)).thenReturn(Optional.of(regla));
+
+        assertTrue(permissaoService.hasPermission(auth, reglaName));
+    }
+
+    @Test
+    public void testEspelharAdmParaTech_AdicionaTechQuandoRegraLiberaAdm() {
+        PermissaoRegra regra = new PermissaoRegra();
+        regra.setNomeRegra("GERENCIAR_CESTAS");
+        regra.setRolesPermitidas("ADM,DIRE,AUX");
+
+        when(repository.findAll()).thenReturn(List.of(regra));
+
+        permissaoService.espelharAdmParaTech();
+
+        assertEquals("ADM,DIRE,AUX,TECH", regra.getRolesPermitidas());
+        verify(repository).save(regra);
+    }
+
+    @Test
+    public void testEspelharAdmParaTech_NaoAlteraRegraSemAdm() {
+        PermissaoRegra regra = new PermissaoRegra();
+        regra.setNomeRegra("EDITAR_AVALIACAO_PSICO");
+        regra.setRolesPermitidas("PSICO");
+
+        when(repository.findAll()).thenReturn(List.of(regra));
+
+        permissaoService.espelharAdmParaTech();
+
+        assertEquals("PSICO", regra.getRolesPermitidas());
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    public void testEspelharAdmParaTech_EIdempotenteQuandoTechJaPresente() {
+        PermissaoRegra regra = new PermissaoRegra();
+        regra.setNomeRegra("GERENCIAR_AVISOS");
+        regra.setRolesPermitidas("ADM,TECH");
+
+        when(repository.findAll()).thenReturn(List.of(regra));
+
+        permissaoService.espelharAdmParaTech();
+
+        assertEquals("ADM,TECH", regra.getRolesPermitidas());
+        verify(repository, never()).save(any());
+    }
 }
