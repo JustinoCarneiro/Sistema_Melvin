@@ -10,7 +10,8 @@ public enum UserRole {
     MARK("mark"),
     ZELA("zela"),
     PSICO("psico"),
-    ASSIST("assistente");
+    ASSIST("assistente"),
+    TECH("tech");
 
     private String role;
 

@@ -34,18 +34,35 @@ public class PermissaoService {
             return;
         }
 
-        createIfNotFound("EDITAR_RENDIMENTO", "ADM,DIRE,COOR");
-        createIfNotFound("GERENCIAR_FREQUENCIA", "ADM,DIRE,COOR,PROF");
-        createIfNotFound("CADASTRAR_ALUNO", "ADM,COOR,DIRE,ASSIST");
+        createIfNotFound("EDITAR_RENDIMENTO", "ADM,TECH,DIRE,COOR");
+        createIfNotFound("GERENCIAR_FREQUENCIA", "ADM,TECH,DIRE,COOR,PROF");
+        createIfNotFound("CADASTRAR_ALUNO", "ADM,TECH,COOR,DIRE,ASSIST");
         createIfNotFound("EDITAR_AVALIACAO_PSICO", "PSICO");
-        createIfNotFound("GERENCIAR_CESTAS", "ADM,DIRE,AUX");
-        createIfNotFound("GERENCIAR_VOLUNTARIOS", "ADM");
-        createIfNotFound("GERENCIAR_EMBAIXADORES", "ADM,DIRE");
-        createIfNotFound("GERENCIAR_AMIGOS", "ADM,DIRE");
-        createIfNotFound("GERENCIAR_AVISOS", "ADM");
-        createIfNotFound("VISUALIZAR_ALUNOS", "PROF,ADM,DIRE,COOR,ASSIST,PSICO");
-        createIfNotFound("VISUALIZAR_RELATORIOS", "PROF,ADM,DIRE,COOR,ASSIST,PSICO");
-        createIfNotFound("GERENCIAR_OCORRENCIA", "PROF,COOR,DIRE,ADM");
+        createIfNotFound("GERENCIAR_CESTAS", "ADM,TECH,DIRE,AUX");
+        createIfNotFound("GERENCIAR_VOLUNTARIOS", "ADM,TECH");
+        createIfNotFound("GERENCIAR_EMBAIXADORES", "ADM,TECH,DIRE");
+        createIfNotFound("GERENCIAR_AMIGOS", "ADM,TECH,DIRE");
+        createIfNotFound("GERENCIAR_AVISOS", "ADM,TECH");
+        createIfNotFound("VISUALIZAR_ALUNOS", "PROF,ADM,TECH,DIRE,COOR,ASSIST,PSICO");
+        createIfNotFound("VISUALIZAR_RELATORIOS", "PROF,ADM,TECH,DIRE,COOR,ASSIST,PSICO");
+        createIfNotFound("GERENCIAR_OCORRENCIA", "PROF,COOR,DIRE,ADM,TECH");
+
+        // TECH é o perfil técnico (US-1.5): acesso equivalente ao ADM em tudo. Regras já
+        // existentes em produção (criadas antes do TECH existir) não passam por
+        // createIfNotFound acima — este passo garante que toda regra que já libera ADM também
+        // libera TECH, mesmo em bancos que já tinham as regras seedadas.
+        espelharAdmParaTech();
+    }
+
+    private void espelharAdmParaTech() {
+        for (PermissaoRegra regra : repository.findAll()) {
+            List<String> roles = new java.util.ArrayList<>(Arrays.asList(regra.getRolesPermitidas().split(",")));
+            if (roles.contains("ADM") && !roles.contains("TECH")) {
+                roles.add("TECH");
+                regra.setRolesPermitidas(String.join(",", roles));
+                repository.save(regra);
+            }
+        }
     }
 
     private void createIfNotFound(String regra, String defaultRoles) {

@@ -1,6 +1,6 @@
 # 📘 CLAUDE.md — Especificação Viva do Sistema Melvin
 
-> **Última atualização:** 12/08/2026
+> **Última atualização:** 27/08/2026
 > **Fase atual:** Fase 5 (Produção)
 > **Metodologia:** Onda-Dev (Playbook de Engenharia)
 
@@ -119,7 +119,7 @@ Então a senha é atualizada com hash Argon2 e retorna 200 OK.
 
 **Critérios de Aceite:**
 ```gherkin
-Dado que o cargo informado é válido (COOR, PROF, AUX, COZI, DIRE, ADM, MARK, ZELA, PSICO, ASSIST),
+Dado que o cargo informado é válido (COOR, PROF, AUX, COZI, DIRE, ADM, MARK, ZELA, PSICO, ASSIST, TECH),
 Quando o admin submete a alteração,
 Então o role é atualizado e retorna 200 OK.
 
@@ -127,6 +127,30 @@ Dado que o cargo informado é inválido,
 Quando o admin submete,
 Então o sistema retorna 400 "Role inválida".
 ```
+
+---
+
+#### US-1.5: Cargo Técnico (TECH)
+**Como** desenvolvedor/responsável técnico do sistema,
+**eu quero** ter um cargo próprio, distinto do ADM da administração do Instituto,
+**para que** minhas ações de manutenção/suporte técnico fiquem separadas das ações da administração real nos registros e ocorrências, sem abrir mão de acesso a nenhuma tela.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que um usuário tem o cargo TECH,
+Quando ele acessa qualquer tela do sistema,
+Então ele tem o mesmo nível de acesso de um ADM, inclusive às telas exclusivas (Permissões de Acesso, Calendário de Exceções, Arquivo Morto, criar/redefinir login de outros usuários).
+
+Dado que o ADM configura as Permissões de Acesso,
+Quando uma regra dinâmica libera o cargo ADM,
+Então essa mesma regra também libera o cargo TECH (o TECH nunca fica com acesso a menos módulos do que o ADM).
+
+Dado que um usuário TECH está logado,
+Quando ele visualiza o cabeçalho do sistema ou o formulário de cadastro de voluntário,
+Então o cargo aparece rotulado como "Suporte Técnico", não como "ADM".
+```
+
+> **Nota de implementação:** `UserRole.TECH` adicionado ao enum (ordinal 10 — armazenado como `smallint` sem `@Enumerated` explícito, exige `ALTER TABLE users` no check constraint, `migration V16`). Backend: toda checagem `hasRole("ADM")`/`hasAnyRole("ADM", ...)` em `SecurityConfiguration` ganhou `"TECH"` ao lado; `PermissaoService` espelha automaticamente TECH em qualquer regra dinâmica que já libere ADM (`espelharAdmParaTech()`, roda no boot, cobre inclusive regras já existentes em produção antes do TECH existir — não é só um default de regra nova). Frontend: `usePermissions.hasPermission` trata TECH como bypass total, igual ADM; `perfisGerais`/`perfisEquipe` e toda rota antes restrita a `role="ADM"` em `Routes.jsx` ganharam TECH; função "tecnico" nova no cadastro de Voluntário (mapeada para o cargo TECH). Sem tela de gestão de usuário "self-service" — a criação do primeiro login TECH é manual (mesma limitação de bootstrap que qualquer ADM novo: `POST /auth/register` exige estar autenticado como ADM/TECH).
 
 ---
 
@@ -686,6 +710,8 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev: vault
 | 11/08/2026 | US-5.5, US-3.7 e US-7.4 implementadas (TDD) e homologadas (Fase 5); auditoria pré-deploy encontrou e corrigiu pendências adicionais; decisão do cliente sobre WhatsApp | — (implementação + correção, sem retorno de fase) | **Entrega:** as 3 US concluídas (ver ROADMAP.md Módulos 11-13), backend 72/72 → 79/79 ao longo das correções, E2E 39/49 → 49/49 (mocks tinham prefixo `/api/` divergente da `baseURL` real, destravando também o CI que estava vermelho desde 07/06/2026 por um problema não relacionado, de fronteira de import). **Homologação (Fase 5):** migrations V12-V14 validadas contra cópia do schema real de produção; achado e corrigido `cestas.data_entrega` NOT NULL herdado (500 em todo `POST /cestas/solicitacao`) e `email_responsavel` descartado em silêncio no `PUT /discente` de aluno existente. **Auditoria pré-deploy adicional:** critério de aceite da US-7.4 "coordenação é notificada" não estava implementado (corrigido); US-5.5 não notificava quando a falta era lançada por edição (`PUT`, o caminho real da tela de chamada — corrigido); tela de validação de solicitações estava sem link no menu (corrigido); vulnerabilidade de segurança no rate-limit do endpoint público (`X-Forwarded-For` lido do lado errado, burlável + vazamento de memória — corrigido, ver `memoria-tecnica/bugs/rate-limit-burlavel-por-x-forwarded-for-forjado.md`); `contato_saida` (dado de segurança, quem retira a criança) tinha o mesmo bug do `email_responsavel` — corrigido. **Decisão do cliente:** a pergunta sobre WhatsApp (US-5.5) vira item formal de Backlog — US-5.6, ROADMAP.md Módulo 14 — aprovado como trabalho futuro, não priorizado agora. Nenhum deploy em produção foi feito; produção segue na V11, aguardando liberação. |
 | 12/08/2026 | Deploy em produção (V11 → V14): US-5.5, US-3.7 e US-7.4 (sem QR Code) ao vivo; ajustes finos de UI; backup off-site restaurado | — (deploy + correção, sem retorno de fase) | **Deploy:** backup pré-deploy, `rsync` + restart dos containers, migrations V12-V14 aplicadas limpas, smoke test pós-deploy (health check, login com mensagem UTF-8 correta, URL limpa `/solicitarcesta`). **UI:** contraste de texto branco-sobre-branco corrigido em Avisos/Embaixadores/Cestas (ícone de editar e rótulo do card mobile); texto de descrição de ocorrência sem espaços estourava a largura do card (`overflow-wrap`). **Infra:** token OAuth do `rclone` (backup off-site pro Google Drive) tinha sido revogado apesar de o app já estar "publicado" — reautorizado e documentado que isso pode acontecer de novo (não é garantia permanente), ver `memoria-tecnica/decisoes/backup-melvin-diario-criptografado.md`. **Pesquisa (não implementada ainda):** alternativas de notificação por WhatsApp (US-5.6) pesquisadas de novo — API oficial da Meta não tem isqenção pra mensagem proativa de utilidade desde jul/2025, mas um BSP pay-as-you-go (Twilio, sem mensalidade fixa) reduz o custo estimado de R$200-1.200/mês pra ~R$30-50/mês no volume do Instituto; segue não priorizado. |
 | 12/08/2026 | QR Code da US-7.4 removido e, no mesmo dia, reintroduzido como caminho principal (confirmação manual virou caminho alternativo) | — (correção de rumo + evolução, sem retorno de fase) | O dono do projeto esclareceu que a remoção do QR Code (linha acima, feita antes do deploy) tinha sido uma decisão técnica interna, não um pedido real do cliente — o pedido original ("acessar o formulário através de um link ou QRCODE") sempre incluiu QR Code. Reimplementado com desenho mais robusto que a primeira versão: e-mail do solicitante (novo campo opcional, cifrado) recebe o QR Code em anexo automaticamente na validação; check-in por scanner de câmera embutido (`html5-qrcode`) ou colando o texto decodificado; confirmação manual por nome (já em produção) preservada como caminho alternativo, nunca bloqueado pelo QR. Migration `V15` (a `V14`, dessa vez, já estava em produção — não podia mais ser editada). Backend: 11 testes novos/adaptados em `CestasServiceTest`. Testado ponta a ponta via Docker com envio real de e-mail. Ver nota de implementação da US-7.4 acima e `memoria-tecnica/decisoes/qr-code-removido-confirmacao-manual.md` (atualizada com a reversão). |
+| 26/08/2026 | Manual do Sistema (US-11.1) implementado e publicado em produção | — (evolução, sem retorno de fase) | Botão "Manual do Sistema" em Configurações, visível a qualquer cargo, abrindo `/app/manual` com passo a passo por funcionalidade e prints reais das telas (capturados via Playwright com dados fictícios, mesmo mecanismo de mock das suítes E2E). Feature 100% frontend, sem contrato de API novo — ver ROADMAP.md Módulo 15. Deploy em produção verificado via smoke test (health check, carregamento do site, login com mensagem UTF-8 correta). |
+| 27/08/2026 | Cargo técnico TECH (US-1.5) criado para separar acesso de manutenção/suporte técnico da administração real do Instituto | — (evolução, sem retorno de fase) | `UserRole.TECH` (ordinal 10, migration V16 para o check constraint de `users.role`) com acesso equivalente ao ADM em tudo, inclusive telas exclusivas (Permissões, Calendário de Exceções, Arquivo Morto, registro/redefinição de login). `PermissaoService` espelha automaticamente TECH em qualquer regra dinâmica que já libere ADM, inclusive regras já existentes em produção antes do TECH existir. Rotulado como "Suporte Técnico" nas telas (Header, cadastro de Voluntário — função "tecnico"). Backend e E2E completos revalidados (0 regressão). |
 
 
 ## Diretivas de Gestão (Regra de Ouro do Trello + Jira)

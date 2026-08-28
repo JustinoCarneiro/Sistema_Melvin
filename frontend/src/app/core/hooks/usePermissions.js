@@ -28,7 +28,8 @@ export function usePermissions() {
 
     const hasPermission = (permissao) => {
         // ADM sempre tem permissão total (ou podemos restringir se quisermos ser puristas)
-        if (role === 'ADM') return true;
+        // TECH (perfil técnico, US-1.5) tem o mesmo acesso total do ADM.
+        if (role === 'ADM' || role === 'TECH') return true;
         return permissoes.includes(permissao);
     };
 
@@ -36,6 +37,7 @@ export function usePermissions() {
         permissoes,
         role,
         isAdm: role === 'ADM',
+        isTech: role === 'TECH',
         isDire: role === 'DIRE',
         isCoor: role === 'COOR',
         isProf: role === 'PROF',

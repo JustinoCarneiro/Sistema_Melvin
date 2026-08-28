@@ -69,11 +69,11 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.PUT, "/discente/{matricula}/avaliacoes").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "EDITAR_RENDIMENTO") || 
                                                  permissaoService.hasPermission(authentication.get(), "EDITAR_AVALIACAO_PSICO")))
-                    .requestMatchers("/permissoes/**").hasRole("ADM")
+                    .requestMatchers("/permissoes/**").hasAnyRole("ADM", "TECH")
 
                     // --- ROTAS ADMINISTRATIVAS (Registro de usuários, etc) ---
-                    .requestMatchers(HttpMethod.POST,  "/auth/register", "/imagens/**", "/aviso/**").hasRole("ADM")
-                    .requestMatchers(HttpMethod.PUT, "/auth/alterar_senha").hasRole("ADM")
+                    .requestMatchers(HttpMethod.POST,  "/auth/register", "/imagens/**", "/aviso/**").hasAnyRole("ADM", "TECH")
+                    .requestMatchers(HttpMethod.PUT, "/auth/alterar_senha").hasAnyRole("ADM", "TECH")
 
                     // --- CESTAS E IMAGENS (Adicionado AUX) ---
                     .requestMatchers(HttpMethod.POST, "/cestas").access((authentication, context) ->
@@ -86,7 +86,7 @@ public class SecurityConfiguration {
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
                     .requestMatchers(HttpMethod.POST, "/cestas/solicitacao/**").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
-                    .requestMatchers(HttpMethod.POST, "/imagens/**").hasAnyRole("ADM", "DIRE") // Imagens mantive restrito, mas pode abrir se precisar
+                    .requestMatchers(HttpMethod.POST, "/imagens/**").hasAnyRole("ADM", "TECH", "DIRE") // Imagens mantive restrito, mas pode abrir se precisar
                     
                     // --- VOLUNTÁRIOS ---
                     .requestMatchers(HttpMethod.POST, "/voluntario").access((authentication, context) -> 
@@ -107,10 +107,10 @@ public class SecurityConfiguration {
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "CADASTRAR_ALUNO")))
 
                     // --- DIÁRIOS ---
-                    .requestMatchers(HttpMethod.POST,"/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
-                    .requestMatchers(HttpMethod.GET, "/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
-                    .requestMatchers(HttpMethod.PUT, "/diarios/**").hasAnyRole("ADM", "COOR", "DIRE")
-                    .requestMatchers(HttpMethod.DELETE, "/diarios/**").hasAnyRole("ADM", "COOR")
+                    .requestMatchers(HttpMethod.POST,"/diarios/**").hasAnyRole("ADM", "TECH", "COOR", "DIRE")
+                    .requestMatchers(HttpMethod.GET, "/diarios/**").hasAnyRole("ADM", "TECH", "COOR", "DIRE")
+                    .requestMatchers(HttpMethod.PUT, "/diarios/**").hasAnyRole("ADM", "TECH", "COOR", "DIRE")
+                    .requestMatchers(HttpMethod.DELETE, "/diarios/**").hasAnyRole("ADM", "TECH", "COOR")
 
                     // --- LEITURA GERAL ---
                     .requestMatchers(HttpMethod.GET, "/cestas").access((authentication, context) -> 
@@ -132,8 +132,8 @@ public class SecurityConfiguration {
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
                     .requestMatchers(HttpMethod.PUT, "/aviso/**").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AVISOS")))
-                    .requestMatchers(HttpMethod.PUT, "/auth/alterar_role/{matricula}/{role}").hasRole("ADM")
-                    .requestMatchers(HttpMethod.PUT, "/imagens/**").hasAnyRole("ADM", "DIRE")
+                    .requestMatchers(HttpMethod.PUT, "/auth/alterar_role/{matricula}/{role}").hasAnyRole("ADM", "TECH")
+                    .requestMatchers(HttpMethod.PUT, "/imagens/**").hasAnyRole("ADM", "TECH", "DIRE")
 
                     // --- DELEÇÃO ---
                     .requestMatchers(HttpMethod.DELETE, "/cestas").access((authentication, context) -> 

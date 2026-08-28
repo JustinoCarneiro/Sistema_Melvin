@@ -24,7 +24,8 @@ function Voluntario_frequencia({tipo}){
             zelador: "Frequência Zeladores",
             diretor: "Frequência Diretores",
             psicologo: "Frequência Psicólogos",
-            assistente: "Frequência Assistentes"
+            assistente: "Frequência Assistentes",
+            tecnico: "Frequência Suporte Técnico"
         };
         return titles[tipo] || "Frequência Voluntários";
     };

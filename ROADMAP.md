@@ -1,6 +1,6 @@
 # 🗺️ ROADMAP.md — Blueprint de Arquitetura e Contratos
 
-> **Última atualização:** 12/08/2026 (Módulo 13 — QR Code reintroduzido como caminho principal)
+> **Última atualização:** 27/08/2026 (Módulo 16 — Cargo Técnico TECH)
 > **Metodologia:** Onda-Dev (Fase 3 — Blueprint)
 > **Referência:** [CLAUDE.md](./CLAUDE.md)
 
@@ -31,6 +31,7 @@
 | 13 | Solicitação de Cestas + Confirmação de Entrega | 🔴 Grande | 5-7 | ✅ Concluído |
 | 14 | Notificação de Falta via WhatsApp | 🟡 Médio | 3-4 | 🔲 Backlog |
 | 15 | Central de Ajuda (Manual do Sistema) | 🟢 Pequeno | 1-2 | ✅ Concluído |
+| 16 | Cargo Técnico (TECH) | 🟡 Médio | 3-4 | ✅ Concluído |
 
 ---
 
@@ -703,6 +704,33 @@ Capturados via Playwright, reaproveitando o mesmo mecanismo de mock de cookies/A
 
 ---
 
+## MÓDULO 16: CARGO TÉCNICO (TECH)
+**Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ Concluído (27/08/2026)**
+
+> Épico de referência: [CLAUDE.md #Épico 1 — US-1.5](./CLAUDE.md)
+
+### Mudança de modelo
+`UserRole` ganha o valor `TECH` (ordinal 10). Como o campo `role` de `User` é armazenado como `smallint` por enum ordinal (sem `@Enumerated` explícito), o check constraint `users_role_check` (gerado originalmente pelo Hibernate `ddl-auto=update`, travado em `0-9`) precisa de migration explícita — não é ajustado automaticamente quando o enum ganha um valor novo. Migration `V16__Add_tech_role_to_users_check.sql`.
+
+### Contratos API
+Sem endpoint novo. `PUT /auth/alterar_role/{matricula}/{role}` já aceita qualquer valor de `UserRole` via `UserRole.valueOf()` — TECH funciona automaticamente, sem mudança de contrato.
+
+### Autorização (equivalente ao ADM em tudo)
+- `SecurityConfiguration`: toda rota antes restrita a `hasRole("ADM")` ou `hasAnyRole("ADM", ...)` ganhou `"TECH"` ao lado (permissões, registro de usuário, alterar senha/role, imagens, diários).
+- `PermissaoService.espelharAdmParaTech()`: roda no `@PostConstruct`, depois do seed de regras padrão — para toda `PermissaoRegra` que já libera `ADM` e ainda não libera `TECH`, adiciona `TECH` à lista. Cobre tanto os defaults novos (`ADM,TECH,...` já vem assim no código) quanto regras que já existiam em produção antes do TECH existir (sem isso, um `UPDATE` manual via SQL ou pela tela de Permissões seria necessário regra por regra).
+- Frontend: `usePermissions().hasPermission()` trata `TECH` como bypass total (mesmo padrão do `ADM`); `perfisGerais`/`perfisEquipe` e toda rota antes restrita a `role="ADM"` em `Routes.jsx` ganharam `TECH` (Permissões, Calendário de Exceções, Arquivo Morto, frequências de administradores/diretores).
+
+### UI
+Rotulado como "Suporte Técnico": badge do cabeçalho (`Header/index.jsx`), coluna nova na matriz de Permissões (`ConfiguracoesPermissoes.jsx`), e nova opção de Função no cadastro de Voluntário (`funcao: "tecnico"` → mapeado para o cargo `TECH` em `getRoleFromFuncao`). Dashboard próprio em `/app/tech` (mesmo componente `HomeApp` dos demais cargos) e tela de frequência própria em `/voluntario/frequencias/tecnicos`, seguindo o mesmo padrão dos demais cargos — sem isso o cargo ficaria incompleto em relação aos outros 10 (sem destino de navegação ao clicar no título do sistema, por exemplo).
+
+### Entrega (TDD)
+Backend: suíte completa revalidada (0 regressão) após a adição do enum, do branch explícito em `User.getAuthorities()` (evita cair no fallback `else` que hoje resolve para `ROLE_DIRE`) e do espelhamento de permissões. Frontend: lint, build e suíte E2E completa (49/49) revalidados sem alteração nos testes existentes — a mudança é aditiva (novo cargo, não altera comportamento dos 10 já existentes).
+
+### Fora do escopo desta entrega
+Sem tela de "criar usuário" self-service — o primeiro login TECH foi criado manualmente (mesma limitação de bootstrap que qualquer ADM novo: `POST /auth/register` já exige estar autenticado como ADM/TECH).
+
+---
+
 ## Modelagem de Dados (Resumo)
 
 | Entidade | Chave Primária | Campos Notáveis |
@@ -737,3 +765,4 @@ Capturados via Playwright, reaproveitando o mesmo mecanismo de mock de cookies/A
 | V13 | Criação da tabela `Ocorrencia` (Módulo 12 — registro de ocorrências) |
 | V14 | Campos de solicitação/agendamento/entrega em Cestas (Módulo 13) |
 | V15 | `email_solicitante` + `qr_code_token` em Cestas (Módulo 13 — QR Code reintroduzido) |
+| V16 | Amplia check constraint `users_role_check` para o cargo TECH (Módulo 16) |

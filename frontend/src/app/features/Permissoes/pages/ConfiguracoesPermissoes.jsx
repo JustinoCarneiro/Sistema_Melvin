@@ -5,6 +5,7 @@ import { FaShieldAlt, FaSave, FaCheck, FaTimes } from 'react-icons/fa';
 
 const ROLES = [
     { id: 'ADM', label: 'ADM' },
+    { id: 'TECH', label: 'Suporte Técnico' },
     { id: 'DIRE', label: 'Diretoria' },
     { id: 'COOR', label: 'Coordenação' },
     { id: 'PROF', label: 'Professor' },

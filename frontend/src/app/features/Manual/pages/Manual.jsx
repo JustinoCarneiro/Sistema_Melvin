@@ -28,16 +28,17 @@ import imgEmbaixadoresLista from '../assets/embaixadores-lista.png';
 import imgAmigosMelvinLista from '../assets/amigosmelvin-lista.png';
 
 const CARGOS = [
-    { id: 'ADM', nome: 'Administrador (ADM)', resumo: 'Acesso total: todos os módulos operacionais, mais a área de Administração (arquivo morto), Permissões de Acesso e Calendário de Exceções — as duas únicas telas exclusivas do ADM.' },
-    { id: 'DIRE', nome: 'Diretoria (DIRE)', resumo: 'Mesmo nível de acesso operacional do ADM (Alunos, Voluntários, Frequência, Rendimento, Relatórios, Cestas, Embaixadores, Amigos do Melvin), exceto Gerenciar Voluntários, Permissões de Acesso e Calendário de Exceções, que continuam exclusivos do ADM.' },
-    { id: 'COOR', nome: 'Coordenação (COOR)', resumo: 'Alunos (visualizar, cadastrar e editar), Frequência, Rendimento, Relatórios e Registro de Ocorrências. Cestas, Embaixadores, Amigos do Melvin e Avisos dependem de permissão extra concedida pelo ADM.' },
+    { id: 'ADM', nome: 'Administrador (ADM)', resumo: 'Acesso total: todos os módulos operacionais, mais a área de Administração (arquivo morto), Permissões de Acesso e Calendário de Exceções — telas exclusivas de ADM e TECH.' },
+    { id: 'TECH', nome: 'Suporte Técnico (TECH)', resumo: 'Perfil técnico com o mesmo nível de acesso do ADM em tudo, inclusive as telas exclusivas (Permissões de Acesso, Calendário de Exceções, Arquivo Morto, criar/redefinir login de outros usuários). Existe pra separar as ações de quem mantém o sistema das ações da administração do Instituto nos registros.' },
+    { id: 'DIRE', nome: 'Diretoria (DIRE)', resumo: 'Mesmo nível de acesso operacional do ADM (Alunos, Voluntários, Frequência, Rendimento, Relatórios, Cestas, Embaixadores, Amigos do Melvin), exceto Gerenciar Voluntários, Permissões de Acesso e Calendário de Exceções, que continuam exclusivos de ADM e TECH.' },
+    { id: 'COOR', nome: 'Coordenação (COOR)', resumo: 'Alunos (visualizar, cadastrar e editar), Frequência, Rendimento, Relatórios e Registro de Ocorrências. Cestas, Embaixadores, Amigos do Melvin e Avisos dependem de permissão extra concedida pelo ADM/TECH.' },
     { id: 'PROF', nome: 'Professor (PROF)', resumo: 'Visualizar Alunos, fazer a chamada de frequência das próprias salas, registrar Ocorrências e ver Relatórios. Não cadastra nem edita o cadastro do aluno por padrão.' },
-    { id: 'AUX', nome: 'Auxiliar (AUX)', resumo: 'Gerenciar Cestas Básicas (doações) por padrão. Acesso aos demais módulos depende de permissão concedida pelo ADM em Configurações → Permissões de Acesso.' },
+    { id: 'AUX', nome: 'Auxiliar (AUX)', resumo: 'Gerenciar Cestas Básicas (doações) por padrão. Acesso aos demais módulos depende de permissão concedida pelo ADM/TECH em Configurações → Permissões de Acesso.' },
     { id: 'PSICO', nome: 'Psicólogo (PSICO)', resumo: 'Visualizar Alunos e Relatórios; é o único cargo que edita a nota de Avaliação Psicológica na tela de Rendimento — os demais cargos veem esse campo apenas como leitura.' },
     { id: 'ASSIST', nome: 'Assistente (ASSIST)', resumo: 'Visualizar Alunos, Cadastrar/Editar Alunos e ver Relatórios.' },
-    { id: 'COZI', nome: 'Cozinha (COZI)', resumo: 'Sem módulo operacional liberado por padrão. Acesso a qualquer módulo (ex.: Cestas) depende de o ADM conceder a permissão correspondente.' },
-    { id: 'MARK', nome: 'Marketing (MARK)', resumo: 'Sem módulo operacional liberado por padrão. Acesso a Embaixadores, Amigos do Melvin ou Avisos, por exemplo, depende de permissão concedida pelo ADM.' },
-    { id: 'ZELA', nome: 'Zeladoria (ZELA)', resumo: 'Sem módulo operacional liberado por padrão. Acesso depende de permissão concedida pelo ADM.' },
+    { id: 'COZI', nome: 'Cozinha (COZI)', resumo: 'Sem módulo operacional liberado por padrão. Acesso a qualquer módulo (ex.: Cestas) depende de o ADM/TECH conceder a permissão correspondente.' },
+    { id: 'MARK', nome: 'Marketing (MARK)', resumo: 'Sem módulo operacional liberado por padrão. Acesso a Embaixadores, Amigos do Melvin ou Avisos, por exemplo, depende de permissão concedida pelo ADM/TECH.' },
+    { id: 'ZELA', nome: 'Zeladoria (ZELA)', resumo: 'Sem módulo operacional liberado por padrão. Acesso depende de permissão concedida pelo ADM/TECH.' },
 ];
 
 const SECOES = [
@@ -46,7 +47,7 @@ const SECOES = [
         titulo: 'Perfis de Acesso',
         icone: <FaUsersCog />,
         quemUsa: 'Todos os cargos',
-        resumo: 'O Sistema Melvin tem 10 cargos (roles). O que cada um vê no menu e pode fazer em cada tela depende de duas coisas: o cargo em si (algumas telas, como Permissões e Calendário de Exceções, são exclusivas de ADM) e das Permissões de Acesso configuráveis (tela em Configurações → Permissões de Acesso, só ADM), que definem quais cargos ativam cada funcionalidade dinâmica — como Gerenciar Cestas ou Editar Rendimento.',
+        resumo: 'O Sistema Melvin tem 11 cargos (roles). O que cada um vê no menu e pode fazer em cada tela depende de duas coisas: o cargo em si (algumas telas, como Permissões e Calendário de Exceções, são exclusivas de ADM e TECH) e das Permissões de Acesso configuráveis (tela em Configurações → Permissões de Acesso, só ADM/TECH), que definem quais cargos ativam cada funcionalidade dinâmica — como Gerenciar Cestas ou Editar Rendimento.',
         passos: [
             { texto: 'Todo cargo, ao entrar em Configurações, sempre vê seu próprio perfil e a Auto Frequência — isso não depende de nenhuma permissão, é igual para todo mundo.' },
             { texto: 'O que muda entre os cargos é o menu lateral (quais módulos aparecem) e quais botões de ação (Adicionar, Editar, Exportar...) ficam visíveis dentro de cada tela.' },
@@ -82,18 +83,18 @@ const SECOES = [
         titulo: 'Meu Perfil e Auto Frequência',
         icone: <FaCalendarCheck />,
         quemUsa: 'Todos os cargos',
-        resumo: 'Tela de Configurações (menu → "Configurações"). Reúne seus dados cadastrais, o registro da sua própria presença do dia e, só para ADM, os atalhos administrativos do sistema — incluindo este Manual.',
+        resumo: 'Tela de Configurações (menu → "Configurações"). Reúne seus dados cadastrais, o registro da sua própria presença do dia e, só para ADM e TECH, os atalhos administrativos do sistema — incluindo este Manual.',
         passos: [
             { texto: 'O card "Meu Perfil" mostra seus dados pessoais e institucionais (somente leitura) e os dias da semana em que você atua como voluntário (M = manhã, T = tarde).', imagem: { src: imgConfigPerfil, legenda: 'Configurações — Meu Perfil e Auto Frequência (visão de um Professor).' } },
             { texto: 'No card "Auto Frequência", selecione sua presença de Manhã e/ou Tarde (Presente / Falta / Falta Justificada / N/A), preencha a Justificativa se necessário, e clique em "Confirmar Presença". Pode ser refeito no mesmo dia — o sistema atualiza o registro em vez de duplicar.' },
-            { texto: 'Se seu cargo for ADM, aparece também o card "Administração (Arquivo Morto)", com atalhos para os cadastros desativados de cada módulo e para as telas de Permissões de Acesso e Calendário de Exceções.', imagem: { src: imgConfigAdmin, legenda: 'Configurações — card de Administração, visível apenas para o cargo ADM.' } },
+            { texto: 'Se seu cargo for ADM ou TECH, aparece também o card "Administração (Arquivo Morto)", com atalhos para os cadastros desativados de cada módulo e para as telas de Permissões de Acesso e Calendário de Exceções.', imagem: { src: imgConfigAdmin, legenda: 'Configurações — card de Administração, visível para os cargos ADM e TECH.' } },
         ],
     },
     {
         id: 'alunos',
         titulo: 'Alunos',
         icone: <FaChild />,
-        quemUsa: 'ADM, Diretoria, Coordenação, Professor, Assistente, Psicólogo (visualização); cadastro/edição por padrão em ADM, Coordenação, Diretoria e Assistente',
+        quemUsa: 'ADM, TECH, Diretoria, Coordenação, Professor, Assistente, Psicólogo (visualização); cadastro/edição por padrão em ADM, TECH, Coordenação, Diretoria e Assistente',
         resumo: 'Cadastro completo dos alunos do instituto, com dados pessoais, familiares, de saúde, diário de acompanhamento e ocorrências.',
         passos: [
             { texto: 'Em "Alunos", use a busca por nome/matrícula e os filtros de Turno e Sala/Oficina. O botão "Em espera" alterna entre a lista de matriculados e a fila de espera. Quem tem permissão de cadastro vê também "Exportar" (gera .xlsx) e "Adicionar Aluno".', imagem: { src: imgAlunosLista, legenda: 'Lista de Alunos, com filtros e ações no cabeçalho.' } },
@@ -107,7 +108,7 @@ const SECOES = [
         id: 'frequencia-alunos',
         titulo: 'Frequência de Alunos (Chamada)',
         icone: <FaCalendarCheck />,
-        quemUsa: 'ADM, Diretoria, Coordenação, Professor (por padrão)',
+        quemUsa: 'ADM, TECH, Diretoria, Coordenação, Professor (por padrão)',
         resumo: 'Chamada diária de presença por sala e turno.',
         passos: [
             { texto: 'Acesse pelo botão "Frequências" na lista de Alunos. Escolha a Data, o Turno e a Sala — para Professores e Auxiliares, a lista de salas já vem limitada às salas em que atuam.', imagem: { src: imgAlunoFrequencia, legenda: 'Chamada de frequência — presença por sala e turno.' } },
@@ -119,7 +120,7 @@ const SECOES = [
         id: 'rendimento',
         titulo: 'Rendimento e Avaliações',
         icone: <FaChartBar />,
-        quemUsa: 'Leitura: ADM, Diretoria, Coordenação, Professor, Assistente, Psicólogo. Edição de Rendimento: ADM/Diretoria/Coordenação (por padrão). Edição da Avaliação Psicológica: só Psicólogo.',
+        quemUsa: 'Leitura: ADM, TECH, Diretoria, Coordenação, Professor, Assistente, Psicólogo. Edição de Rendimento: ADM/TECH/Diretoria/Coordenação (por padrão). Edição da Avaliação Psicológica: só Psicólogo.',
         resumo: 'Avaliação do aluno em 5 categorias, por estrelas de 1 a 5.',
         passos: [
             { texto: 'Acesse pelo ícone de estrela na lista de Alunos. Presença, Participação, Comportamento e Rendimento Escolar ficam editáveis para quem tem a permissão "Editar Rendimento"; a Avaliação Psicológica só é editável pelo cargo Psicólogo — para os demais aparece com o rótulo "Apenas Leitura".', imagem: { src: imgRendimento, legenda: 'Tela de Rendimento — avaliação por estrelas, com a Avaliação Psicológica somente leitura para quem não é Psicólogo.' } },
@@ -130,7 +131,7 @@ const SECOES = [
         id: 'relatorios',
         titulo: 'Relatórios',
         icone: <FaChartBar />,
-        quemUsa: 'ADM, Diretoria, Coordenação, Professor, Assistente, Psicólogo',
+        quemUsa: 'ADM, TECH, Diretoria, Coordenação, Professor, Assistente, Psicólogo',
         resumo: 'Relatório de Desempenho (notas) e de Frequência mensal, com exportação em Excel.',
         passos: [
             { texto: 'Alterne entre as abas "Desempenho" e "Frequência" no topo da tela. Filtre por nome, Sala/Oficina e, na aba Frequência, por Mês e Ano.', imagem: { src: imgRelatorios, legenda: 'Relatórios — aba Desempenho, com filtros por sala e turno.' } },
@@ -142,7 +143,7 @@ const SECOES = [
         id: 'voluntarios',
         titulo: 'Voluntários',
         icone: <FaChalkboardTeacher />,
-        quemUsa: 'Todos os cargos de equipe (visualização); cadastro/edição/acesso ao sistema por padrão só em ADM',
+        quemUsa: 'Todos os cargos de equipe (visualização); cadastro/edição/acesso ao sistema por padrão em ADM e TECH',
         resumo: 'Cadastro da equipe de voluntários (professores, coordenação, auxiliares etc.) e da liberação de acesso ao sistema.',
         passos: [
             { texto: 'Na lista, filtre por Função e alterne "Em espera" para ver quem ainda não foi efetivado. O botão "Frequências" leva à chamada da função selecionada.', imagem: { src: imgVoluntariosLista, legenda: 'Lista de Voluntários, com filtro por função.' } },
@@ -154,7 +155,7 @@ const SECOES = [
         id: 'frequencia-voluntarios',
         titulo: 'Frequência de Voluntários',
         icone: <FaCalendarCheck />,
-        quemUsa: 'ADM e Diretoria sempre; Coordenação para Professores/Auxiliares/Psicólogos/Assistentes',
+        quemUsa: 'ADM e TECH sempre; Diretoria também; Coordenação para Professores/Auxiliares/Psicólogos/Assistentes',
         resumo: 'Chamada de presença da equipe, uma tela por função (Professores, Auxiliares, Coordenadores etc.), no mesmo padrão da chamada de Alunos.',
         passos: [
             { texto: 'Acesse pelo botão "Frequências" na lista de Voluntários (com uma função selecionada) ou pelo atalho da função específica. Escolha a data, marque Presença de Manhã e de Tarde para cada voluntário e clique em "Salvar Chamada".' },
@@ -164,7 +165,7 @@ const SECOES = [
         id: 'cestas',
         titulo: 'Cestas Básicas e Doações',
         icone: <IoBasket />,
-        quemUsa: 'ADM, Diretoria, Auxiliar (por padrão)',
+        quemUsa: 'ADM, TECH, Diretoria, Auxiliar (por padrão)',
         resumo: 'Controle do fluxo de doações (entradas e saídas) e o processo completo de solicitação de cesta por líderes da igreja, com agendamento e confirmação de entrega.',
         passos: [
             { texto: 'A tela "Fluxo de Doações" mostra o total arrecadado, entregue e o saldo em estoque, com filtros por Operação (Entrada/Saída), Tipo e Data. O botão "Solicitações" leva à fila de pedidos recebidos pelo formulário público.', imagem: { src: imgCestasLista, legenda: 'Fluxo de Doações — entradas, saídas e saldo em estoque.' } },
@@ -178,7 +179,7 @@ const SECOES = [
         id: 'avisos',
         titulo: 'Avisos',
         icone: <FaBullhorn />,
-        quemUsa: 'ADM (por padrão)',
+        quemUsa: 'ADM e TECH (por padrão)',
         resumo: 'Comunicados internos exibidos no Dashboard de todos os usuários enquanto estiverem no período de vigência.',
         passos: [
             { texto: 'Em "Avisos", veja os avisos cadastrados e use "Criar Aviso" para um novo, ou o ícone de edição para alterar um existente.', imagem: { src: imgAvisosLista, legenda: 'Lista de Avisos.' } },
@@ -189,7 +190,7 @@ const SECOES = [
         id: 'embaixadores',
         titulo: 'Embaixadores',
         icone: <FaHandshake />,
-        quemUsa: 'ADM e Diretoria (por padrão)',
+        quemUsa: 'ADM, TECH e Diretoria (por padrão)',
         resumo: 'Cadastro dos embaixadores/parceiros que aparecem na página pública do site institucional.',
         passos: [
             { texto: 'A lista mostra Nome, Instagram, Contato e Email; o ícone de edição abre o cadastro completo.', imagem: { src: imgEmbaixadoresLista, legenda: 'Lista de Embaixadores.' } },
@@ -200,7 +201,7 @@ const SECOES = [
         id: 'amigos-melvin',
         titulo: 'Amigos do Melvin (Doações Recorrentes)',
         icone: <FaHeart />,
-        quemUsa: 'ADM e Diretoria (por padrão)',
+        quemUsa: 'ADM, TECH e Diretoria (por padrão)',
         resumo: 'Gestão dos apoiadores com assinatura mensal via Stripe — cadastro, doação única e de itens são feitos pelo doador no site público; aqui a equipe acompanha e administra.',
         passos: [
             { texto: 'A lista mostra cada doador com email, CPF, valor mensal, dia preferido, status da assinatura (Ativo/Pendente/Cancelado) e meses de contribuição — o ícone de presente indica marcos de recompensa (3, 6 ou 12 meses).', imagem: { src: imgAmigosMelvinLista, legenda: 'Gestão de Amigos do Melvin.' } },
@@ -211,7 +212,7 @@ const SECOES = [
         id: 'permissoes',
         titulo: 'Permissões de Acesso',
         icone: <FaShieldAlt />,
-        quemUsa: 'Exclusivo do ADM',
+        quemUsa: 'Exclusivo de ADM e TECH',
         resumo: 'Painel central de RBAC dinâmico: define, por funcionalidade, quais cargos têm acesso — sem precisar mexer em código.',
         passos: [
             { texto: 'Cada linha é uma funcionalidade (ex.: "Gerenciar Cestas Básicas") e cada coluna um cargo. Marque ou desmarque a caixa para liberar ou revogar o acesso daquele cargo àquela funcionalidade.', imagem: { src: imgPermissoes, legenda: 'Configurações de Permissões — matriz funcionalidade × cargo.' } },
@@ -222,7 +223,7 @@ const SECOES = [
         id: 'administracao',
         titulo: 'Administração (Arquivo Morto e Calendário)',
         icone: <FaTools />,
-        quemUsa: 'Exclusivo do ADM',
+        quemUsa: 'Exclusivo de ADM e TECH',
         resumo: 'Atalhos para os cadastros desativados de cada módulo e para o calendário de dias não letivos, dentro de Configurações.',
         passos: [
             { texto: 'Os botões "Alunos Desativados", "Voluntários Desativados", "Embaixadores", "Amigos Melvin" e "Avisos" abrem a listagem de registros inativos de cada módulo (ver card de Administração na seção "Meu Perfil e Auto Frequência" acima).' },

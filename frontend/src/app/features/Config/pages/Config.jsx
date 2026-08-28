@@ -65,7 +65,7 @@ function Config(){
                 if (response.status === 200) {
                     setUserData(response.data);
                     const userRole = Cookies.get('role');
-                    setIsAdm(userRole === 'ADM'); 
+                    setIsAdm(userRole === 'ADM' || userRole === 'TECH'); // TECH (US-1.5) tem o mesmo acesso administrativo do ADM 
                 }
             } catch (error) {
                 console.error("Erro ao buscar dados do usuário:", error);

@@ -32,6 +32,7 @@ function Header() {
         "MARK": ["Marketing", "/app/mark"],
         "ZELA": ["Zeladoria", "/app/zela"],
         "ADM": ["Administração", "/app/adm"],
+        "TECH": ["Suporte Técnico", "/app/tech"],
         "PSICO": ["Psicólogo", "/app/psico"]
     };
 

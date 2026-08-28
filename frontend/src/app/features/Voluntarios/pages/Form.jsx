@@ -54,7 +54,7 @@ function Voluntario_forms() {
         const roles = {
             'coordenador': 'COOR', 'professor': 'PROF', 'auxiliar': 'AUX', 'cozinheiro': 'COZI',
             'administrador': 'ADM', 'marketing': 'MARK', 'zelador': 'ZELA', 'diretor': 'DIRE',
-            'psicologo': 'PSICO', 'assistente': 'ASSIST'
+            'psicologo': 'PSICO', 'assistente': 'ASSIST', 'tecnico': 'TECH'
         };
         return roles[f] || null;
     };
@@ -214,6 +214,7 @@ function Voluntario_forms() {
                                     <option value="cozinheiro">Cozinheiro</option>
                                     <option value="psicologo">Psicólogo</option>
                                     <option value="assistente">Assistente Social</option>
+                                    <option value="tecnico">Suporte Técnico</option>
                                 </select>
                             </div>
                         </div>

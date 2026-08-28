@@ -92,7 +92,8 @@ function Voluntarios({ modoDesativados = false }) {
             administrador: "administradores",
             zelador: "zeladores",
             psicologo: "psicologos",
-            assistente: "assistentes"
+            assistente: "assistentes",
+            tecnico: "tecnicos"
         };
 
         const rotaDestino = rotas[filtroFuncao];
@@ -104,6 +105,7 @@ function Voluntarios({ modoDesativados = false }) {
     const formatFuncao = (funcao) => {
         if (!funcao) return '-';
         if (funcao === 'assistente') return 'Assistente Social';
+        if (funcao === 'tecnico') return 'Suporte Técnico';
         return funcao.charAt(0).toUpperCase() + funcao.slice(1);
     };
 
@@ -158,6 +160,7 @@ function Voluntarios({ modoDesativados = false }) {
                                     <option value="zelador">Zeladoria</option>
                                     <option value="psicologo">Psicólogos</option>
                                     <option value="assistente">Assistentes Sociais</option>
+                                    <option value="tecnico">Suporte Técnico</option>
                                 </select>
 
                                 <Botao
