@@ -28,6 +28,12 @@ test.describe('Cargo Técnico (TECH)', () => {
     await expect(page.locator('button', { hasText: 'Calendário de Exceções' })).toBeVisible();
   });
 
+  test('deve exibir o card de Ocorrências Técnicas (exclusivo do TECH)', async ({ page }) => {
+    await page.goto('/#/app/config');
+    await expect(page.locator('h3', { hasText: 'Ocorrências Técnicas' })).toBeVisible();
+    await expect(page.locator('button', { hasText: 'Ver Ocorrências Técnicas' })).toBeVisible();
+  });
+
   test('deve acessar a tela de Permissões de Acesso', async ({ page }) => {
     await page.route('**/permissoes', route => {
       if (route.request().url().includes('.js')) return route.continue();

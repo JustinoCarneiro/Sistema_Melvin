@@ -1,7 +1,7 @@
 import styles from "./Config.module.scss";
 import { useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUserCog, FaCalendarCheck, FaTools, FaBook } from "react-icons/fa";
+import { FaUserCog, FaCalendarCheck, FaTools, FaBook, FaBug } from "react-icons/fa";
 import Cookies from "js-cookie";
 
 import { voluntarioService } from "@features/Voluntarios";
@@ -13,6 +13,7 @@ import Deslogar from "@core/components/Deslogar";
 function Config(){
     const [userData, setUserData] = useState(null);
     const [isAdm, setIsAdm] = useState(false);
+    const [isTech, setIsTech] = useState(false);
     const [data, setData] = useState('');
     const [frequencia, setFrequencia] = useState({
         presenca_manha: '',
@@ -65,7 +66,8 @@ function Config(){
                 if (response.status === 200) {
                     setUserData(response.data);
                     const userRole = Cookies.get('role');
-                    setIsAdm(userRole === 'ADM' || userRole === 'TECH'); // TECH (US-1.5) tem o mesmo acesso administrativo do ADM 
+                    setIsAdm(userRole === 'ADM' || userRole === 'TECH'); // TECH (US-1.5) tem o mesmo acesso administrativo do ADM
+                    setIsTech(userRole === 'TECH'); // Ocorrências Técnicas: exclusivo do TECH, nem o ADM vê
                 }
             } catch (error) {
                 console.error("Erro ao buscar dados do usuário:", error);
@@ -300,6 +302,24 @@ function Config(){
                                     onClick={() => navigate('/app/config/calendario')} 
                                 />
                             </div>
+                        </div>
+                    </section>
+                )}
+
+                {/* --- CARD 4: OCORRÊNCIAS TÉCNICAS (Só para TECH, nem o ADM vê) --- */}
+                {isTech && (
+                    <section className={`${styles.card} ${styles.cardAdmin}`}>
+                        <div className={styles.cardHeader}>
+                            <FaBug className={styles.icon}/>
+                            <h3>Ocorrências Técnicas</h3>
+                        </div>
+                        <div className={styles.shortcutsGrid}>
+                            <Botao
+                                nome="Ver Ocorrências Técnicas"
+                                corFundo="#5B21B6"
+                                corBorda="#4C1D95"
+                                onClick={() => navigate('/app/ocorrencias-tecnicas')}
+                            />
                         </div>
                     </section>
                 )}

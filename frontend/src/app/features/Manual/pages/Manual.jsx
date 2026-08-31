@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styles from './Manual.module.scss';
 import {
     FaUsersCog, FaUserCog, FaChild, FaChalkboardTeacher, FaCalendarCheck,
-    FaBullhorn, FaHandshake, FaHeart, FaChartBar, FaShieldAlt, FaTools,
+    FaBullhorn, FaHandshake, FaHeart, FaChartBar, FaShieldAlt, FaTools, FaBug,
 } from 'react-icons/fa';
 import { IoBasket } from 'react-icons/io5';
 
@@ -26,10 +26,12 @@ import imgAvisosLista from '../assets/avisos-lista.png';
 import imgAvisoForm from '../assets/aviso-form.png';
 import imgEmbaixadoresLista from '../assets/embaixadores-lista.png';
 import imgAmigosMelvinLista from '../assets/amigosmelvin-lista.png';
+import imgOcorrenciasTecnicasLista from '../assets/ocorrencias-tecnicas-lista.png';
+import imgOcorrenciaTecnicaForm from '../assets/ocorrencia-tecnica-form.png';
 
 const CARGOS = [
     { id: 'ADM', nome: 'Administrador (ADM)', resumo: 'Acesso total: todos os módulos operacionais, mais a área de Administração (arquivo morto), Permissões de Acesso e Calendário de Exceções — telas exclusivas de ADM e TECH.' },
-    { id: 'TECH', nome: 'Suporte Técnico (TECH)', resumo: 'Perfil técnico com o mesmo nível de acesso do ADM em tudo, inclusive as telas exclusivas (Permissões de Acesso, Calendário de Exceções, Arquivo Morto, criar/redefinir login de outros usuários). Existe pra separar as ações de quem mantém o sistema das ações da administração do Instituto nos registros.' },
+    { id: 'TECH', nome: 'Suporte Técnico (TECH)', resumo: 'Perfil técnico com o mesmo nível de acesso do ADM em tudo, inclusive as telas exclusivas (Permissões de Acesso, Calendário de Exceções, Arquivo Morto, criar/redefinir login de outros usuários), mais uma tela extra só sua: Ocorrências Técnicas. Existe pra separar as ações de quem mantém o sistema das ações da administração do Instituto nos registros.' },
     { id: 'DIRE', nome: 'Diretoria (DIRE)', resumo: 'Mesmo nível de acesso operacional do ADM (Alunos, Voluntários, Frequência, Rendimento, Relatórios, Cestas, Embaixadores, Amigos do Melvin), exceto Gerenciar Voluntários, Permissões de Acesso e Calendário de Exceções, que continuam exclusivos de ADM e TECH.' },
     { id: 'COOR', nome: 'Coordenação (COOR)', resumo: 'Alunos (visualizar, cadastrar e editar), Frequência, Rendimento, Relatórios e Registro de Ocorrências. Cestas, Embaixadores, Amigos do Melvin e Avisos dependem de permissão extra concedida pelo ADM/TECH.' },
     { id: 'PROF', nome: 'Professor (PROF)', resumo: 'Visualizar Alunos, fazer a chamada de frequência das próprias salas, registrar Ocorrências e ver Relatórios. Não cadastra nem edita o cadastro do aluno por padrão.' },
@@ -228,6 +230,17 @@ const SECOES = [
         passos: [
             { texto: 'Os botões "Alunos Desativados", "Voluntários Desativados", "Embaixadores", "Amigos Melvin" e "Avisos" abrem a listagem de registros inativos de cada módulo (ver card de Administração na seção "Meu Perfil e Auto Frequência" acima).' },
             { texto: 'Em "Calendário de Exceções", cadastre feriados e recessos (Data + Descrição): esses dias deixam de contar como falta nos relatórios de frequência.', imagem: { src: imgCalendario, legenda: 'Calendário de Exceções — feriados e recessos que não contam como falta.' } },
+        ],
+    },
+    {
+        id: 'ocorrencias-tecnicas',
+        titulo: 'Ocorrências Técnicas',
+        icone: <FaBug />,
+        quemUsa: 'Exclusivo do TECH — nem o ADM vê esta tela',
+        resumo: 'Registro de achados técnicos do próprio sistema (bugs, incidentes, decisões técnicas, manutenção, segurança) — inclusive os que surgem em sessões de manutenção fora da tela, como uma revisão de logs de produção. Diferente da tela de Ocorrências de Alunos (dados comportamentais/pedagógicos), aqui o assunto é o sistema em si, não um aluno.',
+        passos: [
+            { texto: 'Em "Ocorrências Técnicas", filtre por título/descrição, Categoria (Bug, Incidente, Manutenção, Decisão Técnica, Segurança) ou Status (Pendente/Resolvido). Clique no badge de Status de uma linha pra alternar entre Pendente e Resolvido.', imagem: { src: imgOcorrenciasTecnicasLista, legenda: 'Lista de Ocorrências Técnicas, com badges de severidade e status.' } },
+            { texto: 'Em "Nova Ocorrência", preencha Título, Categoria, Severidade (Baixa/Média/Alta), Descrição (causa raiz, contexto, o que foi feito) e a Data do ocorrido, depois "Registrar Ocorrência". O autor é sempre o próprio usuário TECH logado, preenchido automaticamente pelo backend.', imagem: { src: imgOcorrenciaTecnicaForm, legenda: 'Formulário de nova Ocorrência Técnica.' } },
         ],
     },
 ];

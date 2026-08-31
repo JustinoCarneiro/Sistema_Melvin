@@ -18,6 +18,12 @@ test.describe('Config & Profile', () => {
     await expect(page.locator('span', { hasText: 'Admin User' })).toBeVisible();
   });
 
+  test('ADM não deve ver o card de Ocorrências Técnicas (exclusivo do TECH)', async ({ page }) => {
+    await page.goto('/#/app/config');
+    await expect(page.locator('h3', { hasText: 'Meu Perfil' })).toBeVisible();
+    await expect(page.locator('h3', { hasText: 'Ocorrências Técnicas' })).not.toBeVisible();
+  });
+
   test('should allow marking auto-frequency', async ({ page }) => {
     await page.goto('/#/app/config');
     // Using nth(0) or .first() to match the first select if there are multiple, or select Option by its value directly

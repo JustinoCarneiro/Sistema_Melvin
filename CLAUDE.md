@@ -1,6 +1,6 @@
 # 📘 CLAUDE.md — Especificação Viva do Sistema Melvin
 
-> **Última atualização:** 27/08/2026
+> **Última atualização:** 30/08/2026
 > **Fase atual:** Fase 5 (Produção)
 > **Metodologia:** Onda-Dev (Playbook de Engenharia)
 
@@ -645,6 +645,42 @@ Então o texto indica explicitamente quais cargos têm acesso a ela, mesmo que o
 
 ---
 
+### ÉPICO 12: OCORRÊNCIAS TÉCNICAS
+
+**Escopo:** Registro de achados técnicos do próprio sistema (bugs, incidentes, decisões técnicas, manutenção, segurança), exclusivo do cargo TECH — nem o ADM tem acesso, mantendo a separação entre a manutenção técnica do sistema e a administração real do Instituto.
+
+#### US-12.1: Registrar e Consultar Ocorrências Técnicas
+**Como** usuário do cargo TECH,
+**eu quero** registrar achados técnicos do sistema (bugs corrigidos, incidentes, decisões de manutenção, revisões de log) — muitos deles originados de sessões de trabalho com IA/agente técnico — e consultar o histórico depois,
+**para que** o conhecimento técnico da manutenção do sistema fique registrado, sem se misturar aos registros de ocorrência de alunos nem ficar visível para a administração do Instituto.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que um usuário TECH está na tela de Configurações,
+Quando ele visualiza a página,
+Então vê o card "Ocorrências Técnicas", que não aparece para nenhum outro cargo, incluindo ADM.
+
+Dado que um usuário TECH preenche título, categoria (Bug, Incidente, Manutenção, Decisão Técnica, Segurança), severidade (Baixa, Média, Alta), descrição e data,
+Quando ele registra a ocorrência,
+Então ela é salva vinculada ao seu login como autor, com timestamp de criação, e status inicial "Pendente".
+
+Dado que existem ocorrências técnicas cadastradas,
+Quando um usuário TECH abre a lista,
+Então vê todas em ordem cronológica decrescente, com filtro por título/descrição, categoria e status (Pendente/Resolvido).
+
+Dado que uma ocorrência está "Pendente",
+Quando o usuário TECH clica no badge de status dela,
+Então o status alterna para "Resolvido" (e vice-versa).
+
+Dado que um usuário de qualquer outro cargo (incluindo ADM) tenta acessar a rota de Ocorrências Técnicas diretamente,
+Quando a requisição chega ao backend,
+Então o sistema retorna 403 Forbidden.
+```
+
+> **Nota de implementação:** entidade `OcorrenciaTecnica` nova (`titulo`, `categoria` enum, `severidade` enum, `descricao` — sem `SensitiveDataConverter`, diferente de `Ocorrencia`/aluno: é dado técnico interno, não pessoal sob LGPD —, `resolvido`, `autorLogin`, `dataOcorrencia`, `criadoEm`), migration `V17`. Autorização hardcoded em `SecurityConfiguration` (`hasRole("TECH")`, não `hasAnyRole` com ADM — deliberadamente exclusivo, mesmo padrão de restrição das telas de Permissões/Calendário, só que sem incluir ADM desta vez). Frontend: card novo em `Config.jsx` controlado por um estado `isTech` próprio (`role === 'TECH'` exato, não o `isAdm` que já inclui TECH), para não vazar pro ADM. Rotas `/app/ocorrencias-tecnicas` e `/app/ocorrencias-tecnicas/criar` com `role="TECH"`. Documentado no Manual do Sistema (US-11.1) como seção "Exclusivo do TECH — nem o ADM vê esta tela".
+
+---
+
 ## 4. DIRETRIZES DE SINTAXE E PADRÕES
 
 ### Backend
@@ -712,6 +748,7 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev: vault
 | 12/08/2026 | QR Code da US-7.4 removido e, no mesmo dia, reintroduzido como caminho principal (confirmação manual virou caminho alternativo) | — (correção de rumo + evolução, sem retorno de fase) | O dono do projeto esclareceu que a remoção do QR Code (linha acima, feita antes do deploy) tinha sido uma decisão técnica interna, não um pedido real do cliente — o pedido original ("acessar o formulário através de um link ou QRCODE") sempre incluiu QR Code. Reimplementado com desenho mais robusto que a primeira versão: e-mail do solicitante (novo campo opcional, cifrado) recebe o QR Code em anexo automaticamente na validação; check-in por scanner de câmera embutido (`html5-qrcode`) ou colando o texto decodificado; confirmação manual por nome (já em produção) preservada como caminho alternativo, nunca bloqueado pelo QR. Migration `V15` (a `V14`, dessa vez, já estava em produção — não podia mais ser editada). Backend: 11 testes novos/adaptados em `CestasServiceTest`. Testado ponta a ponta via Docker com envio real de e-mail. Ver nota de implementação da US-7.4 acima e `memoria-tecnica/decisoes/qr-code-removido-confirmacao-manual.md` (atualizada com a reversão). |
 | 26/08/2026 | Manual do Sistema (US-11.1) implementado e publicado em produção | — (evolução, sem retorno de fase) | Botão "Manual do Sistema" em Configurações, visível a qualquer cargo, abrindo `/app/manual` com passo a passo por funcionalidade e prints reais das telas (capturados via Playwright com dados fictícios, mesmo mecanismo de mock das suítes E2E). Feature 100% frontend, sem contrato de API novo — ver ROADMAP.md Módulo 15. Deploy em produção verificado via smoke test (health check, carregamento do site, login com mensagem UTF-8 correta). |
 | 27/08/2026 | Cargo técnico TECH (US-1.5) criado para separar acesso de manutenção/suporte técnico da administração real do Instituto | — (evolução, sem retorno de fase) | `UserRole.TECH` (ordinal 10, migration V16 para o check constraint de `users.role`) com acesso equivalente ao ADM em tudo, inclusive telas exclusivas (Permissões, Calendário de Exceções, Arquivo Morto, registro/redefinição de login). `PermissaoService` espelha automaticamente TECH em qualquer regra dinâmica que já libere ADM, inclusive regras já existentes em produção antes do TECH existir. Rotulado como "Suporte Técnico" nas telas (Header, cadastro de Voluntário — função "tecnico"). Backend e E2E completos revalidados (0 regressão). |
+| 30/08/2026 | Ocorrências Técnicas (US-12.1) — módulo novo, exclusivo do cargo TECH | — (evolução, sem retorno de fase) | Pedido do dono do projeto: registrar achados técnicos do sistema (bugs, incidentes, decisões, manutenção, segurança) — muitos vindos de sessões de trabalho com IA, como a própria correção do bug do hash Argon2 corrompido via SSH nesta mesma sessão. Entidade `OcorrenciaTecnica` nova (migration V17), sem cifragem (dado técnico, não pessoal). Acesso restrito a `hasRole("TECH")` — deliberadamente sem ADM, ao contrário das demais telas exclusivas do TECH. Card novo em Configurações controlado por estado `isTech` dedicado (não reaproveita o `isAdm` que inclui TECH). Documentado no Manual do Sistema com prints reais. Backend: 9 testes novos (`OcorrenciaTecnicaServiceTest` 7, `OcorrenciaTecnicaRepositoryTest` 2 — suíte completa 106/106 verde). Frontend: 4 testes E2E novos (lista, criação, card exclusivo em Config visível pro TECH e ausente pro ADM). |
 
 
 ## Diretivas de Gestão (Regra de Ouro do Trello + Jira)

@@ -1,6 +1,6 @@
 # 🗺️ ROADMAP.md — Blueprint de Arquitetura e Contratos
 
-> **Última atualização:** 27/08/2026 (Módulo 16 — Cargo Técnico TECH)
+> **Última atualização:** 30/08/2026 (Módulo 17 — Ocorrências Técnicas)
 > **Metodologia:** Onda-Dev (Fase 3 — Blueprint)
 > **Referência:** [CLAUDE.md](./CLAUDE.md)
 
@@ -32,6 +32,7 @@
 | 14 | Notificação de Falta via WhatsApp | 🟡 Médio | 3-4 | 🔲 Backlog |
 | 15 | Central de Ajuda (Manual do Sistema) | 🟢 Pequeno | 1-2 | ✅ Concluído |
 | 16 | Cargo Técnico (TECH) | 🟡 Médio | 3-4 | ✅ Concluído |
+| 17 | Ocorrências Técnicas | 🟢 Pequeno | 1-2 | ✅ Concluído |
 
 ---
 
@@ -731,6 +732,34 @@ Sem tela de "criar usuário" self-service — o primeiro login TECH foi criado m
 
 ---
 
+## MÓDULO 17: OCORRÊNCIAS TÉCNICAS
+**Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído (30/08/2026)**
+
+> Épico de referência: [CLAUDE.md #Épico 12 — US-12.1](./CLAUDE.md)
+
+### Mudança de modelo
+Entidade `OcorrenciaTecnica` nova (migration `V17`): `titulo`, `categoria` (enum `BUG`, `INCIDENTE`, `MANUTENCAO`, `DECISAO_TECNICA`, `SEGURANCA`), `severidade` (enum `BAIXA`, `MEDIA`, `ALTA`), `descricao` (TEXT), `resolvido` (boolean), `autorLogin`, `dataOcorrencia`, `criadoEm`. Diferente de `Ocorrencia` (US-3.7, sobre alunos), aqui os campos usam camelCase normal (Hibernate `CamelCaseToUnderscoresNamingStrategy` de sempre) — o underscore em `matricula_discente`/`autor_login`/`data_ocorrencia`/`criado_em` era um caso isolado daquela entidade, não um padrão do projeto a repetir. Sem `SensitiveDataConverter`: dado técnico interno do sistema, não é dado pessoal sujeito à LGPD.
+
+### Contratos API
+| Método | Endpoint | Auth | Descrição |
+|---|---|---|---|
+| `POST` | `/ocorrencias-tecnicas` | `hasRole("TECH")` | Cria ocorrência; autor extraído do token (não do payload), `resolvido` sempre nasce `false` mesmo se o payload tentar forjar `true` |
+| `GET` | `/ocorrencias-tecnicas` | `hasRole("TECH")` | Lista todas, ordem cronológica decrescente (`dataOcorrencia` desc, `criadoEm` desc como desempate) |
+| `PUT` | `/ocorrencias-tecnicas/{id}/alternar-resolvido` | `hasRole("TECH")` | Alterna `resolvido` (true↔false); 404 se o id não existir |
+
+**Autorização deliberadamente mais restrita que as demais telas exclusivas do TECH:** `hasRole("TECH")` puro, não `hasAnyRole("ADM", "TECH")` — decisão explícita do dono do projeto de manter esta tela fora do alcance até do ADM, ao contrário de Permissões/Calendário/Arquivo Morto (que TECH e ADM dividem).
+
+### UI
+Card "Ocorrências Técnicas" em `Config.jsx`, controlado por um estado `isTech` próprio (`role === 'TECH'` exato) — deliberadamente **não** reaproveita o `isAdm` já existente (que inclui TECH), porque aqui o ADM não pode ver o card. Tela de lista com filtro por título/descrição, categoria e status (Pendente/Resolvido), badge de severidade colorido (verde/laranja/vermelho) e badge de status clicável (alterna resolvido/pendente na hora). Formulário de criação simples (sem edição — só criar e listar, mesma restrição de escopo já usada em `Ocorrencia`/US-3.7). Rotas `/app/ocorrencias-tecnicas` e `/app/ocorrencias-tecnicas/criar`, `role="TECH"`.
+
+### Entrega (TDD)
+Backend: `OcorrenciaTecnicaServiceTest` (7 testes: cadastro válido associa autor/timestamp, payload não consegue forjar `resolvido=true` de saída, falta de título/descrição retorna 400, listagem delega pro repositório ordenado, alternar resolvido de false→true, alternar com id inexistente retorna 404) + `OcorrenciaTecnicaRepositoryTest` (2, `@DataJpaTest` contra H2, valida ordenação cronológica e desempate por `criadoEm` — mesmo padrão de `OcorrenciaRepositoryTest`). Suíte completa do backend: 106/106 verde. Frontend: `tests/ocorrencias-tecnicas.spec.js` (2: lista renderiza dados mockados, criação registra via POST com o fluxo real de navegação lista→form pra não cair em `about:blank` no `navigate(-1)` do form) + 1 teste novo em `tech-role.spec.js` (card visível pro TECH) + 1 teste novo em `config.spec.js` (card ausente pro ADM, prova negativa da exclusividade). Suíte E2E completa: 56/56 verde. Lint e build OK.
+
+### Origem
+Pedido do dono do projeto, para dar ao cargo TECH (recém-criado no Módulo 16) um lugar de registrar achados técnicos do sistema — muitos deles originados de sessões de trabalho com IA/agente técnico, como a própria correção do bug do hash Argon2 corrompido via SSH nesta mesma sessão (ver `memoria-tecnica/` se aplicável, ou o histórico desta sessão).
+
+---
+
 ## Modelagem de Dados (Resumo)
 
 | Entidade | Chave Primária | Campos Notáveis |
@@ -749,6 +778,7 @@ Sem tela de "criar usuário" self-service — o primeiro login TECH foi criado m
 | `Diario` | `id` | `matriculaAtrelada` (única), `fileName`, `filePath` |
 | `Imagem` | `id` | `idAtrelado`, `tipo`, `fileName`, `filePath` |
 | `Ocorrencia` | `id` (UUID) | `matricula_discente`, `categoria`, `descricao` (cifrado), `autor_login`, `data_ocorrencia`, `criado_em` |
+| `OcorrenciaTecnica` | `id` (UUID) | `titulo`, `categoria`, `severidade`, `descricao` (não cifrado — dado técnico, não LGPD), `resolvido`, `autorLogin`, `dataOcorrencia`, `criadoEm` |
 
 ---
 
@@ -766,3 +796,4 @@ Sem tela de "criar usuário" self-service — o primeiro login TECH foi criado m
 | V14 | Campos de solicitação/agendamento/entrega em Cestas (Módulo 13) |
 | V15 | `email_solicitante` + `qr_code_token` em Cestas (Módulo 13 — QR Code reintroduzido) |
 | V16 | Amplia check constraint `users_role_check` para o cargo TECH (Módulo 16) |
+| V17 | Criação da tabela `ocorrencia_tecnica` (Módulo 17 — Ocorrências Técnicas) |

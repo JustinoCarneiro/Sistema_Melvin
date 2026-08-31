@@ -16,6 +16,7 @@ import PrivateRoute from "@core/services/PrivateRoute";
 import Header from "@core/components/Header";
 import { Config, Calendario } from "@features/Config";
 import { Manual } from "@features/Manual";
+import { OcorrenciasTecnicas, OcorrenciaTecnicaForm } from "@features/OcorrenciasTecnicas";
 import { Relatorios } from "@features/Relatorios";
 import { Rendimento } from "@features/Rendimento";
 import { ConfiguracoesPermissoes } from "@features/Permissoes";
@@ -191,6 +192,10 @@ function AppContent() {
 
                     {/* --- MANUAL DO SISTEMA (US-11.1) --- */}
                     <Route path="/manual" element={<PrivateRoute role={perfisEquipe} element={Manual} />} />
+
+                    {/* --- OCORRÊNCIAS TÉCNICAS (exclusivo do TECH) --- */}
+                    <Route path="/ocorrencias-tecnicas" element={<PrivateRoute role="TECH" element={OcorrenciasTecnicas} />} />
+                    <Route path="/ocorrencias-tecnicas/criar" element={<PrivateRoute role="TECH" element={OcorrenciaTecnicaForm} />} />
 
                     {/* --- FREQUÊNCIAS --- */}
                     <Route path="/frequencias/alunos" element={<PrivateRoute role={perfisGerais} element={Aluno_frequencia} />} />

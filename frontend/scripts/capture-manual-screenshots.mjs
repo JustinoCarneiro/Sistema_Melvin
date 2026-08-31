@@ -115,6 +115,12 @@ const DIAS_NAO_LETIVOS = [
     { id: 'f2', data: '2026-10-12', descricao: 'Feriado Nacional — Nossa Senhora Aparecida' },
 ];
 
+const OCORRENCIAS_TECNICAS = [
+    { id: 't1', titulo: 'Hash Argon2 corrompido via SSH', categoria: 'BUG', severidade: 'ALTA', descricao: 'O $ do formato Argon2 foi expandido pelo shell remoto ao passar por ssh com aspas duplas, corrompendo o hash gravado no banco.', resolvido: true, autorLogin: '2026009', dataOcorrencia: '2026-08-27' },
+    { id: 't2', titulo: 'Mock de aviso interceptando asset de imagem', categoria: 'BUG', severidade: 'MEDIA', descricao: 'Glob amplo "**/aviso*" casava por acidente com o import de PNG do Manual, quebrando o carregamento do módulo.', resolvido: true, autorLogin: '2026009', dataOcorrencia: '2026-08-26' },
+    { id: 't3', titulo: 'Revisão de logs pós-deploy do Módulo 16', categoria: 'MANUTENCAO', severidade: 'BAIXA', descricao: 'Conferência dos logs do backend após o deploy da migration V17 — nenhum erro encontrado.', resolvido: false, autorLogin: '2026009', dataOcorrencia: '2026-08-28' },
+];
+
 const RANKING = [
     { matricula: '2026012', nome: 'Beatriz Souza Lima', media: 4.8 },
     { matricula: '2026014', nome: 'Larissa Costa Almeida', media: 4.6 },
@@ -148,6 +154,7 @@ async function applyDefaultMocks(page, role) {
         PSICO: ['VISUALIZAR_ALUNOS', 'EDITAR_AVALIACAO_PSICO', 'VISUALIZAR_RELATORIOS'],
         ASSIST: ['VISUALIZAR_ALUNOS', 'CADASTRAR_ALUNO', 'VISUALIZAR_RELATORIOS'],
         DIRE: ['VISUALIZAR_ALUNOS', 'GERENCIAR_FREQUENCIA', 'EDITAR_RENDIMENTO', 'GERENCIAR_CESTAS', 'GERENCIAR_EMBAIXADORES', 'GERENCIAR_AMIGOS', 'VISUALIZAR_RELATORIOS', 'GERENCIAR_OCORRENCIA'],
+        TECH: [], // TECH faz bypass total em hasPermission() no frontend, não depende de regra dinâmica
         MARK: [], COZI: [], ZELA: [],
     };
 
@@ -177,6 +184,7 @@ async function applyDefaultMocks(page, role) {
     await mock(page, '**/diarios/captura/*', { status: 404, body: '' });
     await mock(page, '**/imagens/captura/*', { status: 404, body: '' });
     await mock(page, '**/dias-nao-letivos*', json(DIAS_NAO_LETIVOS));
+    await mock(page, '**/ocorrencias-tecnicas*', json(OCORRENCIAS_TECNICAS));
 }
 
 // --- Lista de capturas ---
@@ -202,6 +210,8 @@ const SHOTS = [
     { file: 'aviso-form.png', path: '/#/app/avisos/criar', role: 'ADM' },
     { file: 'embaixadores-lista.png', path: '/#/app/embaixadores', role: 'ADM' },
     { file: 'amigosmelvin-lista.png', path: '/#/app/amigosmelvin', role: 'DIRE' },
+    { file: 'ocorrencias-tecnicas-lista.png', path: '/#/app/ocorrencias-tecnicas', role: 'TECH' },
+    { file: 'ocorrencia-tecnica-form.png', path: '/#/app/ocorrencias-tecnicas/criar', role: 'TECH' },
 ];
 
 function waitForServer(url, timeoutMs = 90000) {

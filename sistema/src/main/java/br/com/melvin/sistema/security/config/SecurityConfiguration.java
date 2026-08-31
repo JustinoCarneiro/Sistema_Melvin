@@ -71,6 +71,10 @@ public class SecurityConfiguration {
                                                  permissaoService.hasPermission(authentication.get(), "EDITAR_AVALIACAO_PSICO")))
                     .requestMatchers("/permissoes/**").hasAnyRole("ADM", "TECH")
 
+                    // --- OCORRÊNCIAS TÉCNICAS: exclusivo do TECH, nem o ADM vê (separação deliberada
+                    // das ações de manutenção/suporte técnico da administração real do Instituto) ---
+                    .requestMatchers("/ocorrencias-tecnicas/**").hasRole("TECH")
+
                     // --- ROTAS ADMINISTRATIVAS (Registro de usuários, etc) ---
                     .requestMatchers(HttpMethod.POST,  "/auth/register", "/imagens/**", "/aviso/**").hasAnyRole("ADM", "TECH")
                     .requestMatchers(HttpMethod.PUT, "/auth/alterar_senha").hasAnyRole("ADM", "TECH")
