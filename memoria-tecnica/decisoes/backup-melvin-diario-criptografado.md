@@ -48,5 +48,15 @@ openssl enc -d -aes-256-cbc -pbkdf2 \
 - O dump antigo em texto puro (`/backups/sistemamelvin-2026-08-01_02-00-01.sql`) foi só protegido com `chmod 600`, não apagado (ação destrutiva em produção não foi autorizada nesta sessão) — considerar removê-lo manualmente já que existe um backup criptografado equivalente mais recente.
 - Antes de mexer de novo nesse script, ler esta nota — a criptografia, o alerta por e-mail e o upload off-site são intencionais, não acidente.
 
+## Atualização (30/08/2026) — segundo script de backup, sem criptografia, rodando à parte
+
+**Achado:** durante uma verificação pedida pelo dono do projeto ("verifique se o backup no servidor está funcionando"), a checagem do cron oficial (`/root/scripts/backup_postgres.sh`) confirmou que ele continua saudável — rodando todo dia, criptografado, retenção de 30 dias local batendo com 30 arquivos off-site no Drive, token OAuth do rclone válido (não revogado desta vez). Mas apareceu um **segundo mecanismo de backup**, não coberto por esta nota: `backup.sh`, na raiz do próprio repositório `sistema_melvin` (sincronizado pro servidor a cada deploy via `rsync` do `deploy.sh remote`, em `/root/sistema/sistema_melvin/backup.sh`). Esse script era chamado manualmente antes de cada deploy (hábito do assistente/agente, documentado no `DEPLOY_CHECKLIST.md` como `./backup.sh`) e gerava um dump **em texto puro** (só `gzip`, sem `openssl enc`), retenção de 7 dias, **sem** upload off-site — e os arquivos gerados estavam com permissão `644` (mundo podia ler), não `600`.
+
+**Causa raiz:** os dois scripts nasceram em momentos/contextos diferentes (o `backup.sh` do projeto parece ser bem mais antigo, um snapshot rápido pré-deploy escrito antes da auditoria de 04/08/2026 que endureceu o cron) e nunca foram consolidados — o `DEPLOY_CHECKLIST.md` seguiu referenciando o script mais fraco sem ninguém perceber que ele havia ficado defasado em relação ao padrão de segurança já estabelecido para o backup "de verdade".
+
+**Decisão:** consolidar em um único mecanismo. `backup.sh` **removido do repositório** (e do servidor, via rsync do próximo deploy — os arquivos `.sql.gz` já gerados por ele foram protegidos com `chmod 600`, não apagados, mesmo tratamento já dado ao dump antigo em texto puro descrito acima). O passo de "backup antes do deploy" no `DEPLOY_CHECKLIST.md` passa a apontar direto pro script oficial (`ssh root@<vps> '/root/scripts/backup_postgres.sh'`) — mesma criptografia AES, mesmo envio off-site, sem manter um segundo caminho mais fraco.
+
+**Como aplicar:** antes de qualquer deploy futuro, rodar o script oficial via SSH em vez de um script local do projeto. Se precisar de um snapshot rápido "fora do horário do cron" por qualquer outro motivo, usar esse mesmo script oficial (ele não é exclusivo do cron, pode ser chamado manualmente a qualquer hora) — nunca recriar um script paralelo mais simples só por conveniência, é exatamente esse padrão que gerou a lacuna encontrada agora.
+
 ## Ligado a
 - [[radar-cep-nao-ativado]]

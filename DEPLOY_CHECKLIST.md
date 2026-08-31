@@ -198,7 +198,7 @@ location /api/ {
 - [x] `STRIPE_WEBHOOK_SECRET` atualizado com o signing secret do webhook real
 - [x] Flyway migrations executadas com sucesso na inicialização
 - [x] Nginx configurado com `proxy_pass http://` (sem HTTPS interno)
-- [x] Backup do banco executado antes do deploy (`./backup.sh`)
+- [x] Backup do banco executado antes do deploy (`ssh root@<vps> '/root/scripts/backup_postgres.sh'` — o script oficial, criptografado e com envio off-site; o antigo `./backup.sh` do projeto, sem criptografia/off-site, foi removido em 30/08/2026, ver `memoria-tecnica/decisoes/backup-melvin-diario-criptografado.md`)
 - [x] `docker stats` confirma memória dentro do limite (< 85% de 1GB)
 - [x] Teste de fumaça: login funcional via `https://institutomelvin.org` (matrícula inexistente → 401 correto; ver correção do bug de `UsernameNotFoundException` nesta mesma atualização)
 - [x] Logs limpos de PII (`docker logs backend-melvin | grep -i nome` retorna vazio)
