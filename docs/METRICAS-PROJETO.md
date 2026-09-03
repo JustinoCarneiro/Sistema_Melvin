@@ -6,6 +6,10 @@
 > **Regra de dado sensível:** só o *custo/hora interno da empresa* fica fora deste arquivo — no
 > sibling privado `<projeto>-docs-privados/` ou informado na hora da análise. Todo o resto
 > (datas, valor do contrato, comissão, timesheet, esperas) mora aqui, versionado com o projeto.
+>
+> ⚠ **2026-09-02:** blocos 1–2 ainda por reconstruir; bloco 3 semeado com a estimativa
+> retroativa por proxy de commit — o registro real por sessão **começa a partir daqui**. Panorama
+> entre projetos: `onda-starter/historico-projetos/PANORAMA-KPI.md`.
 
 ---
 
@@ -13,10 +17,10 @@
 
 | Campo | Valor |
 |---|---|
-| Nome / slug | sistema_melvin / `<slug-para-o-arquivo-de-analise>` |
-| Valor do contrato (bruto) | `<R$ ____>` |
+| Nome / slug | sistema_melvin / `sistema-melvin` |
+| Valor do contrato (bruto) | **pro bono** (Instituto Social Melvin — ONG; confirmado 2026-09-02). Onda cobre só a infra (VPS + domínio, ~R$ 860/ano — ver `onda-propostas/clientes/instituto-melvin/`). |
 | Moeda | BRL |
-| Canal | `<Workana / contrato direto / indicação / ...>` |
+| Canal | indicação / social — n/a |
 | Comissão de plataforma % | `<__% ou n/a>` |
 | Taxa de saque % | `<__% ou n/a>` |
 | Regime tributário | `<Simples ~6% / MEI fixo / PJ / n/a>` |
@@ -38,11 +42,17 @@
 
 ## 3. Timesheet — uma linha por sessão (Fase 4)
 
+**A partir de 2026-09-02: uma linha por sessão de trabalho** (data · fase 0–5 · horas · nota).
+Sendo pro bono, o objetivo do registro aqui é medir o **custo de manutenção por ano** para decidir
+a cada renovação se compensa manter. A linha `(est. retroativa)` abaixo é proxy de commit
+(detalhe em `onda-starter/historico-projetos/estimativas-horas-2026-09-02.md`).
+
 | Data | Fase (0–5) | Horas | Nota |
 |---|---|---|---|
-| `<AAAA-MM-DD>` | `<n>` | `<h>` | `<o que foi feito>` |
+| _(primeira entrada real aqui)_ | | | |
 
-Σ horas por fase: `<preencher no fechamento>`   ·   Σ total: `<__>`
+Σ real registrada: **0 h** (começa agora)
+Σ **(est. retroativa por proxy de commit)**: **~93 h piso · ~116–135 h central · ~162 h teto** — 155 commits, 81 sessões, **diluídos entre jul/2024 e set/2026** (~40–60 h/ano de manutenção)
 
 ## 4. Log de espera / impedimento (Fase 4)
 
