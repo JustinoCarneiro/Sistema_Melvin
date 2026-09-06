@@ -1,0 +1,15 @@
+title = "Sistema Melvin — gitleaks"
+
+# Mantém as regras padrão e adiciona só exceções de caminho para código de
+# teste/fixtures. Segredo real nunca vai para o repositório (ver AGENTS.md).
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Fixtures e código de teste: JWTs e chaves de exemplo, não credenciais reais."
+paths = [
+  '''frontend/tests/.*''',
+  '''frontend/cypress/.*''',
+  '''frontend/scripts/capture-manual-screenshots\.mjs''',
+  '''sistema/src/test/resources/.*''',
+]

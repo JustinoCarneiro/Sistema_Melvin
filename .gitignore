@@ -44,3 +44,6 @@ Thumbs.db
 *.bak
 *.tmp
 .env.jira
+
+# ─── OndaDev ───
+.ondadev/handoff/current.md
