@@ -53,7 +53,7 @@ TOTAL:                      43 dias úteis
 ## MÓDULO 1: AUTENTICAÇÃO & RBAC DINÂMICO
 **Peso: 🔴 GRANDE (~5-7 dias) | Status: ✅ Concluído**
 
-> Épicos de referência: [CLAUDE.md #Épico 1](./CLAUDE.md) e [CLAUDE.md #Épico 2](./CLAUDE.md)
+> Épicos de referência: [spec.md #Épico 1](./docs/product/spec.md) e [spec.md #Épico 2](./docs/product/spec.md)
 
 ### Contratos API
 
@@ -156,7 +156,7 @@ TOTAL:                      43 dias úteis
 ## MÓDULO 2: GESTÃO DE DISCENTES (ALUNOS)
 **Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ Concluído**
 
-> Épico de referência: [CLAUDE.md #Épico 3](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 3](./docs/product/spec.md)
 
 ### Contratos API
 
@@ -259,7 +259,7 @@ TOTAL:                      43 dias úteis
 ## MÓDULO 3: GESTÃO DE VOLUNTÁRIOS
 **Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ Concluído**
 
-> Épico de referência: [CLAUDE.md #Épico 4](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 4](./docs/product/spec.md)
 
 ### Contratos API
 
@@ -303,7 +303,7 @@ TOTAL:                      43 dias úteis
 ## MÓDULO 4: FREQUÊNCIA (PONTO ELETRÔNICO)
 **Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ Concluído**
 
-> Épico de referência: [CLAUDE.md #Épico 5](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 5](./docs/product/spec.md)
 
 ### Contratos API
 
@@ -360,7 +360,7 @@ TOTAL:                      43 dias úteis
 ## MÓDULO 5: AMIGOS DO MELVIN (DOAÇÕES — STRIPE)
 **Peso: 🔴 GRANDE (~5-7 dias) | Status: ✅ Concluído**
 
-> Épico de referência: [CLAUDE.md #Épico 6](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 6](./docs/product/spec.md)
 
 ### Contratos API
 
@@ -467,7 +467,7 @@ TOTAL:                      43 dias úteis
 ## MÓDULO 6: CESTAS + EMBAIXADORES + AVISOS
 **Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído**
 
-> Épico de referência: [CLAUDE.md #Épico 7](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 7](./docs/product/spec.md)
 
 ### Contratos API
 
@@ -498,7 +498,7 @@ TOTAL:                      43 dias úteis
 ## MÓDULO 7: DASHBOARD + RELATÓRIOS
 **Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído**
 
-> Épico de referência: [CLAUDE.md #Épico 8](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 8](./docs/product/spec.md)
 
 ### Contratos API
 
@@ -523,7 +523,7 @@ TOTAL:                      43 dias úteis
 ## MÓDULO 8: DIÁRIO + RENDIMENTO
 **Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído**
 
-> Épico de referência: [CLAUDE.md #Épico 9](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 9](./docs/product/spec.md)
 
 ### Contratos API
 
@@ -540,7 +540,7 @@ TOTAL:                      43 dias úteis
 ## MÓDULO 9: SITE INSTITUCIONAL (PÚBLICO)
 **Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído**
 
-> Épico de referência: [CLAUDE.md #Épico 10](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 10](./docs/product/spec.md)
 
 Páginas públicas (sem autenticação):
 - `/` — Home do site
@@ -571,7 +571,7 @@ Tipos suportados: `embaixador`, `aviso`.
 ## MÓDULO 11: NOTIFICAÇÃO DE FALTA AO RESPONSÁVEL
 **Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído (10/08/2026)**
 
-> Épico de referência: [CLAUDE.md #Épico 5 — US-5.5](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 5 — US-5.5](./docs/product/spec.md)
 
 ### Mudança de modelo
 `Discente` ganha campo novo `email_responsavel` (cifrado, `SensitiveDataConverter`) — nome snake_case pra seguir a convenção já usada em `contato_pai`/`contato_mae`/`contato_saida` no mesmo arquivo (não `emailResponsavel`, como a spec inicial cogitava). Migration `V12__Add_email_responsavel_to_discente.sql`.
@@ -587,7 +587,7 @@ Tipos suportados: `embaixador`, `aviso`.
 ## MÓDULO 12: REGISTRO DE OCORRÊNCIAS DO ALUNO
 **Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ Concluído (10/08/2026)**
 
-> Épico de referência: [CLAUDE.md #Épico 3 — US-3.7](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 3 — US-3.7](./docs/product/spec.md)
 
 ### Modelo: `Ocorrencia` (entregue)
 | Campo | Tipo | Observação |
@@ -620,7 +620,7 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 ## MÓDULO 13: SOLICITAÇÃO DE CESTAS + CONFIRMAÇÃO DE ENTREGA
 **Peso: 🔴 GRANDE (~5-7 dias) | Status: ✅ Concluído (10/08/2026, revisado 12/08/2026 — duas vezes)**
 
-> Épico de referência: [CLAUDE.md #Épico 7 — US-7.4](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 7 — US-7.4](./docs/product/spec.md)
 
 > ✅ **QR Code: removido e reintroduzido no mesmo dia (12/08/2026).** Primeira revisão removeu o check-in por QR Code do escopo. Horas depois, esclarecido que essa remoção não tinha vindo de um pedido real do cliente — o pedido original sempre incluiu QR Code. Reintroduzido como **caminho principal** de confirmação de entrega, com a confirmação manual (construída na primeira revisão) virando o **caminho alternativo**. Esta seção reflete o estado final; o histórico completo das duas revisões está na nota mais abaixo.
 
@@ -673,7 +673,7 @@ Backend: `CestasServiceTest` com 33 testes (os 22 da entrega original — solici
 ## MÓDULO 14: NOTIFICAÇÃO DE FALTA VIA WHATSAPP
 **Peso: 🟡 MÉDIO (~3-4 dias, estimativa) | Status: 🔲 Backlog**
 
-> Épico de referência: [CLAUDE.md #Épico 5 — US-5.6](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 5 — US-5.6](./docs/product/spec.md)
 
 Decisão do cliente (11/08/2026): fica formalmente registrado como Backlog, não priorizado agora.
 Sem contrato de API novo — plugaria no mesmo gatilho que a US-5.5 já criou em
@@ -690,7 +690,7 @@ o que decide é a mensalidade do BSP (R$200–1.200/mês). Levantamento completo
 ## MÓDULO 15: CENTRAL DE AJUDA (MANUAL DO SISTEMA)
 **Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído (26/08/2026)**
 
-> Épico de referência: [CLAUDE.md #Épico 11 — US-11.1](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 11 — US-11.1](./docs/product/spec.md)
 
 ### Sem contrato de API novo
 Feature 100% frontend — nenhuma entidade, endpoint ou migration nova. Conteúdo estático (texto + prints) empacotado no bundle da SPA.
@@ -708,7 +708,7 @@ Capturados via Playwright, reaproveitando o mesmo mecanismo de mock de cookies/A
 ## MÓDULO 16: CARGO TÉCNICO (TECH)
 **Peso: 🟡 MÉDIO (~3-4 dias) | Status: ✅ Concluído (27/08/2026)**
 
-> Épico de referência: [CLAUDE.md #Épico 1 — US-1.5](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 1 — US-1.5](./docs/product/spec.md)
 
 ### Mudança de modelo
 `UserRole` ganha o valor `TECH` (ordinal 10). Como o campo `role` de `User` é armazenado como `smallint` por enum ordinal (sem `@Enumerated` explícito), o check constraint `users_role_check` (gerado originalmente pelo Hibernate `ddl-auto=update`, travado em `0-9`) precisa de migration explícita — não é ajustado automaticamente quando o enum ganha um valor novo. Migration `V16__Add_tech_role_to_users_check.sql`.
@@ -735,7 +735,7 @@ Sem tela de "criar usuário" self-service — o primeiro login TECH foi criado m
 ## MÓDULO 17: OCORRÊNCIAS TÉCNICAS
 **Peso: 🟢 PEQUENO (~1-2 dias) | Status: ✅ Concluído (30/08/2026)**
 
-> Épico de referência: [CLAUDE.md #Épico 12 — US-12.1](./CLAUDE.md)
+> Épico de referência: [spec.md #Épico 12 — US-12.1](./docs/product/spec.md)
 
 ### Mudança de modelo
 Entidade `OcorrenciaTecnica` nova (migration `V17`): `titulo`, `categoria` (enum `BUG`, `INCIDENTE`, `MANUTENCAO`, `DECISAO_TECNICA`, `SEGURANCA`), `severidade` (enum `BAIXA`, `MEDIA`, `ALTA`), `descricao` (TEXT), `resolvido` (boolean), `autorLogin`, `dataOcorrencia`, `criadoEm`. Diferente de `Ocorrencia` (US-3.7, sobre alunos), aqui os campos usam camelCase normal (Hibernate `CamelCaseToUnderscoresNamingStrategy` de sempre) — o underscore em `matricula_discente`/`autor_login`/`data_ocorrencia`/`criado_em` era um caso isolado daquela entidade, não um padrão do projeto a repetir. Sem `SensitiveDataConverter`: dado técnico interno do sistema, não é dado pessoal sujeito à LGPD.
