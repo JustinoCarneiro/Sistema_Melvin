@@ -10,7 +10,8 @@ básicas, pagamentos via Stripe). Em produção; Fase 5 da metodologia OndaDev
 
 | Caminho | Finalidade |
 | --- | --- |
-| `CLAUDE.md` | Espec Viva: stack, épicos, histórias, critérios de aceite, changelog de escopo. |
+| `CLAUDE.md` | Espec Viva: stack, arquitetura, resumo de épicos, máquina de estados, convenções, changelog de escopo. |
+| `docs/product/spec.md` | Histórias de usuário completas e critérios de aceite BDD. |
 | `ROADMAP.md` | Módulos, pesos e estado de entrega. |
 | `sistema/` | Backend Java 21 + Spring Boot 3 (Maven). |
 | `frontend/` | SPA React + Vite + TypeScript. |

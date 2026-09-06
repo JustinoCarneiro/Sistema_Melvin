@@ -8,7 +8,9 @@ Este projeto segue a **Metodologia Onda-Dev** (Playbook de Engenharia), um proce
 
 | Artefato | Descrição | Fase |
 |---|---|---|
-| [`CLAUDE.md`](./CLAUDE.md) | **Spec Viva** — Épicos, Histórias de Usuário e Critérios de Aceite | Fase 1 |
+| [`AGENTS.md`](./AGENTS.md) | **Contrato canônico** — comandos, autoridade da informação, risco, DoD | — |
+| [`CLAUDE.md`](./CLAUDE.md) | **Spec Viva** — stack, arquitetura, resumo de épicos, máquina de estados, changelog | Fase 1 |
+| [`docs/product/spec.md`](./docs/product/spec.md) | **Histórias de Usuário** completas e Critérios de Aceite BDD | Fase 1 |
 | [`ROADMAP.md`](./ROADMAP.md) | **Blueprint** — Módulos com peso, contratos API-First (JSON) e estimativas | Fase 3 |
 | [`smoke_test.sh`](./smoke_test.sh) | **Smoke Test** — Validação automatizada pré-deploy | Fase 5 |
 | [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) | **CI/CD** — Pipeline de Integração Contínua (GitHub Actions) | Fase 4/5 |
