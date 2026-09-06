@@ -1,8 +1,10 @@
+@AGENTS.md
+
 # 📘 CLAUDE.md — Especificação Viva do Sistema Melvin
 
 > **Última atualização:** 30/08/2026
 > **Fase atual:** Fase 5 (Produção)
-> **Metodologia:** Onda-Dev (Playbook de Engenharia)
+> **Metodologia:** OndaDev — versão em `ONDA_VERSION`. Contrato de trabalho em `AGENTS.md`.
 
 ---
 
@@ -751,6 +753,13 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev: vault
 | 30/08/2026 | Ocorrências Técnicas (US-12.1) — módulo novo, exclusivo do cargo TECH | — (evolução, sem retorno de fase) | Pedido do dono do projeto: registrar achados técnicos do sistema (bugs, incidentes, decisões, manutenção, segurança) — muitos vindos de sessões de trabalho com IA, como a própria correção do bug do hash Argon2 corrompido via SSH nesta mesma sessão. Entidade `OcorrenciaTecnica` nova (migration V17), sem cifragem (dado técnico, não pessoal). Acesso restrito a `hasRole("TECH")` — deliberadamente sem ADM, ao contrário das demais telas exclusivas do TECH. Card novo em Configurações controlado por estado `isTech` dedicado (não reaproveita o `isAdm` que inclui TECH). Documentado no Manual do Sistema com prints reais. Backend: 9 testes novos (`OcorrenciaTecnicaServiceTest` 7, `OcorrenciaTecnicaRepositoryTest` 2 — suíte completa 106/106 verde). Frontend: 4 testes E2E novos (lista, criação, card exclusivo em Config visível pro TECH e ausente pro ADM). |
 
 
-## Diretivas de Gestão (Regra de Ouro do Trello + Jira)
-> **ATENÇÃO:** Toda vez que você (Claude/IA) criar, modificar ou deletar qualquer especificação funcional ou técnica nos arquivos `CLAUDE.md`, `ROADMAP.md`, `docs/spec.md` ou `design/DESIGN.md`, você é **OBRIGADO** a executar **os dois scripts** — `./scripts/trello_sync.py` e `./scripts/jira_sync.py` — para espelhar essa exata alteração no Trello e no Jira correspondentes (criando cards/issues no Backlog, atualizando os Critérios de Aceite ou arquivando o que foi cancelado). Documentação, Trello e Jira são a mesma entidade. Board Jira deste projeto: `MEL` em `ondaenterprise.atlassian.net` (credenciais em `.env.jira`, fora do controle de versão).
+## Diretivas de Gestão (Jira)
+
+O quadro Jira do projeto (board `MEL` em `ondaenterprise.atlassian.net`) é uma
+**projeção do status**, não a fonte da verdade — essa continua sendo este
+`CLAUDE.md` + `ROADMAP.md`. A spec muda primeiro aqui; o board é acertado depois,
+à mão na UI ou com `scripts/jira_sync.py` para lotes pontuais — **nunca disparado
+automaticamente por edição de doc** (isso recriava issues em duplicata). Não há
+mais Trello. Credenciais de API do Jira em `.env.jira`, fora do controle de
+versão. Exclusão de issue exige confirmação explícita.
 
