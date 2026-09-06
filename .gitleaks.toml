@@ -1,7 +1,7 @@
 title = "Sistema Melvin — gitleaks"
 
-# Mantém as regras padrão e adiciona só exceções de caminho para código de
-# teste/fixtures. Segredo real nunca vai para o repositório (ver AGENTS.md).
+# Mantém as regras padrão e adiciona só exceções para código de teste/exemplo.
+# Segredo real nunca vai para o repositório (ver AGENTS.md).
 [extend]
 useDefault = true
 
@@ -13,3 +13,17 @@ paths = [
   '''frontend/scripts/capture-manual-screenshots\.mjs''',
   '''sistema/src/test/resources/.*''',
 ]
+
+[[allowlists]]
+description = """
+Placeholders no CI e strings de exemplo em docs. Investigado 2026-09-06: o
+'stripe-access-token' que o gitleaks acusava no histórico de .github/workflows/ci.yml
+(commit b31602d5f) é a string literal 'sk_test_placeholder' (modo test, valor
+falso) — não é chave real, nada a rotacionar.
+"""
+regexTarget = "match"
+regexes = [
+  '''sk_test_placeholder''',
+  '''whsec_test_placeholder''',
+]
+paths = ['''ROADMAP\.md''']
