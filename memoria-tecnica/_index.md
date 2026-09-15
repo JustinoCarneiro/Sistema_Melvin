@@ -23,6 +23,8 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev (avali
 - [[login-500-em-vez-de-401]]
 - [[campo-novo-opcional-nao-persiste-nem-aceita-null]]
 - [[rate-limit-burlavel-por-x-forwarded-for-forjado]]
+- [[dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica]] — pendente
+- [[flyway-nao-reconstroi-banco-do-zero-baseline-vazio]] — pendente
 
 ## Decisões
 - [[idempotencia-dedup-pagamentos-stripe]]
