@@ -145,7 +145,7 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.PUT, "/imagens/**").hasAnyRole("ADM", "TECH", "DIRE")
 
                     // --- DELEÇÃO ---
-                    .requestMatchers(HttpMethod.DELETE, "/cestas").access((authentication, context) -> 
+                    .requestMatchers(HttpMethod.DELETE, "/cestas/**").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
                     .requestMatchers(HttpMethod.DELETE, "/voluntario").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))

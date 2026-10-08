@@ -77,6 +77,20 @@ function SolicitacoesCestas() {
         }
     };
 
+    const handleCancelar = async (id, nomeBeneficiario) => {
+        if (!window.confirm(`Tem certeza que deseja cancelar a solicitação de ${nomeBeneficiario}?`)) return;
+
+        setMensagem(null);
+        try {
+            await cestaService.cancelar(id);
+            setMensagem({ tipo: 'sucesso', texto: `Solicitação de ${nomeBeneficiario} cancelada.` });
+            await fetchTudo();
+        } catch (error) {
+            await fetchTudo();
+            setMensagem({ tipo: 'erro', texto: error.message || 'Não foi possível cancelar a solicitação.' });
+        }
+    };
+
     const handleConfirmarEntrega = async (id, nomeBeneficiario) => {
         setMensagem(null);
         try {
@@ -210,12 +224,18 @@ function SolicitacoesCestas() {
                                                     onChange={(e) => setDatasRetirada(prev => ({ ...prev, [s.id]: e.target.value }))}
                                                 />
                                             </td>
-                                            <td data-label="Ação">
+                                            <td data-label="Ação" className={styles.acoes}>
                                                 <Botao
                                                     nome="Validar"
                                                     corFundo="#F29F05"
                                                     corBorda="#8A6F3E"
                                                     onClick={() => handleValidar(s.id)}
+                                                />
+                                                <Botao
+                                                    nome="Cancelar"
+                                                    corFundo="#C60108"
+                                                    corBorda="#602929"
+                                                    onClick={() => handleCancelar(s.id, s.nome)}
                                                 />
                                             </td>
                                         </tr>
@@ -299,6 +319,12 @@ function SolicitacoesCestas() {
                                                     corFundo="#207556"
                                                     corBorda="#155c42"
                                                     onClick={() => handleConfirmarEntrega(s.id, s.nome)}
+                                                />
+                                                <Botao
+                                                    nome="Cancelar"
+                                                    corFundo="#C60108"
+                                                    corBorda="#602929"
+                                                    onClick={() => handleCancelar(s.id, s.nome)}
                                                 />
                                             </td>
                                         </tr>

@@ -92,6 +92,19 @@ const cestaService = {
         }
     },
 
+    async cancelar(id) {
+        const endpoint = `/cestas/solicitacao/${id}/cancelar`;
+        try {
+            const response = await http.put(endpoint);
+            return response;
+        } catch (error) {
+            console.error('Erro ao cancelar solicitação:', error.response?.data || error.message);
+            const resposta = error.response?.data;
+            const mensagem = typeof resposta === 'string' ? resposta : resposta?.message;
+            return Promise.reject(new Error(mensagem || error.message));
+        }
+    },
+
     async confirmarEntrega(id) {
         const endpoint = `/cestas/solicitacao/${id}/confirmar-entrega`;
         try {

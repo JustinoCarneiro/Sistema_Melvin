@@ -37,12 +37,17 @@ public class CestasService {
     QrCodeService qrCodeService;
 
     public List<Cestas> listar(){
-        return repositorio.findAll();
+        return repositorio.findAllByStatusIsNull();
     }
 
     public ResponseEntity<?> adicionar(Cestas cesta){
-        // Garante que é uma criação (ID null)
-        cesta.setId(null); 
+        // O cadastro geral cria apenas registros legados de entrada/saída. Campos da
+        // máquina de estados pertencem exclusivamente ao endpoint de solicitação.
+        cesta.setId(null);
+        cesta.setStatus(null);
+        cesta.setDataRetirada(null);
+        cesta.setEntregueEm(null);
+        cesta.setQrCodeToken(null);
         Cestas savedCesta = repositorio.save(cesta);
         return new ResponseEntity<Cestas>(savedCesta, HttpStatus.CREATED); 
     }
@@ -60,6 +65,11 @@ public class CestasService {
             return new ResponseEntity<String>("Doação não encontrada no banco de dados!", HttpStatus.NOT_FOUND);
         } else {
             Cestas existente = existenteOpt.get();
+            if (existente.getStatus() != null) {
+                return new ResponseEntity<String>(
+                        "Solicitações devem ser alteradas somente pelas ações do fluxo de cestas.",
+                        HttpStatus.CONFLICT);
+            }
 
             // Atualiza TODOS os campos com os dados novos que vieram do Frontend
             existente.setNome(cestaAtualizada.getNome());
@@ -88,12 +98,19 @@ public class CestasService {
 
     // Método de remover agora deve receber o ID, ou extrair o ID do objeto
     public ResponseEntity<String> remover(UUID id){
-        if(!repositorio.existsById(id)){
+        Optional<Cestas> existenteOpt = repositorio.findById(id);
+        if (existenteOpt.isEmpty()) {
             return new ResponseEntity<String>("Doação não encontrada!", HttpStatus.NOT_FOUND);
-        } else {
-            repositorio.deleteById(id);
-            return new ResponseEntity<String>("Doação removida com sucesso!", HttpStatus.OK);
         }
+
+        if (existenteOpt.get().getStatus() != null) {
+            return new ResponseEntity<String>(
+                    "Solicitações não podem ser excluídas; use a ação de cancelamento.",
+                    HttpStatus.CONFLICT);
+        }
+
+        repositorio.deleteById(id);
+        return new ResponseEntity<String>("Doação removida com sucesso!", HttpStatus.OK);
     }
 
     // ============ US-7.4: Solicitação de Cesta (link público) ============
@@ -115,6 +132,7 @@ public class CestasService {
         solicitacao.setStatus(StatusCesta.SOLICITADA);
         solicitacao.setDataRetirada(null);
         solicitacao.setEntregueEm(null);
+        solicitacao.setQrCodeToken(null);
 
         Cestas salva = repositorio.save(solicitacao);
         notificarCoordenacao(salva);
@@ -156,19 +174,26 @@ public class CestasService {
                     HttpStatus.CONFLICT);
         }
 
-        existente.setStatus(StatusCesta.AGENDADA);
-        existente.setDataRetirada(dataRetirada);
         // Gerado sempre (não só quando há e-mail): a coordenação pode ver/baixar o QR
         // manualmente pela tela mesmo sem envio automático.
-        existente.setQrCodeToken(UUID.randomUUID().toString());
-
-        Cestas salva = repositorio.save(existente);
-
-        if (salva.getEmailSolicitante() != null && !salva.getEmailSolicitante().isBlank()) {
-            enviarQrCodePorEmail(salva);
+        String qrCodeToken = UUID.randomUUID().toString();
+        int atualizadas = repositorio.agendarSeSolicitada(
+                id, StatusCesta.SOLICITADA, StatusCesta.AGENDADA, dataRetirada, qrCodeToken);
+        if (atualizadas == 0) {
+            return new ResponseEntity<String>(
+                    "Solicitação foi alterada por outra operação. Atualize a tela e tente novamente.",
+                    HttpStatus.CONFLICT);
         }
 
-        return new ResponseEntity<Cestas>(salva, HttpStatus.OK);
+        existente.setStatus(StatusCesta.AGENDADA);
+        existente.setDataRetirada(dataRetirada);
+        existente.setQrCodeToken(qrCodeToken);
+
+        if (existente.getEmailSolicitante() != null && !existente.getEmailSolicitante().isBlank()) {
+            enviarQrCodePorEmail(existente);
+        }
+
+        return new ResponseEntity<Cestas>(existente, HttpStatus.OK);
     }
 
     // Best-effort: falha no envio do e-mail não derruba a validação, que já
@@ -194,6 +219,35 @@ public class CestasService {
 
     public List<Cestas> listarAgendadas() {
         return repositorio.findAllByStatus(StatusCesta.AGENDADA);
+    }
+
+    // US-7.4: cancela uma solicitação ainda pendente de validação ou já agendada
+    // (ex.: beneficiário não compareceu na data de retirada). Depois de ENTREGUE ou
+    // já CANCELADA não há cancelamento — mesma guarda de estado das outras transições.
+    public ResponseEntity<?> cancelar(UUID id) {
+        Optional<Cestas> existenteOpt = repositorio.findById(id);
+        if (existenteOpt.isEmpty()) {
+            return new ResponseEntity<String>("Solicitação não encontrada!", HttpStatus.NOT_FOUND);
+        }
+
+        Cestas existente = existenteOpt.get();
+        if (existente.getStatus() != StatusCesta.SOLICITADA && existente.getStatus() != StatusCesta.AGENDADA) {
+            return new ResponseEntity<String>(
+                    "Solicitação não pode ser cancelada (status atual: " + existente.getStatus() + ").",
+                    HttpStatus.CONFLICT);
+        }
+
+        int atualizadas = repositorio.cancelarSeStatusAtual(
+                id, existente.getStatus(), StatusCesta.CANCELADA);
+        if (atualizadas == 0) {
+            return new ResponseEntity<String>(
+                    "Solicitação foi alterada por outra operação. Atualize a tela e tente novamente.",
+                    HttpStatus.CONFLICT);
+        }
+
+        existente.setStatus(StatusCesta.CANCELADA);
+        existente.setQrCodeToken(null);
+        return new ResponseEntity<Cestas>(existente, HttpStatus.OK);
     }
 
     // US-7.4 (reintroduzido): confirmação de entrega manual, direto pelo ID — caminho
@@ -230,10 +284,18 @@ public class CestasService {
                     HttpStatus.CONFLICT);
         }
 
-        existente.setStatus(StatusCesta.ENTREGUE);
-        existente.setEntregueEm(LocalDateTime.now());
+        LocalDateTime entregueEm = LocalDateTime.now();
+        int atualizadas = repositorio.confirmarEntregaSeAgendada(
+                existente.getId(), StatusCesta.AGENDADA, StatusCesta.ENTREGUE, entregueEm);
+        if (atualizadas == 0) {
+            return new ResponseEntity<String>(
+                    "Solicitação foi alterada por outra operação. Atualize a tela e tente novamente.",
+                    HttpStatus.CONFLICT);
+        }
 
-        return new ResponseEntity<Cestas>(repositorio.save(existente), HttpStatus.OK);
+        existente.setStatus(StatusCesta.ENTREGUE);
+        existente.setEntregueEm(entregueEm);
+        return new ResponseEntity<Cestas>(existente, HttpStatus.OK);
     }
 
     // US-7.4 (reintroduzido): permite à coordenação ver/baixar o QR Code manualmente

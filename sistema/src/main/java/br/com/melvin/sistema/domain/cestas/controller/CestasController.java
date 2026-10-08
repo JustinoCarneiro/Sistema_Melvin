@@ -52,6 +52,11 @@ public class CestasController {
         return service.listarAgendadas();
     }
 
+    @PutMapping("/solicitacao/{id}/cancelar")
+    public ResponseEntity<?> cancelar(@PathVariable UUID id) {
+        return service.cancelar(id);
+    }
+
     @PostMapping("/solicitacao/{id}/confirmar-entrega")
     public ResponseEntity<?> confirmarEntrega(@PathVariable UUID id) {
         return service.confirmarEntrega(id);

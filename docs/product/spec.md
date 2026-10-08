@@ -488,11 +488,23 @@ Então o status muda para ENTREGUE do mesmo jeito — o caminho alternativo nunc
 Dado que uma solicitação já está ENTREGUE,
 Quando alguém tenta confirmar a entrega dela de novo (por QR Code ou manualmente),
 Então o sistema recusa a ação e exibe "já foi confirmada como entregue em [data/hora]" (evita dupla contagem de entrega).
+
+Dado que uma solicitação está com status SOLICITADA (pendente de validação) ou AGENDADA (aguardando retirada, ex.: beneficiário não compareceu na data marcada),
+Quando o coordenador clica em "Cancelar" na linha da solicitação e confirma,
+Então o status muda para CANCELADA e a solicitação some das listas "Pendentes de validação" e "Aguardando retirada".
+
+Dado que uma solicitação já está ENTREGUE ou já está CANCELADA,
+Quando alguém tenta cancelá-la,
+Então o sistema recusa a ação (não há cancelamento depois da entrega, nem cancelamento duplicado).
+
+Dado que validação, cancelamento e confirmação de entrega disputam a mesma solicitação,
+Quando duas dessas ações são executadas ao mesmo tempo,
+Então apenas a primeira transição compatível é persistida e a outra recebe conflito sem sobrescrever o estado vencedor.
 ```
 
 > **Nota de implementação (atualizada na entrega):** máquina de estados nova (`SOLICITADA → AGENDADA → ENTREGUE`, com `CANCELADA` previsto no enum como saída) sobre `Cestas`, reintroduzindo o campo `status` — nullable, para que os cadastros diretos já existentes (sem fluxo de solicitação) fiquem com `status` NULL e sigam distinguíveis das solicitações reais. Campos do solicitante genéricos (`nomeSolicitante` + `nivelSolicitante`, enum `CELULA/SETOR/AREA/DISTRITO/REDE`), não um campo fixo por nível — o beneficiário/célula continua identificado por `lider_celula`/`rede`, que já existiam. Migration `V14`.
 >
-> **Segurança do endpoint público:** `POST /cestas/solicitacao` é `permitAll` (mesmo padrão de `/amigomelvin`), mas — diferente dos demais endpoints públicos — recebeu **rate limit** (5 solicitações/hora por IP, Bucket4j), por ser o único que dispara um fluxo de trabalho interno da coordenação. Decisão e trade-offs em `memoria-tecnica/decisoes/rate-limit-apenas-solicitacao-cesta.md`. O service **ignora campos de fluxo interno vindos no payload** (`status`, `entregueEm`, `id`): a solicitação sempre nasce em `SOLICITADA` — payload público não consegue forjar uma cesta já entregue.
+> **Segurança do endpoint público:** `POST /cestas/solicitacao` é `permitAll` (mesmo padrão de `/amigomelvin`), mas — diferente dos demais endpoints públicos — recebeu **rate limit** (5 solicitações/hora por IP, Bucket4j), por ser o único que dispara um fluxo de trabalho interno da coordenação. Decisão e trade-offs em `memoria-tecnica/decisoes/rate-limit-apenas-solicitacao-cesta.md`. O service **ignora campos de fluxo interno vindos no payload** (`id`, `status`, `dataRetirada`, `entregueEm` e `qrCodeToken`): a solicitação sempre nasce limpa em `SOLICITADA` — o payload público não consegue forjar entrega nem reutilizar token de QR.
 >
 > **QR Code: removido e reintroduzido no mesmo dia (12/08/2026).** Primeira revisão: check-in por QR Code saiu do escopo, confirmação virou manual por ID (`QrCodeService`, ZXing e a coluna `qr_code_token` removidos; migration `V14` editada antes de ir a produção). Segunda revisão, horas depois: esclarecido que o pedido original do cliente ("acessar o formulário através de um link ou QRCODE") sempre incluiu QR Code — a remoção anterior tinha sido overengineering cortado sem necessidade real. Reintroduzido como **caminho principal**, com a confirmação manual (que já estava em produção) virando o **caminho alternativo**, não descartada.
 >
@@ -503,6 +515,8 @@ Então o sistema recusa a ação e exibe "já foi confirmada como entregue em [d
 > **Link público sem `#` (12/08/2026):** para uso em QR Codes/links compartilhados com supervisores e líderes externos, `/solicitarcesta` passou a ser renderizado fora do `HashRouter` que o resto do app usa (que produz URLs com `/#/`) — acessível como `institutomelvin.org/solicitarcesta`, uma URL limpa. O Nginx de produção já tinha fallback de SPA (`try_files ... /index.html`) configurado, então isso não exigiu mudança de infraestrutura.
 >
 > **Permissões:** validação, check-in (por ID ou por token) e visualização do QR reaproveitam `GERENCIAR_CESTAS` (já existente). A permissão `SOLICITAR_CESTA` cogitada na especificação **não foi criada** — perdeu o sentido quando o cliente esclareceu que qualquer nível da hierarquia pode solicitar, sem cadastro prévio no sistema (o link é aberto, protegido por rate limit em vez de permissão).
+>
+> **Cancelamento (08–09/10/2026):** pedido do cliente — cancelar solicitações pendentes de validação, e cancelar agendamentos quando o beneficiário não comparece na data de retirada. `CANCELADA` já existia no enum `StatusCesta` desde a V14 mas estava morto (nenhum código o usava); fechado agora com `cancelar(UUID id)` em `CestasService` e `PUT /cestas/solicitacao/{id}/cancelar`, reaproveitando `GERENCIAR_CESTAS`. Aceita a partir de `SOLICITADA` **ou** `AGENDADA` (os dois pontos pedidos); recusa (409) a partir de `ENTREGUE` ou já `CANCELADA` — mesma guarda de estado das demais transições. As transições `SOLICITADA → AGENDADA`, `SOLICITADA/AGENDADA → CANCELADA` e `AGENDADA → ENTREGUE` usam updates condicionais pelo status observado no banco; se o estado mudar entre leitura e escrita, a operação perde com 409 e a tela recarrega as listas. Ao cancelar um agendamento, o token de QR Code é invalidado. O CRUD geral `/cestas` fica restrito a registros de entrada/saída com `status` nulo: não lista, edita nem exclui solicitações, e seu POST ignora campos internos do fluxo. `DELETE /cestas/**` exige `GERENCIAR_CESTAS`. Sem migration (coluna `status` já é `VARCHAR(20)` sem `CHECK` constraint) e sem campo de motivo (escopo mínimo pedido; item cancelado simplesmente some das duas listas filtradas por status — se o Instituto quiser depois um histórico/relatório de cancelamentos, é evolução futura, não assumida aqui). Botão "Cancelar" com confirmação (`window.confirm`, mesmo padrão já usado em Alunos/Voluntários/Cestas) nas duas telas (pendentes e agendadas). A regra padrão `GERENCIAR_CESTAS` inclui `COOR`; a regra ativa de produção foi conferida antes do deploy e já libera esse cargo.
 
 ---
 
@@ -626,4 +640,3 @@ Então o sistema retorna 403 Forbidden.
 > **Nota de implementação:** entidade `OcorrenciaTecnica` nova (`titulo`, `categoria` enum, `severidade` enum, `descricao` — sem `SensitiveDataConverter`, diferente de `Ocorrencia`/aluno: é dado técnico interno, não pessoal sob LGPD —, `resolvido`, `autorLogin`, `dataOcorrencia`, `criadoEm`), migration `V17`. Autorização hardcoded em `SecurityConfiguration` (`hasRole("TECH")`, não `hasAnyRole` com ADM — deliberadamente exclusivo, mesmo padrão de restrição das telas de Permissões/Calendário, só que sem incluir ADM desta vez). Frontend: card novo em `Config.jsx` controlado por um estado `isTech` próprio (`role === 'TECH'` exato, não o `isAdm` que já inclui TECH), para não vazar pro ADM. Rotas `/app/ocorrencias-tecnicas` e `/app/ocorrencias-tecnicas/criar` com `role="TECH"`. Documentado no Manual do Sistema (US-11.1) como seção "Exclusivo do TECH — nem o ADM vê esta tela".
 
 ---
-

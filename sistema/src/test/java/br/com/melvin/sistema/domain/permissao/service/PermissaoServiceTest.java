@@ -8,6 +8,7 @@ import br.com.melvin.sistema.security.model.UserRole;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -34,6 +35,23 @@ public class PermissaoServiceTest {
 
     @InjectMocks
     private PermissaoService permissaoService;
+
+    @Test
+    public void testRegraPadraoDeCestasIncluiCoordenacao() {
+        when(environment.getActiveProfiles()).thenReturn(new String[0]);
+        when(repository.findByNomeRegra(anyString())).thenReturn(Optional.empty());
+        when(repository.findAll()).thenReturn(List.of());
+
+        permissaoService.initDefaultRules();
+
+        ArgumentCaptor<PermissaoRegra> captor = ArgumentCaptor.forClass(PermissaoRegra.class);
+        verify(repository, atLeastOnce()).save(captor.capture());
+        PermissaoRegra regraCestas = captor.getAllValues().stream()
+                .filter(regra -> "GERENCIAR_CESTAS".equals(regra.getNomeRegra()))
+                .findFirst()
+                .orElseThrow();
+        assertTrue(Arrays.asList(regraCestas.getRolesPermitidas().split(",")).contains("COOR"));
+    }
 
     @Test
     public void testHasPermission_UserHasPermission() {

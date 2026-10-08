@@ -38,7 +38,7 @@ public class PermissaoService {
         createIfNotFound("GERENCIAR_FREQUENCIA", "ADM,TECH,DIRE,COOR,PROF");
         createIfNotFound("CADASTRAR_ALUNO", "ADM,TECH,COOR,DIRE,ASSIST");
         createIfNotFound("EDITAR_AVALIACAO_PSICO", "PSICO");
-        createIfNotFound("GERENCIAR_CESTAS", "ADM,TECH,DIRE,AUX");
+        createIfNotFound("GERENCIAR_CESTAS", "ADM,TECH,DIRE,AUX,COOR");
         createIfNotFound("GERENCIAR_VOLUNTARIOS", "ADM,TECH");
         createIfNotFound("GERENCIAR_EMBAIXADORES", "ADM,TECH,DIRE");
         createIfNotFound("GERENCIAR_AMIGOS", "ADM,TECH,DIRE");

@@ -618,7 +618,7 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 ---
 
 ## MÓDULO 13: SOLICITAÇÃO DE CESTAS + CONFIRMAÇÃO DE ENTREGA
-**Peso: 🔴 GRANDE (~5-7 dias) | Status: ✅ Concluído (10/08/2026, revisado 12/08/2026 — duas vezes)**
+**Peso: 🔴 GRANDE (~5-7 dias) | Status: ✅ Concluído (10/08/2026, revisado em 12/08/2026 e 09/10/2026)**
 
 > Épico de referência: [spec.md #Épico 7 — US-7.4](./docs/product/spec.md)
 
@@ -636,6 +636,7 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 | `GET` | `/cestas/solicitacoes` | `GERENCIAR_CESTAS` | Lista solicitações pendentes de validação (status `SOLICITADA`) |
 | `PUT` | `/cestas/solicitacao/{id}/validar` | `GERENCIAR_CESTAS` | Define `dataRetirada` → status `AGENDADA` |
 | `GET` | `/cestas/solicitacoes/agendadas` | `GERENCIAR_CESTAS` | Lista solicitações aguardando retirada (status `AGENDADA`) |
+| `PUT` | `/cestas/solicitacao/{id}/cancelar` | `GERENCIAR_CESTAS` | Cancela solicitação `SOLICITADA` ou `AGENDADA` → status `CANCELADA`; invalida o QR e retorna 409 para estado incompatível ou corrida perdida |
 | `POST` | `/cestas/solicitacao/{id}/confirmar-entrega` | `GERENCIAR_CESTAS` | Caminho **alternativo**: confirmação manual, pelo ID → status `ENTREGUE`. Retorna 409 se já estava `ENTREGUE` ou se ainda não foi `AGENDADA` |
 | `POST` | `/cestas/solicitacao/checkin/{token}` | `GERENCIAR_CESTAS` | Caminho **principal**: confirmação por token de QR Code (escaneado ou colado) → mesma lógica/mesmos 409 do endpoint acima |
 | `GET` | `/cestas/solicitacoes/{id}/qrcode` | `GERENCIAR_CESTAS` | Imagem PNG do QR Code da solicitação (pra coordenação ver/baixar manualmente, mesmo sem e-mail cadastrado) |
@@ -644,14 +645,16 @@ Nova permissão dinâmica: `GERENCIAR_OCORRENCIA`, default `[PROF, COOR, DIRE, A
 - **Endpoint público sem proteção antiabuso → resolvido.** `POST /cestas/solicitacao` recebeu rate limit de 5 solicitações/hora por IP (`CestasSolicitacaoRateLimitFilter`, Bucket4j 8.19.0). Escopo deliberadamente cirúrgico: só este endpoint, não os demais públicos (que seguem sem proteção). Decisão, calibragem e armadilha de ordem de registro do filtro em `memoria-tecnica/decisoes/rate-limit-apenas-solicitacao-cesta.md`.
   **Correção de segurança (auditoria pré-deploy, 11/08/2026):** a chave do limite lia o primeiro elemento de `X-Forwarded-For`, que o nginx (`$proxy_add_x_forwarded_for`) **anexa** ao valor mandado pelo cliente — ou seja, o começo do header é a parte que o próprio cliente controla. O limite era burlável variando o header, e cada valor forjado abria uma entrada nova no mapa em memória (vazamento explorável, heap de 512m). Corrigido: chave agora sai de `X-Real-IP` (sobrescrito pelo nginx), fallback lê o *último* elemento do `X-Forwarded-For`, e o mapa tem teto de 10k entradas. Ver `memoria-tecnica/bugs/rate-limit-burlavel-por-x-forwarded-for-forjado.md`.
 - **Payload público não pode forjar estado.** `solicitar()` zera `id`, `status`, `dataRetirada` e `entregueEm` antes de salvar — sem isso, um POST manual criaria uma cesta já `ENTREGUE`. Coberto por teste.
+- **Transições concorrentes não podem sobrescrever o estado vencedor.** Validação, cancelamento e confirmação de entrega usam updates condicionais pelo status atual. Se outra operação vencer primeiro, a segunda recebe 409; o cancelamento também apaga o token de QR Code. O CRUD geral lista apenas registros com `status` nulo, zera campos internos na criação e recusa edição/exclusão de solicitações. A rota real de exclusão (`DELETE /cestas/{id}`) está protegida por `GERENCIAR_CESTAS`. Ver `memoria-tecnica/bugs/cancelamento-cesta-sobrescreve-transicao-concorrente.md`.
 - **Permissão `SOLICITAR_CESTA` não foi criada** — perdeu o sentido com a correção de escopo (qualquer nível solicita, sem cadastro prévio). Validação e confirmação de entrega reaproveitam `GERENCIAR_CESTAS`.
 
 ### Fora do escopo desta entrega
-- **Transição `CANCELADA`** existe no enum mas não tem endpoint que a acione.
 - **Envio de QR Code por WhatsApp** — só por e-mail nesta entrega (mesma limitação da US-5.5/US-5.6: WhatsApp automatizado ainda não foi implementado no sistema).
 
 ### Entrega (TDD)
 Backend: `CestasServiceTest` com 33 testes (os 22 da entrega original — solicitar/validar/listarAgendadas/confirmarEntrega, os 409 de dupla confirmação e de confirmação antes de agendar, payload forjado, notificação à coordenação — mais 11 novos da reintrodução do QR Code: geração de token na validação, envio de e-mail com anexo quando há `emailSolicitante`, falha de envio não derruba a validação, confirmação por token — sucesso/404/409/equivalência com o caminho por ID —, obtenção do QR Code — sucesso/sem token/inexistente) + `CestasSolicitacaoRateLimitFilterTest` (5). Suíte completa do backend verde. Frontend: página pública `/solicitarcesta` (fora do `HashRouter`, URL limpa, com campo de e-mail do solicitante) + tela interna `/app/cestas/solicitacoes` com três blocos ("Pendentes de validação", "Confirmar entrega via QR Code" — scanner de câmera embutido ou colar o código — e "Aguardando retirada", com botões "Ver QR Code" e "Confirmar Entrega"). E2E (suíte mockada): 49/49 verde, sem regressão. Verificação viva adicional via Docker com envio real de e-mail (QR Code em anexo confirmado no log do `EmailService` e na imagem renderizada). Lint e `npm run build` OK.
+
+> **Cancelamento (09/10/2026):** acrescentados testes de serviço para os estados aceitos/recusados, isolamento do CRUD geral e corridas com validação/entrega; testes JPA das atualizações condicionais; testes MockMvc das permissões; e três fluxos Playwright com dados sintéticos, incluindo recuperação após 409. Smoke pré-deploy aprovado: backend 135/135, frontend 60/60, lint, build, Docker Compose e varredura de segredos — 12 gates, 0 falhas.
 
 > **Achado na auditoria pré-deploy (11/08/2026):** o critério de aceite "a coordenação é notificada" não tinha sido implementado na entrega original — a lista acima chegou a listar isso como "fora do escopo", decisão revertida na auditoria porque é um critério de aceite aprovado, não um nice-to-have. `solicitar()` agora chama `emailService.notifyInstituto()` com solicitante, nível, beneficiário, contato, célula, rede e observações. Ver commit `406f7f9`.
 
