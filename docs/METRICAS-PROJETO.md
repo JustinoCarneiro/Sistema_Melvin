@@ -49,9 +49,11 @@ a cada renovação se compensa manter. A linha `(est. retroativa)` abaixo é pro
 
 | Data | Fase (0–5) | Horas | Nota |
 |---|---|---|---|
+| 2026-10-08 | 5 | ≈0,1 | Auditoria de produção: preparo local das portas Docker, conciliação do prazo em duas etapas e validações de Compose, backend e frontend. |
+| 2026-10-08 | 5 | ≈0,2 | Endurecimento do deploy e smoke com TDD, validação completa local, leitura do proxy de produção e dry-run do rsync; publicação bloqueada por exclusão remota pendente. |
 | 2026-10-09 | 4–5 | 0,8 h | Revisão, TDD, segurança, smoke e deploy do cancelamento de solicitações de cesta. |
 
-Σ real registrada: **0,8 h**
+Σ real registrada: **≈1,1 h** (soma das linhas acima; as de 08/10 são estimativas)
 Σ **(est. retroativa por proxy de commit)**: **~93 h piso · ~116–135 h central · ~162 h teto** — 155 commits, 81 sessões, **diluídos entre jul/2024 e set/2026** (~40–60 h/ano de manutenção)
 
 ## 4. Log de espera / impedimento (Fase 4)
