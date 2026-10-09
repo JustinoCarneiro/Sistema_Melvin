@@ -43,15 +43,16 @@ agora exige a permissão `VISUALIZAR_RELATORIOS` (`PROF,ADM,TECH,DIRE,COOR,ASSIS
 genérico de `/dashboard/**` (Spring Security usa a primeira regra que casar). `COZI`,
 `ZELA`, `MARK` e `AUX` deixam de conseguir chamar o endpoint.
 
-**Verificado:** `mvn compile` limpo. **Não verificado:** a suíte de testes completa
-não pôde ser executada nesta sessão (`mvn test` bloqueado pelo sandbox do agente —
-restrição de ambiente, não falha de teste). Não existe teste de integração/segurança
-automatizado para `SecurityConfiguration` neste projeto (nenhuma outra rota deste
-arquivo tem — gap pré-existente, não introduzido por este fix). **Antes de considerar
-isto pronto:** rodar `mvn test` localmente e, no mínimo, um teste manual (logar como
-`COZI`/`ZELA`/`MARK` e confirmar 403 em `/dashboard/ranking`; logar como
-`DIRE`/`COOR`/`PSICO`/`ADM` e confirmar 200) antes de decidir sobre o deploy em
-produção — não feito nesta sessão, decisão do Marcos.
+**Validação inicial (15/09/2026):** `mvn compile` limpo; a suíte completa não pôde
+ser executada naquela sessão por restrição do sandbox.
+
+**Validação do candidato de release (08/10/2026):** o novo
+`DashboardRankingSecurityTest` usa MockMvc e confirma 403 sem a permissão
+`VISUALIZAR_RELATORIOS`, 200 com a permissão e acesso preservado a
+`/dashboard/presentes`. A suíte backend completa passou: 109 testes, sem falhas.
+Ainda falta a validação humana com contas de teste de perfis sem/com permissão
+antes da publicação em produção; nenhuma credencial ou dado real deve entrar
+nos testes ou neste registro.
 
 Itens do caminho sugerido original, ainda em aberto (não fechados por este fix):
 
