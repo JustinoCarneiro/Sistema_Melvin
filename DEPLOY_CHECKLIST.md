@@ -155,10 +155,13 @@ O script valida:
 ./deploy.sh remote
 ```
 
-O comando executa `smoke_test.sh` **antes** de acessar o servidor, exige sucesso do backup remoto
-e aborta se o dry-run do rsync falhar ou apontar qualquer exclusão. Confira o diff e o alvo antes
-de executar. A publicação ainda requer validação humana e autorização explícita, conforme
-`AGENTS.md`; o smoke cobre as verificações automatizadas.
+O comando executa `smoke_test.sh` **antes** de acessar o servidor, exige checkout Git limpo,
+sem arquivos não versionados, e sucesso do backup remoto. Um dry-run aborta se encontrar
+arquivos remotos obsoletos fora das exclusões explícitas. O rsync envia apenas o manifesto
+versionado, preserva os itens excluídos e mostra a prévia antes da transferência; falhas abortam.
+O deploy local exige PostgreSQL já em execução, recria só backend/frontend e confere a resposta
+HTTP de ambos. Confira o diff e o alvo antes de executar. A publicação ainda requer validação
+humana e autorização explícita, conforme `AGENTS.md`; o smoke cobre as verificações automatizadas.
 
 ### Verificação Pós-Deploy
 ```bash
