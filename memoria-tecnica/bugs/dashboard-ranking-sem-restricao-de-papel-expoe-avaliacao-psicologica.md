@@ -2,7 +2,7 @@
 tipo: bug
 data: 2026-09-13
 severidade: Média
-status: Corrigido no candidato — homologação e deploy pendentes
+status: Corrigido e publicado em produção em 08/10/2026
 ---
 
 # Painel `/dashboard` sem restrição de papel expõe avaliação psicológica de aluno a qualquer cargo autenticado
@@ -55,8 +55,10 @@ ser executada naquela sessão por restrição do sandbox.
 acesso, 200 para `PSICO` e `COOR`, e acesso preservado a `/dashboard/presentes`.
 O Playwright confirma que `ADM` não consulta nem exibe o ranking e que `PSICO`
 continua a usá-lo. Ainda falta a validação humana com contas de teste dos perfis
-permitidos e negados antes da publicação em produção; nenhuma credencial ou dado
-real deve entrar nos testes ou neste registro.
+permitidos e negados. A publicação foi autorizada e concluída em 08/10/2026 às
+23:53 BRT. No pós-deploy, o site e o health da API responderam 200, a rota sem
+autenticação respondeu 403 e os containers permaneceram saudáveis. Nenhuma
+credencial ou dado real entrou nos testes ou neste registro.
 
 Itens do caminho sugerido original, ainda em aberto (não fechados por este fix):
 
