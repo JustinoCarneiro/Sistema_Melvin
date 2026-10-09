@@ -217,7 +217,8 @@ SPRING_MAIL_PASSWORD=sua-senha-de-app
 ```bash
 ./deploy.sh
 ```
-Acesse em: **[http://institutomelvin.org:3000](http://institutomelvin.org:3000)**
+Acesse em produção: **[https://institutomelvin.org](https://institutomelvin.org)**.
+Quando a configuração for aplicada, as portas 3000 (frontend) e 8443 (backend) do Compose ficarão disponíveis apenas no próprio servidor para o proxy reverso.
 
 ### 3. Desenvolvimento (Hot Reload)
 - **Frontend**: Qualquer alteração na pasta `frontend/` reflete instantaneamente no navegador (via Vite Proxy).

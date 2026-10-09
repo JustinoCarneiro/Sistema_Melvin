@@ -155,6 +155,11 @@ O script valida:
 ./deploy.sh remote
 ```
 
+O comando executa `smoke_test.sh` **antes** de acessar o servidor, exige sucesso do backup remoto
+e aborta se o dry-run do rsync falhar ou apontar qualquer exclusão. Confira o diff e o alvo antes
+de executar. A publicação ainda requer validação humana e autorização explícita, conforme
+`AGENTS.md`; o smoke cobre as verificações automatizadas.
+
 ### Verificação Pós-Deploy
 ```bash
 # Health check do backend (Spring Boot Actuator, liberado no SecurityConfiguration)
@@ -175,6 +180,9 @@ docker exec postgresdb psql -U melvin -d sistemamelvin -f /scripts/monitor_donor
 ## 6. Configuração do Nginx (Proxy Reverso)
 
 Confirme no arquivo `/etc/nginx/sites-enabled/institutomelvin.org`:
+
+O site deve encaminhar para `localhost:3000` e a API para `localhost:8443` antes de aplicar o
+vínculo das portas Docker a `127.0.0.1`.
 
 ```nginx
 location /api/ {
@@ -205,4 +213,4 @@ location /api/ {
 
 ---
 
-*Última atualização: Maio/2026*
+*Checklist histórico de Maio/2026; fluxo de deploy e checagem do proxy atualizados em 08/10/2026. Os itens marcados acima precisam ser reconfirmados em cada publicação.*

@@ -52,7 +52,7 @@ services:
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
       SPRING_JPA_SHOW_SQL: "false"
     ports:
-      - "8443:8080"
+      - "127.0.0.1:8443:8080"
     volumes:
       - ./sistema:/app/src
       # Persiste a trilha de logs de pagamento entre recriações do container
@@ -80,7 +80,7 @@ services:
     env_file:
       - .env
     ports:
-      - "3000:80"
+      - "127.0.0.1:3000:80"
     depends_on:
       - backend
     volumes:

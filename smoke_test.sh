@@ -4,7 +4,7 @@
 # Executa validação completa antes do deploy para produção.
 # ═══════════════════════════════════════════════════════════════════
 
-set -e
+set -eo pipefail
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -80,22 +80,32 @@ if [ -f "sistema/mvnw" ]; then
     fi
     cd ..
 else
-    log_warn "mvnw não encontrado — pulando testes backend"
+    log_fail "mvnw não encontrado — testes backend não executados"
 fi
 
-# ─── 3. BUILD DO FRONTEND ───
-log_step "3/5 — Build Frontend (Vite)"
+# ─── 3. VALIDAÇÃO DO FRONTEND ───
+log_step "3/5 — Lint, Build e Playwright do Frontend"
 
 if [ -f "frontend/package.json" ]; then
     cd frontend
+    if npm run lint --silent 2>&1 | tail -5; then
+        log_pass "Lint do frontend passou"
+    else
+        log_fail "Lint do frontend FALHOU"
+    fi
     if npm run build --silent 2>&1 | tail -3; then
         log_pass "Build do frontend bem-sucedido"
     else
         log_fail "Build do frontend FALHOU"
     fi
+    if PLAYWRIGHT_PORT="${PLAYWRIGHT_PORT:-3101}" npm test -- --reporter=line 2>&1 | tail -5; then
+        log_pass "Testes Playwright passaram"
+    else
+        log_fail "Testes Playwright FALHARAM"
+    fi
     cd ..
 else
-    log_warn "package.json do frontend não encontrado"
+    log_fail "package.json do frontend não encontrado — validação não executada"
 fi
 
 # ─── 4. VALIDAÇÃO DO DOCKER COMPOSE ───
@@ -130,12 +140,15 @@ if [ -f ".env" ]; then
 fi
 
 # Verifica se segredos não estão hardcoded no código
-HARDCODED=$(grep -r "sk_live_\|sk_test_\|whsec_" sistema/src/ 2>/dev/null | grep -v "target/" | grep -v ".class" || true)
-if [ -z "$HARDCODED" ]; then
-    log_pass "Nenhum segredo hardcoded no código backend"
-else
+if grep -r -q -E 'sk_live_|sk_test_|whsec_' sistema/src/ 2>/dev/null; then
     log_fail "Segredos potencialmente hardcoded detectados!"
-    echo "$HARDCODED"
+else
+    GREP_STATUS=$?
+    if [ "$GREP_STATUS" -eq 1 ]; then
+        log_pass "Nenhum segredo hardcoded no código backend"
+    else
+        log_fail "Varredura de segredos não pôde ser concluída"
+    fi
 fi
 
 # ─── RESULTADO FINAL ───
@@ -148,6 +161,6 @@ if [ $FAIL -gt 0 ]; then
     echo -e "\n${RED}⛔ Smoke test FALHOU. Corrija os problemas antes do deploy.${NC}"
     exit 1
 else
-    echo -e "\n${GREEN}🚀 Smoke test APROVADO. Sistema pronto para deploy.${NC}"
+    echo -e "\n${GREEN}✅ Verificações automatizadas pré-deploy aprovadas.${NC}"
     exit 0
 fi
