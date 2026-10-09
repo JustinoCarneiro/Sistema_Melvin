@@ -1,7 +1,7 @@
 # 🗺️ ROADMAP.md — Blueprint de Arquitetura e Contratos
 
-> **Última atualização:** 30/08/2026 (Módulo 17 — Ocorrências Técnicas)
-> **Metodologia:** Onda-Dev (Fase 3 — Blueprint)
+> **Última atualização:** 08/10/2026 (prazo máximo de três meses para todo o escopo aberto)
+> **Metodologia:** OndaDev 3.0 — sistema em produção (Fase 5); blueprint incremental das novas evoluções
 > **Referência:** [CLAUDE.md](./CLAUDE.md)
 
 ---
@@ -29,14 +29,29 @@
 | 11 | Notificação de Falta ao Responsável | 🟢 Pequeno | 1-2 | ✅ Concluído |
 | 12 | Registro de Ocorrências do Aluno | 🟡 Médio | 3-4 | ✅ Concluído |
 | 13 | Solicitação de Cestas + Confirmação de Entrega | 🔴 Grande | 5-7 | ✅ Concluído |
-| 14 | Notificação de Falta via WhatsApp | 🟡 Médio | 3-4 | 🔲 Backlog |
+| 14 | Notificação de Falta via WhatsApp (US-5.6) | 🟡 Médio | 4 | ⬜ Pendente |
 | 15 | Central de Ajuda (Manual do Sistema) | 🟢 Pequeno | 1-2 | ✅ Concluído |
 | 16 | Cargo Técnico (TECH) | 🟡 Médio | 3-4 | ✅ Concluído |
 | 17 | Ocorrências Técnicas | 🟢 Pequeno | 1-2 | ✅ Concluído |
+| 18 | Revisão de fronteiras de acesso e regressões de segurança | 🔴 Grande | 7 | ⬜ Pendente |
+| 19 | Identidade e vínculo de responsáveis | 🔴 Grande | 7 | ⬜ Pendente |
+| 20 | Comunicação da família, faltas e contatos | 🔴 Grande | 7 | ⬜ Pendente |
+| 21 | Documentos da família e autorização de passeio | 🔴 Grande | 7 | ⬜ Pendente |
+| 22 | Avisos direcionados | 🟡 Médio | 4 | ⬜ Pendente |
+| 23 | Painel e acompanhamento do aluno | 🔴 Grande | 7 | ⬜ Pendente |
+| 24 | Relatórios de desenvolvimento | 🟡 Médio | 4 | ⬜ Pendente |
+| 25 | Agenda institucional, rotina e cardápio | 🔴 Grande | 7 | ⬜ Pendente |
+| 26 | Agenda da família | 🟡 Médio | 4 | ⬜ Pendente |
+| 27 | Navegação e páginas institucionais | 🟡 Médio | 4 | ⬜ Pendente |
+| 28 | Espaços, equipe, notícias e consentimento de imagem | 🔴 Grande | 7 | ⬜ Pendente |
+| 29 | Transparência, prestação de contas e documentos públicos | 🔴 Grande | 7 | ⬜ Pendente |
+| 30 | Canal público de sugestões e reclamações | 🟡 Médio | 4 | ⬜ Pendente |
+
+> Módulos 14 e 18–30: a coluna **Dias** usa o limite superior do peso (Grande 7, Médio 4), como na fórmula da seção "Evolução 08/10/2026". Pesos preliminares até a Fase 3.
 
 ---
 
-## Prazo Técnico (Fórmula Onda-Dev)
+## Prazo Técnico Histórico (estimativa original, não usar para a evolução de 2026/2027)
 
 ```
 Fase 2 (Aprovação Visual):  5 dias
@@ -47,6 +62,107 @@ Fase 5 (Homologação):       2 dias
 ────────────────────────────────────
 TOTAL:                      43 dias úteis
 ```
+
+---
+
+## Evolução 08/10/2026 — escopo aberto e prazo máximo de 08/01/2027
+
+**Abrangência:** as 16 histórias novas do site (`US-10.3`–`US-10.18`), as 8 histórias da Área da Família (`US-13.1`–`US-13.8`), o backlog anterior `US-5.6` (módulo 14) e a revisão e validação do cancelamento de cestas acrescentado à `US-7.4`. Este último foi implementado e endurecido em `c2eed41` (versão reaplicada e ampliada do rascunho `041abf7`) e **publicado em produção em 09/10/2026 às 11:21**; conferido em leitura em 09/10: fontes e imagens no servidor correspondem ao `c2eed41`, Flyway sem migração pendente e API saudável. Em 09/10 o `c2eed41` também virou a `main` do GitHub (CI verde) e a `main` local foi alinhada a ele; o rascunho antigo ficou só na branch local `main-pre-reconciliacao`, sem publicação. Falta a validação humana do Instituto. Os módulos 1–17 mantêm o status histórico acima, exceto o 14, agora incluído no escopo restante. Esta seção substitui o total histórico de 43 dias para decisões sobre o trabalho **restante**.
+
+### Limite e cálculo OndaDev 3.0
+
+- **Prazo máximo do cliente:** **08/01/2027** (três meses desde 08/10/2026). **Capacidade confirmada:** uma pessoa conduzindo o desenvolvimento, com agentes de IA. O [playbook OndaDev 3.0](./docs/Metodologia_de_Desenvolvimento_-_Onda.md) (apontador; texto canônico em `onda-starter`, seção 7, "Previsibilidade — o prazo calculado") foi desenhado para exatamente esse cenário e estima por peso de módulo, não por horas. Contar agentes como capacidade extra, ou somar margem por cima da fórmula, duplicaria o que o método já assume: o resultado da fórmula é o "prazo técnico blindado" do próprio playbook (limite superior de cada peso).
+- De 09/10/2026 a 08/01/2027 há **59 dias úteis** (segunda a sexta, excluídos 12/10, 02/11, 20/11, 24–25/12, 31/12/2026 e 01/01/2027; [feriados de 2026](https://pesquisa.apps.tcu.gov.br/doc/norma/Portaria/TCU%20E%20TCU/1/2026/)). Premissa conservadora: 24 e 31/12 são pontos facultativos tratados como não úteis; se forem trabalhados, a janela sobe para 61 dias.
+- **Fórmula OndaDev (`Prazo = Fase 2 + Σ módulos + 2d de Fase 5`) para o escopo restante:** Fase 2 com identidade existente (2) + módulos Grandes (8 × 7 = 56) + módulos Médios (6 × 4 = 24) + Fase 5 (2) + revisão e validação do cancelamento de cestas (1) = **85 dias úteis**. A linha de base termina em **17/02/2027** (08–09/02/2027, Carnaval, tratados como sem expediente); **não atende** ao prazo máximo. Déficit: **26 dias úteis** (24, se 24 e 31/12 forem trabalhados).
+- Mesmo no limite inferior dos pesos (Grande 5, Médio 3), 8 × 5 + 6 × 3 + 2 + 2 + 1 = **63 dias**, ainda 4 além da janela. Não é defensável registrar 08/01 como entrega garantida com uma pessoa, escopo integral e as evidências exigidas.
+- A data de 08/01 permanece como **restrição do cliente e risco aberto** para o escopo integral. O dono do projeto decidiu internamente dividir a entrega: núcleo de 52 dias úteis até 28/12/2026 (7 dias úteis antes do limite) e restante com segunda homologação até 19/02/2027, totalizando 87 dias úteis. O Instituto ainda precisa aceitar o prazo da etapa 2; ver `memoria-tecnica/decisoes/entrega-em-duas-etapas-prazo-08-01-2027.md`. Uma eventual redução de estimativa só vale após evidência real de velocidade (timesheet em `docs/METRICAS-PROJETO.md`, recalibração dos pesos), sem suprimir testes, segurança ou homologação.
+
+### Gates da metodologia antes de iniciar e encerrar a evolução
+
+| Etapa | Evidência / condição de passagem | Situação em 08/10/2026 |
+|---|---|---|
+| Fase 1 · G1 | Fechar decisões ainda abertas na spec: emissão de credenciais e vínculo familiar, fonte dos indicadores, escopo do cadastro editorial e provedor de WhatsApp. Registrar mudanças primeiro em `CLAUDE.md` e `docs/product/spec.md`. | ⬜ Pendente |
+| Fase 2 · G2/G3 | Produzir protótipo estático navegável das novas telas, com acessibilidade AA e estados de erro/vazio/carregamento; obter aceite do Instituto e congelamento visual. A identidade existe e está em produção (`docs/DESIGN_SYSTEM.md`, tokens em `frontend/src/index.scss` e em `CLAUDE.md` §5), o que sustenta Fase 2 ≈ 2 dias; o diretório `design/` referenciado em `AGENTS.md` ainda não existe neste checkout e o contrato deve ser reconciliado. | ⬜ Pendente |
+| Fase 3 | Após G3, fechar ERD e relações exatas, contratos Request/Response com validação e autorização no servidor, rastreabilidade história ↔ módulo (tabela abaixo, a confirmar) e controle ↔ módulo, além de threat model dos módulos com PII/auth. `docs/security/` (threat model, controles, relatório de revisão) ainda não existe neste repositório e nasce aqui. A modelagem, os pesos e os contratos abaixo são **propostas**, não o blueprint aprovado. | ⬜ Pendente |
+| Fase 4 · G4/G5/G6 | Implementar módulo por módulo com teste falhando antes da mudança, Green/Refactor, revisão estática de segurança nos riscos, um autor por PR, outro agente revisando R1/R2, small commits, status canônico no ROADMAP e linha de timesheet em `docs/METRICAS-PROJETO.md`. Agentes em paralelo usam worktrees isolados, nunca o mesmo checkout. | ⬜ Pendente |
+| Fase 5 · G7 | Smoke Docker, toda a esteira de testes, UAT humano, migrações para a frente e rollback ensaiado, relatório de controles/bloqueadores de segurança, revisão manual da `memoria-tecnica/` e análise `docs/ANALISE-PROJETO-<nome>.md`. Deploy via CI/CD só com autorização explícita e alvo confirmado. | ⬜ Pendente |
+
+A correção de rotas públicas identificada no módulo 18 pode ser tratada **como manutenção de segurança separada do novo portal**, com seu próprio contrato, TDD e revisão proporcional ao risco, antes do G3 visual. A codificação das novas histórias 10 e 13 só começa após G3 e a Fase 3 concluída. Mudanças de autenticação e de dados de crianças são R2 pelo contrato local; qualquer migration que altere esses dados também segue R2. Migrations sem PII seguem a classificação local de R1 até que o contrato canônico do projeto seja reconciliado com o playbook 3.0.
+
+**Estado da previsão:** há módulos e pesos definidos para orientar a decisão, mas ainda **não há cronograma de entrega do escopo integral que caiba em 08/01/2027** com a capacidade confirmada. A divisão em duas etapas é decisão interna, sujeita ao aceite do Instituto; as datas por módulo serão fixadas após G3. A linha de base com uma homologação termina em 17/02/2027; a execução em duas etapas, com duas homologações, termina em 19/02/2027. Nenhuma das datas constitui aceite do Instituto.
+
+**Dependências duras para ordenar a Fase 4:** o módulo 19 (identidade) antes de qualquer rota `/familia/**` (módulos 20–24 e 26) e, pela regra "o coração entra cedo", junto com o 18 abre a Fase 4; o 18 antes do lançamento da Área da Família; o 25 antes do 26 (a agenda da família cruza a agenda institucional); o registro de consentimento (módulo 28) antes de publicar qualquer imagem de pessoa; provedor e template aprovados antes do módulo 14.
+
+### Gates que precisam ser resolvidos no início
+
+1. **Acesso e identidade:** confirmar com o Instituto quem valida o vínculo responsável–aluno e entrega a credencial inicial. Para estimar, assumir provisionamento pela secretaria/coordenação após conferência presencial/documental, sem autocadastro por CPF/matrícula e sem reaproveitar a conta de funcionário. Há rotas públicas já existentes em produção que devolvem dados pessoais (inventário e detalhe da revisão ficam fora deste repositório público até a correção). Isso não depende da Área da Família: tratar como correção separada e antecipada (R2), sem esperar o módulo 19. O módulo 18 inventaria o uso legítimo no frontend, restringe as respostas e entrega testes negativos antes do lançamento da Área da Família. O cliente deve aprovar o fluxo de credenciais e o impacto das rotas existentes.
+2. **Conteúdo e rotina editorial:** Instituto entrega textos, fotos, horários, lista de parceiros, documentos e números de impacto com responsável pela publicação. O orçamento inclui cadastro interno mínimo para agenda, cardápio, notícias, documentos e números periódicos, porque as histórias de leitura dependem de alguém mantê-los atualizados, embora a spec deixe o desenho do CRUD fora das histórias. Assumir números de impacto informados e aprovados manualmente pelo Instituto, com período e fonte; integração automática é mudança de escopo.
+3. **Consentimento e proteção:** registrar evidência/validade da autorização de imagem antes de publicar pessoa identificável; definir quem pode publicar e retirar conteúdo. Confirmar com a coordenação quais observações pedagógicas são aptas à família. Dados de crianças, contatos, justificativas e relatórios seguem `docs/SEGURANCA_E_LGPD.md`; APIs da família devolvem DTOs mínimos.
+4. **WhatsApp:** decidir e contratar o provedor oficial, número remetente e template de utilidade antes do módulo 14. O prazo de aprovação externa do template não está nos 4 dias de desenvolvimento; se atrasar, desloca a entrega integral. `US-5.6` estava no backlog sem prioridade, mas entrou nesta previsão por “finalizar tudo”.
+5. **Aceite e produção:** reservar responsáveis do Instituto para conferir conteúdo, vínculo de pelo menos duas famílias fictícias e autorização de passeio. Migrações Flyway novas serão progressivas; versões já aplicadas não serão editadas. Publicação e escrita em produção exigem autorização R2 separada quando o pacote estiver pronto.
+6. **Dados do painel (US-13.2 e US-13.3):** o cadastro atual não tem foto do aluno nem professor; "horário" existe só como `turno`; não há registro de "conteúdos trabalhados" (o Diário é só upload de arquivo). Existem `sala`, `turno`, os indicadores de atividades (`karate`, `ballet`, `informatica`…) e as notas `avaliacao*` — a `avaliacaoPsicologico` não pode sair para a família (ver `memoria-tecnica/bugs/dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica.md`). Antes de fechar o peso do módulo 23, decidir com o Instituto o que o painel mostra: só campos existentes, ou captura nova. Captura nova — foto de criança incluída — é escopo adicional, com consentimento e LGPD, e não está nos 7 dias.
+
+### Rastreabilidade história → módulo
+
+Verificado em 08/10/2026 contra `docs/product/spec.md`: as 16 histórias `US-10.3`–`US-10.18`, as 8 histórias `US-13.1`–`US-13.8` e a `US-5.6` têm módulo dono; nenhuma ficou fora da estimativa. Cada história pertence a um único módulo (N:1). Mapeamento preliminar, a confirmar na Fase 3.
+
+| Módulo | Histórias |
+|---|---|
+| 14 | `US-5.6` |
+| 18 | Controle sem história própria: revisão das fronteiras de acesso de rotas públicas já existentes (gate 1), antes do lançamento da Área da Família |
+| 19 | `US-13.1` |
+| 20 | `US-13.7` |
+| 21 | `US-13.6` |
+| 22 | `US-13.8` |
+| 23 | `US-13.2`, `US-13.3` |
+| 24 | `US-13.4` |
+| 25 | `US-10.8`, `US-10.9` |
+| 26 | `US-13.5` |
+| 27 | `US-10.3`, `US-10.4`, `US-10.6`, `US-10.11`, `US-10.16`, `US-10.17` |
+| 28 | `US-10.5`, `US-10.7`, `US-10.10` |
+| 29 | `US-10.12`, `US-10.13`, `US-10.14`, `US-10.15` |
+| 30 | `US-10.18` |
+| (1 dia) | `US-7.4`, cancelamento de cestas: publicado em produção em 09/10/2026 e na `main` do GitHub (`c2eed41`); falta a validação humana do Instituto |
+
+### Desenho de dados proposto para o escopo novo
+
+Modelos abaixo são **propostas para fechar antes da implementação**, não migrations existentes. PKs e FKs são explícitas; dados pessoais de conteúdo devem seguir a cifragem adotada no projeto (hashes de senha seguem Argon2). `Discente`, `FrequenciaDiscente`, `Aviso` e `User` já existem e são preservados.
+
+| Entidade / mudança | Campos centrais (tipo) | Relação e controle |
+|---|---|---|
+| `responsavel_conta` | `id UUID PK`, `login VARCHAR UNIQUE`, `senha_hash VARCHAR`, `ativo BOOLEAN`, `criado_em TIMESTAMP` | Identidade separada de `users`/cargos de equipe; senha Argon2. |
+| `responsavel_discente` | `responsavel_id UUID FK`, `discente_id UUID FK`, `vinculo VARCHAR`, `ativo BOOLEAN`, `validado_por UUID`, `validado_em TIMESTAMP` | N:N; PK composta; resolve vários filhos e revogação de vínculo. |
+| `justificativa_falta` | `id UUID PK`, `frequencia_id UUID FK`, `turno VARCHAR`, `autor_id UUID FK`, `texto TEXT cifrado`, `anexo_ref VARCHAR NULL`, `criado_em TIMESTAMP`, `revogado_em TIMESTAMP NULL`, `revogado_por UUID NULL` | Registro original `F` permanece; estado justificado é derivado da justificativa ativa por turno; coordenação pode revogar. Reconciliar na Fase 3 com `FrequenciaDiscente.justificativa` (texto livre do professor), que a consulta de `FaltaAlertaDTO` já usa para ignorar faltas justificadas no alerta de 4 ou mais faltas. |
+| `auditoria_contato` | `id UUID PK`, `discente_id UUID FK`, `autor_id UUID FK`, `campo VARCHAR`, `antes/depois TEXT cifrados`, `alterado_em TIMESTAMP`, `notificado_em TIMESTAMP NULL` | Rastreia alteração de telefone e de contato de saída; nunca registrar valores em log. |
+| `documento_familia` e `autorizacao_passeio` | Documento: `id UUID PK`, `discente_id UUID FK`, `tipo VARCHAR`, `titulo VARCHAR`, `texto TEXT cifrado`, `prazo TIMESTAMP NULL`, `publicado_em TIMESTAMP`. Aceite: `id UUID PK`, `documento_id UUID FK`, `responsavel_id UUID FK`, `texto_aceito TEXT cifrado`, `aceito_em TIMESTAMP` | Snapshot imutável do texto aceito; unicidade por documento e responsável, verificação de prazo no servidor. |
+| `relatorio_desenvolvimento` | `id UUID PK`, `discente_id UUID FK`, `periodo_inicio/fim DATE`, `avancos/reforcos/orientacoes TEXT cifrados`, `publicado_em TIMESTAMP NULL`, `autor_id UUID` | Só versão publicada e destinada à família sai no DTO. |
+| `evento_institucional`, `rotina_turma`, `cardapio_dia` | Evento: `id UUID`, `tipo/titulo VARCHAR`, `inicio/fim TIMESTAMP`, `sala INTEGER NULL`, `publicado BOOLEAN`. Rotina: `id UUID`, `sala INTEGER`, `dia_semana SMALLINT`, `inicio/fim TIME`, `atividade VARCHAR`. Cardápio: `id UUID`, `data DATE UNIQUE`, `descricao TEXT`, `publicado BOOLEAN` | Agenda pública por período; agenda familiar filtra sala/filho. |
+| `conteudo_publico`, `publicacao`, `consentimento_imagem`, `publicacao_pessoa` | Conteúdo: `id UUID`, `tipo VARCHAR`, `titulo VARCHAR`, `corpo TEXT`, `publicado_em TIMESTAMP`. Publicação: `id UUID`, `tipo VARCHAR`, `data DATE`, `foto_ref VARCHAR`, `relato TEXT`, `publicado_em TIMESTAMP`. Consentimento: `id UUID`, `discente_id UUID FK NULL`, `voluntario_id UUID FK NULL`, `vigente_ate DATE NULL`, `evidencia_ref VARCHAR`, `revogado_em TIMESTAMP NULL` (exatamente uma FK de pessoa). Associação: `publicacao_id UUID FK`, `consentimento_id UUID FK` | Conteúdo editorial sem expor cadastro interno; publicação de imagem só com consentimento vigente conferido para **todas** as pessoas identificáveis. |
+| `impacto_periodo`, `prestacao_contas`, `documento_publico` | Impacto: `id UUID`, `inicio/fim DATE`, `indicador VARCHAR`, `valor NUMERIC`, `fonte VARCHAR`, `publicado_em TIMESTAMP`. Contas: `id UUID`, `inicio/fim DATE`, `categoria VARCHAR`, `recebido/distribuido NUMERIC`, `unidade VARCHAR`. Documento: `id UUID`, `categoria/titulo VARCHAR`, `arquivo_ref VARCHAR`, `publicado_em TIMESTAMP` | Somente agregados aprovados e arquivos institucionais publicados; nenhum beneficiário individual. |
+| `manifestacao` | `id UUID PK`, `tipo VARCHAR`, `texto TEXT cifrado`, `recebido_em TIMESTAMP`, `status VARCHAR` | Anônima; rate limit no endpoint público; e-mail interno usa dados mínimos. |
+| `aviso_destinatario` + `Aviso.visibilidade` | `aviso_id UUID FK`, `discente_id UUID FK`; `visibilidade VARCHAR` em `Aviso` | Aviso geral mantém comportamento; direcionado só aparece para responsáveis com vínculo ativo ao aluno; o `GET /aviso` público existente deve excluir direcionados. |
+
+### Contratos externos propostos (antes do código)
+
+Paths abaixo são relativos ao backend; o Nginx publica sob `/api/v1`. Exceto `POST /familia/auth/login`, todas as rotas `/familia/**` exigem token de família e **derivam o aluno da conta autenticada**, validando o vínculo em toda chamada. Nunca confiam em `responsavelId` enviado pelo cliente. Respostas de erro padronizadas: `400 {code,message}` para entrada inválida, `401` para sessão inválida, `403` para permissão funcional ausente, `404` para recurso inexistente ou vínculo ausente (sem revelar aluno de outra família), `409` para conflito de estado, `429` para limite público. DTOs públicos nunca contêm dados pessoais sensíveis.
+
+| Módulo | Método e path | Request → resposta de sucesso (campos essenciais) |
+|---|---|---|
+| 19 | `POST /familia/auth/login` | `{login:string, senha:string}` → `200 {token:string, expiraEm:datetime}`; erro genérico `401`, sem enumeração. |
+| 19 | `GET /familia/filhos` | Token → `200 [{id:UUID, nome:string, sala:int}]` apenas vínculos ativos. Provisionamento: `POST /interno/responsaveis` `{login, vinculos:[discenteId]}` → `201 {id, login, instrucoesEntrega}` para coordenação; senha temporária entregue por canal aprovado, nunca em log. |
+| 20 | `POST /familia/filhos/{id}/comunicacoes` | `{tipo: MENSAGEM|ATENDIMENTO, texto:string}` → `202 {protocolo:UUID}`; encaminha por e-mail, sem caixa de mensagens interna. |
+| 20 | `POST /familia/filhos/{id}/faltas/{frequenciaId}/justificativas` | `{turno:MANHA|TARDE, texto:string, anexoRef?:string}` → `201 {id, estado:JUSTIFICADA, criadoEm}`; `409` se não há falta elegível ou já foi justificada. `POST /interno/justificativas/{id}/revogar` → `200 {estado:REVOGADA}` para coordenação. |
+| 20 | `PUT /familia/filhos/{id}/contato` | `{tipo:TELEFONE|CONTATO_SAIDA, valor:string}` → `200 {atualizadoEm}`; alteração de saída gera notificação à equipe/outro responsável. |
+| 21 | `GET /familia/filhos/{id}/documentos` | Token → `200 [{id,tipo,titulo,prazo,estado}]`; só documentos destinados ao filho. `POST /familia/filhos/{id}/documentos/{documentoId}/autorizar` → `201 {autorizacaoId, aceitoEm}`; `409` após prazo/aceite duplicado. Cadastro interno de documento: `POST /interno/documentos-familia` `{discenteIds,tipo,titulo,texto,prazo}` → `201 {id}`. |
+| 22 | `GET /familia/filhos/{id}/avisos` | Token → `200 [{id,titulo,corpo,tipo:GERAL|DIRECIONADO}]`; criação interna `POST /interno/avisos-direcionados` `{discenteIds,titulo,corpo,inicio,fim}` → `201 {id}`. |
+| 23 | `GET /familia/filhos/{id}/resumo` | Token → `200 {nome,fotoRef,sala,professor,horario,frequenciaMes}`. `GET /familia/filhos/{id}/acompanhamento?mes=YYYY-MM` → `200 {frequencias,atividades,evolucao,conteudos,observacoesPublicaveis}`. |
+| 24 | `GET /familia/filhos/{id}/desenvolvimento` | Token → `200 [{periodo,avancos,reforcos,orientacoes}]` (lista vazia com estado explicativo na UI). `POST /interno/desenvolvimento` `{discenteId,periodo,avancos,reforcos,orientacoes}` → `201 {id}`; publicação interna explícita. |
+| 25–26 | `GET /publico/agenda?de=DATE&ate=DATE`, `GET /publico/cardapio?semana=DATE`, `GET /familia/filhos/{id}/agenda?de=DATE&ate=DATE` | `200` com eventos/rotina publicados, dias do cardápio ou compromissos filtrados pelo filho. Cadastro interno: `POST/PUT /interno/eventos`, `/interno/rotinas`, `/interno/cardapios` com campos da tabela de dados acima; `201/200 {id}`. |
+| 27–29 | `GET /publico/conteudos/{tipo}`, `/publico/publicacoes?tipo=...`, `/publico/impacto?periodo=...`, `/publico/prestacoes`, `/publico/documentos` | `200` com itens publicados e agregados. `POST/PUT /interno/conteudos`, `/interno/publicacoes`, `/interno/impactos`, `/interno/prestacoes`, `/interno/documentos-publicos` → `201/200 {id}`; mídia e documento só publicados após revisão/consentimento. |
+| 30 | `POST /publico/manifestacoes` | `{tipo:SUGESTAO|RECLAMACAO, texto:string}` → `202 {protocolo:UUID}`; sem login; `429` sob abuso. Consulta interna apenas por coordenação/secretaria. |
+| 14 | Nenhum endpoint público novo | Mesmo gatilho da US-5.5; WhatsApp independente do envio de e-mail. Falha do provedor fica em auditoria técnica sem expor telefone. |
+
+**Critério de encerramento:** cada história tem teste de aceite correspondente, incluindo 403/404 entre famílias, ausência de observação sensível, consentimento de imagem, assinatura após prazo, reversão de falta e rate limit. Rodar `./mvnw test --batch-mode --no-transfer-progress`, `npm run lint`, `npm run build`, `npm test`, smoke via Docker, revisão de segurança/LGPD e aceite humano antes da autorização de deploy. Atualizar status e datas reais por módulo, sem confundir previsão com entrega.
 
 ---
 
@@ -674,11 +790,11 @@ Backend: `CestasServiceTest` com 33 testes (os 22 da entrega original — solici
 ---
 
 ## MÓDULO 14: NOTIFICAÇÃO DE FALTA VIA WHATSAPP
-**Peso: 🟡 MÉDIO (~3-4 dias, estimativa) | Status: 🔲 Backlog**
+**Peso: 🟡 MÉDIO (4 dias, estimativa) | Status: ⬜ Pendente**
 
 > Épico de referência: [spec.md #Épico 5 — US-5.6](./docs/product/spec.md)
 
-Decisão do cliente (11/08/2026): fica formalmente registrado como Backlog, não priorizado agora.
+Decisão do cliente (11/08/2026): registrado originalmente como backlog. A previsão integral de 08/10/2026 inclui sua execução neste módulo.
 Sem contrato de API novo — plugaria no mesmo gatilho que a US-5.5 já criou em
 `FrequenciaDiscenteService` (`cadastrar()` e `alterar()`), como canal adicional ao lado do
 `EmailService`, nunca no lugar dele (falha no WhatsApp não pode derrubar o e-mail que já funciona).

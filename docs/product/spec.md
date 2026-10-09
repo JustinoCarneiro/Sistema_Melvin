@@ -559,7 +559,7 @@ Então apenas a primeira transição compatível é persistida e a outra recebe 
 
 ### ÉPICO 10: SITE INSTITUCIONAL (PÚBLICO)
 
-**Escopo:** Landing page pública com informações do instituto, embaixadores, doações e impacto social.
+**Escopo:** Landing page pública institucional — história, equipe, espaços, atividades, agenda, transparência, documentos e canais de contato/contribuição — além de doações, embaixadores e impacto social.
 
 #### US-10.1: Página de Doações
 **Como** visitante,
@@ -570,6 +570,246 @@ Então apenas a primeira transição compatível é persistida e a outra recebe 
 **Como** visitante,
 **eu quero** visualizar os embaixadores e parceiros do instituto,
 **para que** conheça quem apoia a causa.
+
+#### US-10.3: Reorganização do Menu Principal
+**Como** visitante,
+**eu quero** navegar o site institucional por um menu organizado por tema (Início, O Instituto, Nossos Espaços, Projetos e Atividades, Equipe, Agenda, Como Ajudar, Transparência, Contato, Área da Família),
+**para que** eu encontre rápido a informação que procuro, sem depender de rolar a página inteira.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante está em qualquer página do site institucional,
+Quando ele abre o menu principal,
+Então vê os itens Início, O Instituto, Nossos Espaços, Projetos e Atividades, Equipe, Agenda, Como Ajudar, Transparência, Contato e Área da Família, nessa ordem.
+
+Dado que as páginas de doação já existentes hoje (Amigos do Melvin, Doação, Sua Nota tem Valor, Embaixadores) foram agrupadas sob "Como Ajudar",
+Quando o visitante acessa uma URL antiga diretamente (ex: /doacoes, /amigos-do-melvin),
+Então a página carrega normalmente, sem link quebrado, mesmo fora do menu reorganizado.
+```
+
+#### US-10.4: Página "O Instituto"
+**Como** visitante,
+**eu quero** conhecer a história, missão, visão, valores, público atendido e princípios do Instituto,
+**para que** eu entenda quem são e o que fazem antes de me engajar (doar, ser voluntário, matricular um filho).
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante acessa "O Instituto",
+Quando a página carrega,
+Então exibe história, missão, visão, valores, público atendido e os princípios cristãos que orientam o trabalho do Instituto.
+```
+
+#### US-10.5: Página "Nossos Espaços"
+**Como** visitante,
+**eu quero** ver uma galeria com foto, nome e descrição de cada ambiente do Instituto,
+**para que** eu conheça a estrutura física antes de visitar pessoalmente.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante acessa "Nossos Espaços",
+Quando a página carrega,
+Então vê uma lista de ambientes (ex: Recepção, Diretoria, salas de reforço, espaço de atendimento psicopedagógico, oficinas, espaço de esporte, cozinha, refeitório, área de convivência, entre outros), cada um com foto, nome e descrição curta.
+
+Dado que o visitante clica no botão "Conheça nosso Instituto",
+Quando a ação ocorre,
+Então abre uma galeria navegável com as fotos de todos os ambientes.
+```
+
+#### US-10.6: Página "Projetos e Atividades"
+**Como** visitante,
+**eu quero** ver quais atividades o Instituto oferece (reforço escolar, esporte, oficinas, cursos, ações sociais),
+**para que** eu saiba do que meu filho, ou a comunidade, pode participar.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante acessa "Projetos e Atividades",
+Quando a página carrega,
+Então vê cada atividade oferecida com uma descrição curta de seu propósito.
+```
+
+#### US-10.7: Página "Equipe"
+**Como** visitante,
+**eu quero** ver a equipe do Instituto organizada por setor (Diretoria, Coordenação, Secretaria e Administrativo, Equipe Pedagógica, Equipe Técnica e Social, Instrutores, Equipe de Apoio e Voluntários),
+**para que** eu identifique quem é responsável por cada função.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante acessa "Equipe",
+Quando a página carrega,
+Então vê as pessoas agrupadas nos 8 setores (Diretoria, Coordenação, Secretaria e Administrativo, Equipe Pedagógica, Equipe Técnica e Social, Instrutores, Equipe de Apoio, Voluntários), cada uma com nome, cargo/função e foto.
+
+Dado que uma pessoa listada não tem autorização de uso de imagem/dados registrada,
+Quando a página é montada,
+Então essa pessoa não é exibida — toda exibição depende de autorização prévia (já confirmada como existente e assinada para a equipe e alunos atuais).
+
+Dado que a seção "Voluntários" é exibida,
+Quando o visitante a vê,
+Então aparece com destaque textual diferenciado (ex: "pessoas que doam tempo, conhecimento e amor"), reconhecendo o caráter voluntário.
+```
+
+#### US-10.8: Página "Agenda"
+**Como** visitante ou família,
+**eu quero** ver o calendário de eventos do Instituto (reuniões de pais, palestras, campanhas, passeios, feriados, datas especiais) e os horários de funcionamento/turmas,
+**para que** eu me organize e não perca nenhum compromisso.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante acessa "Agenda",
+Quando a página carrega,
+Então vê os próximos eventos institucionais (reunião de pais, evento, palestra, campanha, passeio, feriado, data especial) em ordem cronológica.
+
+Dado que a página "Agenda" também mostra a rotina semanal,
+Quando o visitante consulta,
+Então vê os horários de funcionamento do Instituto e os horários de cada turma/atividade.
+```
+
+> **Nota:** eventos e rotina semanal precisam de alguém (secretaria/coordenação) cadastrando — não é conteúdo estático, é CRUD interno novo que alimenta esta página pública de leitura. Desenho desse CRUD fica fora do escopo desta US.
+
+#### US-10.9: Cardápio e Lanches da Semana
+**Como** família,
+**eu quero** consultar o que será servido às crianças durante a semana, quando aplicável,
+**para que** eu saiba o que meu filho vai comer no Instituto.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o Instituto oferece alimentação/lanche em determinada semana,
+Quando a família acessa a página de Cardápio,
+Então vê o que está planejado para cada dia daquela semana.
+
+Dado que não há cardápio cadastrado para a semana corrente,
+Quando a família acessa a página,
+Então vê uma mensagem informando que a informação ainda não foi publicada, em vez de uma página vazia sem explicação.
+```
+
+> **Nota:** conteúdo muda toda semana — requer cadastro interno (provavelmente pela cozinha, cargo `COZI` já existente), fora do escopo desta US de exibição pública.
+
+#### US-10.10: Notícias e Registros de Atividades
+**Como** visitante ou família,
+**eu quero** ver fotos e relatos curtos das atividades realizadas pelo Instituto,
+**para que** eu acompanhe o dia a dia e o impacto do trabalho.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que uma atividade foi registrada com foto e relato,
+Quando o visitante acessa "Notícias e Registros",
+Então vê os registros mais recentes primeiro, cada um com foto, data e relato curto.
+
+Dado que uma foto envolve aluno(s) identificável(is),
+Quando o registro é publicado,
+Então só é publicado se a autorização de uso de imagem do(s) aluno(s) envolvido(s) estiver vigente (mesma autorização já confirmada como assinada na matrícula).
+```
+
+> **Nota:** conteúdo recorrente — requer cadastro interno (provavelmente marketing, cargo `MARK` já existente), fora do escopo desta US de exibição pública.
+
+#### US-10.11: Página "Projetos e Parceiros"
+**Como** visitante, potencial parceiro ou empresa,
+**eu quero** ver quais instituições, igrejas, empresas e projetos já apoiam o Instituto,
+**para que** eu avalie a credibilidade e as formas de parceria existentes.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante acessa "Projetos e Parceiros",
+Quando a página carrega,
+Então vê a lista de parceiros (instituições, igrejas, empresas) e dos projetos que eles apoiam.
+```
+
+#### US-10.12: Estrutura Organizacional e Organograma
+**Como** visitante, potencial parceiro ou empresa,
+**eu quero** ver a estrutura organizacional do Instituto representada visualmente,
+**para que** eu entenda a hierarquia e a governança antes de avaliar uma parceria.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante acessa a página de Transparência,
+Quando ele consulta a seção de estrutura organizacional,
+Então vê um organograma visual com a hierarquia (Instituto Melvin Edward Huber → Diretoria → Coordenação → Secretaria/Administrativo → Pedagógico → Assistência Social/Equipe Técnica → Projetos e Instrutores → Apoio → Voluntariado).
+```
+
+#### US-10.13: "Transparência Melvin" — Números de Impacto
+**Como** visitante, doador ou potencial parceiro,
+**eu quero** ver números grandes e simples sobre o impacto do Instituto,
+**para que** eu entenda rapidamente o alcance do trabalho, sem precisar ler relatórios extensos.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante acessa "Transparência",
+Quando a página carrega,
+Então vê números agregados de impacto: crianças atendidas, famílias alcançadas, atendimentos educacionais realizados, refeições/lanches oferecidos, atividades esportivas realizadas, cursos/oficinas oferecidos, voluntários atuantes e alimentos/doações distribuídos.
+
+Dado que a mesma página mostra "Para onde vão as doações?",
+Quando o visitante consulta,
+Então vê a destinação por categoria (alimentação, material pedagógico, manutenção, atividades esportivas, higiene, projetos sociais), nunca por indivíduo nem com folha de pagamento.
+```
+
+> **Nota:** se os números forem dinâmicos (consultando dado real do sistema — Discente, Cestas, Amigos do Melvin), entra integração de agregação nova; se forem informados manualmente pelo Instituto, é conteúdo estático. Decisão de arquitetura pendente, fora do escopo desta US.
+
+#### US-10.14: Prestação de Contas Simplificada
+**Como** visitante ou doador,
+**eu quero** ver um resumo periódico simples do que foi recebido e distribuído (ex: "recebemos X kg de alimentos e distribuímos X cestas"),
+**para que** eu confie que minha doação está sendo usada, sem precisar interpretar uma planilha financeira.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o Instituto publica a prestação de contas de um período,
+Quando o visitante consulta,
+Então vê um resumo simplificado (quantidade recebida, quantidade distribuída) sem identificar nenhuma família beneficiária.
+```
+
+#### US-10.15: Documentos Institucionais
+**Como** visitante, família ou parceiro,
+**eu quero** acessar os documentos institucionais do Instituto,
+**para que** eu consulte regras, calendário, orientações e políticas sem precisar perguntar à secretaria.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante acessa "Documentos Institucionais",
+Quando a página carrega,
+Então vê, no mínimo, o regulamento, o calendário, as orientações às famílias, a política de proteção à criança e os canais de contato, disponíveis para download/consulta.
+```
+
+#### US-10.16: Página "Como Ajudar" com Destaque para Doação
+**Como** visitante que quer contribuir,
+**eu quero** ver, numa única página, todas as formas de ajudar o Instituto (doação financeira, alimentos, roupas, material escolar, higiene, voluntariado, indicação para empresas),
+**para que** eu escolha a forma que for possível pra mim.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante acessa "Como Ajudar",
+Quando a página carrega,
+Então vê as páginas de doação já existentes (Amigos do Melvin, Doação, Sua Nota tem Valor, Embaixadores) e as demais formas de contribuição (alimentos, roupas, material escolar, higiene, voluntariado, indicação do Instituto para empresas).
+
+Dado que a doação financeira é o canal de arrecadação principal do Instituto,
+Quando o visitante vê o menu ou a página "Como Ajudar",
+Então o atalho/botão "Doar" mantém o mesmo destaque visual que tem hoje (separado dos demais itens), não vira apenas mais um item de submenu.
+```
+
+#### US-10.17: Página "Contato"
+**Como** visitante,
+**eu quero** encontrar os canais de contato do Instituto,
+**para que** eu consiga falar com eles por telefone, e-mail ou presencialmente.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante acessa "Contato",
+Quando a página carrega,
+Então vê endereço, telefone, e-mail e redes sociais do Instituto.
+```
+
+#### US-10.18: Canal de Sugestões e Reclamações
+**Como** família ou visitante,
+**eu quero** enviar uma sugestão ou reclamação para o Instituto,
+**para que** eu me manifeste com segurança, sem precisar de um contato direto.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante está na página "Contato" ou em "Como Ajudar",
+Quando ele preenche e envia o formulário de sugestão/reclamação,
+Então a mensagem é registrada e notificada à coordenação/secretaria, sem exigir login — é um canal público e anônimo, aberto a qualquer visitante (não só família matriculada).
+
+Dado que o formulário é um endpoint público sem autenticação,
+Quando ele recebe submissões,
+Então é protegido contra abuso por rate limit (mesmo padrão já usado em `/cestas/solicitacao`, ver `memoria-tecnica/decisoes/rate-limit-apenas-solicitacao-cesta.md`), evitando flood de bot.
+```
 
 ---
 
@@ -640,3 +880,158 @@ Então o sistema retorna 403 Forbidden.
 > **Nota de implementação:** entidade `OcorrenciaTecnica` nova (`titulo`, `categoria` enum, `severidade` enum, `descricao` — sem `SensitiveDataConverter`, diferente de `Ocorrencia`/aluno: é dado técnico interno, não pessoal sob LGPD —, `resolvido`, `autorLogin`, `dataOcorrencia`, `criadoEm`), migration `V17`. Autorização hardcoded em `SecurityConfiguration` (`hasRole("TECH")`, não `hasAnyRole` com ADM — deliberadamente exclusivo, mesmo padrão de restrição das telas de Permissões/Calendário, só que sem incluir ADM desta vez). Frontend: card novo em `Config.jsx` controlado por um estado `isTech` próprio (`role === 'TECH'` exato, não o `isAdm` que já inclui TECH), para não vazar pro ADM. Rotas `/app/ocorrencias-tecnicas` e `/app/ocorrencias-tecnicas/criar` com `role="TECH"`. Documentado no Manual do Sistema (US-11.1) como seção "Exclusivo do TECH — nem o ADM vê esta tela".
 
 ---
+
+### ÉPICO 13: ÁREA DA FAMÍLIA (PORTAL DO RESPONSÁVEL)
+
+**Escopo:** Portal autenticado para responsáveis de alunos acompanharem frequência, desenvolvimento, agenda e documentos do filho, e se comunicarem com o Instituto, sem depender dos cargos de equipe já existentes (`COOR, PROF, AUX, COZI, DIRE, ADM, MARK, ZELA, PSICO, ASSIST, TECH`). Backlog — ver `CLAUDE.md` §7 (changelog de 08/10/2026) para o histórico de levantamento com a cliente.
+
+#### US-13.1: Autenticação de Responsável
+**Como** responsável por um aluno matriculado,
+**eu quero** entrar na Área da Família com usuário e senha próprios,
+**para que** eu acesse só as informações do(s) meu(s) filho(s), sem precisar de um login de equipe.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o responsável tem credenciais válidas de família,
+Quando ele faz login na Área da Família,
+Então acessa o painel só com os dados do(s) aluno(s) vinculado(s) a ele, nunca de outro aluno.
+
+Dado que um responsável tem mais de um filho matriculado,
+Quando ele faz login,
+Então consegue alternar entre os filhos dentro da mesma conta, sem precisar de um login por filho.
+
+Dado que as credenciais de família são inválidas ou não existem,
+Quando alguém tenta entrar,
+Então o sistema recusa o acesso sem revelar se a matrícula/CPF informado existe (mesmo princípio de não enumeração já usado no login de equipe).
+```
+
+> **Nota:** mecanismo de como o responsável recebe a credencial inicial (autocadastro validado por matrícula/CPF do filho vs. o Instituto cria e entrega) é decisão de arquitetura pendente, fora do escopo desta US. Pré-requisito de todas as demais US deste épico.
+
+#### US-13.2: Painel "Meu Filho"
+**Como** responsável logado,
+**eu quero** ver um resumo do meu filho ao entrar (foto, nome, turma, professor, horário, frequência do mês),
+**para que** eu tenha a informação mais importante sem precisar navegar por várias telas.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o responsável está logado,
+Quando a Área da Família carrega,
+Então vê foto, nome, turma, professor, horário e percentual de frequência do mês do filho selecionado.
+
+Dado que o responsável quer mais contexto institucional,
+Quando ele navega a partir do painel,
+Então encontra atalhos para Professores, Diretoria, Secretaria, Projetos e Nossos Espaços (mesmo conteúdo já público do site, ver Épico 10).
+```
+
+#### US-13.3: Acompanhamento
+**Como** responsável logado,
+**eu quero** ver presença/faltas, atividades frequentadas, evolução no reforço e conteúdos trabalhados do meu filho,
+**para que** eu acompanhe o dia a dia dele no Instituto.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o responsável acessa "Acompanhamento",
+Quando a página carrega,
+Então vê presenças/faltas, atividades frequentadas, evolução no reforço escolar e conteúdos trabalhados do filho.
+
+Dado que uma observação pedagógica foi registrada internamente como sensível (ex: ligada a atendimento psicológico),
+Quando o responsável acessa "Acompanhamento",
+Então essa observação NÃO é exibida — só as observações pedagógicas marcadas como apropriadas para a família aparecem.
+```
+
+#### US-13.4: Desenvolvimento
+**Como** responsável logado,
+**eu quero** ver relatórios periódicos simples sobre o desenvolvimento do meu filho,
+**para que** eu saiba o que ele está avançando e o que precisa de reforço em casa.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que a equipe pedagógica publicou um relatório periódico para o aluno,
+Quando o responsável acessa "Desenvolvimento",
+Então vê avanços percebidos, aspectos a fortalecer e orientações para continuar o trabalho em casa.
+
+Dado que ainda não existe relatório publicado para o período corrente,
+Quando o responsável acessa "Desenvolvimento",
+Então vê uma mensagem explicando isso, em vez de uma tela vazia sem contexto.
+```
+
+> **Nota:** conteúdo estruturado novo — hoje "Diário e Rendimento" (Épico 9) é só upload/download de arquivo, não existe relatório periódico estruturado por aluno. Modelagem desse relatório fica fora do escopo desta US.
+
+#### US-13.5: Minha Agenda
+**Como** responsável logado,
+**eu quero** ver os dias, horários, reuniões, eventos e compromissos específicos do meu filho,
+**para que** eu não perca nada que diga respeito a ele.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o responsável acessa "Minha Agenda",
+Quando a página carrega,
+Então vê os dias/horários das atividades do filho, próximas reuniões, eventos e avaliações que afetam aquele aluno especificamente, cruzando a agenda institucional (Épico 10, US-10.8) com a turma do aluno.
+```
+
+#### US-13.6: Documentos e Autorização de Passeio
+**Como** responsável logado,
+**eu quero** ver declarações, comunicados, termos e autorizar passeios do meu filho,
+**para que** eu resolva isso pelo celular, sem precisar ir até a secretaria.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o responsável acessa "Documentos",
+Quando a página carrega,
+Então vê declarações, comunicados, termos e autorizações pendentes destinadas à família dele.
+
+Dado que existe uma autorização de passeio pendente,
+Quando o responsável clica em "Autorizo" dentro da Área da Família autenticada,
+Então o sistema grava o texto exato da autorização no momento do clique, o usuário responsável e o timestamp — funcionando como assinatura eletrônica simples, válida para esse consentimento de baixo risco.
+
+Dado que o prazo de uma autorização pendente já passou,
+Quando o responsável tenta autorizar depois do prazo,
+Então o sistema recusa e indica que o prazo encerrou.
+```
+
+#### US-13.7: Comunicação com o Instituto
+**Como** responsável logado,
+**eu quero** enviar mensagem à secretaria/coordenação, justificar falta, atualizar meu telefone e solicitar atendimento,
+**para que** eu resolva essas pendências sem precisar ligar ou ir pessoalmente.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o responsável preenche o formulário de "Comunicação com o Instituto" (mensagem, justificar falta, atualizar telefone ou solicitar atendimento),
+Quando ele envia,
+Então o pedido é encaminhado por e-mail à secretaria/coordenação — não é mensageria interna com resposta pelo sistema (confirmado não existir chat/ticket em nenhum épico hoje).
+
+Dado que o responsável justifica uma falta já registrada do filho,
+Quando ele envia a justificativa,
+Então a frequência do aluno (Épico 5) é marcada como "falta justificada" imediatamente, mantendo quem justificou, quando, e o texto/anexo informado — sem apagar o registro original de falta feito pelo professor, e visível/reversível pela coordenação.
+
+Dado que o responsável atualiza o telefone de contato,
+Quando ele salva,
+Então o cadastro do aluno é atualizado imediatamente com o novo telefone.
+
+Dado que o campo atualizado é o "contato de saída" (quem retira a criança), não um telefone comum,
+Quando o responsável tenta alterá-lo,
+Então o sistema notifica a equipe/outro responsável cadastrado sobre a mudança, por ser dado de segurança da criança.
+```
+
+> **Nota:** o critério de "falta justificada" introduz um estado novo sobre a Frequência do Épico 5 (hoje só `presencaManha`/`presencaTarde` = "F"/presente) — desenho exato desse campo fica fora do escopo desta US, mas é alteração em domínio de outro épico, não isolada ao Épico 13.
+
+#### US-13.8: Avisos Direcionados
+**Como** responsável logado,
+**eu quero** receber avisos específicos do meu filho (ex: "inscrito no passeio", "precisamos da autorização até dia 15"), além dos avisos gerais do Instituto,
+**para que** eu não misture o que é geral com o que é específico do meu filho.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que a coordenação cria um aviso direcionado a um aluno ou família específica,
+Quando o responsável daquele aluno acessa "Avisos",
+Então vê esse aviso, mas nenhum outro responsável vê (diferente do Aviso institucional hoje, que é sempre visível a todo mundo, ver Épico 7 US-7.3).
+
+Dado que existe um aviso geral do Instituto (broadcast, como já funciona hoje) e um aviso direcionado ao filho do responsável,
+Quando o responsável acessa "Avisos",
+Então vê os dois tipos juntos, diferenciados visualmente.
+```
+
+> **Nota:** modelo `Aviso` atual (Épico 7) não tem campo de destinatário, é broadcast institucional puro — direcionamento por aluno/família é modelagem nova, não reaproveitamento.
+
+---
+

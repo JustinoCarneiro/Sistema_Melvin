@@ -33,3 +33,4 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev (avali
 - [[backup-melvin-diario-criptografado]]
 - [[rate-limit-apenas-solicitacao-cesta]]
 - [[qr-code-removido-confirmacao-manual]]
+- [[entrega-em-duas-etapas-prazo-08-01-2027]]
