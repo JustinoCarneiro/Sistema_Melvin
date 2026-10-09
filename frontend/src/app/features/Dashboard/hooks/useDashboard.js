@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 import dashboardService from '../api/dashboardService';
 import frequenciaService from '@core/services/frequenciaService';
 
 export function useDashboard() {
+    const canViewRanking = ['PSICO', 'COOR'].includes(Cookies.get('role'));
     const [frequenciaPorSala, setFrequenciaPorSala] = useState({ manha: {}, tarde: {} });
     const [rankingMelhores, setRankingMelhores] = useState([]);
     const [rankingPiores, setRankingPiores] = useState([]);
@@ -24,7 +26,7 @@ export function useDashboard() {
                 const [frequenciaRes, avisosRes, rankingRes, alertasRes] = await Promise.all([
                     frequenciaService.listDiscente(new Date().toISOString().split('T')[0]),
                     dashboardService.getAvisos(),
-                    dashboardService.getRanking(rankingSortBy),
+                    canViewRanking ? dashboardService.getRanking(rankingSortBy) : Promise.resolve({ data: [] }),
                     frequenciaService.getAlertasFaltas(now.getMonth() + 1, now.getFullYear())
                 ]);
 
@@ -59,7 +61,7 @@ export function useDashboard() {
     // Efeito SEPARADO apenas para ATUALIZAR o ranking
     useEffect(() => {
         // Não roda na carga inicial
-        if (loading) return; 
+        if (loading || !canViewRanking) return;
 
         const fetchRankingData = async () => {
             setIsRankingLoading(true); // 2. Ativa o loading SÓ do ranking
@@ -78,7 +80,7 @@ export function useDashboard() {
 
         fetchRankingData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [rankingSortBy]); // Roda apenas quando o filtro do ranking muda
+    }, [rankingSortBy, canViewRanking]); // Roda apenas quando o filtro muda ou o perfil habilita o ranking
 
     return { 
         loading, 
@@ -88,6 +90,7 @@ export function useDashboard() {
         avisos, 
         rankingMelhores, 
         rankingPiores,
+        canViewRanking,
         rankingSortBy,
         setRankingSortBy,
         alertasFaltas

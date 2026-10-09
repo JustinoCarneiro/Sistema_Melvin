@@ -64,14 +64,11 @@ public class SecurityConfiguration {
 
                     // --- ROTAS AUTENTICADAS GERAIS ---
                     .requestMatchers(HttpMethod.GET, "/auth/role_{matricula}").authenticated()
-                    // /dashboard/ranking expõe avaliação psicológica/comportamental de aluno
-                    // (sortBy=psicologico|comportamento) — restrito a quem tem função
-                    // pedagógica/clínica/administrativa (mesma permissão já usada para
-                    // relatórios). Precisa vir ANTES do .authenticated() genérico de
-                    // /dashboard/** abaixo (Spring Security usa a primeira regra que casar).
+                    // /dashboard/ranking inclui nota psicológica até na média padrão.
+                    // Somente psicologia e coordenação podem consultar qualquer ordenação.
+                    // A regra precisa vir antes do /dashboard/** genérico.
                     // Achado de segurança: memoria-tecnica/bugs/dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica.md
-                    .requestMatchers(HttpMethod.GET, "/dashboard/ranking").access((authentication, context) ->
-                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_RELATORIOS")))
+                    .requestMatchers(HttpMethod.GET, "/dashboard/ranking").hasAnyRole("PSICO", "COOR")
                     .requestMatchers(HttpMethod.GET, "/dashboard/**").authenticated()
                     .requestMatchers(HttpMethod.GET, "/permissoes/minhas").authenticated()
                     .requestMatchers(HttpMethod.PUT, "/discente/{matricula}/avaliacoes").access((authentication, context) -> 

@@ -7,6 +7,12 @@ const RANKING_MOCK = [
 ];
 const ALERTAS_COM_FALTAS = [{ matricula: '2026001', nome: 'Aluno Crítico', quantidade: 6 }];
 
+async function acessarComo(page, role) {
+  await page.context().addCookies([{ name: 'role', value: role, domain: 'localhost', path: '/' }]);
+  await page.route('**/auth/role_*', route => route.fulfill({ status: 200, body: role }));
+  await page.goto(`/#/app/${role.toLowerCase()}`);
+}
+
 test.describe('Dashboard', () => {
   test.beforeEach(async ({ page }) => {
     // Ranking: retorna 2 alunos para todos os sortBy
@@ -58,7 +64,7 @@ test.describe('Dashboard', () => {
   });
 
   test('deve exibir alunos no card de Destaques', async ({ page }) => {
-    await page.goto('/#/app/adm');
+    await acessarComo(page, 'PSICO');
 
     await expect(page.locator('h3', { hasText: 'Destaques' })).toBeVisible();
     await expect(page.locator('li', { hasText: 'Aluno Top' }).first()).toBeVisible();
@@ -66,7 +72,7 @@ test.describe('Dashboard', () => {
   });
 
   test('deve recarregar ranking ao mudar o filtro de categoria', async ({ page }) => {
-    await page.goto('/#/app/adm');
+    await acessarComo(page, 'PSICO');
     await expect(page.locator('h3', { hasText: 'Destaques' })).toBeVisible();
 
     // Aguarda a requisição com sortBy=presenca disparada pela troca do select
@@ -82,7 +88,7 @@ test.describe('Dashboard', () => {
   test('deve chamar ranking com sortBy correto para cada categoria disponível', async ({ page }) => {
     const categorias = ['presenca', 'participacao', 'comportamento', 'rendimento', 'psicologico'];
 
-    await page.goto('/#/app/adm');
+    await acessarComo(page, 'PSICO');
     await expect(page.locator('h3', { hasText: 'Destaques' })).toBeVisible();
 
     for (const categoria of categorias) {
@@ -90,5 +96,18 @@ test.describe('Dashboard', () => {
       await page.locator('select[class*="selectFilter"]').selectOption({ value: categoria });
       await req;
     }
+  });
+
+  test('não consulta nem exibe ranking para administração', async ({ page }) => {
+    const rankingRequests = [];
+    page.on('request', request => {
+      if (request.url().includes('/dashboard/ranking')) rankingRequests.push(request.url());
+    });
+
+    await page.goto('/#/app/adm');
+
+    await expect(page.locator('h3', { hasText: 'Frequência do Dia' })).toBeVisible();
+    await expect(page.locator('h3', { hasText: 'Destaques' })).toHaveCount(0);
+    expect(rankingRequests).toHaveLength(0);
   });
 });

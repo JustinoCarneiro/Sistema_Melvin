@@ -11,6 +11,7 @@ function Home() {
         avisos, 
         rankingMelhores, 
         rankingPiores, 
+        canViewRanking,
         rankingSortBy, 
         setRankingSortBy,
         alertasFaltas
@@ -140,7 +141,7 @@ function Home() {
                 </div>
 
                 {/* --- RANKING: MELHORES --- */}
-                <div className={styles.card}>
+                {canViewRanking && <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <div className={styles.headerTitleGroup}>
                             <FaArrowUp color="#22c55e"/>
@@ -162,10 +163,10 @@ function Home() {
                             <RankingList alunos={rankingMelhores} type="good" />
                         )}
                     </div>
-                </div>
+                </div>}
 
                 {/* --- RANKING: PIORES --- */}
-                <div className={styles.card}>
+                {canViewRanking && <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <div className={styles.headerTitleGroup}>
                             <FaArrowDown color="#ef4444"/>
@@ -179,7 +180,7 @@ function Home() {
                             <RankingList alunos={rankingPiores} type="bad" />
                         )}
                     </div>
-                </div>
+                </div>}
 
                 {/* --- ALERTA DE FALTAS --- */}
                 <div className={styles.card}>

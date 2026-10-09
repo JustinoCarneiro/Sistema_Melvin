@@ -2,7 +2,7 @@
 tipo: bug
 data: 2026-09-13
 severidade: Média
-status: Corrigido (código) — deploy em produção pendente de confirmação
+status: Corrigido no candidato — homologação e deploy pendentes
 ---
 
 # Painel `/dashboard` sem restrição de papel expõe avaliação psicológica de aluno a qualquer cargo autenticado
@@ -36,32 +36,30 @@ avaliação psicológica/comportamental, que é dado sensível por natureza (LGP
 
 ## Solução
 
-**Corrigido em `SecurityConfiguration.java` (2026-09-15):** `GET /dashboard/ranking`
-agora exige a permissão `VISUALIZAR_RELATORIOS` (`PROF,ADM,TECH,DIRE,COOR,ASSIST,PSICO`
-— a mesma regra de relatório já seedada e usada em outras rotas deste arquivo), via
-`permissaoService.hasPermission(...)`, adicionada **antes** do `.authenticated()`
-genérico de `/dashboard/**` (Spring Security usa a primeira regra que casar). `COZI`,
-`ZELA`, `MARK` e `AUX` deixam de conseguir chamar o endpoint.
+**Primeira correção (15/09/2026):** `GET /dashboard/ranking` passou a exigir
+`VISUALIZAR_RELATORIOS` antes da regra genérica de `/dashboard/**`. A revisão
+de 08/10/2026 identificou que essa permissão também inclui `PROF` e `ASSIST`,
+embora a média padrão do ranking incorpore a nota psicológica.
+
+**Decisão de acesso (08/10/2026):** o dono do projeto confirmou apenas `PSICO`
+e `COOR` para qualquer ordenação do ranking. O candidato passou a aplicar
+`hasAnyRole("PSICO", "COOR")` no servidor; o frontend só consulta e exibe os
+cards de ranking para esses perfis. Os demais cards do dashboard permanecem
+disponíveis segundo suas regras próprias.
 
 **Validação inicial (15/09/2026):** `mvn compile` limpo; a suíte completa não pôde
 ser executada naquela sessão por restrição do sandbox.
 
 **Validação do candidato de release (08/10/2026):** o novo
-`DashboardRankingSecurityTest` usa MockMvc e confirma 403 sem a permissão
-`VISUALIZAR_RELATORIOS`, 200 com a permissão e acesso preservado a
-`/dashboard/presentes`. A suíte backend completa passou: 109 testes, sem falhas.
-Ainda falta a validação humana com contas de teste de perfis sem/com permissão
-antes da publicação em produção; nenhuma credencial ou dado real deve entrar
-nos testes ou neste registro.
+`DashboardRankingSecurityTest` usa MockMvc para verificar 403 em cargos sem
+acesso, 200 para `PSICO` e `COOR`, e acesso preservado a `/dashboard/presentes`.
+O Playwright confirma que `ADM` não consulta nem exibe o ranking e que `PSICO`
+continua a usá-lo. Ainda falta a validação humana com contas de teste dos perfis
+permitidos e negados antes da publicação em produção; nenhuma credencial ou dado
+real deve entrar nos testes ou neste registro.
 
 Itens do caminho sugerido original, ainda em aberto (não fechados por este fix):
 
-- Restringir `GET /dashboard/ranking` a papéis com função pedagógica/clínica/direção (ex.:
-  `PSICO`, `COOR`, `DIRE`, `ADM`), no mesmo padrão já usado para `/ocorrencias-tecnicas/**`
-  (`hasRole("TECH")`).
-- Avaliar se `sortBy=psicologico` e `sortBy=comportamento` merecem trava adicional (só
-  `PSICO`/`COOR`) mesmo dentro de quem já acessa o ranking, já que nem toda direção pedagógica
-  precisa ver a nota psicológica individual de um aluno.
 - `/dashboard/presentes` e `/dashboard/avisos` parecem de sensibilidade menor (contagem
   agregada e avisos já públicos) — não é óbvio que precisem da mesma restrição, mas vale
   confirmar com a direção do Instituto antes de decidir, em vez de presumir.

@@ -36,8 +36,28 @@ class DashboardRankingSecurityTest {
     private DashboardService dashboardService;
 
     @Test
+    @WithMockUser(roles = "PROF")
+    void negaRankingPsicologicoAoProfessorMesmoComPermissaoDeRelatorios() throws Exception {
+        when(permissaoService.hasPermission(any(Authentication.class), eq("VISUALIZAR_RELATORIOS")))
+                .thenReturn(true);
+
+        mockMvc.perform(get("/dashboard/ranking").param("sortBy", "psicologico"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ASSIST")
+    void negaMediaQueIncluiNotaPsicologicaAAssistencia() throws Exception {
+        when(permissaoService.hasPermission(any(Authentication.class), eq("VISUALIZAR_RELATORIOS")))
+                .thenReturn(true);
+
+        mockMvc.perform(get("/dashboard/ranking"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     @WithMockUser(roles = "COZI")
-    void negaRankingPsicologicoSemPermissaoDeRelatorios() throws Exception {
+    void negaRankingACozinha() throws Exception {
         when(permissaoService.hasPermission(any(Authentication.class), eq("VISUALIZAR_RELATORIOS")))
                 .thenReturn(false);
 
@@ -47,15 +67,34 @@ class DashboardRankingSecurityTest {
 
     @Test
     @WithMockUser(roles = "PSICO")
-    void permiteRankingPsicologicoComPermissaoDeRelatorios() throws Exception {
-        when(permissaoService.hasPermission(any(Authentication.class), eq("VISUALIZAR_RELATORIOS")))
-                .thenReturn(true);
+    void permiteRankingPsicologicoAoPsicologo() throws Exception {
         when(dashboardService.getRankingAlunos(5, "psicologico")).thenReturn(List.of());
 
         mockMvc.perform(get("/dashboard/ranking").param("sortBy", "psicologico"))
                 .andExpect(status().isOk());
 
         verify(dashboardService).getRankingAlunos(5, "psicologico");
+    }
+
+    @Test
+    @WithMockUser(roles = "COOR")
+    void permiteMediaGeralACoordenacao() throws Exception {
+        when(dashboardService.getRankingAlunos(5, "media")).thenReturn(List.of());
+
+        mockMvc.perform(get("/dashboard/ranking"))
+                .andExpect(status().isOk());
+
+        verify(dashboardService).getRankingAlunos(5, "media");
+    }
+
+    @Test
+    @WithMockUser(roles = "ADM")
+    void negaRankingAAdministracao() throws Exception {
+        when(permissaoService.hasPermission(any(Authentication.class), eq("VISUALIZAR_RELATORIOS")))
+                .thenReturn(true);
+
+        mockMvc.perform(get("/dashboard/ranking"))
+                .andExpect(status().isForbidden());
     }
 
     @Test
