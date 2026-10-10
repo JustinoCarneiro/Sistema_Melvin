@@ -1,6 +1,12 @@
 import http from './http';
 import Cookies from 'js-cookie';
 
+// Mensagem que o servidor mandou (texto puro ou { message }), ou o texto padrão.
+const mensagemDoErro = (error, padrao) => {
+    const data = error.response?.data;
+    return (typeof data === 'string' && data) || data?.message || padrao;
+};
+
 const authService = {
     async login(data) {
         const endpoint = "/auth/login";
@@ -25,7 +31,7 @@ const authService = {
             return response;
         } catch (error) {
             console.error('Erro ao registrar usuário:', error.response?.data || error.message);
-            return Promise.reject(new Error(error.response?.data || error.message));
+            return Promise.reject(new Error(mensagemDoErro(error, 'Não foi possível criar o acesso.')));
         }
     },
 
@@ -50,7 +56,7 @@ const authService = {
             return response;
         } catch (error) {
             console.error('Erro ao alterar senha:', error.response?.data || error.message);
-            return Promise.reject(new Error(error.response?.data?.message || error.message));
+            return Promise.reject(new Error(mensagemDoErro(error, 'Não foi possível redefinir a senha.')));
         }
     },
 

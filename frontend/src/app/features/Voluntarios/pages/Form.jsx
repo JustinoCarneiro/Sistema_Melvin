@@ -77,6 +77,7 @@ function Voluntario_forms() {
 
     const handleCriarAcesso = async () => {
         if (!senhaAcesso || senhaAcesso !== confirmarSenha) return alert("As senhas não coincidem!");
+        if (senhaAcesso.length < 8) return alert("A senha deve ter pelo menos 8 caracteres.");
         const role = getRoleFromFuncao(formDado.funcao);
         if (!role) return alert(`A função "${formDado.funcao}" não tem perfil de acesso.`);
 
@@ -86,18 +87,19 @@ function Voluntario_forms() {
                 alert("Acesso criado!");
                 setSenhaAcesso(''); setConfirmarSenha('');
             }
-        } catch (error) { alert("Erro ao criar acesso. Usuário já existe?"); }
+        } catch (error) { alert(error.message || "Erro ao criar acesso. Usuário já existe?"); }
     };
 
     const handleRedefinirSenha = async () => {
         if (!senhaAcesso || senhaAcesso !== confirmarSenha) return alert("As senhas não coincidem!");
+        if (senhaAcesso.length < 8) return alert("A senha deve ter pelo menos 8 caracteres.");
         try {
             const response = await authService.updatePassword(formDado.matricula, senhaAcesso);
             if (response?.status === 200) {
                 alert("Senha redefinida!");
                 setSenhaAcesso(''); setConfirmarSenha('');
             }
-        } catch (error) { alert("Erro ao redefinir senha."); }
+        } catch (error) { alert(error.message || "Erro ao redefinir senha."); }
     };
 
     const handleSubmit = async (e) => {

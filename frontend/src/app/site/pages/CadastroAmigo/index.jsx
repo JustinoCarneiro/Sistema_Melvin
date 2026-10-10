@@ -129,7 +129,7 @@ function CheckoutForm({ donationType, amount, initialData }) {
             console.error("Erro no checkout:", err);
             const status = err?.response?.status;
             const data = err?.response?.data;
-            const serverMsg = typeof data === 'string' ? data : null;
+            const serverMsg = typeof data === 'string' ? data : (typeof data?.message === 'string' ? data.message : null);
             if (status === 409) {
                 // Backend detectou cadastro duplicado para este e-mail.
                 setError(serverMsg || 'Já existe uma assinatura ativa ou pendente para este e-mail.');
