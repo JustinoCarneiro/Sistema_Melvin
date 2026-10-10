@@ -41,7 +41,7 @@ public class SecurityConfiguration {
     SecurityFilter securityFilter;
 
     @Autowired
-    br.com.melvin.sistema.domain.cestas.config.CestasSolicitacaoRateLimitFilter cestasRateLimitFilter;
+    br.com.melvin.sistema.shared.security.RateLimitPublicoFilter rateLimitPublicoFilter;
 
     @Autowired
     UrlFrontend urlFrontend;
@@ -62,7 +62,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                     // --- ROTAS PÚBLICAS (Login e leituras abertas) ---
                     // Das imagens, só a captura por id é do site (foto de embaixador e de aviso); a lista completa é da área logada.
-                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/imagens/captura/**", "/embaixador/publicos", "/app/docs/imagens_embaixadores/**", "/app/docs/imagens_avisos/**", "/aviso", "/amigomelvin/stats", "/actuator/health").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/imagens/captura/**", "/embaixador/publicos", "/app/docs/imagens_embaixadores/**", "/app/docs/imagens_avisos/**", "/aviso", "/actuator/health").permitAll()
                     // O cadastro de embaixador é só o caminho exato; o cadastro manual de Amigo (POST /amigomelvin) é da administração.
                     .requestMatchers(HttpMethod.POST, "/auth/login", "/embaixador", "/amigomelvin/subscribe", "/amigomelvin/one-time", "/amigomelvin/items", "/v1/webhooks/payments", "/cestas/solicitacao").permitAll()
                     // Frequência de alunos e ponto dos voluntários, e a consulta de voluntário por matrícula, são da
@@ -156,6 +156,9 @@ public class SecurityConfiguration {
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
                     .requestMatchers(HttpMethod.GET, "/amigomelvin").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AMIGOS")))
+                    // Total de doadores e receita mensal: dado financeiro, sem uso no site (nenhuma chamada nos logs).
+                    .requestMatchers(HttpMethod.GET, "/amigomelvin/stats").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AMIGOS")))
                     .requestMatchers(HttpMethod.GET, "/voluntario").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
 
@@ -210,7 +213,7 @@ public class SecurityConfiguration {
                     .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(cestasRateLimitFilter, SecurityFilter.class)
+                .addFilterBefore(rateLimitPublicoFilter, SecurityFilter.class)
                 .build();
     }
 

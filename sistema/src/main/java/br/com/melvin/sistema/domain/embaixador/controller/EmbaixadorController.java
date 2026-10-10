@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.melvin.sistema.domain.embaixador.dto.EmbaixadorCadastroDTO;
 import br.com.melvin.sistema.domain.embaixador.dto.EmbaixadorPublicoDTO;
 import br.com.melvin.sistema.domain.embaixador.model.Embaixador;
 import br.com.melvin.sistema.domain.embaixador.service.EmbaixadorService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -34,8 +36,8 @@ public class EmbaixadorController {
     }
 
     @PostMapping
-    public ResponseEntity<?> adicionar(@RequestBody Embaixador embaixador) {
-        return service.adicionar(embaixador);
+    public ResponseEntity<?> adicionar(@RequestBody @Valid EmbaixadorCadastroDTO dados) {
+        return service.cadastrar(dados);
     }
     
     @PutMapping

@@ -53,12 +53,12 @@ public class AmigoMelvinController {
     }
     
     @PostMapping("/one-time")
-    public ResponseEntity<?> oneTimeDonation(@RequestBody OneTimeDonationDTO dto) {
+    public ResponseEntity<?> oneTimeDonation(@Valid @RequestBody OneTimeDonationDTO dto) {
         return service.processarDoacaoUnica(dto);
     }
 
     @PostMapping("/items")
-    public ResponseEntity<?> doacaoItens(@RequestBody DoacaoItemDTO dto) {
+    public ResponseEntity<?> doacaoItens(@Valid @RequestBody DoacaoItemDTO dto) {
         return service.registrarDoacaoItem(dto);
     }
     

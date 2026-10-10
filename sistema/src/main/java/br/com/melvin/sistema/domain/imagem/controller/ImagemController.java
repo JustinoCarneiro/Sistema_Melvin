@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import br.com.melvin.sistema.shared.util.LogSanitizer;
 
 import br.com.melvin.sistema.domain.imagem.model.Imagem;
 import br.com.melvin.sistema.domain.imagem.service.ImagemService;
@@ -36,7 +37,7 @@ public class ImagemController {
 
     @GetMapping("/captura/{id}/{tipo}")
     public ResponseEntity<Imagem> capturaPorIdAtrelado(@PathVariable UUID id, @PathVariable String tipo) {
-        logger.info("Recebida solicitação GET /imagens/captura/{}/{}", id, tipo);
+        logger.info("Recebida solicitação GET /imagens/captura/{}/{}", id, LogSanitizer.limpar(tipo));
 
         Imagem imagem = service.capturaPorIdAtreladoeTipo(id, tipo);
         

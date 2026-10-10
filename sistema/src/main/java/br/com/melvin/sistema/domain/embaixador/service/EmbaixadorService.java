@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import br.com.melvin.sistema.domain.embaixador.dto.EmbaixadorCadastroDTO;
 import br.com.melvin.sistema.domain.embaixador.dto.EmbaixadorPublicoDTO;
 import br.com.melvin.sistema.domain.embaixador.model.Embaixador;
 import br.com.melvin.sistema.domain.embaixador.repository.EmbaixadorRepository;
 import br.com.melvin.sistema.shared.service.EmailService;
+import br.com.melvin.sistema.shared.util.LogSanitizer;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,17 +34,22 @@ public class EmbaixadorService {
         return repositorio.findPublicos();
     }
 
-    public ResponseEntity<?> adicionar(Embaixador embaixador){
-        if (embaixador == null) {
-            return new ResponseEntity<String>("Dados inválidos!", HttpStatus.BAD_REQUEST);
-        }
-        log.info("Recebendo nova solicitação de embaixador: {}", embaixador.getNome());
-        
-        // Garante que novos cadastros via site comecem como não aprovados e não contatados
+    // Cadastro PÚBLICO (site). Monta o Embaixador a partir dos campos que o visitante pode informar: o corpo da
+    // requisição não escolhe id (sobrescreveria um cadastro existente) nem aprovação.
+    public ResponseEntity<?> cadastrar(EmbaixadorCadastroDTO dados){
+        log.info("Recebendo nova solicitação de embaixador: {}", LogSanitizer.limpar(dados.nome()));
+
+        Embaixador embaixador = new Embaixador();
+        embaixador.setNome(dados.nome().trim());
+        embaixador.setContato(dados.contato().trim());
+        embaixador.setEmail(dados.email().trim());
+        embaixador.setInstagram(dados.instagram() == null || dados.instagram().isBlank() ? null : dados.instagram().trim());
+
+        // Novos cadastros via site começam como não aprovados e não contatados
         embaixador.setStatus(false);
         embaixador.setContatado(false);
-        
-        Embaixador savedEmbaixador = repositorio.save(embaixador);
+
+        repositorio.save(embaixador);
 
         // Notifica o solicitante
         emailService.sendEmail(
@@ -65,7 +72,8 @@ public class EmbaixadorService {
             "Acesse o painel administrativo para gerenciar esta solicitação."
         );
 
-        return new ResponseEntity<Embaixador>(savedEmbaixador, HttpStatus.CREATED);
+        // A resposta não devolve o cadastro: o visitante só precisa saber que foi recebido.
+        return new ResponseEntity<>(java.util.Map.of("mensagem", "Recebemos sua solicitação. Entraremos em contato em breve."), HttpStatus.CREATED);
     }
 
     public ResponseEntity<?> alterar(Embaixador embaixador){

@@ -6,6 +6,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 import jakarta.mail.internet.MimeMessage;
 
 import lombok.RequiredArgsConstructor;
@@ -54,10 +55,14 @@ public class EmailService {
 
         helper.setFrom("imeh@igrejadapaz.com.br", "Instituto Social Melvin");
         helper.setTo(to);
-        helper.setSubject(subject);
+        // O assunto leva dados digitados por visitantes (nome no cadastro público): quebra de linha ali
+        // viraria um cabeçalho novo no e-mail (injeção de cabeçalho).
+        helper.setSubject(subject.replaceAll("[\\r\\n]+", " "));
 
-        // Transforma as quebras de linha em <br> para manter a formatação no HTML
-        String formattedText = text.replace("\n", "<br>");
+        // Os textos são sempre texto puro, mas levam dados digitados por visitantes (nome, observações):
+        // escapar antes de entrar no template impede que virem HTML na caixa de quem recebe, em e-mail
+        // enviado pelo remetente real do Instituto. Só depois as quebras de linha viram <br>.
+        String formattedText = HtmlUtils.htmlEscape(text, "UTF-8").replace("\n", "<br>");
 
         // Template HTML elegante com as cores do Melvin
         String htmlTemplate = "<!DOCTYPE html>" +

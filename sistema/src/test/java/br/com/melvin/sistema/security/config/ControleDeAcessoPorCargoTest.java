@@ -1,5 +1,6 @@
 package br.com.melvin.sistema.security.config;
 
+import br.com.melvin.sistema.support.TestIps;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -166,6 +167,13 @@ class ControleDeAcessoPorCargoTest {
         liberado(rota, UserRole.DIRE, UserRole.ADM);
     }
 
+    @Test
+    void estatisticasDeDoacaoExigemGerenciarAmigos() throws Exception {
+        Supplier<MockHttpServletRequestBuilder> rota = () -> get("/amigomelvin/stats");
+        negado(rota, UserRole.COZI, UserRole.COOR);
+        liberado(rota, UserRole.DIRE, UserRole.ADM);
+    }
+
     // ---- exportações com dados pessoais ----
 
     @Test
@@ -222,7 +230,7 @@ class ControleDeAcessoPorCargoTest {
 
     @Test
     void soOCadastroDeEmbaixadorEPublicoNaoSeusSubcaminhos() throws Exception {
-        assertThat(status(() -> json(post("/embaixador"), "{}"), null)).isNotIn(401, 403);
+        assertThat(status(() -> json(post("/embaixador").header("X-Real-IP", TestIps.novo()), "{}"), null)).isNotIn(401, 403);
         assertThat(status(() -> json(post("/embaixador/qualquer"), "{}"), null)).isIn(401, 403);
         assertThat(status(() -> json(post("/embaixador/qualquer/coisa"), "{}"), null)).isIn(401, 403);
     }

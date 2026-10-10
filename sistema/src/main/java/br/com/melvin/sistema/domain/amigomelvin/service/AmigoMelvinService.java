@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.melvin.sistema.domain.amigomelvin.dto.AssinaturaRespostaDTO;
 import br.com.melvin.sistema.domain.amigomelvin.dto.SubscriptionRequestDTO;
 import br.com.melvin.sistema.domain.amigomelvin.model.AmigoMelvin;
 import br.com.melvin.sistema.domain.amigomelvin.model.DonorStatus;
@@ -64,6 +65,8 @@ public class AmigoMelvinService {
     }
 
     public ResponseEntity<?> adicionar(AmigoMelvin amigomelvin) {
+        // Cadastro manual (administração): sempre cria; o corpo da requisição não escolhe o id de um doador existente.
+        amigomelvin.setId(null);
         amigomelvin.setStatus(DonorStatus.PENDING);
         AmigoMelvin savedAmigoMelvin = repositorio.save(amigomelvin);
         return new ResponseEntity<AmigoMelvin>(savedAmigoMelvin, HttpStatus.CREATED);
@@ -104,10 +107,25 @@ public class AmigoMelvinService {
                         java.util.List.of(DonorStatus.PENDING, DonorStatus.ACTIVE));
             }
             if (existente == null && emailHash != null) {
-                existente = repositorio.findFirstByEmailHashAndStatusIn(emailHash,
+                // O e-mail só identifica cadastros ANTIGOS, sem CPF. Quem tem CPF é identificado por ele:
+                // pessoas diferentes (um casal, por exemplo) podem usar o mesmo e-mail sem serem o mesmo doador.
+                AmigoMelvin porEmail = repositorio.findFirstByEmailHashAndStatusIn(emailHash,
                         java.util.List.of(DonorStatus.PENDING, DonorStatus.ACTIVE));
+                if (porEmail != null && porEmail.getCpfHash() == null) {
+                    existente = porEmail;
+                }
             }
             if (existente != null) {
+                // Alterar ou substituir uma assinatura existente muda cobrança de outra pessoa. Como não há login
+                // de doador, o cadastro só é reconhecido quando o CPF E o e-mail batem com os do registro; o CPF
+                // sozinho (informação que circula) não basta.
+                if (existente.getCpfHash() != null
+                        && (emailHash == null || !emailHash.equals(existente.getEmailHash()))) {
+                    log.warn("Alteração de assinatura recusada: o CPF casa com um cadastro, mas o e-mail não.");
+                    return new ResponseEntity<>(
+                            "Já existe um cadastro com esses dados. Para alterar a sua assinatura, fale com o Instituto.",
+                            HttpStatus.CONFLICT);
+                }
                 if (DonorStatus.ACTIVE.equals(existente.getStatus())) {
                     if (existente.getValorMensal() != null
                             && existente.getValorMensal().compareTo(dto.valor()) == 0) {
@@ -129,8 +147,9 @@ public class AmigoMelvinService {
                     if (dto.mensagem() != null && !dto.mensagem().isBlank()) {
                         existente.setMensagem(dto.mensagem());
                     }
-                    AmigoMelvin atualizado = repositorio.save(existente);
-                    return new ResponseEntity<>(atualizado, HttpStatus.OK);
+                    repositorio.save(existente);
+                    // Resposta pública: nada do cadastro, só o aviso de que o valor foi atualizado.
+                    return new ResponseEntity<>(new AssinaturaRespostaDTO(null, true), HttpStatus.OK);
                 } else if (DonorStatus.PENDING.equals(existente.getStatus())) {
                     log.info("Assinatura PENDING encontrada. Cancelando a antiga para permitir nova tentativa com novo cartão.");
                     existente.setStatus(DonorStatus.CANCELLED);
@@ -181,9 +200,8 @@ public class AmigoMelvinService {
             amigo.setMensagem(dto.mensagem());
             amigo.setClientSecret(clientSecret);
 
-            AmigoMelvin savedAmigoMelvin;
             try {
-                savedAmigoMelvin = repositorio.save(amigo);
+                repositorio.save(amigo);
             } catch (org.springframework.dao.DataIntegrityViolationException dup) {
                 // Corrida: outro cadastro com o mesmo CPF venceu a constraint única
                 // (uq_amigomelvin_cpf_hash_ativo). Como o Stripe já criou a assinatura,
@@ -218,7 +236,8 @@ public class AmigoMelvinService {
                     "Contato: " + amigo.getContato() + "\n\n" +
                     "Acesse o painel administrativo para mais detalhes.");
 
-            return new ResponseEntity<>(savedAmigoMelvin, HttpStatus.CREATED);
+            // Resposta pública: só o clientSecret para o site confirmar o primeiro pagamento (3D Secure).
+            return new ResponseEntity<>(new AssinaturaRespostaDTO(clientSecret, false), HttpStatus.CREATED);
         } catch (com.stripe.exception.StripeException e) {
             log.error("Erro ao processar assinatura no Stripe", e);
             return new ResponseEntity<>("Erro ao processar assinatura no Stripe: " + e.getMessage(),

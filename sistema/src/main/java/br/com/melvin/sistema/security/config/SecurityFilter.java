@@ -58,7 +58,7 @@ public class SecurityFilter extends OncePerRequestFilter{
 
         // Check if the request URI and method match any public endpoints
         if (isPublicEndpoint(method, requestURI)) {
-            logger.info("Public endpoint accessed: {} {}", method, requestURI);
+            logger.debug("Public endpoint accessed: {} {}", method, requestURI);
             filterChain.doFilter(request, response);
             return;
         }
@@ -67,18 +67,18 @@ public class SecurityFilter extends OncePerRequestFilter{
         if(token != null){
             logger.debug("Token found in request");
             var login = tokenService.validateToken(token);
-            logger.info("Login extracted from token: {}", login);
+            logger.debug("Login extracted from token: {}", login);
             UserDetails user = userRepository.findByLogin(login);
 
             if (user != null) {
-                logger.info("User found: {}", user.getUsername());
+                logger.debug("User found: {}", user.getUsername());
                 var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {
-                logger.warn("User not found for login: {}", login);
+                logger.debug("User not found for login: {}", login);
             }
         } else {
-            logger.info("No token found in request");
+            logger.debug("No token found in request");
         }
         filterChain.doFilter(request, response);
     }
@@ -86,7 +86,7 @@ public class SecurityFilter extends OncePerRequestFilter{
     private String recoverToken(HttpServletRequest request){
         var authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if(authHeader == null) {
-            logger.info("No Authorization header found");
+            logger.debug("No Authorization header found");
             return null;
         }
         logger.debug("Authorization header found");

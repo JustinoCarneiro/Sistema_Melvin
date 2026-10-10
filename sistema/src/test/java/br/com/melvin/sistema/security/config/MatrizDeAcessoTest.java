@@ -1,5 +1,6 @@
 package br.com.melvin.sistema.security.config;
 
+import br.com.melvin.sistema.support.TestIps;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,6 @@ class MatrizDeAcessoTest {
     private static final String TABELA = """
             PUBLICA   POST    /amigomelvin/items
             PUBLICA   POST    /amigomelvin/one-time
-            PUBLICA   GET     /amigomelvin/stats
             PUBLICA   POST    /amigomelvin/subscribe
             PUBLICA   POST    /auth/login
             PUBLICA   GET     /aviso
@@ -86,6 +86,7 @@ class MatrizDeAcessoTest {
             RESTRITA  GET     /amigomelvin
             RESTRITA  POST    /amigomelvin
             RESTRITA  PUT     /amigomelvin
+            RESTRITA  GET     /amigomelvin/stats
             RESTRITA  POST    /amigomelvin/{id}/cancelar
             RESTRITA  PUT     /auth/alterar_role/{matricula}/{role}
             RESTRITA  PUT     /auth/alterar_senha
@@ -183,7 +184,8 @@ class MatrizDeAcessoTest {
 
     private MockHttpServletRequestBuilder requisicao(String metodo, String padrao) {
         String caminho = padrao.replaceAll("\\{[^/}]*\\}", "1");
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.request(HttpMethod.valueOf(metodo), caminho);
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.request(HttpMethod.valueOf(metodo), caminho)
+                .header("X-Real-IP", TestIps.novo());
         if (!"GET".equals(metodo) && !"DELETE".equals(metodo)) {
             String corpo = "{}";
             if (padrao.equals("/frequenciavoluntario")) {
