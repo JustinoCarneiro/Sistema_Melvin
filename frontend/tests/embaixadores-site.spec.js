@@ -13,11 +13,10 @@ test.describe('Site — Embaixadores (lista pública)', () => {
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify([
-        { id: 'a1', nome: 'Maria Publica', descricao: 'Apoia o projeto desde o início' },
-        { id: 'a2', nome: 'Carlos Aprovado', descricao: 'Divulga o Instituto na comunidade' },
+        { id: 'a1', nome: 'Maria Publica', descricao: 'Apoia o projeto desde o início', fotoPath: '/app/docs/imagens_embaixadores/maria.jpg' },
+        { id: 'a2', nome: 'Carlos Aprovado', descricao: 'Divulga o Instituto na comunidade', fotoPath: null },
       ]),
     }));
-    await page.route('**/imagens/lista', route => route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }));
 
     await page.goto('/#/embaixadores');
 
@@ -33,6 +32,10 @@ test.describe('Site — Embaixadores (lista pública)', () => {
       for (let n = el; n && n !== document.body; n = n.parentElement) opacidade = Math.min(opacidade, Number(getComputedStyle(n).opacity));
       return opacidade;
     })).toBe(1);
+
+    // A foto vem junto na lista pública: nada de baixar a lista de imagens (que é da área logada).
+    await expect(page.getByRole('img', { name: 'Maria Publica' })).toHaveAttribute('src', /\/app\/docs\/imagens_embaixadores\/maria\.jpg$/);
+    expect(pedidos.filter(caminho => caminho.endsWith('/imagens/lista'))).toEqual([]);
 
     expect(pedidos.filter(caminho => caminho.endsWith('/embaixador'))).toEqual([]);
     expect(pedidos.some(caminho => caminho.endsWith('/embaixador/publicos'))).toBe(true);

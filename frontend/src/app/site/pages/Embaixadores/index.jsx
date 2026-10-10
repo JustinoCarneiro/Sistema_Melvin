@@ -66,23 +66,11 @@ const Embaixadores = () => {
                     return;
                 }
 
-                const embaixadoresData = await Promise.all(dados
-                    .map(async embaixador => {
-                        try {
-                            const imagemResponse = await get.imagemlista();
-                            const imagemData = Array.isArray(imagemResponse.data) ? imagemResponse.data : [];
-                            const imagemParaEmbaixador = imagemData.find(imagem => imagem.idAtrelado === embaixador.id && imagem.tipo === 'embaixador');
-
-                            if (imagemParaEmbaixador) {
-                                const imageUrl = `${import.meta.env.VITE_REACT_APP_FETCH_URL}${imagemParaEmbaixador.filePath}`;
-                                return { ...embaixador, imageUrl };
-                            }
-                            return { ...embaixador, imageUrl: null };
-                        } catch (imageError) {
-                            return { ...embaixador, imageUrl: null };
-                        }
-                    })
-                );
+                // A foto vem na própria lista pública (fotoPath); a lista de imagens é da área logada.
+                const embaixadoresData = dados.map(embaixador => ({
+                    ...embaixador,
+                    imageUrl: embaixador.fotoPath ? `${import.meta.env.VITE_REACT_APP_FETCH_URL}${embaixador.fotoPath}` : null
+                }));
 
                 setEmbaixadores(embaixadoresData);
                 setLoading(false);
