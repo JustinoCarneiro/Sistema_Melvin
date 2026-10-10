@@ -3,7 +3,9 @@ package br.com.melvin.sistema.domain.dashboard.controller;
 import br.com.melvin.sistema.domain.dashboard.dto.AlunoRankingDTO;
 import br.com.melvin.sistema.domain.aviso.model.Aviso; 
 import br.com.melvin.sistema.domain.dashboard.service.DashboardService;
+import br.com.melvin.sistema.domain.dashboard.service.NotaPsicologicaAcesso;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +27,8 @@ public class DashboardController {
     }
 
     @GetMapping("/ranking")
-    public List<AlunoRankingDTO> getRankingAlunos(@RequestParam(defaultValue = "media") String sortBy) {
-        return service.getRankingAlunos(5, sortBy); // Retorna o Top 5
+    public List<AlunoRankingDTO> getRankingAlunos(@RequestParam(defaultValue = "media") String sortBy, Authentication authentication) {
+        return service.getRankingAlunos(5, sortBy, NotaPsicologicaAcesso.podeVer(authentication)); // Retorna o Top 5
     }
 
     // 2. Adicione o novo endpoint para buscar os avisos ativos

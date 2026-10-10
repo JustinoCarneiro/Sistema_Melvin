@@ -7,11 +7,22 @@ const RANKING_MOCK = [
 ];
 const ALERTAS_COM_FALTAS = [{ matricula: '2026001', nome: 'Aluno Crítico', quantidade: 6 }];
 
-async function acessarComo(page, role) {
+async function acessarComo(page, role, { permissoes, atrasoPermissoesMs = 0 } = {}) {
   await page.context().addCookies([{ name: 'role', value: role, domain: 'localhost', path: '/' }]);
   await page.route('**/auth/role_*', route => route.fulfill({ status: 200, body: role }));
+  if (permissoes) {
+    await page.route('**/permissoes/minhas*', async route => {
+      if (route.request().url().includes('.js')) return route.continue();
+      if (atrasoPermissoesMs) await new Promise(resolve => setTimeout(resolve, atrasoPermissoesMs));
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(permissoes) });
+    });
+  }
   await page.goto(`/#/app/${role.toLowerCase()}`);
 }
+
+const seletorOrdenacao = 'select[class*="selectFilter"]';
+const OPCOES_COM_PSICOLOGICO = ['Média Geral', 'Presença', 'Participação', 'Comportamento', 'Rendimento', 'Psicológico'];
+const OPCOES_SEM_PSICOLOGICO = ['Média Pedagógica', 'Presença', 'Participação', 'Comportamento', 'Rendimento'];
 
 test.describe('Dashboard', () => {
   test.beforeEach(async ({ page }) => {
@@ -98,16 +109,57 @@ test.describe('Dashboard', () => {
     }
   });
 
-  test('não consulta nem exibe ranking para administração', async ({ page }) => {
+  test('docente com Visualizar Relatórios vê Destaques com Média Pedagógica e sem opção Psicológico', async ({ page }) => {
+    const sortBys = [];
+    page.on('request', request => {
+      const m = request.url().match(/dashboard\/ranking\?.*sortBy=([^&]+)/);
+      if (m) sortBys.push(m[1]);
+    });
+
+    await acessarComo(page, 'PROF', { permissoes: ['VISUALIZAR_RELATORIOS'] });
+
+    await expect(page.locator('h3', { hasText: 'Destaques' })).toBeVisible();
+    await expect(page.locator('h3', { hasText: 'Atenção Necessária' })).toBeVisible();
+    await expect(page.locator('li', { hasText: 'Aluno Top' }).first()).toBeVisible();
+    await expect(page.locator(seletorOrdenacao).locator('option')).toHaveText(OPCOES_SEM_PSICOLOGICO);
+    expect(sortBys).toContain('media');
+    expect(sortBys).not.toContain('psicologico');
+  });
+
+  test('carrega o ranking do docente mesmo quando as permissões chegam depois do painel', async ({ page }) => {
+    await acessarComo(page, 'PROF', { permissoes: ['VISUALIZAR_RELATORIOS'], atrasoPermissoesMs: 1200 });
+
+    await expect(page.locator('h3', { hasText: 'Destaques' })).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('li', { hasText: 'Aluno Top' }).first()).toBeVisible();
+  });
+
+  test('psicologia e coordenação veem Média Geral e a opção Psicológico, sem depender da permissão de relatórios', async ({ page }) => {
+    for (const role of ['PSICO', 'COOR']) {
+      await acessarComo(page, role, { permissoes: [] });
+
+      await expect(page.locator('h3', { hasText: 'Destaques' })).toBeVisible();
+      await expect(page.locator(seletorOrdenacao).locator('option')).toHaveText(OPCOES_COM_PSICOLOGICO);
+    }
+  });
+
+  test('administração vê Destaques com Média Pedagógica e sem opção Psicológico', async ({ page }) => {
+    await page.goto('/#/app/adm');
+
+    await expect(page.locator('h3', { hasText: 'Destaques' })).toBeVisible();
+    await expect(page.locator(seletorOrdenacao).locator('option')).toHaveText(OPCOES_SEM_PSICOLOGICO);
+  });
+
+  test('cargo sem Visualizar Relatórios não consulta nem exibe o ranking', async ({ page }) => {
     const rankingRequests = [];
     page.on('request', request => {
       if (request.url().includes('/dashboard/ranking')) rankingRequests.push(request.url());
     });
 
-    await page.goto('/#/app/adm');
+    await acessarComo(page, 'COZI', { permissoes: ['GERENCIAR_FREQUENCIA'] });
 
     await expect(page.locator('h3', { hasText: 'Frequência do Dia' })).toBeVisible();
     await expect(page.locator('h3', { hasText: 'Destaques' })).toHaveCount(0);
+    await expect(page.locator('h3', { hasText: 'Atenção Necessária' })).toHaveCount(0);
     expect(rankingRequests).toHaveLength(0);
   });
 });

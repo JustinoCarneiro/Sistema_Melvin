@@ -15,12 +15,21 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Regra do ranking (Destaques): quem tem VISUALIZAR_RELATORIOS vê as categorias pedagógicas e a
+ * média de quatro notas; a ordenação psicológica e a média com a nota psicológica ficam só
+ * para PSICO e COOR.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -35,66 +44,167 @@ class DashboardRankingSecurityTest {
     @MockBean
     private DashboardService dashboardService;
 
+    private void relatorios(boolean liberado) {
+        when(permissaoService.hasPermission(any(Authentication.class), eq("VISUALIZAR_RELATORIOS")))
+                .thenReturn(liberado);
+    }
+
+    // ---- docência e demais cargos com Visualizar Relatórios: sem nota psicológica ----
+
     @Test
     @WithMockUser(roles = "PROF")
-    void negaRankingPsicologicoAoProfessorMesmoComPermissaoDeRelatorios() throws Exception {
-        when(permissaoService.hasPermission(any(Authentication.class), eq("VISUALIZAR_RELATORIOS")))
-                .thenReturn(true);
+    void permiteMediaPedagogicaAoProfessorComPermissaoDeRelatorios() throws Exception {
+        relatorios(true);
+        when(dashboardService.getRankingAlunos(5, "media", false)).thenReturn(List.of());
 
-        mockMvc.perform(get("/dashboard/ranking").param("sortBy", "psicologico"))
-                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/dashboard/ranking"))
+                .andExpect(status().isOk());
+
+        verify(dashboardService).getRankingAlunos(5, "media", false);
+    }
+
+    @Test
+    @WithMockUser(roles = "PROF")
+    void permiteCategoriaPedagogicaAoProfessor() throws Exception {
+        relatorios(true);
+        when(dashboardService.getRankingAlunos(5, "comportamento", false)).thenReturn(List.of());
+
+        mockMvc.perform(get("/dashboard/ranking").param("sortBy", "comportamento"))
+                .andExpect(status().isOk());
+
+        verify(dashboardService).getRankingAlunos(5, "comportamento", false);
     }
 
     @Test
     @WithMockUser(roles = "ASSIST")
-    void negaMediaQueIncluiNotaPsicologicaAAssistencia() throws Exception {
-        when(permissaoService.hasPermission(any(Authentication.class), eq("VISUALIZAR_RELATORIOS")))
-                .thenReturn(true);
+    void permiteMediaPedagogicaAAssistenciaComPermissao() throws Exception {
+        relatorios(true);
+        when(dashboardService.getRankingAlunos(5, "media", false)).thenReturn(List.of());
+
+        mockMvc.perform(get("/dashboard/ranking"))
+                .andExpect(status().isOk());
+
+        verify(dashboardService).getRankingAlunos(5, "media", false);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADM")
+    void permiteMediaPedagogicaAAdministracaoComPermissao() throws Exception {
+        relatorios(true);
+        when(dashboardService.getRankingAlunos(5, "media", false)).thenReturn(List.of());
+
+        mockMvc.perform(get("/dashboard/ranking"))
+                .andExpect(status().isOk());
+
+        verify(dashboardService).getRankingAlunos(5, "media", false);
+    }
+
+    @Test
+    @WithMockUser(roles = "PROF")
+    void negaAoProfessorSemPermissaoDeRelatorios() throws Exception {
+        relatorios(false);
 
         mockMvc.perform(get("/dashboard/ranking"))
                 .andExpect(status().isForbidden());
+
+        verify(dashboardService, never()).getRankingAlunos(anyInt(), anyString(), anyBoolean());
     }
 
     @Test
     @WithMockUser(roles = "COZI")
-    void negaRankingACozinha() throws Exception {
-        when(permissaoService.hasPermission(any(Authentication.class), eq("VISUALIZAR_RELATORIOS")))
-                .thenReturn(false);
+    void negaRankingACozinhaSemPermissao() throws Exception {
+        relatorios(false);
+
+        mockMvc.perform(get("/dashboard/ranking"))
+                .andExpect(status().isForbidden());
+
+        verify(dashboardService, never()).getRankingAlunos(anyInt(), anyString(), anyBoolean());
+    }
+
+    // ---- nota psicológica: só PSICO e COOR ----
+
+    @Test
+    @WithMockUser(roles = "PROF")
+    void negaRankingPsicologicoAoProfessorMesmoComPermissaoDeRelatorios() throws Exception {
+        relatorios(true);
 
         mockMvc.perform(get("/dashboard/ranking").param("sortBy", "psicologico"))
+                .andExpect(status().isForbidden());
+
+        verify(dashboardService, never()).getRankingAlunos(anyInt(), anyString(), anyBoolean());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADM")
+    void negaRankingPsicologicoAAdministracao() throws Exception {
+        relatorios(true);
+
+        mockMvc.perform(get("/dashboard/ranking").param("sortBy", "psicologico"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "PROF")
+    void negaRankingPsicologicoQuandoOParametroVemRepetido() throws Exception {
+        relatorios(true);
+
+        mockMvc.perform(get("/dashboard/ranking").param("sortBy", "media", "psicologico"))
+                .andExpect(status().isForbidden());
+
+        verify(dashboardService, never()).getRankingAlunos(anyInt(), anyString(), anyBoolean());
+    }
+
+    @Test
+    @WithMockUser(roles = "PROF")
+    void negaRankingPsicologicoIgnorandoMaiusculas() throws Exception {
+        relatorios(true);
+
+        mockMvc.perform(get("/dashboard/ranking").param("sortBy", "PSICOLOGICO"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(roles = "PSICO")
     void permiteRankingPsicologicoAoPsicologo() throws Exception {
-        when(dashboardService.getRankingAlunos(5, "psicologico")).thenReturn(List.of());
+        when(dashboardService.getRankingAlunos(5, "psicologico", true)).thenReturn(List.of());
 
         mockMvc.perform(get("/dashboard/ranking").param("sortBy", "psicologico"))
                 .andExpect(status().isOk());
 
-        verify(dashboardService).getRankingAlunos(5, "psicologico");
+        verify(dashboardService).getRankingAlunos(5, "psicologico", true);
     }
 
     @Test
     @WithMockUser(roles = "COOR")
-    void permiteMediaGeralACoordenacao() throws Exception {
-        when(dashboardService.getRankingAlunos(5, "media")).thenReturn(List.of());
+    void permiteMediaComNotaPsicologicaACoordenacao() throws Exception {
+        when(dashboardService.getRankingAlunos(5, "media", true)).thenReturn(List.of());
 
         mockMvc.perform(get("/dashboard/ranking"))
                 .andExpect(status().isOk());
 
-        verify(dashboardService).getRankingAlunos(5, "media");
+        verify(dashboardService).getRankingAlunos(5, "media", true);
     }
 
     @Test
-    @WithMockUser(roles = "ADM")
-    void negaRankingAAdministracao() throws Exception {
-        when(permissaoService.hasPermission(any(Authentication.class), eq("VISUALIZAR_RELATORIOS")))
-                .thenReturn(true);
+    @WithMockUser(roles = "COOR")
+    void psicologiaECoordenacaoNaoDependemDaPermissaoDeRelatorios() throws Exception {
+        relatorios(false);
+        when(dashboardService.getRankingAlunos(5, "psicologico", true)).thenReturn(List.of());
+
+        mockMvc.perform(get("/dashboard/ranking").param("sortBy", "psicologico"))
+                .andExpect(status().isOk());
+    }
+
+    // ---- sem login e rotas vizinhas ----
+
+    @Test
+    void negaRankingSemLoginMesmoSeAPermissaoForSimuladaComoLiberada() throws Exception {
+        relatorios(true);
 
         mockMvc.perform(get("/dashboard/ranking"))
                 .andExpect(status().isForbidden());
+
+        verify(dashboardService, never()).getRankingAlunos(anyInt(), anyString(), anyBoolean());
     }
 
     @Test

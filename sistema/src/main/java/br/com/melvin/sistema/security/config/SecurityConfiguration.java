@@ -13,11 +13,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,6 +27,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.authorization.AuthorizationDecision;
 
 import org.springframework.web.cors.CorsConfiguration;
+import br.com.melvin.sistema.domain.dashboard.service.NotaPsicologicaAcesso;
 import br.com.melvin.sistema.domain.permissao.service.PermissaoService;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -64,11 +67,25 @@ public class SecurityConfiguration {
 
                     // --- ROTAS AUTENTICADAS GERAIS ---
                     .requestMatchers(HttpMethod.GET, "/auth/role_{matricula}").authenticated()
-                    // /dashboard/ranking inclui nota psicológica até na média padrão.
-                    // Somente psicologia e coordenação podem consultar qualquer ordenação.
+                    // /dashboard/ranking: quem tem VISUALIZAR_RELATORIOS vê as categorias pedagógicas e a
+                    // média de quatro notas. A ordenação psicológica (e a média que a inclui, calculada no
+                    // serviço) é só de PSICO e COOR, que também não dependem da permissão.
                     // A regra precisa vir antes do /dashboard/** genérico.
                     // Achado de segurança: memoria-tecnica/bugs/dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica.md
-                    .requestMatchers(HttpMethod.GET, "/dashboard/ranking").hasAnyRole("PSICO", "COOR")
+                    .requestMatchers(HttpMethod.GET, "/dashboard/ranking").access((authentication, context) -> {
+                        Authentication auth = authentication.get();
+                        if (auth == null || auth instanceof AnonymousAuthenticationToken || !auth.isAuthenticated()) {
+                            return new AuthorizationDecision(false);
+                        }
+                        if (NotaPsicologicaAcesso.podeVer(auth)) {
+                            return new AuthorizationDecision(true);
+                        }
+                        String[] ordenacoes = context.getRequest().getParameterValues("sortBy");
+                        boolean pedePsicologico = ordenacoes != null
+                                && Arrays.stream(ordenacoes).anyMatch("psicologico"::equalsIgnoreCase);
+                        return new AuthorizationDecision(!pedePsicologico
+                                && permissaoService.hasPermission(auth, "VISUALIZAR_RELATORIOS"));
+                    })
                     .requestMatchers(HttpMethod.GET, "/dashboard/**").authenticated()
                     .requestMatchers(HttpMethod.GET, "/permissoes/minhas").authenticated()
                     .requestMatchers(HttpMethod.PUT, "/discente/{matricula}/avaliacoes").access((authentication, context) -> 

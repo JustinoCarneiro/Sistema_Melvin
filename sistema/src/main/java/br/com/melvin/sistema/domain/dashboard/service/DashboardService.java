@@ -7,6 +7,7 @@ import br.com.melvin.sistema.domain.aviso.repository.AvisoRepository;
 import br.com.melvin.sistema.domain.frequencia.repository.FrequenciaDiscenteRepository;
 import br.com.melvin.sistema.domain.discente.repository.DiscenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -38,7 +39,12 @@ public class DashboardService {
     }
 
     // MÉTODO DE RANKING ATUALIZADO PARA ACEITAR ORDENAÇÃO
-    public List<AlunoRankingDTO> getRankingAlunos(int limit, String sortBy) {
+    // incluiNotaPsicologica: só Psicologia e Coordenação. Sem ele, a ordenação "psicologico" é
+    // negada e a média usa apenas as quatro notas pedagógicas.
+    public List<AlunoRankingDTO> getRankingAlunos(int limit, String sortBy, boolean incluiNotaPsicologica) {
+        if (!incluiNotaPsicologica && "psicologico".equalsIgnoreCase(sortBy)) {
+            throw new AccessDeniedException("A ordenação por nota psicológica é restrita a Psicologia e Coordenação.");
+        }
         List<Discente> todosDiscentes = discenteRepository.findAll();
 
         // Define o comparador com base no critério 'sortBy'
@@ -65,13 +71,14 @@ public class DashboardService {
         } else {
             rankingStream = todosDiscentes.stream()
                 .map(discente -> {
-                    double media = (
+                    double notasPedagogicas =
                         (discente.getAvaliacaoPresenca() != null ? discente.getAvaliacaoPresenca() : 0.0) +
                         (discente.getAvaliacaoParticipacao() != null ? discente.getAvaliacaoParticipacao() : 0.0) +
                         (discente.getAvaliacaoComportamento() != null ? discente.getAvaliacaoComportamento() : 0.0) +
-                        (discente.getAvaliacaoRendimento() != null ? discente.getAvaliacaoRendimento() : 0.0) +
-                        (discente.getAvaliacaoPsicologico() != null ? discente.getAvaliacaoPsicologico() : 0.0)
-                    ) / 5.0;
+                        (discente.getAvaliacaoRendimento() != null ? discente.getAvaliacaoRendimento() : 0.0);
+                    double media = incluiNotaPsicologica
+                        ? (notasPedagogicas + (discente.getAvaliacaoPsicologico() != null ? discente.getAvaliacaoPsicologico() : 0.0)) / 5.0
+                        : notasPedagogicas / 4.0;
                     return new AlunoRankingDTO(discente.getNome(), discente.getMatricula(), media);
                 })
                 .sorted(Comparator.comparing(AlunoRankingDTO::getMediaGeral).reversed());

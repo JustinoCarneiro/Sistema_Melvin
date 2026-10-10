@@ -2,9 +2,14 @@ import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import dashboardService from '../api/dashboardService';
 import frequenciaService from '@core/services/frequenciaService';
+import { usePermissions } from '@core/hooks/usePermissions';
 
 export function useDashboard() {
-    const canViewRanking = ['PSICO', 'COOR'].includes(Cookies.get('role'));
+    const { hasPermission, loading: loadingPermissoes } = usePermissions();
+    // Psicologia e Coordenação veem tudo, inclusive a nota psicológica; os demais cargos com
+    // "Visualizar Relatórios" veem o ranking pedagógico (o servidor aplica a mesma regra).
+    const canViewPsychRanking = ['PSICO', 'COOR'].includes(Cookies.get('role'));
+    const canViewRanking = canViewPsychRanking || hasPermission('VISUALIZAR_RELATORIOS');
     const [frequenciaPorSala, setFrequenciaPorSala] = useState({ manha: {}, tarde: {} });
     const [rankingMelhores, setRankingMelhores] = useState([]);
     const [rankingPiores, setRankingPiores] = useState([]);
@@ -23,10 +28,9 @@ export function useDashboard() {
             setError(null);
             try {
                 const now = new Date();
-                const [frequenciaRes, avisosRes, rankingRes, alertasRes] = await Promise.all([
+                const [frequenciaRes, avisosRes, alertasRes] = await Promise.all([
                     frequenciaService.listDiscente(new Date().toISOString().split('T')[0]),
                     dashboardService.getAvisos(),
-                    canViewRanking ? dashboardService.getRanking(rankingSortBy) : Promise.resolve({ data: [] }),
                     frequenciaService.getAlertasFaltas(now.getMonth() + 1, now.getFullYear())
                 ]);
 
@@ -42,9 +46,6 @@ export function useDashboard() {
                 freqPorSala.tarde.total = Object.values(freqPorSala.tarde).reduce((a, b) => a + b, 0);
                 setFrequenciaPorSala(freqPorSala);
                 setAvisos(avisosRes.data || []);
-                const ranking = rankingRes.data || [];
-                setRankingMelhores(ranking);
-                setRankingPiores([...ranking].sort((a, b) => a.mediaGeral - b.mediaGeral));
 
                 setAlertasFaltas(alertasRes.data || []);
 
@@ -55,13 +56,12 @@ export function useDashboard() {
             }
         };
         fetchInitialData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // Roda apenas uma vez
 
-    // Efeito SEPARADO apenas para ATUALIZAR o ranking
+    // Efeito SEPARADO para CARREGAR e ATUALIZAR o ranking. Espera o painel terminar de carregar e as
+    // permissões chegarem, porque o perfil que habilita o ranking só é conhecido depois delas.
     useEffect(() => {
-        // Não roda na carga inicial
-        if (loading || !canViewRanking) return;
+        if (loading || loadingPermissoes || !canViewRanking) return;
 
         const fetchRankingData = async () => {
             setIsRankingLoading(true); // 2. Ativa o loading SÓ do ranking
@@ -79,8 +79,7 @@ export function useDashboard() {
         };
 
         fetchRankingData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [rankingSortBy, canViewRanking]); // Roda apenas quando o filtro muda ou o perfil habilita o ranking
+    }, [rankingSortBy, canViewRanking, loading, loadingPermissoes]); // Roda quando o filtro muda ou o perfil habilita o ranking
 
     return { 
         loading, 
@@ -91,6 +90,7 @@ export function useDashboard() {
         rankingMelhores, 
         rankingPiores,
         canViewRanking,
+        canViewPsychRanking,
         rankingSortBy,
         setRankingSortBy,
         alertasFaltas

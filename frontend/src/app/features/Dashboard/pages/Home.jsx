@@ -12,6 +12,7 @@ function Home() {
         rankingMelhores, 
         rankingPiores, 
         canViewRanking,
+        canViewPsychRanking,
         rankingSortBy, 
         setRankingSortBy,
         alertasFaltas
@@ -27,13 +28,15 @@ function Home() {
         }
     };
 
+    // Nota psicológica (ordenação e média que a inclui) é só de Psicologia e Coordenação;
+    // os demais veem a média das quatro notas pedagógicas, com outro nome para não serem comparadas.
     const rankingOptions = [
-        { value: 'media', label: 'Média Geral' },
+        { value: 'media', label: canViewPsychRanking ? 'Média Geral' : 'Média Pedagógica' },
         { value: 'presenca', label: 'Presença' },
         { value: 'participacao', label: 'Participação' },
         { value: 'comportamento', label: 'Comportamento' },
         { value: 'rendimento', label: 'Rendimento' },
-        { value: 'psicologico', label: 'Psicológico' },
+        ...(canViewPsychRanking ? [{ value: 'psicologico', label: 'Psicológico' }] : []),
     ];
 
     if (loading) return (

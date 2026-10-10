@@ -9,11 +9,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,7 +81,7 @@ public class DashboardServiceTest {
         when(discenteRepository.findAll()).thenReturn(Arrays.asList(aluno1, aluno2, aluno3, alunoComNulls));
 
         // Testando a média geral
-        List<AlunoRankingDTO> ranking = dashboardService.getRankingAlunos(3, "geral");
+        List<AlunoRankingDTO> ranking = dashboardService.getRankingAlunos(3, "geral", true);
 
         assertThat(ranking).hasSize(3);
         assertThat(ranking.get(0).getNome()).isEqualTo("Aluno C"); // Media 10.0
@@ -95,7 +98,7 @@ public class DashboardServiceTest {
     void deveLidarComValoresNulosNoCalculoDeMediaGeral() {
         when(discenteRepository.findAll()).thenReturn(Arrays.asList(alunoComNulls));
 
-        List<AlunoRankingDTO> ranking = dashboardService.getRankingAlunos(1, "geral");
+        List<AlunoRankingDTO> ranking = dashboardService.getRankingAlunos(1, "geral", true);
 
         assertThat(ranking).hasSize(1);
         assertThat(ranking.get(0).getNome()).isEqualTo("Aluno D");
@@ -106,12 +109,96 @@ public class DashboardServiceTest {
     void deveRetornarRankingOrdenadoPorCategoriaEspecifica() {
         when(discenteRepository.findAll()).thenReturn(Arrays.asList(aluno1, aluno2, aluno3, alunoComNulls));
 
-        List<AlunoRankingDTO> ranking = dashboardService.getRankingAlunos(4, "presenca");
+        List<AlunoRankingDTO> ranking = dashboardService.getRankingAlunos(4, "presenca", true);
 
         assertThat(ranking).hasSize(4);
         assertThat(ranking.get(0).getNome()).isEqualTo("Aluno C"); // Presenca 10
         assertThat(ranking.get(1).getNome()).isEqualTo("Aluno A"); // Presenca 10
         assertThat(ranking.get(2).getNome()).isEqualTo("Aluno B"); // Presenca 8
         assertThat(ranking.get(3).getNome()).isEqualTo("Aluno D"); // Presenca nula (0.0) -> Pega como 0 ou último
+    }
+
+    // ---- Média sem a nota psicológica (quem não é Psicologia nem Coordenação) ----
+
+    private Discente aluno(String matricula, String nome, double pres, double part, double comp, double rend, double psico) {
+        Discente d = new Discente();
+        d.setMatricula(matricula);
+        d.setNome(nome);
+        d.setAvaliacaoPresenca(pres);
+        d.setAvaliacaoParticipacao(part);
+        d.setAvaliacaoComportamento(comp);
+        d.setAvaliacaoRendimento(rend);
+        d.setAvaliacaoPsicologico(psico);
+        return d;
+    }
+
+    @Test
+    void semAcessoPsicologicoAMediaIgnoraANotaPsicologicaEUsaQuatroNotas() {
+        // X: (8+6+10+8)/4 = 8.0 sem psicológica; (8+6+10+8+2)/5 = 6.8 com ela
+        // Y: (7+7+7+7)/4 = 7.0 sem psicológica; (7+7+7+7+10)/5 = 7.6 com ela
+        Discente x = aluno("901", "Aluno X", 8, 6, 10, 8, 2);
+        Discente y = aluno("902", "Aluno Y", 7, 7, 7, 7, 10);
+        when(discenteRepository.findAll()).thenReturn(Arrays.asList(x, y));
+
+        List<AlunoRankingDTO> ranking = dashboardService.getRankingAlunos(5, "media", false);
+
+        assertThat(ranking).extracting(AlunoRankingDTO::getNome).containsExactly("Aluno X", "Aluno Y");
+        assertThat(ranking.get(0).getMediaGeral()).isEqualTo(8.0);
+        assertThat(ranking.get(1).getMediaGeral()).isEqualTo(7.0);
+    }
+
+    @Test
+    void comAcessoPsicologicoAMediaContinuaUsandoAsCincoNotas() {
+        Discente x = aluno("901", "Aluno X", 8, 6, 10, 8, 2);
+        Discente y = aluno("902", "Aluno Y", 7, 7, 7, 7, 10);
+        when(discenteRepository.findAll()).thenReturn(Arrays.asList(x, y));
+
+        List<AlunoRankingDTO> ranking = dashboardService.getRankingAlunos(5, "media", true);
+
+        assertThat(ranking).extracting(AlunoRankingDTO::getNome).containsExactly("Aluno Y", "Aluno X");
+        assertThat(ranking.get(0).getMediaGeral()).isEqualTo(7.6);
+        assertThat(ranking.get(1).getMediaGeral()).isEqualTo(6.8);
+    }
+
+    @Test
+    void semAcessoPsicologicoNotasNulasContamComoZeroNaMediaDeQuatro() {
+        // D: (0+0+10+10)/4 = 5.0
+        when(discenteRepository.findAll()).thenReturn(Arrays.asList(alunoComNulls));
+
+        List<AlunoRankingDTO> ranking = dashboardService.getRankingAlunos(1, "media", false);
+
+        assertThat(ranking.get(0).getMediaGeral()).isEqualTo(5.0);
+    }
+
+    @Test
+    void semAcessoPsicologicoNegaAOrdenacaoPsicologicaSemLerOBanco() {
+        assertThatThrownBy(() -> dashboardService.getRankingAlunos(5, "psicologico", false))
+                .isInstanceOf(AccessDeniedException.class);
+
+        verifyNoInteractions(discenteRepository);
+    }
+
+    @Test
+    void comAcessoPsicologicoOrdenaPelaNotaPsicologica() {
+        Discente x = aluno("901", "Aluno X", 8, 6, 10, 8, 2);
+        Discente y = aluno("902", "Aluno Y", 7, 7, 7, 7, 10);
+        when(discenteRepository.findAll()).thenReturn(Arrays.asList(x, y));
+
+        List<AlunoRankingDTO> ranking = dashboardService.getRankingAlunos(5, "psicologico", true);
+
+        assertThat(ranking).extracting(AlunoRankingDTO::getNome).containsExactly("Aluno Y", "Aluno X");
+        assertThat(ranking.get(0).getMediaGeral()).isEqualTo(10.0);
+    }
+
+    @Test
+    void semAcessoPsicologicoAsCategoriasPedagogicasContinuamDisponiveis() {
+        Discente x = aluno("901", "Aluno X", 8, 6, 10, 8, 2);
+        Discente y = aluno("902", "Aluno Y", 7, 7, 7, 7, 10);
+        when(discenteRepository.findAll()).thenReturn(Arrays.asList(x, y));
+
+        List<AlunoRankingDTO> ranking = dashboardService.getRankingAlunos(5, "comportamento", false);
+
+        assertThat(ranking).extracting(AlunoRankingDTO::getNome).containsExactly("Aluno X", "Aluno Y");
+        assertThat(ranking.get(0).getMediaGeral()).isEqualTo(10.0);
     }
 }
