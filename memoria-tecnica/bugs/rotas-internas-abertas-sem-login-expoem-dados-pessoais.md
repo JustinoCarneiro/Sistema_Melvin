@@ -2,7 +2,7 @@
 tipo: bug
 data: 2026-10-10
 severidade: Alta
-status: Corrigido e publicado em produção em 10/10/2026 (1º lote)
+status: Corrigido e publicado em produção em 10/10/2026 (1º e 2º lotes)
 ---
 
 # Rotas internas respondiam sem login e expunham dados pessoais
@@ -61,6 +61,26 @@ site público consome, e por isso continua aberta.
   sem erros nem reinício e, sem login, as rotas dão 403 tanto pelo servidor quanto pela URL pública.
 - **Não verificado em produção:** as telas logadas por cargo (sem credenciais); isso foi conferido só
   na stack local. Falta a validação humana.
+
+## 2º lote: lista pública de embaixadores (10/10/2026)
+`GET /embaixador` era público e devolvia a entidade inteira: contato, e-mail e Instagram de todos os
+cadastrados, inclusive os ainda não aprovados. O site usava só nome, descrição e a foto (ligada pelo
+id) e filtrava os aprovados no navegador, então os dados de contato chegavam a qualquer visitante
+sem aparecer na tela. A mesma lista de caminhos do `SecurityFilter` também estava envolvida.
+
+- O site passa a usar `GET /embaixador/publicos`: só os aprovados e só `id`, `nome` e `descricao`.
+  A consulta é uma projeção JPQL, então contato, e-mail e Instagram nem são carregados.
+- `GET /embaixador` (lista completa) passa a exigir login e a permissão de gerenciar embaixadores
+  (por padrão ADM, TECH e DIRE). A tela de administração segue funcionando para esses cargos.
+- No `SecurityFilter`, o prefixo `/embaixador` foi trocado por `/embaixador/publicos`; sem isso o
+  administrador levaria 403 na lista completa porque o filtro não leria o token. A mutação
+  confirmou: com o prefixo antigo de volta, o teste do administrador falha.
+- O cadastro pelo site (`POST /embaixador`) continua público.
+- Validação: backend 167/167 (9 testes novos), Playwright 66/66, smoke 12/12 e stack local com login
+  real (visitante vê só o aprovado, ADM vê a lista completa, COZI recebe 403). Publicado em
+  10/10/2026 às 14:10 (BRT). Em produção a tabela estava vazia (0 cadastros) no momento da
+  publicação, então a lista pública vazia é o resultado correto e a filtragem de aprovados e
+  pendentes foi conferida só na stack local.
 
 ## Ainda em aberto
 - Qualquer cargo logado ainda lê a entidade inteira de aluno e de voluntário nessas rotas. Reduzir

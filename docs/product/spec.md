@@ -592,6 +592,21 @@ Então os cards de ranking não aparecem e o servidor responde 403 ao ranking.
 **eu quero** visualizar os embaixadores e parceiros do instituto,
 **para que** conheça quem apoia a causa.
 
+**Critérios de Aceite:**
+```gherkin
+Dado que o visitante acessa a página de Embaixadores,
+Quando a lista carrega,
+Então vê apenas embaixadores aprovados, cada um com foto, nome e descrição.
+
+Dado que alguém se cadastrou como embaixador e ainda não foi aprovado,
+Quando o visitante acessa a página,
+Então esse cadastro não aparece, e contato, e-mail e Instagram de nenhum cadastrado chegam ao navegador do visitante.
+
+Dado que a administração (por padrão ADM, TECH e DIRE) abre a gestão de embaixadores,
+Quando a lista completa carrega,
+Então vê todos os cadastros, aprovados e pendentes, com os dados de contato; quem não tem a permissão de gerenciar embaixadores recebe 403.
+```
+
 #### US-10.3: Reorganização do Menu Principal
 **Como** visitante,
 **eu quero** navegar o site institucional por um menu organizado por tema (Início, O Instituto, Nossos Espaços, Projetos e Atividades, Equipe, Agenda, Como Ajudar, Transparência, Contato, Área da Família),

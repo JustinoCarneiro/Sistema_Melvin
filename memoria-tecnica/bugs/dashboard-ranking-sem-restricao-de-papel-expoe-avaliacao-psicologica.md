@@ -94,6 +94,15 @@ e sem `sortBy=psicologico`), o bundle publicado contém "Média Pedagógica" e a
 seguem fechadas por fora. **Não verificado em produção:** o comportamento por cargo com login real
 (Professor, Psicólogo, Coordenação); isso foi conferido só na stack local. Falta a validação humana.
 
+**Correção posterior (10/10/2026):** no deploy do lote de embaixadores o smoke acusou o teste de
+login do ADM intermitente (3 falhas em 25 repetições). Causa: depois desta revisão o ADM também
+consulta o ranking, e o `auth.spec.js` usa o `test` puro do Playwright, sem as fixtures; ali o
+servidor estático responde 200 com o `index.html` a rotas desconhecidas. O hook guardava essa
+resposta como estava, o `.map` quebrava na renderização e o painel inteiro sumia logo depois de
+aparecer. Corrigido com guarda de tipo (`Array.isArray`) no hook, como nas demais listagens, e teste
+de regressão no `dashboard.spec.js`; o teste de login do ADM passou 25/25. O smoke barrou o deploy
+antes de qualquer ação remota, como deve.
+
 **Ainda em aberto, fora do escopo desta revisão:**
 
 - A mesma nota psicológica continua visível a cargos como `PROF` em Rendimento
