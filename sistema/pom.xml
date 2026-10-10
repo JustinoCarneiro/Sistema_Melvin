@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.4</version>
+		<version>3.5.16</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.melvin</groupId>
@@ -17,6 +17,12 @@
 		<java.version>21</java.version>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
+		<!-- Correções de segurança acima do que o Spring Boot 3.5.16 traz, na mesma linha de versão (consultado no
+		     OSV em 10/10/2026). Ao atualizar o Spring Boot, conferir se ainda são necessárias. -->
+		<tomcat.version>10.1.60</tomcat.version>
+		<jackson-bom.version>2.21.7</jackson-bom.version>
+		<commons-lang3.version>3.18.0</commons-lang3.version>
+		<log4j2.version>2.25.5</log4j2.version>
 	</properties>
 	<dependencies>
 
@@ -38,7 +44,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.6.0</version>
+			<version>42.7.14</version>
 			<scope>runtime</scope>
 		</dependency>
 
@@ -77,7 +83,7 @@
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
-			<version>4.4.0</version>
+			<version>4.6.1</version>
 		</dependency>
 
 		<dependency>
@@ -91,10 +97,11 @@
 			<artifactId>spring-security-crypto</artifactId>
 		</dependency>
 
+		<!-- O Argon2PasswordEncoder usa só o bcprov (a linha jdk15on parou na 1.70, com alertas abertos). -->
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcpkix-jdk15on</artifactId>
-			<version>1.70</version>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>1.86</version>
 		</dependency>
 
 		<dependency>
@@ -106,7 +113,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>5.2.5</version>
+			<version>5.5.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
@@ -126,6 +133,13 @@
 			<groupId>com.stripe</groupId>
 			<artifactId>stripe-java</artifactId>
 			<version>25.10.0</version>
+		</dependency>
+
+		<!-- O PaymentWebhookController usa o Gson diretamente (leitura do evento do Stripe); antes ele chegava só
+		     de forma transitiva. Versão gerenciada pelo Spring Boot. -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
 		</dependency>
 
 		<dependency>
