@@ -35,8 +35,8 @@ function Login() {
             if (response.status === 200) {
                 const role = response.data.role;
                 const expires = new Date(Date.now() + 2 * 60 * 60 * 1000); // acompanha a validade do token (2h)
-                Cookies.set('login', login, { sameSite: 'Lax', secure: false, path: '/', expires });
-                Cookies.set('role', role, { sameSite: 'Lax', secure: false, path: '/', expires });
+                Cookies.set('login', login, { sameSite: 'Lax', secure: window.location.protocol === 'https:', path: '/', expires });
+                Cookies.set('role', role, { sameSite: 'Lax', secure: window.location.protocol === 'https:', path: '/', expires });
 
                 navigate(`/app/${role.toLowerCase()}`);
             }

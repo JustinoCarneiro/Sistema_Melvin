@@ -14,8 +14,8 @@ const authService = {
             const response = await http.post(endpoint, data);
             const { token, role } = response.data;
             const expires = new Date(Date.now() + 2 * 60 * 60 * 1000); // acompanha a validade do token (2h)
-            Cookies.set('token', token, { sameSite: 'Lax', secure: false, path: '/', expires });
-            Cookies.set('role', role, { sameSite: 'Lax', secure: false, path: '/', expires });
+            Cookies.set('token', token, { sameSite: 'Lax', secure: window.location.protocol === 'https:', path: '/', expires });
+            Cookies.set('role', role, { sameSite: 'Lax', secure: window.location.protocol === 'https:', path: '/', expires });
             return response;
         } catch (error) {
             console.error('Erro no serviço de autenticação:', error.response?.data || error.message);

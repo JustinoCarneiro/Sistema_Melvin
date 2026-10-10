@@ -10,8 +10,8 @@ const auth = {
             
             const { token, role } = response.data;
             
-            Cookies.set('token', token, { sameSite: 'Lax', secure: false, path: '/' });
-            Cookies.set('role', role, { sameSite: 'Lax', secure: false, path: '/' });
+            Cookies.set('token', token, { sameSite: 'Lax', secure: window.location.protocol === 'https:', path: '/' });
+            Cookies.set('role', role, { sameSite: 'Lax', secure: window.location.protocol === 'https:', path: '/' });
             
             return response;
         } catch (error) {
