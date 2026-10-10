@@ -57,7 +57,7 @@ const Embaixadores = () => {
     useEffect(() => {
         const fetchEmbaixadores = async () => {
             try {
-                const response = await get.embaixadores();
+                const response = await get.embaixadoresPublicos();
                 const dados = response.data;
 
                 if (!Array.isArray(dados)) {
@@ -67,7 +67,6 @@ const Embaixadores = () => {
                 }
 
                 const embaixadoresData = await Promise.all(dados
-                    .filter(embaixador => embaixador.status)
                     .map(async embaixador => {
                         try {
                             const imagemResponse = await get.imagemlista();

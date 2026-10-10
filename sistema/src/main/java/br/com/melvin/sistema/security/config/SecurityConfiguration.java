@@ -61,7 +61,7 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                     // --- ROTAS PÚBLICAS (Login e leituras abertas) ---
-                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/imagens/**", "/embaixador/**", "/app/docs/imagens_embaixadores/**", "/app/docs/imagens_avisos/**", "/aviso", "/amigomelvin/stats", "/actuator/health").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/imagens/**", "/embaixador/publicos", "/app/docs/imagens_embaixadores/**", "/app/docs/imagens_avisos/**", "/aviso", "/amigomelvin/stats", "/actuator/health").permitAll()
                     .requestMatchers(HttpMethod.POST, "/auth/login", "/embaixador/**", "/amigomelvin", "/amigomelvin/subscribe", "/amigomelvin/one-time", "/amigomelvin/items", "/v1/webhooks/payments", "/cestas/solicitacao").permitAll()
                     // Frequência de alunos e ponto dos voluntários, e a consulta de voluntário por matrícula, são da
                     // área logada: não aparecem aqui de propósito e caem em .anyRequest().authenticated().
@@ -153,6 +153,10 @@ public class SecurityConfiguration {
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
                     .requestMatchers(HttpMethod.PUT, "/amigomelvin").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AMIGOS")))
+                    // A lista completa de embaixadores tem contato e e-mail de quem se cadastrou: só a administração.
+                    // O site público usa /embaixador/publicos (aprovados, só nome e descrição).
+                    .requestMatchers(HttpMethod.GET, "/embaixador").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_EMBAIXADORES")))
                     .requestMatchers(HttpMethod.PUT, "/embaixador/**").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_EMBAIXADORES")))
                     .requestMatchers(HttpMethod.PUT, "/voluntario").access((authentication, context) -> 

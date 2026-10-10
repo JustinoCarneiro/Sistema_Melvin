@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import br.com.melvin.sistema.domain.embaixador.dto.EmbaixadorPublicoDTO;
 import br.com.melvin.sistema.domain.embaixador.model.Embaixador;
 import br.com.melvin.sistema.domain.embaixador.repository.EmbaixadorRepository;
 import br.com.melvin.sistema.shared.service.EmailService;
@@ -25,6 +26,10 @@ public class EmbaixadorService {
 
     public List<Embaixador> listar(){
         return repositorio.findAll();
+    }
+
+    public List<EmbaixadorPublicoDTO> listarPublicos(){
+        return repositorio.findPublicos();
     }
 
     public ResponseEntity<?> adicionar(Embaixador embaixador){

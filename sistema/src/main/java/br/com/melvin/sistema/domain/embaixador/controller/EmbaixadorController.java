@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.melvin.sistema.domain.embaixador.dto.EmbaixadorPublicoDTO;
 import br.com.melvin.sistema.domain.embaixador.model.Embaixador;
 import br.com.melvin.sistema.domain.embaixador.service.EmbaixadorService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,11 @@ public class EmbaixadorController {
     @GetMapping
     public List<Embaixador> listar(){
         return service.listar();
+    }
+
+    @GetMapping("/publicos")
+    public List<EmbaixadorPublicoDTO> listarPublicos(){
+        return service.listarPublicos();
     }
 
     @PostMapping

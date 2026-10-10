@@ -135,8 +135,9 @@ const get = {
             return Promise.reject(error);
         }
     },
-    async embaixadores(){
-        const endpoint = "/embaixador";
+    async embaixadoresPublicos(){
+        // Só os aprovados, com nome e descrição. A lista completa (/embaixador) é da administração.
+        const endpoint = "/embaixador/publicos";
 
         try{
             const response = await http.get(endpoint);
