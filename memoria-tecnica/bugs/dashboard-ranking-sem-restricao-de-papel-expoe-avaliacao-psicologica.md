@@ -2,7 +2,7 @@
 tipo: bug
 data: 2026-09-13
 severidade: Média
-status: Corrigido e publicado em produção em 08/10/2026; regra revisada em 10/10/2026 (publicação da revisão pendente)
+status: Corrigido e publicado em produção em 08/10/2026; regra revisada e publicada em produção em 10/10/2026
 ---
 
 # Painel `/dashboard` sem restrição de papel expõe avaliação psicológica de aluno a qualquer cargo autenticado
@@ -83,6 +83,16 @@ de quatro notas (8,0 e 7,0 para os alunos sintéticos) e 403 em `sortBy=psicolog
 parâmetro repetido ou em maiúsculas; Psicologia e Coordenação recebem a média de cinco notas (7,6 e
 6,8) e a ordenação psicológica; Cozinha e sem login recebem 403; a interface mostra as opções certas
 para cada cargo.
+
+**Publicação da revisão (10/10/2026, 08:18 BRT):** pelo `deploy.sh remote` a partir de um worktree
+limpo no commit `02860ff`. O smoke fechou 12/12 (backend, lint, build, Playwright 64/64, Compose,
+varredura de segredos), o backup cifrado e a cópia off-site terminaram antes da recriação e o dry-run
+não apontou exclusões. Conferido no servidor: os arquivos de segurança, serviço, controller e
+frontend batem com o commit, Flyway validou 18 migrações sem nada a aplicar, o backend subiu em
+20,6 s com 0 erros e sem reinício, API e site respondem 200, o ranking sem login responde 403 (com
+e sem `sortBy=psicologico`), o bundle publicado contém "Média Pedagógica" e as portas 3000 e 8443
+seguem fechadas por fora. **Não verificado em produção:** o comportamento por cargo com login real
+(Professor, Psicólogo, Coordenação); isso foi conferido só na stack local. Falta a validação humana.
 
 **Ainda em aberto, fora do escopo desta revisão:**
 
