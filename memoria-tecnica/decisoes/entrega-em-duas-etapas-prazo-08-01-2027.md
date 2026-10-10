@@ -76,8 +76,8 @@ sem nenhuma folga.
   com o peso usando o timesheet de `docs/METRICAS-PROJETO.md`. Se o ritmo real divergir, recalcular
   e renegociar a data da etapa 2, e não absorver o desvio em silêncio.
 - **O módulo 18 não espera o portal.** Trata de rotas públicas já existentes e segue como correção
-  separada e antecipada (R2, com TDD). Os detalhes ficam fora do repositório público até a correção
-  estar commitada.
+  separada e antecipada (R2, com TDD). O 1º lote foi publicado em 10/10/2026; o restante segue
+  pendente, com os detalhes fora do repositório público até a correção.
 - A numeração dos módulos é a do `ROADMAP.md` em 08/10/2026. Se ele for renumerado, valem os nomes
   desta nota.
 
