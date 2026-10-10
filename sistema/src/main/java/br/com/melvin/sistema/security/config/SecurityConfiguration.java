@@ -61,8 +61,10 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                     // --- ROTAS PÚBLICAS (Login e leituras abertas) ---
-                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/imagens/**", "/embaixador/publicos", "/app/docs/imagens_embaixadores/**", "/app/docs/imagens_avisos/**", "/aviso", "/amigomelvin/stats", "/actuator/health").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/auth/login", "/embaixador/**", "/amigomelvin", "/amigomelvin/subscribe", "/amigomelvin/one-time", "/amigomelvin/items", "/v1/webhooks/payments", "/cestas/solicitacao").permitAll()
+                    // Das imagens, só a captura por id é do site (foto de embaixador e de aviso); a lista completa é da área logada.
+                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/imagens/captura/**", "/embaixador/publicos", "/app/docs/imagens_embaixadores/**", "/app/docs/imagens_avisos/**", "/aviso", "/amigomelvin/stats", "/actuator/health").permitAll()
+                    // O cadastro de embaixador é só o caminho exato; o cadastro manual de Amigo (POST /amigomelvin) é da administração.
+                    .requestMatchers(HttpMethod.POST, "/auth/login", "/embaixador", "/amigomelvin/subscribe", "/amigomelvin/one-time", "/amigomelvin/items", "/v1/webhooks/payments", "/cestas/solicitacao").permitAll()
                     // Frequência de alunos e ponto dos voluntários, e a consulta de voluntário por matrícula, são da
                     // área logada: não aparecem aqui de propósito e caem em .anyRequest().authenticated().
                     // O SecurityFilter precisa ler o token nesses caminhos (ver PUBLIC_ENDPOINTS_BY_METHOD).
@@ -117,7 +119,11 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.POST, "/imagens/**").hasAnyRole("ADM", "TECH", "DIRE") // Imagens mantive restrito, mas pode abrir se precisar
                     
                     // --- VOLUNTÁRIOS ---
-                    .requestMatchers(HttpMethod.POST, "/voluntario").access((authentication, context) -> 
+                    // As regras de escrita precisam casar com o caminho REAL da rota. Uma regra para "/voluntario" não
+                    // cobre "/voluntario/{matricula}": a rota cai em anyRequest().authenticated() e qualquer cargo logado passa.
+                    .requestMatchers(HttpMethod.POST, "/voluntario").access((authentication, context) ->
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
+                    .requestMatchers(HttpMethod.DELETE, "/voluntario/{matricula}").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
                     
                     // --- AVISOS ---
@@ -129,8 +135,13 @@ public class SecurityConfiguration {
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "CADASTRAR_ALUNO")))
                     .requestMatchers(HttpMethod.GET, "/discente").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_ALUNOS")))
-                    .requestMatchers(HttpMethod.GET, "/discente/matricula/{matricula}").access((authentication, context) -> 
+                    .requestMatchers(HttpMethod.GET, "/discente/matricula/{matricula}").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_ALUNOS")))
+                    // Planilha com os dados de todos os alunos: mesma permissão da lista de alunos.
+                    .requestMatchers(HttpMethod.GET, "/discente/export").access((authentication, context) ->
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_ALUNOS")))
+                    .requestMatchers(HttpMethod.DELETE, "/discente/{matricula}").access((authentication, context) ->
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "CADASTRAR_ALUNO")))
                     .requestMatchers(HttpMethod.PUT, "/discente").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "CADASTRAR_ALUNO")))
 
@@ -151,7 +162,10 @@ public class SecurityConfiguration {
                     // --- EDIÇÃO GERAL ---
                     .requestMatchers(HttpMethod.PUT, "/cestas").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
-                    .requestMatchers(HttpMethod.PUT, "/amigomelvin").access((authentication, context) -> 
+                    .requestMatchers(HttpMethod.PUT, "/amigomelvin").access((authentication, context) ->
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AMIGOS")))
+                    // Cadastro manual de Amigo e cancelamento de assinatura (cancela no Stripe): administração.
+                    .requestMatchers(HttpMethod.POST, "/amigomelvin", "/amigomelvin/{id}/cancelar").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AMIGOS")))
                     // A lista completa de embaixadores tem contato e e-mail de quem se cadastrou: só a administração.
                     // O site público usa /embaixador/publicos (aprovados, só nome e descrição).
@@ -169,13 +183,13 @@ public class SecurityConfiguration {
                     // --- DELEÇÃO ---
                     .requestMatchers(HttpMethod.DELETE, "/cestas/**").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_CESTAS")))
-                    .requestMatchers(HttpMethod.DELETE, "/voluntario").access((authentication, context) -> 
+                    .requestMatchers(HttpMethod.DELETE, "/frequenciavoluntario/{matricula}/{data}").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
-                    .requestMatchers(HttpMethod.DELETE, "/frequenciavoluntario").access((authentication, context) -> 
-                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
-                    .requestMatchers(HttpMethod.DELETE, "/discente").access((authentication, context) -> 
-                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "CADASTRAR_ALUNO")))
-                    
+
+                    // --- CALENDÁRIO DE EXCEÇÕES: tela exclusiva de ADM e TECH (a leitura é de qualquer logado) ---
+                    .requestMatchers(HttpMethod.POST, "/dias-nao-letivos").hasAnyRole("ADM", "TECH")
+                    .requestMatchers(HttpMethod.DELETE, "/dias-nao-letivos/{id}").hasAnyRole("ADM", "TECH")
+
                     // --- OCORRÊNCIAS (US-3.7) ---
                     .requestMatchers(HttpMethod.POST, "/ocorrencias").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_OCORRENCIA")))
@@ -187,8 +201,11 @@ public class SecurityConfiguration {
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_FREQUENCIA")))
                     .requestMatchers(HttpMethod.PUT, "/frequenciadiscente").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_FREQUENCIA")))
-                    .requestMatchers(HttpMethod.DELETE, "/frequenciadiscente").access((authentication, context) -> 
+                    .requestMatchers(HttpMethod.DELETE, "/frequenciadiscente/{matricula}/{data}").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_FREQUENCIA")))
+                    // Planilha de frequência com nome de cada aluno: mesma permissão da tela de Relatórios.
+                    .requestMatchers(HttpMethod.GET, "/frequenciadiscente/export").access((authentication, context) ->
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_RELATORIOS")))
 
                     .anyRequest().authenticated()
                 )

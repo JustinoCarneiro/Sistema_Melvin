@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.melvin.sistema.domain.frequencia.model.FrequenciaVoluntario;
 import br.com.melvin.sistema.domain.frequencia.service.FrequenciaVoluntarioService;
+import br.com.melvin.sistema.domain.frequencia.service.PontoVoluntarioAcesso;
 
 @RestController
 @RequestMapping("/frequenciavoluntario")
@@ -39,12 +42,18 @@ public class FrequenciaVoluntarioController {
     }
 
     @PostMapping
-    public ResponseEntity<?> adicionar(@RequestBody FrequenciaVoluntario frequencia){
+    public ResponseEntity<?> adicionar(@RequestBody FrequenciaVoluntario frequencia, Authentication authentication){
+        if (!PontoVoluntarioAcesso.podeRegistrar(authentication, frequencia.getMatricula())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Você só pode registrar o seu próprio ponto.");
+        }
         return service.cadastrar(frequencia);
     }
 
     @PutMapping
-    public ResponseEntity<?> alterar(@RequestBody FrequenciaVoluntario frequencia){
+    public ResponseEntity<?> alterar(@RequestBody FrequenciaVoluntario frequencia, Authentication authentication){
+        if (!PontoVoluntarioAcesso.podeRegistrar(authentication, frequencia.getMatricula())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Você só pode alterar o seu próprio ponto.");
+        }
         return service.alterar(frequencia);
     }
 

@@ -38,7 +38,7 @@ public class SecurityFilter extends OncePerRequestFilter{
     static {
         PUBLIC_ENDPOINTS_BY_METHOD.put("GET", Arrays.asList(
             "/voluntario/nomesfuncoes",
-            "/imagens",
+            "/imagens/captura",
             "/embaixador/publicos",
             "/app/docs/imagens_embaixadores",
             "/app/docs/imagens_avisos",
