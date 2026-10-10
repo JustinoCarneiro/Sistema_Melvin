@@ -210,7 +210,19 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.GET, "/frequenciadiscente/export").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_RELATORIOS")))
 
-                    .anyRequest().authenticated()
+                    // --- ROTAS DE QUALQUER CARGO LOGADO (o painel e as telas comuns carregam estes dados) ---
+                    .requestMatchers(HttpMethod.GET, "/dias-nao-letivos", "/discente/sala/{sala}", "/frequenciadiscente/**",
+                            "/frequenciavoluntario/**", "/imagens/lista", "/voluntario/matricula/{matricula}").authenticated()
+                    // Ponto: qualquer logado registra o próprio; o controller recusa o de outra pessoa (PontoVoluntarioAcesso).
+                    .requestMatchers(HttpMethod.POST, "/frequenciavoluntario").authenticated()
+                    .requestMatchers(HttpMethod.PUT, "/frequenciavoluntario").authenticated()
+                    .requestMatchers("/error").authenticated()
+
+                    // Padrão NEGAR: rota que não está acima é recusada para todos, até para o ADM. Antes o padrão era
+                    // "qualquer logado", e foi assim que regra com caminho errado ou API publicada sem querer (o Spring
+                    // Data REST expunha cada repositório) ficava aberta a qualquer cargo. Rota nova precisa de regra aqui
+                    // e de linha na MatrizDeAcessoTest.
+                    .anyRequest().denyAll()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(rateLimitPublicoFilter, SecurityFilter.class)

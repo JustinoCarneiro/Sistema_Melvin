@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -101,8 +102,10 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void metodoNaoSuportadoE405() throws Exception {
-        mockMvc.perform(post("/dashboard/avisos").contentType(MediaType.APPLICATION_JSON).content("{}")
-                .header(HttpHeaders.AUTHORIZATION, bearer("9600001", UserRole.COZI)))
+        // A regra de /permissoes/** vale para todos os métodos (ADM e TECH), então o pedido passa pela segurança e
+        // chega ao Spring MVC, que não tem DELETE ali. Em rota cuja regra é só de um método, o padrão negar responde 403 antes.
+        mockMvc.perform(delete("/permissoes/qualquer")
+                .header(HttpHeaders.AUTHORIZATION, bearer("9600003", UserRole.ADM)))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(jsonPath("$.status").value(405));
     }
