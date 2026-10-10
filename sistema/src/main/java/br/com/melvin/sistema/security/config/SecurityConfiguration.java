@@ -61,9 +61,11 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                     // --- ROTAS PÚBLICAS (Login e leituras abertas) ---
-                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/frequenciavoluntario/**", "/frequenciadiscente/**", "/imagens/**", "/embaixador/**", "/app/docs/imagens_embaixadores/**", "/app/docs/diarios/**", "/app/docs/imagens_avisos/**", "/aviso", "/amigomelvin/stats", "/actuator/health").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/auth/login", "/frequenciavoluntario/**", "/embaixador/**", "/amigomelvin", "/amigomelvin/subscribe", "/amigomelvin/one-time", "/amigomelvin/items", "/v1/webhooks/payments", "/cestas/solicitacao").permitAll()
-                    .requestMatchers(HttpMethod.PUT, "/frequenciavoluntario/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/imagens/**", "/embaixador/**", "/app/docs/imagens_embaixadores/**", "/app/docs/imagens_avisos/**", "/aviso", "/amigomelvin/stats", "/actuator/health").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/auth/login", "/embaixador/**", "/amigomelvin", "/amigomelvin/subscribe", "/amigomelvin/one-time", "/amigomelvin/items", "/v1/webhooks/payments", "/cestas/solicitacao").permitAll()
+                    // Frequência de alunos e ponto dos voluntários, e a consulta de voluntário por matrícula, são da
+                    // área logada: não aparecem aqui de propósito e caem em .anyRequest().authenticated().
+                    // O SecurityFilter precisa ler o token nesses caminhos (ver PUBLIC_ENDPOINTS_BY_METHOD).
 
                     // --- ROTAS AUTENTICADAS GERAIS ---
                     .requestMatchers(HttpMethod.GET, "/auth/role_{matricula}").authenticated()
@@ -134,7 +136,7 @@ public class SecurityConfiguration {
 
                     // --- DIÁRIOS ---
                     .requestMatchers(HttpMethod.POST,"/diarios/**").hasAnyRole("ADM", "TECH", "COOR", "DIRE")
-                    .requestMatchers(HttpMethod.GET, "/diarios/**").hasAnyRole("ADM", "TECH", "COOR", "DIRE")
+                    .requestMatchers(HttpMethod.GET, "/diarios/**", "/app/docs/diarios/**").hasAnyRole("ADM", "TECH", "COOR", "DIRE")
                     .requestMatchers(HttpMethod.PUT, "/diarios/**").hasAnyRole("ADM", "TECH", "COOR", "DIRE")
                     .requestMatchers(HttpMethod.DELETE, "/diarios/**").hasAnyRole("ADM", "TECH", "COOR")
 
@@ -145,7 +147,6 @@ public class SecurityConfiguration {
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AMIGOS")))
                     .requestMatchers(HttpMethod.GET, "/voluntario").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
-                    .requestMatchers(HttpMethod.GET, "/voluntario/matricula/{matricula}").permitAll()
 
                     // --- EDIÇÃO GERAL ---
                     .requestMatchers(HttpMethod.PUT, "/cestas").access((authentication, context) -> 
