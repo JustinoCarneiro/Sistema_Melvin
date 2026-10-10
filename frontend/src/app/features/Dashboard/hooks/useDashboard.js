@@ -68,7 +68,8 @@ export function useDashboard() {
             setError(null);
             try {
                 const rankingRes = await dashboardService.getRanking(rankingSortBy);
-                const ranking = rankingRes.data || [];
+                // Guarda de tipo: resposta que não seja lista derrubaria o painel inteiro na renderização.
+                const ranking = Array.isArray(rankingRes.data) ? rankingRes.data : [];
                 setRankingMelhores(ranking);
                 setRankingPiores([...ranking].sort((a, b) => a.mediaGeral - b.mediaGeral));
             } catch (err) {

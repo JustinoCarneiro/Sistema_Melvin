@@ -162,4 +162,24 @@ test.describe('Dashboard', () => {
     await expect(page.locator('h3', { hasText: 'Atenção Necessária' })).toHaveCount(0);
     expect(rankingRequests).toHaveLength(0);
   });
+
+  test('não derruba o painel quando o ranking devolve algo que não é uma lista', async ({ page }) => {
+    const errosDaPagina = [];
+    page.on('pageerror', erro => errosDaPagina.push(String(erro)));
+    // Ex.: o servidor estático ou um proxy respondendo 200 com a página inicial em vez de JSON
+    await page.route('**/dashboard/ranking*', route => route.fulfill({
+      status: 200,
+      contentType: 'text/html',
+      body: '<!doctype html><html><body>index</body></html>',
+    }));
+
+    await acessarComo(page, 'PROF', { permissoes: ['VISUALIZAR_RELATORIOS'] });
+
+    await expect(page.locator('h3', { hasText: 'Destaques' })).toBeVisible();
+    await page.waitForTimeout(800);
+    await expect(page.locator('h1', { hasText: 'Dashboard' })).toBeVisible();
+    await expect(page.locator('h3', { hasText: 'Frequência do Dia' })).toBeVisible();
+    await expect(page.locator('h3', { hasText: 'Destaques' })).toBeVisible();
+    expect(errosDaPagina).toEqual([]);
+  });
 });
