@@ -76,8 +76,8 @@ const SECOES = [
         quemUsa: 'Todos os cargos',
         resumo: 'Painel de leitura (sem formulários) com a visão geral do dia: frequência, avisos e destaques de alunos.',
         passos: [
-            { texto: 'A tela é a mesma para todos os cargos — o que muda é a URL/atalho de cada um (ex.: /app/coor, /app/prof). Mostra Frequência do Dia por sala/turno, ranking de "Destaques" e "Atenção Necessária" (por média, presença, participação, comportamento, rendimento ou psicológico) e "Faltas Excessivas (Mês)".', imagem: { src: imgDashboardAdm, legenda: 'Dashboard — visão geral do instituto no dia.' } },
-            { texto: 'Use o seletor no card "Destaques" para trocar o critério do ranking (Média Geral, Presença, Participação, Comportamento, Rendimento ou Psicológico).' },
+            { texto: 'A tela é a mesma para todos os cargos — o que muda é a URL/atalho de cada um (ex.: /app/coor, /app/prof). Mostra Frequência do Dia por sala/turno, ranking de "Destaques" e "Atenção Necessária" (para quem tem a permissão "Visualizar Relatórios") e "Faltas Excessivas (Mês)".', imagem: { src: imgDashboardAdm, legenda: 'Dashboard — visão geral do instituto no dia.' } },
+            { texto: 'Use o seletor no card "Destaques" para trocar o critério do ranking. Quem tem "Visualizar Relatórios" escolhe entre Média Pedagógica (média das quatro notas pedagógicas), Presença, Participação, Comportamento e Rendimento. Só Psicólogo e Coordenação veem também a opção Psicológico e a Média Geral, que inclui a Avaliação Psicológica.' },
         ],
     },
     {

@@ -2,7 +2,7 @@
 tipo: bug
 data: 2026-09-13
 severidade: Média
-status: Corrigido e publicado em produção em 08/10/2026
+status: Corrigido e publicado em produção em 08/10/2026; regra revisada em 10/10/2026 (publicação da revisão pendente)
 ---
 
 # Painel `/dashboard` sem restrição de papel expõe avaliação psicológica de aluno a qualquer cargo autenticado
@@ -59,6 +59,40 @@ permitidos e negados. A publicação foi autorizada e concluída em 08/10/2026 �
 23:53 BRT. No pós-deploy, o site e o health da API responderam 200, a rota sem
 autenticação respondeu 403 e os containers permaneceram saudáveis. Nenhuma
 credencial ou dado real entrou nos testes ou neste registro.
+
+**Revisão da decisão de acesso (10/10/2026):** o dono do projeto pediu que o "Destaques" volte
+a ser visto pelos cargos de docência, deixando a nota psicológica só para `PSICO` e `COOR`.
+Implementado assim:
+
+- `GET /dashboard/ranking` passa a aceitar quem tem `VISUALIZAR_RELATORIOS` (permissão dinâmica,
+  ajustável em Permissões) ou é `PSICO`/`COOR`, que não dependem dela. Antes só `PSICO` e `COOR`.
+- Quem não é `PSICO` nem `COOR` não recebe a nota psicológica: `sortBy=psicologico` dá 403, na regra
+  de segurança (qualquer repetição ou caixa do parâmetro também) e de novo no serviço, e a média
+  padrão é calculada só com as quatro notas pedagógicas. Para eles o frontend chama a média de
+  "Média Pedagógica", porque o número difere da "Média Geral" de `PSICO`/`COOR` (cinco notas).
+- Regra única de quem vê a nota psicológica em `NotaPsicologicaAcesso`, usada pela segurança e
+  pelo controller.
+- O frontend deixou de buscar o ranking na carga inicial: busca quando o painel e as permissões
+  terminam de carregar, porque o cargo habilitado só é conhecido depois delas.
+
+**Validação da revisão (10/10/2026):** backend 149/149 (inclui `DashboardRankingSecurityTest` com 15
+casos e `DashboardServiceTest` com 9), lint e build do frontend limpos, Playwright 64/64 (10 no
+painel, inclusive permissões que chegam depois do painel). Conferido também numa stack local
+isolada (H2, sem produção) com login real de cinco cargos: Professor e Administração recebem a média
+de quatro notas (8,0 e 7,0 para os alunos sintéticos) e 403 em `sortBy=psicologico`, inclusive com
+parâmetro repetido ou em maiúsculas; Psicologia e Coordenação recebem a média de cinco notas (7,6 e
+6,8) e a ordenação psicológica; Cozinha e sem login recebem 403; a interface mostra as opções certas
+para cada cargo.
+
+**Ainda em aberto, fora do escopo desta revisão:**
+
+- A mesma nota psicológica continua visível a cargos como `PROF` em Rendimento
+  (`GET /discente/matricula/{matricula}`), na tabela de Relatórios (`GET /discente`) e na
+  exportação para Excel. O Manual documenta isso como leitura permitida, então pode ser intencional;
+  decidir com o Instituto antes de ocultar.
+- O card "Atenção Necessária" não mostra os alunos que precisam de atenção: reordena em ordem
+  crescente os mesmos cinco melhores devolvidos por `/dashboard/ranking`. Corrigir exige um
+  parâmetro de ordem no endpoint.
 
 Itens do caminho sugerido original, ainda em aberto (não fechados por este fix):
 

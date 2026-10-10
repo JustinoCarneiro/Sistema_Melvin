@@ -530,9 +530,30 @@ Então apenas a primeira transição compatível é persistida e a outra recebe 
 **para que** tenha uma visão rápida da frequência diária.
 
 #### US-8.2: Ranking de Alunos
-**Como** coordenador,
+**Como** coordenador ou docente,
 **eu quero** ver o Top 5 alunos por frequência ou média de rendimento,
 **para que** os destaques acadêmicos sejam reconhecidos.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o usuário tem a permissão "Visualizar Relatórios" (por padrão: PROF, COOR, DIRE, ADM, TECH, ASSIST e PSICO),
+Quando ele abre o dashboard,
+Então vê os cards "Destaques" e "Atenção Necessária" e escolhe entre Média Pedagógica (média das quatro notas pedagógicas), Presença, Participação, Comportamento e Rendimento.
+
+Dado que o usuário não é PSICO nem COOR,
+Quando ele consulta o ranking,
+Então a nota de Avaliação Psicológica não aparece na ordenação nem entra na média, e pedir a ordenação "psicologico" é negado com 403 pelo servidor.
+
+Dado que o usuário é PSICO ou COOR,
+Quando ele consulta o ranking,
+Então vê a opção Psicológico e a Média Geral com as cinco notas, mesmo que a permissão "Visualizar Relatórios" tenha sido retirada do cargo.
+
+Dado que o usuário não tem "Visualizar Relatórios" e não é PSICO nem COOR,
+Quando ele abre o dashboard,
+Então os cards de ranking não aparecem e o servidor responde 403 ao ranking.
+```
+
+> **Nota:** a restrição da nota psicológica vale para o ranking do painel. A mesma nota continua visível como leitura em Rendimento, Relatórios e na exportação para Excel para os cargos que já têm acesso a essas telas; estender a restrição a elas depende de decisão do Instituto (ver `memoria-tecnica/bugs/dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica.md`).
 
 #### US-8.3: Avisos Ativos no Dashboard
 **Como** qualquer usuário logado,
