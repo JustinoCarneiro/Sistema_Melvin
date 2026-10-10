@@ -23,6 +23,18 @@ Para garantir proteção extrema aos dados mais sensíveis (doenças, laudos, me
 
 Como o IV aleatório torna o texto cifrado não-pesquisável, campos que precisam de verificação de duplicidade (e-mail e CPF de doadores) também recebem um **índice cego (*blind index*)** — um HMAC-SHA256 determinístico que permite detectar cadastros repetidos **sem nunca expor o dado em claro** nem permitir sua leitura reversa.
 
+### 🚪 Proteção contra Tentativa de Acesso em Massa
+O login do painel limita o número de tentativas de senha: depois de algumas tentativas erradas na mesma matrícula ou vindas do mesmo computador, o sistema passa a recusar novas tentativas por alguns minutos, mesmo que a senha certa seja digitada nesse intervalo. Isso impede que um script tente adivinhar a senha de alguém testando milhares de combinações.
+
+### 📎 Validação de Arquivos Enviados
+Fotos de embaixadores e avisos, e diários de classe enviados pela equipe, são conferidos pelo conteúdo real do arquivo, não apenas pelo nome ou pela extensão informada — um arquivo disfarçado de imagem é recusado. O nome do arquivo salvo no servidor nunca é o nome original enviado pelo computador de quem fez o upload, o que impede truques de nomenclatura.
+
+### 🌐 Limite de Uso nos Formulários Públicos do Site
+Os formulários abertos ao público (doação, cadastro de embaixador) têm um limite de quantas vezes podem ser enviados pelo mesmo visitante em um período curto, impedindo que um script envie centenas de cadastros ou tentativas de pagamento de uma só vez.
+
+### 🔄 Bibliotecas Sempre Atualizadas
+As bibliotecas de terceiros usadas pelo sistema (o framework do servidor, bibliotecas de segurança, de banco de dados, de geração de planilhas) são periodicamente atualizadas para as versões mais recentes recomendadas pelos próprios fabricantes, incorporando as correções de segurança publicadas por eles.
+
 ### 💾 Recuperação de Desastres (Disaster Recovery)
 Em caso de falha de hardware, erro humano ou perda de servidor, o histórico da ONG não é perdido. Um script automatizado no servidor realiza **Backups Diários** blindados de todo o banco de dados, guardando versões de recuperação dos últimos 30 dias de forma criptografada.
 

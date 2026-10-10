@@ -24,7 +24,13 @@ Então o sistema retorna um token JWT e redireciona para o dashboard.
 Dado que o usuário está na tela de login,
 Quando ele insere uma matrícula inexistente ou senha incorreta,
 Então o sistema exibe "Matrícula ou senha inválida" com status 401.
+
+Dado que uma matrícula acumulou 10 tentativas de senha errada (de qualquer IP) ou um IP acumulou 20 em
+matrículas diferentes, numa janela de 15 minutos,
+Quando uma nova tentativa chega, mesmo com a senha certa,
+Então o sistema responde 429 até a janela acabar; um login bem-sucedido zera a contagem da matrícula (não a do IP).
 ```
+> **Nota de implementação (10/10/2026):** `LoginAttemptService`. Ver [[login-sem-limite-de-tentativas-e-verificacao-de-senha-sem-teto]].
 
 #### US-1.2: Registro de Usuário
 **Como** administrador,
@@ -44,7 +50,16 @@ Então o sistema retorna 400 Bad Request.
 Dado que a matrícula já possui um login registrado,
 Quando o administrador tenta registrar novamente,
 Então o sistema retorna 409 Conflict.
+
+Dado que a senha informada tem menos de 8 caracteres, é a própria matrícula ou é uma senha comum,
+Quando o administrador submete o registro,
+Então o sistema retorna 400 com a regra explicada.
+
+Dado que o cargo é TECH,
+Quando quem está registrando NÃO é TECH,
+Então o sistema retorna 403 (só o Suporte Técnico cria acesso técnico).
 ```
+> **Nota de implementação (10/10/2026):** `PoliticaDeSenha` e a separação do TECH (US-1.5).
 
 #### US-1.3: Alteração de Senha
 **Como** administrador,
@@ -56,6 +71,14 @@ Então o sistema retorna 409 Conflict.
 Dado que o usuário existe no sistema,
 Quando o admin envia a nova senha,
 Então a senha é atualizada com hash Argon2 e retorna 200 OK.
+
+Dado que a nova senha tem menos de 8 caracteres, é a própria matrícula ou é uma senha comum,
+Quando o admin submete,
+Então o sistema retorna 400 com a regra explicada.
+
+Dado que o usuário é TECH,
+Quando quem está redefinindo a senha NÃO é TECH,
+Então o sistema retorna 403.
 ```
 
 #### US-1.4: Alteração de Role
@@ -72,6 +95,10 @@ Então o role é atualizado e retorna 200 OK.
 Dado que o cargo informado é inválido,
 Quando o admin submete,
 Então o sistema retorna 400 "Role inválida".
+
+Dado que o novo cargo é TECH ou o usuário já é TECH,
+Quando quem está alterando NÃO é TECH,
+Então o sistema retorna 403 (a separação do cargo técnico vale também na API, não só na tela).
 ```
 
 ---
@@ -361,8 +388,19 @@ Então o backend retorna 409 Conflict (sem criar nova assinatura).
 
 Dado que já existe assinatura ativa/pendente para o mesmo CPF,
 Quando o visitante submete com um VALOR DIFERENTE,
-Então o backend ATUALIZA a assinatura existente no Stripe (não cria uma nova) e retorna 200 OK.
+Então o backend ATUALIZA a assinatura existente no Stripe (não cria uma nova) e retorna 200 OK; a resposta
+pública traz só o aviso de atualização, nunca o cadastro do doador.
+
+Dado que o CPF casa com um cadastro mas o e-mail enviado é diferente do e-mail desse cadastro (ou vice-versa),
+Quando o visitante submete,
+Então o backend retorna 409 sem alterar nada (alterar uma assinatura exige CPF E e-mail do mesmo cadastro).
+
+Dado que o mesmo IP enviou 20 assinaturas na última hora,
+Quando ele tenta mais uma,
+Então o backend retorna 429.
 ```
+> **Nota de implementação (10/10/2026):** resposta pública é `AssinaturaRespostaDTO` (só `clientSecret` ou
+> "atualizada"), `RateLimitPublicoFilter` (20/h). Ver [[cadastros-publicos-confiavam-no-corpo-da-requisicao]].
 
 > **Notas de implementação:** CPF é obrigatório (validação `@CPF`), cifrado em repouso (AES-256-GCM) e indexado por *blind index* HMAC (assim como o e-mail) para deduplicação sem expor o dado. O webhook do Stripe é exposto publicamente em `…/api/v1/webhooks/payments`, mas o controller é mapeado em `/v1/webhooks/payments` porque o nginx remove o prefixo `/api/`.
 
@@ -441,6 +479,24 @@ Então alerta de kit_especial aparece no dashboard admin.
 **Como** administrador,
 **eu quero** cadastrar e editar embaixadores/parceiros com foto e redes sociais,
 **para que** eles apareçam na página pública do site.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que um visitante preenche o formulário público de embaixador (nome, contato, e-mail, Instagram opcional),
+Quando ele submete,
+Então o cadastro entra como não aprovado e não contatado, com um id novo (o corpo da requisição não escolhe
+id, status nem descrição — isso é da administração), e a resposta não devolve o cadastro.
+
+Dado que o mesmo IP enviou 5 cadastros na última hora,
+Quando ele tenta mais um,
+Então o backend retorna 429.
+
+Dado que a administração (por padrão ADM, TECH e DIRE) edita um embaixador,
+Quando ela altera contato, e-mail, Instagram, descrição ou aprovação,
+Então os dados são atualizados; quem não tem a permissão de gerenciar embaixadores recebe 403.
+```
+> **Nota de implementação (10/10/2026):** `EmbaixadorCadastroDTO`, `RateLimitPublicoFilter` (5/h). Ver
+> [[cadastros-publicos-confiavam-no-corpo-da-requisicao]] e US-10.2 (lista pública).
 
 #### US-7.3: CRUD de Avisos
 **Como** coordenador,

@@ -25,6 +25,11 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev (avali
 - [[rate-limit-burlavel-por-x-forwarded-for-forjado]]
 - [[dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica]]
 - [[rotas-internas-abertas-sem-login-expoem-dados-pessoais]]
+- [[spring-data-rest-publicava-repositorios-para-qualquer-logado]]
+- [[regra-de-seguranca-com-caminho-errado-abria-rota-para-qualquer-logado]]
+- [[cadastros-publicos-confiavam-no-corpo-da-requisicao]]
+- [[login-sem-limite-de-tentativas-e-verificacao-de-senha-sem-teto]]
+- [[upload-aceitava-qualquer-arquivo-servido-pelo-mesmo-dominio]]
 - [[flyway-nao-reconstroi-banco-do-zero-baseline-vazio]] — pendente
 
 ## Decisões
@@ -34,4 +39,5 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev (avali
 - [[backup-melvin-diario-criptografado]]
 - [[rate-limit-apenas-solicitacao-cesta]]
 - [[qr-code-removido-confirmacao-manual]]
+- [[dependencias-spring-boot-3-5-e-versoes-fixadas]]
 - [[entrega-em-duas-etapas-prazo-08-01-2027]]

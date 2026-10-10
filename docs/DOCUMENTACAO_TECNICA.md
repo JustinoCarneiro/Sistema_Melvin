@@ -12,7 +12,7 @@ O Sistema Melvin é uma plataforma web de gestão completa para o **Instituto So
 | Camada | Tecnologia |
 |---|---|
 | Frontend | React + Vite + TypeScript |
-| Backend | Java 21 + Spring Boot 3.3.x |
+| Backend | Java 21 + Spring Boot 3.5.x |
 | Banco de Dados | PostgreSQL |
 | Segurança | Spring Security + JWT + Argon2 |
 | Pagamentos | Stripe (SDK nativo + Webhooks) |

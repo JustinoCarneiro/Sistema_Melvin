@@ -82,11 +82,16 @@ sem aparecer na tela. A mesma lista de caminhos do `SecurityFilter` também esta
   publicação, então a lista pública vazia é o resultado correto e a filtragem de aprovados e
   pendentes foi conferida só na stack local.
 
+## 3º lote: auditoria do sistema inteiro (10/10/2026)
+A revisão das demais rotas e o limite de tentativas foram feitos na auditoria de 10/10/2026, publicada no mesmo dia
+às 19:17 (BRT). Cada achado tem nota própria: [[spring-data-rest-publicava-repositorios-para-qualquer-logado]],
+[[regra-de-seguranca-com-caminho-errado-abria-rota-para-qualquer-logado]],
+[[cadastros-publicos-confiavam-no-corpo-da-requisicao]], [[login-sem-limite-de-tentativas-e-verificacao-de-senha-sem-teto]],
+[[upload-aceitava-qualquer-arquivo-servido-pelo-mesmo-dominio]] e [[dependencias-spring-boot-3-5-e-versoes-fixadas]].
+
 ## Ainda em aberto
-- Qualquer cargo logado ainda lê a entidade inteira de aluno e de voluntário nessas rotas. Reduzir
-  com DTO e permissão por cargo.
-- Revisão das demais rotas públicas (módulo 18 do `ROADMAP.md`, próximo lote).
-- Só o endpoint de solicitação de cesta tem limite de tentativas; os outros públicos seguem sem.
+- Qualquer cargo logado ainda lê a entidade inteira de aluno e de voluntário nas rotas de consulta do
+  painel. Reduzir com DTO e permissão por cargo.
 
 ## Ligado a
 - [[dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica]]: mesmo tipo de achado, na mesma auditoria.

@@ -1,10 +1,16 @@
 ---
 tipo: decisao
 data: 2026-08-10
-status: Ativa
+status: Substituída em 10/10/2026
 ---
 
 # Rate limit só no link público de solicitação de cesta (não no sistema todo)
+
+> **Substituída em 10/10/2026.** O limite passou a cobrir todas as rotas públicas que gravam dados, mandam e-mail
+> ou chamam o Stripe: `RateLimitPublicoFilter` (cesta 5/h, embaixador 5/h, assinatura 20/h, doação única 30/h,
+> itens 20/h), que substituiu o `CestasSolicitacaoRateLimitFilter`, com a chave de IP em `ClientIp`. O receio
+> com o fluxo de doação não se confirma: o limite só devolve 429 depois da cota, não duplica nem reenvia nada.
+> Ver [[cadastros-publicos-confiavam-no-corpo-da-requisicao]]. O texto abaixo é o registro histórico.
 
 ## Contexto
 A US-7.4 introduziu `POST /cestas/solicitacao`, um endpoint `permitAll` que qualquer líder da
