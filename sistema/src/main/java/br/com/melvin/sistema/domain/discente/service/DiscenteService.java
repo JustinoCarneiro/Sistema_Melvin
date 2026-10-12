@@ -1,5 +1,6 @@
 package br.com.melvin.sistema.domain.discente.service;
 
+import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +14,10 @@ import org.springframework.security.core.Authentication;
 
 import br.com.melvin.sistema.domain.discente.model.Discente;
 import br.com.melvin.sistema.domain.discente.repository.DiscenteRepository;
+import br.com.melvin.sistema.domain.diario.service.DiarioService;
+import br.com.melvin.sistema.domain.frequencia.repository.FrequenciaDiscenteRepository;
+import br.com.melvin.sistema.domain.ocorrencia.model.Ocorrencia;
+import br.com.melvin.sistema.domain.ocorrencia.repository.OcorrenciaRepository;
 import br.com.melvin.sistema.shared.service.ExcelExportService;
 import br.com.melvin.sistema.domain.discente.dto.DiscenteAvaliacaoDTO;
 
@@ -41,6 +46,18 @@ public class DiscenteService {
 
     @Autowired
     private PermissaoService permissaoService;
+
+    @Autowired
+    private FrequenciaDiscenteRepository frequenciaDiscenteRepository;
+
+    @Autowired
+    private OcorrenciaRepository ocorrenciaRepository;
+
+    @Autowired
+    private DiarioService diarioService;
+
+    private static final String NOME_ALUNO_REMOVIDO = "Aluno removido";
+    private static final String TEXTO_OCORRENCIA_REMOVIDA = "Conteúdo removido por eliminação de dados do aluno";
 
     // Método para listar todos os discentes
     public List<Discente> listar(){
@@ -203,8 +220,42 @@ public class DiscenteService {
             existente.setEndereco("Anonimizado");
             existente.setBairro("Anonimizado");
             existente.setRg("Anonimizado");
-            
+
+            // US-3.3: identificação pessoal e dados da família. A matrícula é mantida de
+            // propósito: generateMatricula() usa COUNT(*) ... LIKE 'AAAA%' e trocá-la
+            // geraria matrículas duplicadas.
+            existente.setNome(NOME_ALUNO_REMOVIDO);
+            existente.setNome_mae(null);
+            existente.setNome_pai(null);
+            existente.setEmail(null);
+            existente.setEmail_responsavel(null);
+            existente.setOutro_familiar(null);
+            existente.setLocal_trabalho_mae(null);
+            existente.setLocal_trabalho_pai(null);
+            existente.setOcupacao_mae(null);
+            existente.setOcupacao_pai(null);
+            existente.setRenda_total(null);
+            existente.setHorario_medicamento(null);
+            existente.setCidade("Anonimizado");
+            if (existente.getData() != null) {
+                existente.setData(LocalDate.of(existente.getData().getYear(), 1, 1));
+            }
+
             discenteRepository.save(existente);
+
+            frequenciaDiscenteRepository.anonimizarNomePorMatricula(matricula, NOME_ALUNO_REMOVIDO);
+
+            // Pela entidade (e não por UPDATE em massa) para o conversor de cifragem da descrição ser aplicado
+            List<Ocorrencia> ocorrencias = ocorrenciaRepository.findAllByMatriculaOrdenadoPorDataDesc(matricula);
+            ocorrencias.forEach(o -> o.setDescricao(TEXTO_OCORRENCIA_REMOVIDA));
+            ocorrenciaRepository.saveAll(ocorrencias);
+
+            // Por último, porque apagar arquivo não é desfeito pela transação; se falhar, tudo acima é revertido
+            ResponseEntity<?> diario = diarioService.deleteDiarioByMatricula(matricula);
+            if (diario.getStatusCode().is5xxServerError()) {
+                throw new IllegalStateException("Não foi possível apagar o diário do aluno; a exclusão foi desfeita.");
+            }
+
             resposta = "Discente removido e dados sensíveis anonimizados com sucesso!";
             return new ResponseEntity<String>(resposta, HttpStatus.OK);
         }

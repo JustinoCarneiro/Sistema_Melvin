@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,6 +17,10 @@ public interface FrequenciaDiscenteRepository extends JpaRepository<FrequenciaDi
     FrequenciaDiscente findByMatriculaAndData(String matricula, LocalDate data);
     void deleteByMatriculaAndData(String matricula, LocalDate data);
     List<FrequenciaDiscente> findAllByData(LocalDate data);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE FrequenciaDiscente f SET f.nome = :nome WHERE f.matricula = :matricula")
+    int anonimizarNomePorMatricula(@Param("matricula") String matricula, @Param("nome") String nome);
 
     @Query("SELECT COUNT(DISTINCT f.matricula) FROM FrequenciaDiscente f WHERE f.data = :data AND (f.presenca_manha = 'P' OR f.presenca_tarde = 'P')")
     Long countPresentesByData(@Param("data") LocalDate data);

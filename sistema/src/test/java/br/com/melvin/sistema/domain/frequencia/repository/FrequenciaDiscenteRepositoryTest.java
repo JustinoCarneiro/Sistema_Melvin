@@ -98,4 +98,24 @@ public class FrequenciaDiscenteRepositoryTest {
 
         assertThat(resultado).isEmpty(); // Apenas 3 dentro do mês
     }
+
+    @Test
+    public void deveAnonimizarONomeSomenteDasFrequenciasDaMatriculaIndicada() {
+        // US-3.3: ao remover um aluno, o nome copiado em cada frequência dele também é apagado.
+        createFrequencia("2026001", LocalDate.of(2026, 3, 2), "P", "P", null);
+        createFrequencia("2026001", LocalDate.of(2026, 3, 3), "F", "P", "Atestado");
+        createFrequencia("2026002", LocalDate.of(2026, 3, 2), "P", "P", null);
+
+        int atualizadas = repository.anonimizarNomePorMatricula("2026001", "Aluno removido");
+
+        assertThat(atualizadas).isEqualTo(2);
+        List<FrequenciaDiscente> todas = repository.findAll();
+        assertThat(todas).filteredOn(f -> f.getMatricula().equals("2026001"))
+                .extracting(FrequenciaDiscente::getNome).containsOnly("Aluno removido");
+        assertThat(todas).filteredOn(f -> f.getMatricula().equals("2026002"))
+                .extracting(FrequenciaDiscente::getNome).containsOnly("Aluno Teste");
+        // Só o nome muda: presença, data e justificativa continuam valendo para a estatística
+        assertThat(todas).filteredOn(f -> f.getMatricula().equals("2026001"))
+                .extracting(FrequenciaDiscente::getJustificativa).contains("Atestado");
+    }
 }

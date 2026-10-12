@@ -45,4 +45,63 @@ test.describe('Discentes Management', () => {
     await expect(alertIcon.locator('text=4')).toBeVisible();
   });
 
+  // US-3.3: "Deletar" apaga dados pessoais de forma irreversível; "Inativa" só desativa.
+  const alunoMock = {
+    matricula: '2026001', nome: 'João Silva', data: '2015-06-20', sexo: 'M', cor: 'Parda',
+    nacionalidade: 'Brasileira', endereco: 'Rua A, 10', bairro: 'Centro', cidade: 'Fortaleza',
+    sala: 1, turno: 'manha', status: 'true'
+  };
+
+  async function abrirEdicaoDoAluno(page, chamadas) {
+    await page.route('**/discente/matricula/2026001', route =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(alunoMock) }));
+    await page.route('**/discente/2026001', route => {
+      chamadas.push(route.request().method());
+      return route.fulfill({ status: 200, body: 'ok' });
+    });
+    await page.route('**/diarios/**', route => route.fulfill({ status: 404, body: 'nao encontrado' }));
+    await page.goto('/#/app/aluno/editar/2026001');
+    await expect(page.locator('input[name="nome"]')).toHaveValue('João Silva');
+  }
+
+  test('should warn that Deletar is irreversible and point to Inativa', async ({ page }) => {
+    await abrirEdicaoDoAluno(page, []);
+    const aviso = page.locator('[role="alert"]').filter({ hasText: 'irreversível' });
+
+    await page.selectOption('select[name="status"]', 'false');
+    await expect(aviso).toHaveCount(0);
+
+    await page.selectOption('select[name="status"]', 'deletar');
+    await expect(aviso).toBeVisible();
+    await expect(aviso).toContainText('Inativa');
+    await expect(aviso).toContainText('eliminação de dados');
+  });
+
+  test('should not send the deletion when the confirmation is dismissed', async ({ page }) => {
+    const chamadas = [];
+    const dialogos = [];
+    page.on('dialog', dialog => { dialogos.push(dialog.message()); dialog.dismiss(); });
+    await abrirEdicaoDoAluno(page, chamadas);
+
+    await page.selectOption('select[name="status"]', 'deletar');
+    await page.getByRole('button', { name: 'Salvar Dados' }).click();
+
+    await expect.poll(() => dialogos.length).toBe(1);
+    expect(dialogos[0]).toContain('irreversível');
+    expect(chamadas).not.toContain('DELETE');
+  });
+
+  test('should send the deletion after the confirmation is accepted', async ({ page }) => {
+    const chamadas = [];
+    const dialogos = [];
+    page.on('dialog', dialog => { dialogos.push(dialog.message()); dialog.accept(); });
+    await abrirEdicaoDoAluno(page, chamadas);
+
+    await page.selectOption('select[name="status"]', 'deletar');
+    await page.getByRole('button', { name: 'Salvar Dados' }).click();
+
+    await expect.poll(() => chamadas.filter(m => m === 'DELETE').length).toBe(1);
+    expect(dialogos[0]).toContain('irreversível');
+  });
+
 });

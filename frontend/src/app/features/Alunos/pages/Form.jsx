@@ -133,7 +133,7 @@ function Aluno_forms(){
         try {
             let response;
             if (formDado.status === 'deletar') {
-                if (window.confirm('Deseja realmente deletar este aluno?')) {
+                if (window.confirm('Esta ação é irreversível: nome, família, contatos e saúde do aluno serão apagados, junto com o diário e o texto das ocorrências. Use somente em pedido de eliminação de dados; para quem saiu e pode voltar, escolha "Inativa".\n\nDeseja realmente deletar este aluno?')) {
                     await discenteService.delete(matricula);
                     try { await diarioService.delete(matricula); } catch (e) { console.warn("Diário não encontrado"); }
                     alert('Registro deletado!');
@@ -237,6 +237,13 @@ function Aluno_forms(){
                                     <option value="deletar">Deletar</option>
                                     <option value="espera">Em espera...</option>
                                 </select>
+                                {formDado.status === 'deletar' && (
+                                    <div className={styles.avisoExclusao} role="alert">
+                                        <strong>Ação irreversível.</strong> Use &quot;Deletar&quot; somente em pedido de eliminação de dados (LGPD):
+                                        nome, família, contatos e saúde do aluno são apagados e o histórico individual não volta.
+                                        Para quem saiu ou pode retornar, escolha &quot;Inativa&quot;.
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className={styles.coluna}>

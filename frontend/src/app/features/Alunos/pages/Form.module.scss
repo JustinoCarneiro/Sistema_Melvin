@@ -303,6 +303,16 @@
     width: 100%;
 }
 
+.avisoExclusao {
+    color: #C70039;
+    background-color: #ffe6e6;
+    border-left: 4px solid #C70039;
+    padding: 0.6rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
 /* --- RESPONSIVIDADE --- */
 @media (max-width: 768px) {
     .container {

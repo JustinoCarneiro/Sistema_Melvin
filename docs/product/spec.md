@@ -205,7 +205,35 @@ Então APENAS os campos do DiscenteListagemDTO são trafegados (sem prontuário,
 Dado que o aluno com matrícula 2026001 será removido,
 Quando o admin confirma a exclusão,
 Então o status muda para INATIVO e campos de contato/saúde são sobrescritos com dados genéricos irreversíveis.
+
+Dado que o aluno 2026001 será removido e possui nome, nome dos pais, e-mails, dados de trabalho e renda da família e data de nascimento,
+Quando o admin confirma a exclusão,
+Então o nome passa a "Aluno removido",
+  E nome da mãe, nome do pai, e-mail, e-mail do responsável, outro familiar, local de trabalho, ocupação, renda e horário de medicamento ficam vazios,
+  E a cidade passa a "Anonimizado" e a data de nascimento mantém apenas o ano (01/01 do ano de nascimento),
+  E matrícula, sala, turno e sexo são preservados para a estatística e para a numeração dos próximos alunos.
+
+Dado que o aluno 2026001 possui frequências, ocorrências e diário registrados,
+Quando o admin confirma a exclusão,
+Então o nome em todas as frequências passa a "Aluno removido",
+  E a descrição de todas as ocorrências é substituída por um texto fixo, preservando categoria, data e autor,
+  E o diário (arquivo e registro) é apagado.
+
+Dado que o arquivo do diário do aluno não pôde ser apagado,
+Quando o admin confirma a exclusão,
+Então a exclusão inteira é desfeita (nada fica pela metade) e o admin recebe um erro.
+
+Dado que a situação da matrícula é alterada para "Inativa" (e não "Deletar"),
+Quando o admin salva,
+Então nenhum dado é apagado, o aluno vai para a lista de desativados e pode voltar a qualquer momento.
+
+Dado o formulário do aluno,
+Quando o admin escolhe "Deletar" em "Situação Matrícula",
+Então a tela exibe o aviso de que a ação é irreversível, só deve ser usada em pedido de eliminação de dados, e que quem saiu e pode voltar deve ser marcado como "Inativa",
+  E ao salvar, a confirmação repete o aviso e, se recusada, nada é enviado ao servidor.
 ```
+
+> **Critérios 2 a 6 acrescentados em 12/10/2026** (auditoria de produção de 08/10/2026; ver `memoria-tecnica/decisoes/exclusao-de-aluno-anonimizacao-completa-em-cascata.md`): a versão original só cobria contato e saúde, deixando nome, família e as frequências, ocorrências e diários ligados ao aluno. A matrícula é mantida de propósito: a numeração de novos alunos usa `COUNT(*) ... LIKE 'AAAA%'`, e trocá-la geraria matrículas duplicadas.
 
 #### US-3.4: Exportar Alunos para Excel
 **Como** coordenador com permissão EXPORTAR_RELATORIO,

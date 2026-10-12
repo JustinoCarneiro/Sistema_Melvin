@@ -103,7 +103,8 @@ const SECOES = [
             { texto: 'Um ícone de alerta ao lado do nome indica quantas faltas o aluno teve no mês — ajuda a identificar quem precisa de atenção antes de abrir o relatório completo.' },
             { texto: 'Ao abrir "Editar Aluno" (ou "Adicionar Aluno"), preencha os blocos Informações Pessoais, Informações Institucionais (situação da matrícula, sala, turno), Informações Familiares (pai, mãe e contexto familiar — inclui o e-mail do responsável usado no aviso automático de falta) e Outras Informações & Saúde. É possível anexar o "Diário de Acompanhamento" em PDF.', imagem: { src: imgAlunoForm, legenda: 'Formulário de Aluno — edição completa do cadastro.' } },
             { texto: 'Quem tem a permissão "Gerenciar Ocorrências" (por padrão: Professor, Coordenação, Diretoria e ADM) vê, ao final do formulário em modo edição, o bloco de Ocorrências: registra uma nova (categoria Comportamental ou Pedagógica + descrição + data) e consulta o histórico completo, do mais recente para o mais antigo.' },
-            { texto: 'Para excluir um aluno, mude "Situação Matrícula" para "Deletar" e salve — os dados sensíveis (contato, saúde) são anonimizados de forma irreversível e o registro estatístico é preservado, conforme a LGPD.' },
+            { texto: 'Para desativar um aluno que saiu ou pode voltar, mude "Situação Matrícula" para "Inativa": nada é apagado e o histórico completo fica guardado.' },
+            { texto: 'Use "Deletar" somente em pedido de eliminação de dados (LGPD). A tela mostra um aviso e pede confirmação, porque a ação é irreversível: nome, nomes dos pais, e-mails, contatos, saúde e dados da família são apagados, o nome some das frequências, o texto das ocorrências é removido e o diário é apagado. Ficam apenas matrícula, sala, turno, sexo, ano de nascimento e as presenças (sem nome), para a estatística do Instituto.' },
         ],
     },
     {

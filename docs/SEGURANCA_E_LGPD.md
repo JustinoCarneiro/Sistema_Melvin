@@ -50,10 +50,11 @@ Isso significa que, nas listas públicas do sistema que trafegam diariamente na 
 
 ### 🗑️ Direito ao Esquecimento vs. Prestação de Contas (Art. 18, VI)
 A LGPD exige que o cidadão tenha o direito de ter seus dados apagados. Porém, a ONG precisa prestar contas quantitativas a auditores e financiadores. O Sistema Melvin resolve esse dilema com a arquitetura de **Soft Delete e Anonimização Irreversível**:
-1. Quando uma família solicita a exclusão ou a criança encerra seu ciclo, ela não é "deletada" agressivamente para não quebrar as tabelas estatísticas do instituto.
-2. O sistema altera o status para *Inativo*.
-3. Simultaneamente, um algoritmo varre os dados sensíveis daquela criança (doenças, alergias, medicações, endereço e telefones dos pais) e os **sobrescreve de forma irrevogável** pela palavra `"Anonimizado"`.
-Desta forma, o Instituto obedece à LGPD, protegendo a criança, mas mantém vivo o histórico numérico ("Atendemos 100 alunos neste ano") para fins de prestação de contas governamental.
+1. Há dois caminhos distintos. **Inativa** (padrão, para quem saiu, se formou ou pode voltar) não apaga nada: o histórico completo fica guardado. **Deletar** (somente em pedido de eliminação de dados) é irreversível, e a tela avisa e pede confirmação.
+2. Ao deletar, o sistema altera o status para *Inativo* e, simultaneamente, um algoritmo varre os dados sensíveis daquela criança (doenças, alergias, medicações, endereço e telefones dos pais) e os **sobrescreve de forma irrevogável** pela palavra `"Anonimizado"`.
+3. Desde 12/10/2026 a mesma operação também apaga a identificação pessoal e os dados da família: o nome vira `"Aluno removido"`; nome da mãe e do pai, e-mails, local de trabalho, ocupação, renda, outro familiar e horário de medicamento ficam vazios; a cidade vira `"Anonimizado"`; e a data de nascimento mantém apenas o ano. Em cascata, o nome nas frequências vira `"Aluno removido"`, a descrição das ocorrências é substituída por um texto fixo e o diário (arquivo e registro) é apagado. Tudo ocorre numa única transação: se o diário não puder ser apagado, nada é alterado.
+4. A **matrícula é mantida** de propósito: a numeração dos próximos alunos depende dela, e trocá-la geraria matrículas duplicadas. Notas de avaliação, sala, turno e sexo também permanecem, para a estatística.
+Desta forma, o Instituto obedece à LGPD, protegendo a criança, mas mantém vivo o histórico numérico ("Atendemos 100 alunos neste ano") para fins de prestação de contas governamental. Os backups diários guardam os dados anteriores por até 30 dias, e a eliminação só se completa quando eles saem dessa janela.
 
 ### ✅ Coleta de Consentimento Explícito (Amigos do Melvin)
 A área pública de doações exige o consentimento livre, inequívoco e informado do doador. Antes de avançar para a tela de pagamento, o usuário é obrigado, via sistema, a preencher uma caixa de seleção ("*checkbox*") que legaliza a transação. O termo exato utilizado na plataforma é juridicamente blindado:
