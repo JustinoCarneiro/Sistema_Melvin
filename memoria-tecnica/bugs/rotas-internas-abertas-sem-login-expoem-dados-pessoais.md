@@ -2,7 +2,7 @@
 tipo: bug
 data: 2026-10-10
 severidade: Alta
-status: Corrigido e publicado em produção em 10/10/2026 (1º e 2º lotes)
+status: Corrigido e publicado em produção (1º a 3º lotes em 10/10/2026; 4º lote em 12/10/2026)
 ---
 
 # Rotas internas respondiam sem login e expunham dados pessoais
@@ -89,9 +89,51 @@ A revisão das demais rotas e o limite de tentativas foram feitos na auditoria d
 [[cadastros-publicos-confiavam-no-corpo-da-requisicao]], [[login-sem-limite-de-tentativas-e-verificacao-de-senha-sem-teto]],
 [[upload-aceitava-qualquer-arquivo-servido-pelo-mesmo-dominio]] e [[dependencias-spring-boot-3-5-e-versoes-fixadas]].
 
+## 4º lote: consultas que respondiam além do necessário (12/10/2026)
+Quatro consultas devolviam mais do que a tela que as usa precisava, ou a mais gente do que devia:
+
+- **Voluntário por matrícula:** qualquer cargo logado lia a ficha completa de qualquer voluntário
+  (contato, RG, endereço). Todos os chamadores no frontend são consultas do próprio usuário (Configurações,
+  Frequência, Alunos) ou o formulário de edição de voluntário. Agora só a própria matrícula, ou quem tem
+  `GERENCIAR_VOLUNTARIOS` (`VoluntarioConsultaAcesso`).
+- **Alunos por sala:** qualquer cargo logado, devolvendo os mesmos dados da lista de alunos, que exige
+  `VISUALIZAR_ALUNOS`. Um cargo sem essa permissão contornava a lista por aqui. Agora exige a mesma
+  permissão. Nenhuma tela chama essa rota.
+- **Lista de avisos:** pública, e devolvia também os avisos inativos e vencidos. O site nunca a usou; só a
+  tela de avisos, para quem gerencia avisos (`GERENCIAR_AVISOS`).
+- **Consultas de imagem (`/imagens/captura` e `/imagens/lista`):** a captura era pública e a lista
+  era de qualquer logado; ambas devolviam o caminho do arquivo no servidor. O site mostra a foto do
+  embaixador aprovado pela lista pública (`fotoPath`) e pelo caminho estático, nunca por essas rotas. Agora
+  exigem `GERENCIAR_EMBAIXADORES` ou `GERENCIAR_AVISOS`.
+
+Continuam públicos de propósito: nomes e funções de voluntários (seção de equipe do site), lista de
+embaixadores aprovados e os caminhos estáticos das fotos de embaixador e de aviso.
+
+**As duas listas mudaram juntas, de novo.** `/aviso` e `/imagens/captura` saíram também do
+`PUBLIC_ENDPOINTS_BY_METHOD` do `SecurityFilter`; sem isso o administrador levaria 403, porque o
+filtro não leria o token.
+
+Contrato que mudou de propósito: dois testes antigos registravam o comportamento anterior (um cargo
+sem permissão lendo a ficha de outra pessoa; a lista de avisos pública) e foram corrigidos junto. Um
+terceiro, do tratador de erros, usava a captura pública de imagem como exemplo de rota anônima com UUID
+no caminho; passou a usar uma rota exclusiva do cargo TECH, que não depende de regra semeada no banco
+de teste.
+
+- Validação: backend 312/312 (eram 308), com 4 testes novos em `RotasInternasSecurityTest` (token real),
+  2 testes de `ControleDeAcessoPorCargoTest` reescritos para as imagens e os avisos e a
+  `MatrizDeAcessoTest` reclassificando 5 rotas (a tabela falha o build se uma rota ficar mais aberta
+  do que ela diz). Smoke pré-deploy 12/12 (inclui Playwright; o frontend não mudou).
+- Publicado em 12/10/2026 às 17:50 (BRT) pelo `deploy.sh remote` a partir do commit `ba833e1`, com
+  backup cifrado e cópia off-site às 17:49. No servidor, os arquivos alterados batem com o commit, os
+  containers subiram sem reinício e sem erro no log, o Flyway segue na V17 e, pela URL pública, a lista
+  de avisos passou de 200 para 403 e as demais rotas públicas seguem em 200.
+- **Não verificado em produção:** o comportamento logado por cargo (sem credenciais); está coberto só
+  pelos testes com token real. Falta a validação humana: ADM abre Avisos e o formulário de embaixador
+  com foto; PROF abre Frequência e Configurações.
+
 ## Ainda em aberto
-- Qualquer cargo logado ainda lê a entidade inteira de aluno e de voluntário nas rotas de consulta do
-  painel. Reduzir com DTO e permissão por cargo.
+- Reduzir o que as consultas da área logada devolvem e a quem. Depende de definir com o Instituto
+  quais cargos usam cada tela; os detalhes ficam fora do repositório até a correção.
 
 ## Ligado a
 - [[dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica]]: mesmo tipo de achado, na mesma auditoria.
