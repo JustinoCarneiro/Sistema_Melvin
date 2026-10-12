@@ -27,7 +27,7 @@ A descrição da ocorrência é atualizada pela entidade (e não por `UPDATE` em
 - Não há chave estrangeira entre as tabelas: qualquer tabela nova que referencie o aluno por matrícula ou copie dado pessoal precisa entrar em `remover` e nos testes.
 - O front já chamava a exclusão do diário por conta própria; agora o servidor também apaga, então essa segunda chamada recebe "não encontrado", que o front já ignora.
 - **Não remover `flushAutomatically = true` de `anonimizarNomePorMatricula`.** O `UPDATE` em massa usa `clearAutomatically`, que descarta alterações ainda não gravadas; sem o flush antes, a ficha do aluno (status, nome, e-mails…) se perde e a exclusão fica parcial, sem erro. `DiscenteRemocaoIntegracaoTest` cobre isso com repositórios reais e falha sem a opção (verificado em 12/10/2026).
-- Mudança de código **não publicada em produção** (aguarda autorização de deploy). Sem migration.
+- Publicado em produção em 12/10/2026 às 13:16 (BRT), commit `3cd2cc0`. Sem migration. A exclusão real não foi exercitada em produção (apagaria um aluno de verdade): a validação foi por testes (unitários, de integração em H2 e E2E) e pelo smoke pós-deploy. Na primeira exclusão real, conferir a ficha, as frequências e o diário do aluno.
 
 ## Ligado a
 - [[backup-melvin-diario-criptografado]] (os backups guardam os dados anteriores por 30 dias)
