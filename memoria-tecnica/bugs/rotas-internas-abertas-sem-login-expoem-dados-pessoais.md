@@ -2,7 +2,7 @@
 tipo: bug
 data: 2026-10-10
 severidade: Alta
-status: Corrigido e publicado em produção (1º a 3º lotes em 10/10/2026; 4º lote em 12/10/2026)
+status: Corrigido e publicado em produção (1º a 3º lotes em 10/10/2026; 4º e 5º lotes em 12/10/2026)
 ---
 
 # Rotas internas respondiam sem login e expunham dados pessoais
@@ -131,9 +131,43 @@ de teste.
   pelos testes com token real. Falta a validação humana: ADM abre Avisos e o formulário de embaixador
   com foto; PROF abre Frequência e Configurações.
 
+## 5º lote: frequência lida só por quem a gerencia (12/10/2026)
+O que restava do módulo 18 dependia de uma regra de negócio, que o Instituto definiu em 12/10/2026:
+frequências são lidas por docentes, coordenação e diretoria.
+
+- **Frequência de alunos** (lista, por data, por data e matrícula, alertas de faltas): qualquer cargo
+  logado, inclusive cozinha, marketing e zeladoria, lia nome, matrícula, presença e justificativa de
+  cada criança, porque o painel carregava esses dados para todos. Agora exige `GERENCIAR_FREQUENCIA`
+  (em produção: ADM, DIRE, COOR, PROF, AUX e TECH; é permissão editável em Configurações). Sem criar regra
+  nova nem migration.
+- **Ponto dos voluntários** (leitura): qualquer cargo logado lia o ponto de todos. Agora cada um lê o
+  próprio (Configurações) e só ADM, TECH, DIRE e COOR leem o de todos, o mesmo critério que já valia
+  para registrar (`PontoVoluntarioAcesso.podeConsultar`).
+- **Visitante anônimo como "dono" de matrícula:** o nome interno do anônimo é `anonymousUser`; a regra
+  "a própria matrícula" do 4º lote (e a nova do ponto) o aceitaria numa matrícula com esse texto. Não
+  vazava dado, porque a matrícula não existe, mas as duas regras agora recusam o anônimo
+  explicitamente. Pegou-se com um teste que falhou antes da correção.
+- **Frontend:** o Dashboard juntava frequência, avisos e alertas num `Promise.all`; negar a frequência
+  derrubaria o painel de todos os cargos sem a permissão. Agora o painel só consulta e exibe os cartões
+  "Frequência do Dia" e "Faltas Excessivas" para quem tem a permissão, e trata como lista só o que for
+  lista (mesma guarda de tipo do ranking, ver o 2º lote). A lista de Alunos não consulta os alertas e
+  Relatórios não oferece a aba "Frequência" a quem não tem a permissão.
+
+- Validação: backend 316/316 (eram 312), Playwright 74/74 (eram 69), smoke 12/12. Testes com token real
+  por cargo (docentes, coordenação e diretoria leem; cozinha, marketing, zeladoria, psicologia e
+  assistente (ASSIST) recebem 403), a `MatrizDeAcessoTest` reclassificando 7 rotas e 5 testes E2E novos.
+- Publicado em 12/10/2026 às 18:53 (BRT) pelo `deploy.sh remote` a partir do commit `9c58f78`, com
+  backup cifrado e cópia off-site às 18:51. No servidor, os arquivos de segurança batem com o commit e
+  o frontend servido tem os mesmos 52 de 53 arquivos do build do commit (o 53º, o `index`, embute a URL
+  da API de produção e por isso difere). Containers sem reinício e sem erro no log, Flyway na V17. Sem
+  login, as rotas de frequência dão 403 pela URL pública.
+- **Não verificado em produção:** o comportamento logado por cargo (sem credenciais). Falta a validação
+  humana: PROF e COOR abrem o Dashboard e a chamada de frequência; COZI abre o Dashboard sem os cartões
+  de frequência; todo voluntário abre Configurações e registra o próprio ponto.
+
 ## Ainda em aberto
-- Reduzir o que as consultas da área logada devolvem e a quem. Depende de definir com o Instituto
-  quais cargos usam cada tela; os detalhes ficam fora do repositório até a correção.
+- A exportação da frequência para Excel (US-5.4) segue pela permissão "Visualizar Relatórios", que
+  inclui psicologia e assistente (ASSIST). Alinhá-la à regra de leitura é decisão pendente do Instituto.
 
 ## Ligado a
 - [[dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica]]: mesmo tipo de achado, na mesma auditoria.

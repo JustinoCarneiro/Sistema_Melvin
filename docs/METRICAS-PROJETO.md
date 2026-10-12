@@ -54,9 +54,9 @@ a cada renovação se compensa manter. A linha `(est. retroativa)` abaixo é pro
 | 2026-10-09 | 4–5 | 0,8 h | Revisão, TDD, segurança, smoke e deploy do cancelamento de solicitações de cesta. |
 | 2026-10-10 | 4–5 | n/r | Quatro publicações de correção de segurança no dia (ranking, rotas internas, embaixadores, auditoria geral). Horas não registradas na época; não reconstruídas aqui. |
 | 2026-10-12 | 4–5 | ≈6 h (est.) | Auditoria de produção: remediação da infraestrutura (servidor, backups, certificados, atualizações do sistema operacional e do Docker) e correção LGPD da exclusão de aluno (spec, TDD, deploy e verificação). Estimativa pelo relógio da sessão, incluindo esperas; ajustar se necessário. |
-| 2026-10-12 | 4–5 | n/r | Módulo 18, 4º lote (consultas por matrícula, por sala, de avisos e de imagens exigindo permissão): inventário de uso no frontend, TDD, deploy e verificação. Horas não registradas; não reconstruídas aqui. |
+| 2026-10-12 | 4–5 | n/r | Módulo 18, 4º e 5º lotes (consultas por matrícula, por sala, de avisos, de imagens e de frequência exigindo permissão): inventário de uso no frontend, TDD, dois deploys e verificação. Horas não registradas; não reconstruídas aqui. |
 
-Σ real registrada: **≈7,1 h** (soma das linhas acima, exceto a de 10/10 e a do 4º lote de 12/10 que não têm horas; as de 08/10 e 12/10 são estimativas)
+Σ real registrada: **≈7,1 h** (soma das linhas acima, exceto a de 10/10 e a dos lotes 4 e 5 de 12/10 que não têm horas; as de 08/10 e 12/10 são estimativas)
 Σ **(est. retroativa por proxy de commit)**: **~93 h piso · ~116–135 h central · ~162 h teto** — 155 commits, 81 sessões, **diluídos entre jul/2024 e set/2026** (~40–60 h/ano de manutenção)
 
 ## 4. Log de espera / impedimento (Fase 4)
