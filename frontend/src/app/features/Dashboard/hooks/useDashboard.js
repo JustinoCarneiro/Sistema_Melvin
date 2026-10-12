@@ -10,6 +10,9 @@ export function useDashboard() {
     // "Visualizar Relatórios" veem o ranking pedagógico (o servidor aplica a mesma regra).
     const canViewPsychRanking = ['PSICO', 'COOR'].includes(Cookies.get('role'));
     const canViewRanking = canViewPsychRanking || hasPermission('VISUALIZAR_RELATORIOS');
+    // A frequência de alunos é lida só por quem gerencia a frequência (docentes, coordenação e diretoria por
+    // padrão); o servidor nega aos demais cargos, então o painel nem a consulta nem a exibe para eles.
+    const canViewFrequencia = hasPermission('GERENCIAR_FREQUENCIA');
     const [frequenciaPorSala, setFrequenciaPorSala] = useState({ manha: {}, tarde: {} });
     const [rankingMelhores, setRankingMelhores] = useState([]);
     const [rankingPiores, setRankingPiores] = useState([]);
@@ -21,22 +24,32 @@ export function useDashboard() {
     const [isRankingLoading, setIsRankingLoading] = useState(false); // 1. NOVO loading para o ranking
     const [error, setError] = useState(null);
 
-    // Efeito para a carga inicial de TUDO
+    // Efeito para a carga inicial de TUDO. Espera as permissões chegarem, porque delas depende o que se consulta.
     useEffect(() => {
+        if (loadingPermissoes) return;
         const fetchInitialData = async () => {
             setLoading(true);
             setError(null);
             try {
                 const now = new Date();
+                const semDados = { data: [] };
+                // Frequência e faltas são opcionais: se faltarem (sem permissão, ou negadas pelo servidor), o
+                // painel carrega do mesmo jeito, só sem esses dois cartões.
                 const [frequenciaRes, avisosRes, alertasRes] = await Promise.all([
-                    frequenciaService.listDiscente(new Date().toISOString().split('T')[0]),
+                    canViewFrequencia
+                        ? frequenciaService.listDiscente(new Date().toISOString().split('T')[0]).catch(() => semDados)
+                        : semDados,
                     dashboardService.getAvisos(),
-                    frequenciaService.getAlertasFaltas(now.getMonth() + 1, now.getFullYear())
+                    canViewFrequencia
+                        ? frequenciaService.getAlertasFaltas(now.getMonth() + 1, now.getFullYear()).catch(() => semDados)
+                        : semDados
                 ]);
 
                 // ... (Processamento de Frequência, Avisos e Ranking)
                 // (a lógica aqui dentro é a mesma de antes)
-                const freqData = frequenciaRes.data || [];
+                // Guarda de tipo: resposta que não seja lista (ex.: página inicial devolvida por proxy) derrubaria a renderização.
+                const lista = (res) => (Array.isArray(res?.data) ? res.data : []);
+                const freqData = lista(frequenciaRes);
                 const freqPorSala = { manha: {}, tarde: {} };
                 ['1', '2', '3', '4'].forEach(sala => {
                     freqPorSala.manha[sala] = freqData.filter(f => f.sala === parseInt(sala) && f.presenca_manha === 'P').length;
@@ -45,9 +58,9 @@ export function useDashboard() {
                 freqPorSala.manha.total = Object.values(freqPorSala.manha).reduce((a, b) => a + b, 0);
                 freqPorSala.tarde.total = Object.values(freqPorSala.tarde).reduce((a, b) => a + b, 0);
                 setFrequenciaPorSala(freqPorSala);
-                setAvisos(avisosRes.data || []);
+                setAvisos(lista(avisosRes));
 
-                setAlertasFaltas(alertasRes.data || []);
+                setAlertasFaltas(lista(alertasRes));
 
             } catch (err) {
                 setError(err.message || 'Falha ao carregar o dashboard.');
@@ -56,7 +69,7 @@ export function useDashboard() {
             }
         };
         fetchInitialData();
-    }, []); // Roda apenas uma vez
+    }, [loadingPermissoes, canViewFrequencia]); // Roda quando as permissões ficam prontas
 
     // Efeito SEPARADO para CARREGAR e ATUALIZAR o ranking. Espera o painel terminar de carregar e as
     // permissões chegarem, porque o perfil que habilita o ranking só é conhecido depois delas.
@@ -92,6 +105,7 @@ export function useDashboard() {
         rankingPiores,
         canViewRanking,
         canViewPsychRanking,
+        canViewFrequencia,
         rankingSortBy,
         setRankingSortBy,
         alertasFaltas

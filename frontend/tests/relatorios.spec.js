@@ -89,6 +89,24 @@ test.describe('Relatórios', () => {
     await expect(row.locator('td').nth(6)).toHaveText('-');
   });
 
+  test('sem Gerenciar Frequência a aba Frequência não é oferecida e a frequência não é consultada', async ({ page }) => {
+    const frequenciaRequests = [];
+    page.on('request', request => {
+      if (/\/frequenciadiscente/.test(request.url())) frequenciaRequests.push(request.url());
+    });
+    await page.context().addCookies([{ name: 'role', value: 'PSICO', domain: 'localhost', path: '/' }]);
+    await page.route('**/permissoes/minhas*', route => {
+      if (route.request().url().includes('.js')) return route.continue();
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(['VISUALIZAR_RELATORIOS']) });
+    });
+
+    await page.goto('/#/app/relatorios');
+
+    await expect(page.locator('button', { hasText: 'Desempenho' })).toBeVisible();
+    await expect(page.locator('button', { hasText: 'Frequência' })).toHaveCount(0);
+    expect(frequenciaRequests).toHaveLength(0);
+  });
+
   test('deve alternar para a aba Frequência e exibir filtros de mês e ano', async ({ page }) => {
     await page.goto('/#/app/relatorios');
 

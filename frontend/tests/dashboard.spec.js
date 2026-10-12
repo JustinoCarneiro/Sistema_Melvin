@@ -163,6 +163,37 @@ test.describe('Dashboard', () => {
     expect(rankingRequests).toHaveLength(0);
   });
 
+  // Frequência de alunos: lida só por quem gerencia a frequência (docentes, coordenação e diretoria por padrão).
+  test('cargo sem Gerenciar Frequência não consulta nem exibe a frequência de alunos, e o painel carrega', async ({ page }) => {
+    const frequenciaRequests = [];
+    page.on('request', request => {
+      if (request.url().includes('/frequenciadiscente')) frequenciaRequests.push(request.url());
+    });
+
+    await acessarComo(page, 'COZI', { permissoes: [] });
+
+    await expect(page.locator('h1', { hasText: 'Dashboard' })).toBeVisible();
+    await expect(page.locator('h3', { hasText: 'Frequência do Dia' })).toHaveCount(0);
+    await expect(page.locator('h3', { hasText: 'Faltas Excessivas' })).toHaveCount(0);
+    expect(frequenciaRequests).toHaveLength(0);
+  });
+
+  test('docente com Gerenciar Frequência vê a frequência do dia e as faltas, mesmo com as permissões chegando depois', async ({ page }) => {
+    await acessarComo(page, 'PROF', { permissoes: ['GERENCIAR_FREQUENCIA'], atrasoPermissoesMs: 1200 });
+
+    await expect(page.locator('h3', { hasText: 'Frequência do Dia' })).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('h3', { hasText: 'Faltas Excessivas' })).toBeVisible();
+    await expect(page.locator('li', { hasText: 'Aluno Crítico' }).first()).toBeVisible();
+  });
+
+  test('não derruba o painel quando a frequência vem negada pelo servidor (403)', async ({ page }) => {
+    await page.route('**/frequenciadiscente/**', route => route.fulfill({ status: 403, body: '' }));
+
+    await acessarComo(page, 'PROF', { permissoes: ['GERENCIAR_FREQUENCIA'] });
+
+    await expect(page.locator('h1', { hasText: 'Dashboard' })).toBeVisible();
+  });
+
   test('não derruba o painel quando o ranking devolve algo que não é uma lista', async ({ page }) => {
     const errosDaPagina = [];
     page.on('pageerror', erro => errosDaPagina.push(String(erro)));
@@ -173,7 +204,7 @@ test.describe('Dashboard', () => {
       body: '<!doctype html><html><body>index</body></html>',
     }));
 
-    await acessarComo(page, 'PROF', { permissoes: ['VISUALIZAR_RELATORIOS'] });
+    await acessarComo(page, 'PROF', { permissoes: ['VISUALIZAR_RELATORIOS', 'GERENCIAR_FREQUENCIA'] });
 
     await expect(page.locator('h3', { hasText: 'Destaques' })).toBeVisible();
     await page.waitForTimeout(800);

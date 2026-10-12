@@ -346,6 +346,26 @@ Então o sistema retorna conflito (frequência já registrada).
 **eu quero** exportar a frequência filtrada por mês, sala e turno em `.xlsx`,
 **para que** relatórios impressos sejam gerados para reuniões.
 
+#### Regra de leitura da frequência (acrescentada em 12/10/2026)
+**Origem:** decisão do Instituto em 12/10/2026 ("frequências devem ser lidas por docentes, coordenação e diretoria"), que fecha o módulo 18 do `ROADMAP.md`. Antes, qualquer cargo logado lia a frequência de alunos e o ponto de todos os voluntários.
+
+**Critérios de Aceite:**
+```gherkin
+Dado que o usuário tem a permissão "Gerenciar Frequência" (por padrão: PROF, COOR, DIRE, ADM e TECH; em produção também AUX),
+Quando ele consulta a frequência de alunos (chamada do dia, histórico, alertas de faltas) ou abre o Dashboard,
+Então vê a frequência do dia e os alertas de faltas.
+
+Dado que o usuário não tem essa permissão (por exemplo COZI, MARK, ZELA, PSICO e ASSIST),
+Quando a frequência de alunos é consultada,
+Então o servidor nega com 403, o Dashboard carrega sem os cartões "Frequência do Dia" e "Faltas Excessivas", a lista de alunos não consulta os alertas e a aba "Frequência" de Relatórios não é oferecida.
+
+Dado qualquer voluntário logado,
+Quando ele abre Configurações,
+Então lê e registra o próprio ponto; o ponto dos demais voluntários só é lido por ADM, TECH, DIRE e COOR.
+```
+
+> **Fora desta regra:** a exportação para Excel (US-5.4) segue pela permissão "Visualizar Relatórios", que inclui PSICO e ASSIST; alinhá-la a esta regra é decisão pendente do Instituto. A permissão é editável em Configurações → Permissões de Acesso, então a regra acompanha o que o ADM conceder.
+
 #### US-5.5: Notificação Automática de Falta ao Responsável
 **Status:** ✅ Concluído (10/08/2026, ver ROADMAP.md Módulo 11).
 

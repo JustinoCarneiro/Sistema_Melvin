@@ -45,6 +45,24 @@ test.describe('Discentes Management', () => {
     await expect(alertIcon.locator('text=4')).toBeVisible();
   });
 
+  test('sem Gerenciar Frequência a lista de alunos carrega e não consulta os alertas de faltas', async ({ page }) => {
+    const alertasRequests = [];
+    page.on('request', request => {
+      if (request.url().includes('/frequenciadiscente/alertas-faltas')) alertasRequests.push(request.url());
+    });
+    await page.context().addCookies([{ name: 'role', value: 'ASSIST', domain: 'localhost', path: '/' }]);
+    await page.route('**/permissoes/minhas*', route => {
+      if (route.request().url().includes('.js')) return route.continue();
+      route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(['VISUALIZAR_ALUNOS']) });
+    });
+
+    await page.goto('/#/app/alunos');
+
+    await expect(page.locator('tr').filter({ hasText: 'João Silva' })).toBeVisible();
+    await page.waitForTimeout(800);
+    expect(alertasRequests).toHaveLength(0);
+  });
+
   // US-3.3: "Deletar" apaga dados pessoais de forma irreversível; "Inativa" só desativa.
   const alunoMock = {
     matricula: '2026001', nome: 'João Silva', data: '2015-06-20', sexo: 'M', cor: 'Parda',

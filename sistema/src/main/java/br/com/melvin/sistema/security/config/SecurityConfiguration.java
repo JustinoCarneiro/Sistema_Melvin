@@ -28,6 +28,7 @@ import org.springframework.security.authorization.AuthorizationDecision;
 
 import org.springframework.web.cors.CorsConfiguration;
 import br.com.melvin.sistema.domain.dashboard.service.NotaPsicologicaAcesso;
+import br.com.melvin.sistema.domain.frequencia.service.PontoVoluntarioAcesso;
 import br.com.melvin.sistema.domain.permissao.service.PermissaoService;
 import br.com.melvin.sistema.domain.voluntario.service.VoluntarioConsultaAcesso;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -229,9 +230,21 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.GET, "/frequenciadiscente/export").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_RELATORIOS")))
 
+                    // --- FREQUÊNCIA (leitura) ---
+                    // Alunos: quem gerencia a frequência (por padrão docentes, coordenação e diretoria). Vem depois do /export,
+                    // que tem regra própria, porque "{data}" também casaria com "export".
+                    .requestMatchers(HttpMethod.GET, "/frequenciadiscente", "/frequenciadiscente/alertas-faltas",
+                            "/frequenciadiscente/{data}", "/frequenciadiscente/{data}/{matricula}").access((authentication, context) ->
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_FREQUENCIA")))
+                    // Ponto dos voluntários: cada um lê o próprio (Configurações); o livro de todos é só da equipe (PontoVoluntarioAcesso).
+                    .requestMatchers(HttpMethod.GET, "/frequenciavoluntario", "/frequenciavoluntario/{data}").access((authentication, context) ->
+                        new AuthorizationDecision(PontoVoluntarioAcesso.podeConsultar(authentication.get(), null)))
+                    .requestMatchers(HttpMethod.GET, "/frequenciavoluntario/{data}/{matricula}").access((authentication, context) ->
+                        new AuthorizationDecision(PontoVoluntarioAcesso.podeConsultar(authentication.get(),
+                                context.getVariables().get("matricula"))))
+
                     // --- ROTAS DE QUALQUER CARGO LOGADO (o painel e as telas comuns carregam estes dados) ---
-                    .requestMatchers(HttpMethod.GET, "/dias-nao-letivos", "/frequenciadiscente/**",
-                            "/frequenciavoluntario/**").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/dias-nao-letivos").authenticated()
                     // Ponto: qualquer logado registra o próprio; o controller recusa o de outra pessoa (PontoVoluntarioAcesso).
                     .requestMatchers(HttpMethod.POST, "/frequenciavoluntario").authenticated()
                     .requestMatchers(HttpMethod.PUT, "/frequenciavoluntario").authenticated()

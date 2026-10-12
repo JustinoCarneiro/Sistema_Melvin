@@ -68,7 +68,9 @@ function Alunos({ modoDesativados = false }) {
     }, [modoDesativados]);
 
     // --- EFEITO: BUSCAR ALERTAS DE FALTAS ---
+    // A frequência é lida só por quem gerencia a frequência; para os demais cargos o servidor negaria.
     useEffect(() => {
+        if (!podeGerenciarFrequencia) return;
         const fetchAlertas = async () => {
             try {
                 const now = new Date();
@@ -79,7 +81,7 @@ function Alunos({ modoDesativados = false }) {
             }
         };
         fetchAlertas();
-    }, []);
+    }, [podeGerenciarFrequencia]);
 
     // --- FILTRAGEM DE DESATIVADOS (LOCAL) ---
     // Usamos useMemo para não recalcular a cada render se nada mudar

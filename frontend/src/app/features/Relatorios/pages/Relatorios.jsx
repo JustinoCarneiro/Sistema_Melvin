@@ -31,6 +31,8 @@ function Relatorios() {
     } = useAlunos();
 
     const podeVisualizarRelatorios = hasPermission('VISUALIZAR_RELATORIOS');
+    // A frequência de alunos é lida só por quem gerencia a frequência; para os demais a aba nem é oferecida.
+    const podeVerFrequencia = hasPermission('GERENCIAR_FREQUENCIA');
     const podeExportar = isAdm || hasPermission('ADMINISTRATIVO');
 
     // Debug: Monitorar erros no console
@@ -220,12 +222,14 @@ function Relatorios() {
                             >
                                 <FaChartBar /> Desempenho
                             </button>
-                            <button 
-                                className={`${styles.toggleBtn} ${view === 'frequencia' ? styles.active : ''}`}
-                                onClick={() => setView('frequencia')}
-                            >
-                                <FaCalendarAlt /> Frequência
-                            </button>
+                            {podeVerFrequencia && (
+                                <button 
+                                    className={`${styles.toggleBtn} ${view === 'frequencia' ? styles.active : ''}`}
+                                    onClick={() => setView('frequencia')}
+                                >
+                                    <FaCalendarAlt /> Frequência
+                                </button>
+                            )}
                         </div>
                     </div>
                     

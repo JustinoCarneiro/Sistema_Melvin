@@ -13,6 +13,7 @@ function Home() {
         rankingPiores, 
         canViewRanking,
         canViewPsychRanking,
+        canViewFrequencia,
         rankingSortBy, 
         setRankingSortBy,
         alertasFaltas
@@ -100,7 +101,7 @@ function Home() {
 
             <div className={styles.dashboardGrid}>
                 {/* --- CARD DE FREQUÊNCIA --- */}
-                <div className={styles.card}>
+                {canViewFrequencia && <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <h3><FaCalendarAlt /> Frequência do Dia</h3>
                     </div>
@@ -141,7 +142,7 @@ function Home() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>}
 
                 {/* --- RANKING: MELHORES --- */}
                 {canViewRanking && <div className={styles.card}>
@@ -186,7 +187,7 @@ function Home() {
                 </div>}
 
                 {/* --- ALERTA DE FALTAS --- */}
-                <div className={styles.card}>
+                {canViewFrequencia && <div className={styles.card}>
                     <div className={styles.cardHeader}>
                         <div className={styles.headerTitleGroup}>
                             <FaExclamationTriangle color="#e11d48"/>
@@ -214,7 +215,7 @@ function Home() {
                             </ul>
                         )}
                     </div>
-                </div>
+                </div>}
             </div>
         </div>
     );

@@ -1,5 +1,6 @@
 package br.com.melvin.sistema.domain.voluntario.service;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
 /**
@@ -13,7 +14,7 @@ public final class VoluntarioConsultaAcesso {
     }
 
     public static boolean podeConsultar(Authentication authentication, String matriculaConsultada, boolean gerenciaVoluntarios) {
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken || !authentication.isAuthenticated()) {
             return false;
         }
         if (matriculaConsultada != null && matriculaConsultada.equals(authentication.getName())) {

@@ -67,13 +67,6 @@ class MatrizDeAcessoTest {
             LOGADO    GET     /dashboard/avisos
             LOGADO    GET     /dashboard/presentes
             LOGADO    GET     /dias-nao-letivos
-            LOGADO    GET     /frequenciadiscente
-            LOGADO    GET     /frequenciadiscente/alertas-faltas
-            LOGADO    GET     /frequenciadiscente/{data}
-            LOGADO    GET     /frequenciadiscente/{data}/{matricula}
-            LOGADO    GET     /frequenciavoluntario
-            LOGADO    GET     /frequenciavoluntario/{data}
-            LOGADO    GET     /frequenciavoluntario/{data}/{matricula}
             LOGADO    POST    /frequenciavoluntario
             LOGADO    PUT     /frequenciavoluntario
             LOGADO    GET     /permissoes/minhas
@@ -120,8 +113,15 @@ class MatrizDeAcessoTest {
             RESTRITA  PUT     /embaixador
             RESTRITA  POST    /frequenciadiscente
             RESTRITA  PUT     /frequenciadiscente
+            RESTRITA  GET     /frequenciadiscente
+            RESTRITA  GET     /frequenciadiscente/alertas-faltas
+            RESTRITA  GET     /frequenciadiscente/{data}
+            RESTRITA  GET     /frequenciadiscente/{data}/{matricula}
             RESTRITA  GET     /frequenciadiscente/export
             RESTRITA  DELETE  /frequenciadiscente/{matricula}/{data}
+            RESTRITA  GET     /frequenciavoluntario
+            RESTRITA  GET     /frequenciavoluntario/{data}
+            RESTRITA  GET     /frequenciavoluntario/{data}/{matricula}
             RESTRITA  DELETE  /frequenciavoluntario/{matricula}/{data}
             RESTRITA  PUT     /imagens/atualizar/{id}/{tipo}
             RESTRITA  GET     /imagens/captura/{id}/{tipo}
