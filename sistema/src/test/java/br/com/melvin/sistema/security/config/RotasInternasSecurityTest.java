@@ -1,8 +1,13 @@
 package br.com.melvin.sistema.security.config;
 
+import br.com.melvin.sistema.domain.permissao.model.PermissaoRegra;
+import br.com.melvin.sistema.domain.permissao.repository.PermissaoRegraRepository;
+import br.com.melvin.sistema.domain.voluntario.model.Voluntario;
+import br.com.melvin.sistema.domain.voluntario.repository.VoluntarioRepository;
 import br.com.melvin.sistema.security.model.User;
 import br.com.melvin.sistema.security.model.UserRole;
 import br.com.melvin.sistema.security.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,10 +18,13 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -37,6 +45,28 @@ class RotasInternasSecurityTest {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private VoluntarioRepository voluntarioRepository;
+
+    @Autowired
+    private PermissaoRegraRepository permissaoRegraRepository;
+
+    @BeforeEach
+    void semeiaPermissoesPadraoDeProducao() {
+        // No perfil de teste o PermissaoService não semeia as regras padrão; aqui valem as de produção.
+        semeia("GERENCIAR_VOLUNTARIOS", "ADM,TECH");
+        semeia("VISUALIZAR_ALUNOS", "PROF,ADM,TECH,DIRE,COOR,ASSIST,PSICO");
+    }
+
+    private void semeia(String nomeRegra, String roles) {
+        if (permissaoRegraRepository.findByNomeRegra(nomeRegra).isEmpty()) {
+            PermissaoRegra regra = new PermissaoRegra();
+            regra.setNomeRegra(nomeRegra);
+            regra.setRolesPermitidas(roles);
+            permissaoRegraRepository.save(regra);
+        }
+    }
 
     private String bearer(String login, UserRole role) {
         User usuario = userRepository.findByLogin(login);
@@ -89,7 +119,6 @@ class RotasInternasSecurityTest {
         mockMvc.perform(get("/frequenciadiscente/alertas-faltas").param("mes", "10").param("ano", "2026"))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/frequenciavoluntario")).andExpect(status().isOk());
-        mockMvc.perform(get("/voluntario/matricula/2026001")).andExpect(status().isOk());
     }
 
     @Test
@@ -102,7 +131,8 @@ class RotasInternasSecurityTest {
                 .header(HttpHeaders.AUTHORIZATION, token)).andExpect(status().isOk());
         mockMvc.perform(get("/frequenciavoluntario").header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/voluntario/matricula/2026001").header(HttpHeaders.AUTHORIZATION, token))
+        // A própria ficha: o login do token é a matrícula consultada.
+        mockMvc.perform(get("/voluntario/matricula/9300001").header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().isOk());
     }
 
@@ -126,11 +156,80 @@ class RotasInternasSecurityTest {
                 .andExpect(result -> assertThat(result.getResponse().getStatus()).isNotIn(401, 403));
     }
 
+    // ---- consulta de voluntário por matrícula: o próprio usuário ou quem gerencia voluntários ----
+
+    private Voluntario voluntarioDeTeste(String matricula) {
+        Voluntario voluntario = voluntarioRepository.findByMatricula(matricula);
+        if (voluntario == null) {
+            voluntario = new Voluntario();
+            voluntario.setMatricula(matricula);
+            voluntario.setNome("Voluntário de Teste " + matricula);
+            voluntario.setContato("85900000000");
+            voluntario.setFuncao("professor");
+            voluntario.setData(LocalDate.of(1990, 1, 1));
+            voluntario.setEndereco("Rua de Teste, 1");
+            voluntario.setBairro("Bairro de Teste");
+            voluntario.setCidade("Cidade de Teste");
+            voluntario.setStatus("true");
+            voluntario.setSalaUm("3");
+            voluntario = voluntarioRepository.save(voluntario);
+        }
+        return voluntario;
+    }
+
+    @Test
+    void voluntarioConsultaOsProprioDadosPorMatricula() throws Exception {
+        voluntarioDeTeste("9300011");
+
+        mockMvc.perform(get("/voluntario/matricula/9300011")
+                .header(HttpHeaders.AUTHORIZATION, bearer("9300011", UserRole.PROF)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.matricula").value("9300011"))
+                .andExpect(jsonPath("$.salaUm").value("3"));
+    }
+
+    @Test
+    void voluntarioNaoConsultaDadosDeOutraPessoaPorMatricula() throws Exception {
+        voluntarioDeTeste("9300012");
+
+        for (UserRole cargo : new UserRole[] { UserRole.PROF, UserRole.AUX, UserRole.COZI, UserRole.COOR, UserRole.DIRE }) {
+            mockMvc.perform(get("/voluntario/matricula/9300012")
+                    .header(HttpHeaders.AUTHORIZATION, bearer("93000" + cargo.ordinal() + "0", cargo)))
+                    .andExpect(status().isForbidden());
+        }
+    }
+
+    @Test
+    void quemGerenciaVoluntariosConsultaQualquerMatricula() throws Exception {
+        voluntarioDeTeste("9300013");
+
+        mockMvc.perform(get("/voluntario/matricula/9300013")
+                .header(HttpHeaders.AUTHORIZATION, bearer("9300014", UserRole.ADM)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.matricula").value("9300013"));
+        mockMvc.perform(get("/voluntario/matricula/9300013")
+                .header(HttpHeaders.AUTHORIZATION, bearer("9300015", UserRole.TECH)))
+                .andExpect(status().isOk());
+    }
+
+    // ---- alunos de uma sala: mesma permissão da lista de alunos ----
+
+    @Test
+    void alunosPorSalaExigemAMesmaPermissaoDaListaDeAlunos() throws Exception {
+        mockMvc.perform(get("/discente/sala/1")).andExpect(status().isForbidden());
+        mockMvc.perform(get("/discente/sala/1").header(HttpHeaders.AUTHORIZATION, bearer("9300021", UserRole.COZI)))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/discente/sala/1").header(HttpHeaders.AUTHORIZATION, bearer("9300022", UserRole.PROF)))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/discente/sala/1").header(HttpHeaders.AUTHORIZATION, bearer("9300023", UserRole.ADM)))
+                .andExpect(status().isOk());
+    }
+
     // ---- o que é público de verdade continua público ----
 
     @Test
     void mantemPublicasAsRotasDoSite() throws Exception {
         mockMvc.perform(get("/voluntario/nomesfuncoes")).andExpect(status().isOk());
-        mockMvc.perform(get("/aviso")).andExpect(status().isOk());
+        mockMvc.perform(get("/embaixador/publicos")).andExpect(status().isOk());
     }
 }

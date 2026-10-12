@@ -29,6 +29,7 @@ import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.web.cors.CorsConfiguration;
 import br.com.melvin.sistema.domain.dashboard.service.NotaPsicologicaAcesso;
 import br.com.melvin.sistema.domain.permissao.service.PermissaoService;
+import br.com.melvin.sistema.domain.voluntario.service.VoluntarioConsultaAcesso;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -61,8 +62,9 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                     // --- ROTAS PÚBLICAS (Login e leituras abertas) ---
-                    // Das imagens, só a captura por id é do site (foto de embaixador e de aviso); a lista completa é da área logada.
-                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/imagens/captura/**", "/embaixador/publicos", "/app/docs/imagens_embaixadores/**", "/app/docs/imagens_avisos/**", "/aviso", "/actuator/health").permitAll()
+                    // Nenhuma consulta de imagem nem a lista de avisos é do site: a foto do embaixador aprovado vem na
+                    // lista pública (fotoPath) e o arquivo sai do caminho estático abaixo.
+                    .requestMatchers(HttpMethod.GET, "/voluntario/nomesfuncoes/**", "/embaixador/publicos", "/app/docs/imagens_embaixadores/**", "/app/docs/imagens_avisos/**", "/actuator/health").permitAll()
                     // O cadastro de embaixador é só o caminho exato; o cadastro manual de Amigo (POST /amigomelvin) é da administração.
                     .requestMatchers(HttpMethod.POST, "/auth/login", "/embaixador", "/amigomelvin/subscribe", "/amigomelvin/one-time", "/amigomelvin/items", "/v1/webhooks/payments", "/cestas/solicitacao").permitAll()
                     // Frequência de alunos e ponto dos voluntários, e a consulta de voluntário por matrícula, são da
@@ -127,13 +129,25 @@ public class SecurityConfiguration {
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
                     
                     // --- AVISOS ---
+                    // A lista completa traz também os avisos inativos e vencidos: é da tela de avisos, não do site.
+                    .requestMatchers(HttpMethod.GET, "/aviso").access((authentication, context) ->
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AVISOS")))
                     .requestMatchers(HttpMethod.POST, "/aviso/**").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AVISOS")))
+
+                    // --- IMAGENS (consulta): só as telas de embaixadores e avisos usam ---
+                    .requestMatchers(HttpMethod.GET, "/imagens/lista", "/imagens/captura/{id}/{tipo}").access((authentication, context) ->
+                        new AuthorizationDecision(
+                                permissaoService.hasPermission(authentication.get(), "GERENCIAR_EMBAIXADORES")
+                                || permissaoService.hasPermission(authentication.get(), "GERENCIAR_AVISOS")))
 
                     // --- DISCENTES / ALUNOS (ASSIST já incluído) ---
                     .requestMatchers(HttpMethod.POST, "/discente").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "CADASTRAR_ALUNO")))
                     .requestMatchers(HttpMethod.GET, "/discente").access((authentication, context) -> 
+                        new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_ALUNOS")))
+                    // Alunos de uma sala: devolve os mesmos dados da lista de alunos, então exige a mesma permissão.
+                    .requestMatchers(HttpMethod.GET, "/discente/sala/{sala}").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_ALUNOS")))
                     .requestMatchers(HttpMethod.GET, "/discente/matricula/{matricula}").access((authentication, context) ->
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_ALUNOS")))
@@ -161,6 +175,11 @@ public class SecurityConfiguration {
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_AMIGOS")))
                     .requestMatchers(HttpMethod.GET, "/voluntario").access((authentication, context) -> 
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS")))
+                    // Ficha completa de um voluntário: a própria (telas comuns) ou, de outra pessoa, só de quem gerencia voluntários.
+                    .requestMatchers(HttpMethod.GET, "/voluntario/matricula/{matricula}").access((authentication, context) ->
+                        new AuthorizationDecision(VoluntarioConsultaAcesso.podeConsultar(authentication.get(),
+                                context.getVariables().get("matricula"),
+                                permissaoService.hasPermission(authentication.get(), "GERENCIAR_VOLUNTARIOS"))))
 
                     // --- EDIÇÃO GERAL ---
                     .requestMatchers(HttpMethod.PUT, "/cestas").access((authentication, context) -> 
@@ -211,8 +230,8 @@ public class SecurityConfiguration {
                         new AuthorizationDecision(permissaoService.hasPermission(authentication.get(), "VISUALIZAR_RELATORIOS")))
 
                     // --- ROTAS DE QUALQUER CARGO LOGADO (o painel e as telas comuns carregam estes dados) ---
-                    .requestMatchers(HttpMethod.GET, "/dias-nao-letivos", "/discente/sala/{sala}", "/frequenciadiscente/**",
-                            "/frequenciavoluntario/**", "/imagens/lista", "/voluntario/matricula/{matricula}").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/dias-nao-letivos", "/frequenciadiscente/**",
+                            "/frequenciavoluntario/**").authenticated()
                     // Ponto: qualquer logado registra o próprio; o controller recusa o de outra pessoa (PontoVoluntarioAcesso).
                     .requestMatchers(HttpMethod.POST, "/frequenciavoluntario").authenticated()
                     .requestMatchers(HttpMethod.PUT, "/frequenciavoluntario").authenticated()

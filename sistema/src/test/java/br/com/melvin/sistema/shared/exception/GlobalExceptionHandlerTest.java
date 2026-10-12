@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -77,7 +78,9 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void idMalFormadoNoCaminhoEErroDeRequisicao() throws Exception {
-        mockMvc.perform(get("/imagens/captura/isto-nao-e-uuid/embaixador"))
+        // Rota exclusiva do cargo TECH (controle por cargo, não por permissão semeada) com UUID no caminho.
+        mockMvc.perform(put("/ocorrencias-tecnicas/isto-nao-e-uuid/alternar-resolvido")
+                .header(HttpHeaders.AUTHORIZATION, bearer("9600004", UserRole.TECH)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(content().string(not(containsString("UUID"))))

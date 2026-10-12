@@ -51,6 +51,7 @@ class ControleDeAcessoPorCargoTest {
             Map.entry("GERENCIAR_VOLUNTARIOS", "ADM,TECH"),
             Map.entry("GERENCIAR_EMBAIXADORES", "ADM,TECH,DIRE"),
             Map.entry("GERENCIAR_AMIGOS", "ADM,TECH,DIRE"),
+            Map.entry("GERENCIAR_AVISOS", "ADM,TECH"),
             Map.entry("VISUALIZAR_ALUNOS", "PROF,ADM,TECH,DIRE,COOR,ASSIST,PSICO"),
             Map.entry("VISUALIZAR_RELATORIOS", "PROF,ADM,TECH,DIRE,COOR,ASSIST,PSICO"));
 
@@ -209,21 +210,26 @@ class ControleDeAcessoPorCargoTest {
         liberado(rota, UserRole.COZI, UserRole.PROF);
     }
 
-    // ---- imagens: só a captura por id é do site ----
+    // ---- imagens: nenhuma consulta é do site (a foto do embaixador aprovado vem na lista pública, por caminho estático) ----
 
     @Test
-    void listaCompletaDeImagensExigeLogin() throws Exception {
-        Supplier<MockHttpServletRequestBuilder> rota = () -> get("/imagens/lista");
-        negado(rota);
-        // Com token real: o SecurityFilter precisa ler o token neste caminho.
-        liberado(rota, UserRole.COZI, UserRole.ADM);
+    void listaEcapturaDeImagensSoParaQuemGerenciaEmbaixadoresOuAvisos() throws Exception {
+        Supplier<MockHttpServletRequestBuilder> lista = () -> get("/imagens/lista");
+        Supplier<MockHttpServletRequestBuilder> captura = () -> get("/imagens/captura/" + UUID_QUALQUER + "/embaixador");
+        negado(lista, UserRole.COZI, UserRole.PROF);
+        negado(captura, UserRole.COZI, UserRole.PROF);
+        // Com token real: o SecurityFilter precisa ler o token nestes caminhos.
+        liberado(lista, UserRole.ADM);
+        liberado(captura, UserRole.ADM);
     }
 
+    // ---- avisos: a lista completa (inclui inativos e vencidos) é de quem gerencia avisos; o site não a usa ----
+
     @Test
-    void capturaDeImagemPorIdContinuaPublicaParaOSite() throws Exception {
-        Supplier<MockHttpServletRequestBuilder> rota = () -> get("/imagens/captura/" + UUID_QUALQUER + "/embaixador");
-        assertThat(status(rota, null)).isNotIn(401, 403);
-        liberado(rota, UserRole.COZI);
+    void listaCompletaDeAvisosSoParaQuemGerenciaAvisos() throws Exception {
+        Supplier<MockHttpServletRequestBuilder> rota = () -> get("/aviso");
+        negado(rota, UserRole.COZI, UserRole.PROF);
+        liberado(rota, UserRole.ADM);
     }
 
     // ---- cadastro de embaixador: só o caminho exato é público ----

@@ -57,11 +57,9 @@ class MatrizDeAcessoTest {
             PUBLICA   POST    /amigomelvin/one-time
             PUBLICA   POST    /amigomelvin/subscribe
             PUBLICA   POST    /auth/login
-            PUBLICA   GET     /aviso
             PUBLICA   POST    /cestas/solicitacao
             PUBLICA   POST    /embaixador
             PUBLICA   GET     /embaixador/publicos
-            PUBLICA   GET     /imagens/captura/{id}/{tipo}
             PUBLICA   POST    /v1/webhooks/payments
             PUBLICA   GET     /voluntario/nomesfuncoes
 
@@ -69,7 +67,6 @@ class MatrizDeAcessoTest {
             LOGADO    GET     /dashboard/avisos
             LOGADO    GET     /dashboard/presentes
             LOGADO    GET     /dias-nao-letivos
-            LOGADO    GET     /discente/sala/{sala}
             LOGADO    GET     /frequenciadiscente
             LOGADO    GET     /frequenciadiscente/alertas-faltas
             LOGADO    GET     /frequenciadiscente/{data}
@@ -77,11 +74,9 @@ class MatrizDeAcessoTest {
             LOGADO    GET     /frequenciavoluntario
             LOGADO    GET     /frequenciavoluntario/{data}
             LOGADO    GET     /frequenciavoluntario/{data}/{matricula}
-            LOGADO    GET     /imagens/lista
             LOGADO    POST    /frequenciavoluntario
             LOGADO    PUT     /frequenciavoluntario
             LOGADO    GET     /permissoes/minhas
-            LOGADO    GET     /voluntario/matricula/{matricula}
 
             RESTRITA  GET     /amigomelvin
             RESTRITA  POST    /amigomelvin
@@ -91,6 +86,7 @@ class MatrizDeAcessoTest {
             RESTRITA  PUT     /auth/alterar_role/{matricula}/{role}
             RESTRITA  PUT     /auth/alterar_senha
             RESTRITA  POST    /auth/register
+            RESTRITA  GET     /aviso
             RESTRITA  POST    /aviso
             RESTRITA  PUT     /aviso/{id}
             RESTRITA  GET     /cestas
@@ -117,6 +113,7 @@ class MatrizDeAcessoTest {
             RESTRITA  PUT     /discente
             RESTRITA  GET     /discente/export
             RESTRITA  GET     /discente/matricula/{matricula}
+            RESTRITA  GET     /discente/sala/{sala}
             RESTRITA  DELETE  /discente/{matricula}
             RESTRITA  PUT     /discente/{matricula}/avaliacoes
             RESTRITA  GET     /embaixador
@@ -127,6 +124,8 @@ class MatrizDeAcessoTest {
             RESTRITA  DELETE  /frequenciadiscente/{matricula}/{data}
             RESTRITA  DELETE  /frequenciavoluntario/{matricula}/{data}
             RESTRITA  PUT     /imagens/atualizar/{id}/{tipo}
+            RESTRITA  GET     /imagens/captura/{id}/{tipo}
+            RESTRITA  GET     /imagens/lista
             RESTRITA  POST    /imagens/upload/{id}/{tipo}
             RESTRITA  POST    /ocorrencias
             RESTRITA  GET     /ocorrencias-tecnicas
@@ -138,6 +137,7 @@ class MatrizDeAcessoTest {
             RESTRITA  GET     /voluntario
             RESTRITA  POST    /voluntario
             RESTRITA  PUT     /voluntario
+            RESTRITA  GET     /voluntario/matricula/{matricula}
             RESTRITA  DELETE  /voluntario/{matricula}
             """;
 
