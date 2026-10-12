@@ -178,6 +178,35 @@ docker stats --no-stream backend-melvin
 docker exec postgresdb psql -U melvin -d sistemamelvin -f /scripts/monitor_donor.sql
 ```
 
+O `smoke_test.sh` é **pré-deploy** (o `deploy.sh remote` já o roda antes de tocar no servidor); não é repetido depois. A conferência pós-deploy é esta, no servidor:
+
+```bash
+# 1) Site e API respondem (esperado 200 nos dois)
+curl -s -o /dev/null -w "%{http_code}\n" https://institutomelvin.org/
+curl -s -o /dev/null -w "%{http_code}\n" https://institutomelvin.org/api/actuator/health
+
+# 2) Login inválido responde 401 com mensagem acentuada. A rota é /api/auth/login
+#    (o nginx tira o /api/); /api/v1/ só existe no webhook do Stripe. Uma tentativa só: o login tem limite.
+curl -s -i -X POST https://institutomelvin.org/api/auth/login -H 'Content-Type: application/json' \
+  -d '{"login":"0000000","password":"invalida"}' | head -1
+
+# 3) Só backend e frontend foram recriados; o banco não (esperado: banco com uptime longo)
+docker ps --format '{{.Names}} {{.Status}}' | grep -E 'backend-melvin|frontend|postgresdb'
+
+# 4) Sem erro nem reinício desde a subida (esperado: 0 e 0)
+docker logs backend-melvin 2>&1 | grep -ciE ' ERROR |Exception'
+docker inspect backend-melvin --format '{{.RestartCount}}'
+
+# 5) Migrations: a última aplicada deve ser a do commit (esperado: igual ao último V*.sql)
+docker exec postgresdb psql -U <usuario-do-banco> -d sistemamelvin -At -c "select max(version::int) from flyway_schema_history where success"
+
+# 6) O código no servidor é o do commit: comparar hashes de arquivos que mudaram
+sha256sum <arquivo no servidor>        # contra: git show HEAD:<arquivo> | sha256sum
+
+# 7) Nenhum keystore dentro do JAR (esperado: 0)
+docker exec backend-melvin sh -c 'unzip -l /app/app.jar | grep -ci keystore'
+```
+
 ---
 
 ## 6. Configuração do Nginx (Proxy Reverso)
