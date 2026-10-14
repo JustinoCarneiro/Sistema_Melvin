@@ -6,8 +6,18 @@ status: Ativa
 
 # Entrega em duas etapas: núcleo até 08/01/2027, restante até 19/02/2027
 
+## Correção de 14/10/2026: de quem é o prazo
+**O 08/01/2027 e as datas das duas etapas são meta do Marcos (dono do projeto), não prazo do
+Instituto.** Esta nota, o `CLAUDE.md` e o `ROADMAP.md` diziam "prazo máximo do cliente" e "pendente:
+aceite do Instituto"; isso não correspondia à realidade e foi corrigido. O Instituto não impôs prazo,
+e **não há aceite de datas a pedir a ele**: a postura é "vamos trabalhando e entregando o mais rápido
+e seguro possível". Ao falar com o Instituto, descreve-se a ordem de entrega (Área da Família e novo
+menu primeiro) e avisa-se quando algo ficar pronto, sem citar datas. A ordem das etapas, a
+aritmética e as consequências abaixo continuam válidas; só a atribuição mudou. Detalhe e
+justificativa em [[decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica]] (item 8).
+
 ## Contexto
-Em 08/10/2026 o Instituto fixou 08/01/2027 como prazo máximo para todo o escopo aberto: as 16
+Em 08/10/2026 o dono do projeto fixou 08/01/2027 como meta para todo o escopo aberto: as 16
 histórias novas do site (US-10.3 a US-10.18), as 8 da Área da Família (US-13.1 a US-13.8), a US-5.6
 (WhatsApp) e o fechamento do cancelamento de cestas (US-7.4). A capacidade é uma pessoa conduzindo
 o desenvolvimento com agentes de IA.
@@ -53,10 +63,10 @@ cardápio, notícias, indicadores e relatórios pedagógicos precisam de alguém
 de fornecedor externo (WhatsApp: provedor e aprovação de template; já era backlog não priorizado
 pela cliente em 11/08/2026) ou de outro módulo (a agenda da família, 26, depende da institucional, 25).
 
-**Isto ainda não é compromisso com o Instituto.** A ordem está decidida internamente; o prazo da
-etapa 2 (19/02/2027, incluindo sua homologação) precisa ser apresentado ao Instituto e aceito por ele. Se o Instituto exigir
-tudo em 08/01, o caminho é aumentar a capacidade humana ou cortar pelo menos 26 dias úteis de
-escopo. Por exemplo, tirar os módulos 14, 24, 25, 26 e um entre 28 e 29 fecha exatamente 59 dias,
+**Isto não é compromisso com o Instituto.** A ordem e as datas (inclusive 19/02/2027 para a etapa 2
+com sua homologação) são meta interna, e não há aceite do Instituto a pedir. Se a meta de 08/01 virar
+exigência real de alguém, o caminho é aumentar a capacidade humana ou cortar pelo menos 26 dias úteis
+de escopo. Por exemplo, tirar os módulos 14, 24, 25, 26 e um entre 28 e 29 fecha exatamente 59 dias,
 sem nenhuma folga.
 
 ## Consequências
@@ -71,10 +81,10 @@ sem nenhuma folga.
 - **A folga de 7 dias é a única margem.** Não é reserva da fórmula; é a diferença entre a janela e
   o núcleo. O que mais provavelmente a consome é o módulo 23: o cadastro atual não tem foto do
   aluno, professor nem "conteúdos trabalhados" (gate 6 do `ROADMAP.md`), e captura nova de dados
-  estoura os 7 dias do módulo. Atraso do Instituto na entrega de conteúdo e no aceite também a consome.
+  estoura os 7 dias do módulo. Atraso do Instituto na entrega de conteúdo e na conferência das entregas também a consome. O módulo 23 já cresceu: em 14/10/2026 foi decidido o painel completo, com foto, professor e conteúdos trabalhados, e ele deve ser reestimado ao desenhar.
 - **Revisão dos pesos.** Ao concluir os módulos 18 e 19 (14 dias de peso), comparar os dias reais
   com o peso usando o timesheet de `docs/METRICAS-PROJETO.md`. Se o ritmo real divergir, recalcular
-  e renegociar a data da etapa 2, e não absorver o desvio em silêncio.
+  a meta da etapa 2, e não absorver o desvio em silêncio.
 - **O módulo 18 não espera o portal.** Trata de rotas públicas já existentes e segue como correção
   separada e antecipada (R2, com TDD). Os cinco lotes foram publicados (três em 10/10/2026 e dois em 12/10/2026); o código do módulo está
   concluído e falta só a validação humana com login real por cargo.
@@ -84,3 +94,4 @@ sem nenhuma folga.
 ## Ligado a
 - [[rate-limit-apenas-solicitacao-cesta]]: o módulo 30 precisa do mesmo padrão de rate limit desde o primeiro dia.
 - [[dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica]]: a avaliação psicológica não pode chegar à família (módulo 23).
+- [[decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica]]: correção da atribuição dos prazos e decisões que mexem nos módulos 14, 19, 23, 24 e 29.

@@ -2,7 +2,7 @@
 tipo: bug
 data: 2026-09-13
 severidade: Média
-status: Corrigido e publicado em produção em 08/10/2026; regra revisada e publicada em produção em 10/10/2026
+status: Corrigido e publicado em produção em 08/10/2026; regra revisada e publicada em produção em 10/10/2026; extensão à ficha do aluno, Rendimento e Excel implementada em 14/10/2026 (ainda não publicada)
 ---
 
 # Painel `/dashboard` sem restrição de papel expõe avaliação psicológica de aluno a qualquer cargo autenticado
@@ -103,12 +103,44 @@ aparecer. Corrigido com guarda de tipo (`Array.isArray`) no hook, como nas demai
 de regressão no `dashboard.spec.js`; o teste de login do ADM passou 25/25. O smoke barrou o deploy
 antes de qualquer ação remota, como deve.
 
+**Extensão da regra (14/10/2026, decisão do dono do projeto: "só PSICO e COOR a veem em TODOS os
+lugares"):** a nota psicológica deixa de aparecer, para quem não é `PSICO` nem `COOR`, também em:
+
+- **Ficha do aluno** (`GET /discente/matricula/{matricula}`, que alimenta a tela Rendimento): a
+  chave `avaliacaoPsicologico` é omitida da resposta (não zerada). O controller monta uma cópia em
+  JSON (`ObjectMapper.valueToTree`) e remove a chave; a entidade gerenciada pelo JPA nunca é alterada.
+  Para `PSICO`/`COOR` a chave vem sempre, inclusive com valor nulo, porque a tela decide mostrar a
+  linha pela **presença da chave** e a primeira nota precisa poder ser lançada.
+- **Resposta de cadastro e edição** (`POST`/`PUT /discente`), que devolviam a entidade inteira, nota
+  incluída, a qualquer cargo com `CADASTRAR_ALUNO`. Achado ao revisar os pontos de saída da entidade
+  `Discente`; passa pela mesma montagem da ficha.
+- **Planilha de alunos** (`GET /discente/export`): `ExcelExportService.exportarDiscentesParaExcel(lista,
+  boolean)` deixa a coluna vazia e calcula a média só com as quatro notas pedagógicas (cabeçalho "Média
+  Pedagógica"), ficando a "Média Geral" de cinco notas para `PSICO`/`COOR`.
+- **Gravação** (`PUT /discente/{matricula}/avaliacoes`): a nota psicológica só é gravada se a pessoa
+  tem `EDITAR_AVALIACAO_PSICO` **e** passa em `NotaPsicologicaAcesso.podeVer`. Sem isso, a tela de quem
+  não vê o campo enviaria a avaliação sem ele e apagaria a nota existente (limitação do DTO: campo
+  ausente vira nulo).
+- **Tela Rendimento:** a linha "Avaliação Psicológica" e o botão de salvar condicionado a ela só
+  existem quando a chave vem na resposta.
+
+**Impacto operacional:** na configuração de produção de 14/10/2026, `ADM`, `DIRE` e `TECH` tinham
+`EDITAR_AVALIACAO_PSICO` e viam/editavam a nota; passam a não ver nem editar. É intencional. Quem
+precisar da nota deve ser `PSICO` ou `COOR`. O Manual do Sistema foi atualizado (texto; a captura de
+Rendimento é feita como `COOR` e continua válida).
+
+**Validação:** `NotaPsicologicaDiscenteSecurityTest` (26 casos: ficha, `POST`/`PUT` e planilha para os
+oito cargos relevantes, mais chave nula para `PSICO`/`COOR`), `ExcelExportServiceTest` (2 novos),
+`DiscenteServiceTest` (2 novos e um ajustado); backend 346/346. Playwright: `rendimento.spec.js`
+(linha ausente sem a chave, presente com a chave, presente com valor nulo, e o salvar sem a nota não
+envia a chave psicológica). Fase vermelha confirmada antes do código nos dois lados.
+
 **Ainda em aberto, fora do escopo desta revisão:**
 
-- A mesma nota psicológica continua visível a cargos como `PROF` em Rendimento
-  (`GET /discente/matricula/{matricula}`), na tabela de Relatórios (`GET /discente`) e na
-  exportação para Excel. O Manual documenta isso como leitura permitida, então pode ser intencional;
-  decidir com o Instituto antes de ocultar.
+- A tabela de Relatórios **não** é via de acesso à nota: `GET /discente` devolve
+  `DiscenteListagemDTO`, que não traz avaliações. Efeito colateral antigo, não corrigido: as colunas de
+  notas de Relatórios mostram sempre "-". Corrigir isso é decisão separada (e, se as notas passarem a
+  vir na listagem, a nota psicológica teria de seguir a mesma regra).
 - O card "Atenção Necessária" não mostra os alunos que precisam de atenção: reordena em ordem
   crescente os mesmos cinco melhores devolvidos por `/dashboard/ranking`. Corrigir exige um
   parâmetro de ordem no endpoint.
@@ -120,6 +152,7 @@ Itens do caminho sugerido original, ainda em aberto (não fechados por este fix)
   confirmar com a direção do Instituto antes de decidir, em vez de presumir.
 
 ## Ligado a
+- [[decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica]]: decisão de 14/10/2026 que estendeu a regra e a justificou.
 - Achado durante o port para o Edu+ (`~/Applications/edu-plus`), que copiou este código e tem
   o mesmo `DashboardService` (renomeado para `Aluno` em vez de `Discente`) com uma variante
   agravada deste problema: lá `findAll()` também ignora `organizacao_id`, vazando dado entre

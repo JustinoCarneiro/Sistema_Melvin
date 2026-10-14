@@ -389,7 +389,7 @@ Então a frequência é salva normalmente (sem quebrar o fluxo) e nenhum e-mail 
 > Esta US cobre só a versão e-mail (🟢 Pequeno, como aprovado). O cliente perguntou se o aviso "daria pra ser no WhatsApp" — decisão registrada em 11/08/2026: **vira item formal de Backlog** (ver US-5.6 abaixo), não é feito agora.
 
 #### US-5.6: Notificação de Falta via WhatsApp
-**Status:** 🔲 Backlog — decisão do cliente em 11/08/2026: aprovado como item futuro, não priorizado ainda. Substitui a "Nota de escopo pendente de decisão" que existia aqui.
+**Status:** 🔲 Backlog — decisão do cliente em 11/08/2026: aprovado como item futuro, não priorizado ainda. Substitui a "Nota de escopo pendente de decisão" que existia aqui. **14/10/2026:** segue sem prioridade (ver "Pré-requisitos externos" abaixo).
 
 **Como** coordenador,
 **eu quero** que o aviso de falta (US-5.5) também possa ser enviado por WhatsApp, além do e-mail,
@@ -411,6 +411,8 @@ Então o e-mail continua sendo enviado normalmente — WhatsApp nunca deve derru
 > - **Via biblioteca não-oficial** (ex. Baileys/whatsapp-web.js): sem mensalidade nem custo por mensagem, mas **viola os Termos de Uso do WhatsApp** — risco real de banimento do número, sem suporte oficial, quebra quando o WhatsApp muda o protocolo. Não recomendado pra uso institucional sem deixar esse risco explícito pro cliente.
 > **Peso estimado:** 🟡 Médio (pela integração com o BSP), não 🔴 — o item 🔴 Grande da proposta original considerava o módulo cheio de "Notificações via WhatsApp"; este escopo é menor, plugado no gatilho que a US-5.5 já criou.
 > **Antes de priorizar:** decidir com o cliente o provedor/BSP (custo mensal recorrente é o fator decisivo, não o preço por mensagem) e se a mensalidade se justifica pelo volume real de faltas do Instituto.
+>
+> **Pré-requisitos externos (14/10/2026):** o Instituto forneceu um número de telefone para isso (o número **não é registrado em nenhum arquivo versionado**). Ainda não existe nenhuma configuração do lado da Meta; faltam (1) conta Meta Business, (2) registro do número, por SMS ou ligação — em geral o número não pode estar ativo no WhatsApp comum ao mesmo tempo — e (3) aprovação do template de mensagem. **Decisão:** fica para depois, sem prioridade agora. Ver `memoria-tecnica/decisoes/decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica.md`.
 
 ---
 
@@ -657,7 +659,37 @@ Quando ele abre o dashboard,
 Então os cards de ranking não aparecem e o servidor responde 403 ao ranking.
 ```
 
-> **Nota:** a restrição da nota psicológica vale para o ranking do painel. A mesma nota continua visível como leitura em Rendimento, Relatórios e na exportação para Excel para os cargos que já têm acesso a essas telas; estender a restrição a elas depende de decisão do Instituto (ver `memoria-tecnica/bugs/dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica.md`).
+#### Regra da nota psicológica (decisão de 14/10/2026): só PSICO e COOR a veem, em todos os lugares
+
+A restrição deixa de valer só para o ranking. A nota de Avaliação Psicológica é dado sensível de saúde de criança e é de uso da equipe de Psicologia e Coordenação.
+
+```gherkin
+Dado que o usuário não é PSICO nem COOR,
+Quando ele consulta a ficha de um aluno (inclusive a tela de Rendimento),
+Então a resposta do servidor não contém a nota psicológica (o campo é omitido, não zerado) e a tela não exibe a linha "Avaliação Psicológica".
+
+Dado que o usuário não é PSICO nem COOR,
+Quando ele cadastra ou edita um aluno,
+Então a resposta do servidor também não contém a nota psicológica.
+
+Dado que o usuário é PSICO ou COOR e a nota psicológica de um aluno ainda não foi lançada,
+Quando ele abre a ficha ou a tela de Rendimento,
+Então o campo vem com valor nulo e a linha continua visível, para que a primeira nota possa ser lançada.
+
+Dado que o usuário não é PSICO nem COOR,
+Quando ele exporta a planilha de alunos,
+Então a coluna "Avaliação Psicológico" sai vazia e a média sai calculada só com as quatro notas pedagógicas, com o cabeçalho "Média Pedagógica".
+
+Dado que o usuário é PSICO ou COOR,
+Quando ele exporta a planilha de alunos,
+Então a coluna traz a nota e a "Média Geral" usa as cinco notas.
+
+Dado que o usuário não é PSICO nem COOR (mesmo que tenha a permissão "Editar Avaliação Psicológica"),
+Quando ele salva as avaliações de um aluno,
+Então a nota psicológica existente é preservada: o servidor só a grava se o usuário tiver a permissão E for PSICO ou COOR.
+```
+
+> **Nota:** a regra vale para o ranking do painel, a ficha do aluno (e Rendimento), as respostas de cadastro/edição do aluno e a planilha de alunos. **Impacto:** na configuração de produção de 14/10/2026, ADM, DIRE e TECH tinham a permissão "Editar Avaliação Psicológica" e viam/editavam a nota; deixam de ver e de editar. A tabela de Relatórios não traz as notas dos alunos (a listagem não as devolve), então não é uma via de acesso. Ver `memoria-tecnica/bugs/dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica.md` e `memoria-tecnica/decisoes/decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica.md`.
 
 #### US-8.3: Avisos Ativos no Dashboard
 **Como** qualquer usuário logado,
@@ -879,9 +911,21 @@ Então vê números agregados de impacto: crianças atendidas, famílias alcanç
 Dado que a mesma página mostra "Para onde vão as doações?",
 Quando o visitante consulta,
 Então vê a destinação por categoria (alimentação, material pedagógico, manutenção, atividades esportivas, higiene, projetos sociais), nunca por indivíduo nem com folha de pagamento.
+
+Dado que o Instituto enviou os valores de um período, com o período e a fonte,
+Quando a administração os aprova,
+Então a página pública passa a mostrá-los com o período e a fonte, e o sistema guarda quem aprovou e quando.
+
+Dado que um valor ainda não foi aprovado pela administração,
+Quando o visitante acessa "Transparência",
+Então esse valor não aparece.
+
+Dado que uma contagem pequena por categoria poderia identificar uma família,
+Quando a administração revisa os valores antes de aprovar,
+Então ela confere isso e só publica o que não identifica ninguém.
 ```
 
-> **Nota:** se os números forem dinâmicos (consultando dado real do sistema — Discente, Cestas, Amigos do Melvin), entra integração de agregação nova; se forem informados manualmente pelo Instituto, é conteúdo estático. Decisão de arquitetura pendente, fora do escopo desta US.
+> **Decisão (14/10/2026):** o Instituto envia os valores prontos, com período e fonte, e a administração aprova antes de publicar; **sem cálculo automático**. Motivo: o sistema só tem parte dos dados (alunos ativos, cestas, doações), refeições e famílias atendidas por projeto não estão registradas de forma confiável, número errado em página pública custa credibilidade, contagem pequena por categoria pode identificar uma família, e a solução cabe no escopo sem aumentá-lo. **Depois:** indicadores do sistema podem entrar pré-calculados para aprovação (mudança de escopo futura). Ver `memoria-tecnica/decisoes/decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica.md`.
 
 #### US-10.14: Prestação de Contas Simplificada
 **Como** visitante ou doador,
@@ -1043,9 +1087,21 @@ Então consegue alternar entre os filhos dentro da mesma conta, sem precisar de 
 Dado que as credenciais de família são inválidas ou não existem,
 Quando alguém tenta entrar,
 Então o sistema recusa o acesso sem revelar se a matrícula/CPF informado existe (mesmo princípio de não enumeração já usado no login de equipe).
+
+Dado que a coordenação ou a administração conferiu pessoalmente o documento de um responsável,
+Quando ela o cadastra e o vincula ao(s) aluno(s) dele,
+Então o responsável passa a ter login próprio, entregue a ele pela coordenação ou administração, com acesso só aos alunos vinculados.
+
+Dado que quem tenta cadastrar um responsável não é da coordenação nem da administração,
+Quando a requisição chega ao servidor,
+Então o sistema recusa (403).
+
+Dado que alguém sem cadastro procura criar uma conta pela Área da Família,
+Quando abre a tela de entrada ou chama a API,
+Então não existe caminho de autocadastro: nem tela, nem rota pública de criação de conta de família.
 ```
 
-> **Nota:** mecanismo de como o responsável recebe a credencial inicial (autocadastro validado por matrícula/CPF do filho vs. o Instituto cria e entrega) é decisão de arquitetura pendente, fora do escopo desta US. Pré-requisito de todas as demais US deste épico.
+> **Decisão (14/10/2026):** coordenação e administração cadastram cada responsável **depois de conferir o documento pessoalmente** e entregam o login inicial; não há autocadastro. Motivo: o portal mostra dados de crianças e permite agir (justificar falta, trocar telefone, autorizar passeio), e autocadastro por dados que outras pessoas sabem (CPF, matrícula, data de nascimento) deixaria quem não é o responsável ver os dados da criança ou autorizar passeio; conferir o documento é a única checagem confiável, já praticada na matrícula, e dados de criança têm proteção reforçada na LGPD. O custo é um cadastro por família. **Se virar gargalo:** evoluir para convite por link no e-mail cadastrado, ainda confirmado pela coordenação. Justificativa completa em `memoria-tecnica/decisoes/decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica.md`. Pré-requisito de todas as demais US deste épico.
 
 #### US-13.2: Painel "Meu Filho"
 **Como** responsável logado,
@@ -1061,7 +1117,13 @@ Então vê foto, nome, turma, professor, horário e percentual de frequência do
 Dado que o responsável quer mais contexto institucional,
 Quando ele navega a partir do painel,
 Então encontra atalhos para Professores, Diretoria, Secretaria, Projetos e Nossos Espaços (mesmo conteúdo já público do site, ver Épico 10).
+
+Dado que a foto do aluno ou o professor da sala não estão preenchidos,
+Quando o responsável abre o painel,
+Então o painel carrega normalmente, sem esse item e sem erro.
 ```
+
+> **Decisão (14/10/2026): painel completo, com foto e professor.** A autorização de uso de imagem já está assinada na matrícula (não é restrição). **Foto:** campo novo na ficha do aluno, enviado por upload com o `UploadSeguro`. **Professor:** sai do cruzamento de `Voluntario.funcao` + `salaUm`/`salaDois` com `Discente.sala`, sem cadastro novo; antes de desenhar, conferir em produção só por contagem se esses campos estão preenchidos. Aumenta o módulo 23 (reestimar ao desenhar). Ver `memoria-tecnica/decisoes/decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica.md`.
 
 #### US-13.3: Acompanhamento
 **Como** responsável logado,
@@ -1077,7 +1139,13 @@ Então vê presenças/faltas, atividades frequentadas, evolução no reforço es
 Dado que uma observação pedagógica foi registrada internamente como sensível (ex: ligada a atendimento psicológico),
 Quando o responsável acessa "Acompanhamento",
 Então essa observação NÃO é exibida — só as observações pedagógicas marcadas como apropriadas para a família aparecem.
+
+Dado que o professor lançou o conteúdo trabalhado da sala (um registro com sala, data e texto curto, por dia ou por semana),
+Quando o responsável acessa "Acompanhamento",
+Então vê os conteúdos lançados para a sala do filho, por data.
 ```
+
+> **Decisão (14/10/2026):** "conteúdos trabalhados" é um **registro novo** (sala + data + texto curto), lançado pelo professor por dia ou por semana; hoje o Diário (Épico 9) é só upload de arquivo e não serve. Ver `memoria-tecnica/decisoes/decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica.md`.
 
 #### US-13.4: Desenvolvimento
 **Como** responsável logado,
@@ -1086,14 +1154,24 @@ Então essa observação NÃO é exibida — só as observações pedagógicas m
 
 **Critérios de Aceite:**
 ```gherkin
-Dado que a equipe pedagógica publicou um relatório periódico para o aluno,
+Dado que a coordenação aprovou um relatório periódico escrito para o aluno,
 Quando o responsável acessa "Desenvolvimento",
 Então vê avanços percebidos, aspectos a fortalecer e orientações para continuar o trabalho em casa.
 
-Dado que ainda não existe relatório publicado para o período corrente,
+Dado que um relatório ainda não foi aprovado pela coordenação,
+Quando o responsável acessa "Desenvolvimento",
+Então o relatório não aparece, e o sistema guarda quem aprovou e quando cada relatório publicado.
+
+Dado que ainda não existe relatório aprovado para o período corrente,
 Quando o responsável acessa "Desenvolvimento",
 Então vê uma mensagem explicando isso, em vez de uma tela vazia sem contexto.
+
+Dado qualquer tela ou resposta da Área da Família,
+Quando ela mostra dados de desenvolvimento do aluno,
+Então a avaliação psicológica NUNCA aparece, nem na tela nem na resposta da API, e notas soltas não são exibidas: a família vê somente relatórios escritos e aprovados.
 ```
+
+> **Decisão (14/10/2026):** a família vê só relatórios escritos e aprovados pela coordenação; a avaliação psicológica nunca vai à família. Motivo: nota solta sem contexto gera ansiedade e comparação, o relatório dá contexto, e a aprovação evita publicar algo sensível sem revisão (com registro de quem aprovou); a psicológica é dado sensível de saúde de criança, de uso da equipe. A lei não proíbe mostrar notas pedagógicas: isso é recomendação, e a base forte é só a psicológica. Ver `memoria-tecnica/decisoes/decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica.md`.
 
 > **Nota:** conteúdo estruturado novo — hoje "Diário e Rendimento" (Épico 9) é só upload/download de arquivo, não existe relatório periódico estruturado por aluno. Modelagem desse relatório fica fora do escopo desta US.
 

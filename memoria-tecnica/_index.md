@@ -42,3 +42,4 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev (avali
 - [[dependencias-spring-boot-3-5-e-versoes-fixadas]]
 - [[entrega-em-duas-etapas-prazo-08-01-2027]]
 - [[exclusao-de-aluno-anonimizacao-completa-em-cascata]]
+- [[decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica]]
