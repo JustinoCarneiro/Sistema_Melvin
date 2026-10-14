@@ -128,12 +128,20 @@ etapas) diziam "prazo máximo do cliente" e "pendente: aceite do Instituto". Iss
 ao Instituto, um compromisso que ninguém pediu. A ordem das etapas e a aritmética continuam válidas;
 só a atribuição mudou. Ver [[entrega-em-duas-etapas-prazo-08-01-2027]].
 
+### 9. Complemento de 14/10/2026: reestimativa do módulo 23 e desenho do módulo 19
+Na mesma sessão, recomendações técnicas foram aceitas pelo dono do projeto:
+- **Reestimativa:** a captura nova do painel (item 3) vira dois habilitadores sem história própria, o módulo 31 (foto do aluno, Pequeno, 2 dias) e o 32 (conteúdos trabalhados, Médio, 4 dias), e o módulo 23 continua Grande, 7 dias. Pela fórmula literal do playbook, a fórmula vai de 85 para 91 dias úteis, o núcleo de 52 para 58 (07/01/2027, 1 dia útil de folga) e o total com duas homologações de 87 para 93 (01/03/2027). O módulo 30 permanece no núcleo; movê-lo para a etapa 2 devolveria 4 dias de folga se necessário.
+- **Módulo 19, token separado:** o JWT de família tem emissor, audiência e chave próprios, `sub` em UUID e cadeia de segurança própria para `/familia/**`. Motivo: o token da equipe usa um emissor e uma chave únicos com `sub` igual ao login, então um token de família no mesmo formato, com login igual a uma matrícula de equipe, autenticaria como essa pessoa, e na mesma cadeia passaria pelas regras de "qualquer logado" da equipe.
+- **Módulo 19, cadastro:** login gerado pelo sistema e não derivável de CPF, matrícula ou telefone; senha temporária mostrada uma única vez, com troca obrigatória no primeiro acesso; o número do documento do responsável não é guardado, só quem conferiu e quando (minimização, LGPD); permissão dinâmica `GERENCIAR_RESPONSAVEIS` (COOR, ADM, TECH).
+- **Ainda aberto:** (a) o escopo do cadastro editorial (agenda, cardápio, notícias, documentos), última pendência do gate G1; (b) a "evolução no reforço escolar" da US-13.3, que conflita com o item 4 e não tem fonte de dados (recomendação: sair do Acompanhamento e ficar com os relatórios da US-13.4).
+
 ## Consequências
 - **Módulo 19 (identidade):** precisa de tela de cadastro de responsável para coordenação e
   administração (com vínculo ao(s) aluno(s)), no lugar de qualquer fluxo de autocadastro. Nenhuma rota
   pública de criação de conta de família.
-- **Módulo 23 (painel):** cresce com foto (upload), professor (cruzamento) e conteúdos trabalhados
-  (registro novo). Reestimar na Fase 3; o peso de 7 dias do `ROADMAP.md` não vale mais como está.
+- **Módulos 23, 31 e 32 (painel):** o 23 segue em 7 dias (resumo, professor por cruzamento,
+  frequência, atividades e leitura dos conteúdos); foto e conteúdos trabalhados viram os habilitadores
+  31 (2 dias) e 32 (4 dias), ver item 9. Foto de criança só sai por rota autenticada com vínculo ativo.
 - **Módulo 24 (relatórios):** o relatório precisa de estado "aprovado" com autor e data da aprovação
   antes de aparecer à família, e não pode incluir a nota psicológica.
 - **Módulo 29 (Transparência):** precisa de cadastro simples de números com período, fonte e aprovação

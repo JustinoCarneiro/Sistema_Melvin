@@ -46,8 +46,10 @@
 | 28 | Espaços, equipe, notícias e consentimento de imagem | 🔴 Grande | 7 | ⬜ Pendente |
 | 29 | Transparência, prestação de contas e documentos públicos | 🔴 Grande | 7 | ⬜ Pendente |
 | 30 | Canal público de sugestões e reclamações | 🟡 Médio | 4 | ⬜ Pendente |
+| 31 | Foto do aluno para o painel da família (habilitador, sem história própria) | 🟢 Pequeno | 2 | ⬜ Pendente |
+| 32 | Conteúdos trabalhados da sala (habilitador, sem história própria) | 🟡 Médio | 4 | ⬜ Pendente |
 
-> Módulos 14 e 18–30: a coluna **Dias** usa o limite superior do peso (Grande 7, Médio 4), como na fórmula da seção "Evolução 08/10/2026". Pesos preliminares até a Fase 3.
+> Módulos 14 e 18–32: a coluna **Dias** usa o limite superior do peso (Grande 7, Médio 4), como na fórmula da seção "Evolução 08/10/2026". Pesos preliminares até a Fase 3.
 
 ---
 
@@ -73,15 +75,15 @@ TOTAL:                      43 dias úteis
 
 - **Meta do dono do projeto:** **08/01/2027** (três meses desde 08/10/2026). **Não é prazo imposto pelo Instituto** (atribuição corrigida em 14/10/2026; ver `memoria-tecnica/decisoes/decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica.md`, item 8). **Capacidade confirmada:** uma pessoa conduzindo o desenvolvimento, com agentes de IA. O [playbook OndaDev 3.0](./docs/Metodologia_de_Desenvolvimento_-_Onda.md) (apontador; texto canônico em `onda-starter`, seção 7, "Previsibilidade — o prazo calculado") foi desenhado para exatamente esse cenário e estima por peso de módulo, não por horas. Contar agentes como capacidade extra, ou somar margem por cima da fórmula, duplicaria o que o método já assume: o resultado da fórmula é o "prazo técnico blindado" do próprio playbook (limite superior de cada peso).
 - De 09/10/2026 a 08/01/2027 há **59 dias úteis** (segunda a sexta, excluídos 12/10, 02/11, 20/11, 24–25/12, 31/12/2026 e 01/01/2027; [feriados de 2026](https://pesquisa.apps.tcu.gov.br/doc/norma/Portaria/TCU%20E%20TCU/1/2026/)). Premissa conservadora: 24 e 31/12 são pontos facultativos tratados como não úteis; se forem trabalhados, a janela sobe para 61 dias.
-- **Fórmula OndaDev (`Prazo = Fase 2 + Σ módulos + 2d de Fase 5`) para o escopo restante:** Fase 2 com identidade existente (2) + módulos Grandes (8 × 7 = 56) + módulos Médios (6 × 4 = 24) + Fase 5 (2) + revisão e validação do cancelamento de cestas (1) = **85 dias úteis**. A linha de base termina em **17/02/2027** (08–09/02/2027, Carnaval, tratados como sem expediente); **não atende** ao prazo máximo. Déficit: **26 dias úteis** (24, se 24 e 31/12 forem trabalhados).
-- Mesmo no limite inferior dos pesos (Grande 5, Médio 3), 8 × 5 + 6 × 3 + 2 + 2 + 1 = **63 dias**, ainda 4 além da janela. Não é defensável registrar 08/01 como entrega garantida com uma pessoa, escopo integral e as evidências exigidas.
-- A data de 08/01 permanece como **meta interna e risco aberto** para o escopo integral. O dono do projeto decidiu dividir a entrega: núcleo de 52 dias úteis até 28/12/2026 (7 dias úteis antes da meta) e restante com segunda homologação até 19/02/2027, totalizando 87 dias úteis. **Não há aceite de datas a pedir ao Instituto:** a postura é ir trabalhando e entregando o mais rápido e seguro possível, e ao Instituto se descreve só a ordem de entrega e se avisa quando algo ficar pronto; ver `memoria-tecnica/decisoes/entrega-em-duas-etapas-prazo-08-01-2027.md`. Uma eventual redução de estimativa só vale após evidência real de velocidade (timesheet em `docs/METRICAS-PROJETO.md`, recalibração dos pesos), sem suprimir testes, segurança ou homologação.
+- **Fórmula OndaDev (`Prazo = Fase 2 + Σ módulos + 2d de Fase 5`) para o escopo restante:** Fase 2 com identidade existente (2) + módulos Grandes (8 × 7 = 56) + módulos Médios (7 × 4 = 28) + módulo Pequeno (1 × 2 = 2) + Fase 5 (2) + revisão e validação do cancelamento de cestas (1) = **91 dias úteis** (eram 85 antes dos módulos 31 e 32, de 14/10/2026). A linha de base termina em **25/02/2027** (08–09/02/2027, Carnaval, tratados como sem expediente); **não atende** ao prazo máximo. Déficit: **32 dias úteis** (30, se 24 e 31/12 forem trabalhados).
+- Mesmo no limite inferior dos pesos (Grande 5, Médio 3), 8 × 5 + 7 × 3 + 1 + 2 + 2 + 1 = **67 dias**, ainda 8 além da janela. Não é defensável registrar 08/01 como entrega garantida com uma pessoa, escopo integral e as evidências exigidas.
+- A data de 08/01 permanece como **meta interna e risco aberto** para o escopo integral. O dono do projeto decidiu dividir a entrega: núcleo de 58 dias úteis até 07/01/2027 (1 dia útil antes da meta; eram 52 dias e 28/12/2026 antes dos módulos 31 e 32) e restante com segunda homologação até 01/03/2027, totalizando 93 dias úteis (eram 87 e 19/02/2027). **Não há aceite de datas a pedir ao Instituto:** a postura é ir trabalhando e entregando o mais rápido e seguro possível, e ao Instituto se descreve só a ordem de entrega e se avisa quando algo ficar pronto; ver `memoria-tecnica/decisoes/entrega-em-duas-etapas-prazo-08-01-2027.md`. Uma eventual redução de estimativa só vale após evidência real de velocidade (timesheet em `docs/METRICAS-PROJETO.md`, recalibração dos pesos), sem suprimir testes, segurança ou homologação.
 
 ### Gates da metodologia antes de iniciar e encerrar a evolução
 
 | Etapa | Evidência / condição de passagem | Situação em 08/10/2026 |
 |---|---|---|
-| Fase 1 · G1 | Fechar decisões ainda abertas na spec: emissão de credenciais e vínculo familiar, fonte dos indicadores, escopo do cadastro editorial e provedor de WhatsApp. Registrar mudanças primeiro em `CLAUDE.md` e `docs/product/spec.md`. | ⬜ Pendente |
+| Fase 1 · G1 | Fechar decisões ainda abertas na spec: emissão de credenciais e vínculo familiar, fonte dos indicadores, escopo do cadastro editorial e provedor de WhatsApp. Registrar mudanças primeiro em `CLAUDE.md` e `docs/product/spec.md`. | 🟡 Quase fechado em 14/10/2026: credenciais e vínculo, fonte dos indicadores e WhatsApp decididos (`memoria-tecnica/decisoes/decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica.md`). **Falta decidir o escopo do cadastro editorial** (agenda, cardápio, notícias e documentos: quem lança e o que o sistema oferece). |
 | Fase 2 · G2/G3 | Produzir protótipo estático navegável das novas telas, com acessibilidade AA e estados de erro/vazio/carregamento; obter aceite do Instituto e congelamento visual. A identidade existe e está em produção (`docs/DESIGN_SYSTEM.md`, tokens em `frontend/src/index.scss` e em `CLAUDE.md` §5), o que sustenta Fase 2 ≈ 2 dias; o diretório `design/` referenciado em `AGENTS.md` ainda não existe neste checkout e o contrato deve ser reconciliado. | ⬜ Pendente |
 | Fase 3 | Após G3, fechar ERD e relações exatas, contratos Request/Response com validação e autorização no servidor, rastreabilidade história ↔ módulo (tabela abaixo, a confirmar) e controle ↔ módulo, além de threat model dos módulos com PII/auth. `docs/security/` (threat model, controles, relatório de revisão) ainda não existe neste repositório e nasce aqui. A modelagem, os pesos e os contratos abaixo são **propostas**, não o blueprint aprovado. | ⬜ Pendente |
 | Fase 4 · G4/G5/G6 | Implementar módulo por módulo com teste falhando antes da mudança, Green/Refactor, revisão estática de segurança nos riscos, um autor por PR, outro agente revisando R1/R2, small commits, status canônico no ROADMAP e linha de timesheet em `docs/METRICAS-PROJETO.md`. Agentes em paralelo usam worktrees isolados, nunca o mesmo checkout. | ⬜ Pendente |
@@ -89,7 +91,7 @@ TOTAL:                      43 dias úteis
 
 A correção de rotas públicas identificada no módulo 18 pode ser tratada **como manutenção de segurança separada do novo portal**, com seu próprio contrato, TDD e revisão proporcional ao risco, antes do G3 visual. A codificação das novas histórias 10 e 13 só começa após G3 e a Fase 3 concluída. Mudanças de autenticação e de dados de crianças são R2 pelo contrato local; qualquer migration que altere esses dados também segue R2. Migrations sem PII seguem a classificação local de R1 até que o contrato canônico do projeto seja reconciliado com o playbook 3.0.
 
-**Estado da previsão:** há módulos e pesos definidos para orientar a decisão, mas ainda **não há cronograma de entrega do escopo integral que caiba na meta de 08/01/2027** com a capacidade confirmada. A divisão em duas etapas é decisão interna do dono do projeto; as datas por módulo serão fixadas após G3. A linha de base com uma homologação termina em 17/02/2027; a execução em duas etapas, com duas homologações, termina em 19/02/2027. As datas são meta interna de planejamento, não compromisso com o Instituto nem aceite dele.
+**Estado da previsão:** há módulos e pesos definidos para orientar a decisão, mas ainda **não há cronograma de entrega do escopo integral que caiba na meta de 08/01/2027** com a capacidade confirmada. A divisão em duas etapas é decisão interna do dono do projeto; as datas por módulo serão fixadas após G3. A linha de base com uma homologação termina em 25/02/2027; a execução em duas etapas, com duas homologações, termina em 01/03/2027. As datas são meta interna de planejamento, não compromisso com o Instituto nem aceite dele.
 
 **Dependências duras para ordenar a Fase 4:** o módulo 19 (identidade) antes de qualquer rota `/familia/**` (módulos 20–24 e 26) e, pela regra "o coração entra cedo", junto com o 18 abre a Fase 4; o 18 antes do lançamento da Área da Família; o 25 antes do 26 (a agenda da família cruza a agenda institucional); o registro de consentimento (módulo 28) antes de publicar qualquer imagem de pessoa; provedor e template aprovados antes do módulo 14.
 
@@ -100,7 +102,22 @@ A correção de rotas públicas identificada no módulo 18 pode ser tratada **co
 3. **Consentimento e proteção:** registrar evidência/validade da autorização de imagem antes de publicar pessoa identificável; definir quem pode publicar e retirar conteúdo. Confirmar com a coordenação quais observações pedagógicas são aptas à família. **Decidido em 14/10/2026 (módulo 24):** a família vê só relatórios escritos e aprovados pela coordenação, com registro de quem aprovou; a avaliação psicológica nunca vai à família. Dados de crianças, contatos, justificativas e relatórios seguem `docs/SEGURANCA_E_LGPD.md`; APIs da família devolvem DTOs mínimos.
 4. **WhatsApp:** decidir e contratar o provedor oficial, número remetente e template de utilidade antes do módulo 14. O prazo de aprovação externa do template não está nos 4 dias de desenvolvimento; se atrasar, desloca a entrega integral. `US-5.6` estava no backlog sem prioridade, mas entrou nesta previsão por “finalizar tudo”. **Decidido em 14/10/2026:** segue para depois, sem prioridade; o Instituto forneceu um número (não registrado aqui, o repo é público), mas falta toda a configuração da Meta (conta Meta Business, registro do número, aprovação do template).
 5. **Aceite e produção:** reservar responsáveis do Instituto para conferir conteúdo, vínculo de pelo menos duas famílias fictícias e autorização de passeio. Migrações Flyway novas serão progressivas; versões já aplicadas não serão editadas. Publicação e escrita em produção exigem autorização R2 separada quando o pacote estiver pronto.
-6. **Dados do painel (US-13.2 e US-13.3):** o cadastro atual não tem foto do aluno nem professor; "horário" existe só como `turno`; não há registro de "conteúdos trabalhados" (o Diário é só upload de arquivo). Existem `sala`, `turno`, os indicadores de atividades (`karate`, `ballet`, `informatica`…) e as notas `avaliacao*` — a `avaliacaoPsicologico` não pode sair para a família (ver `memoria-tecnica/bugs/dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica.md`). Antes de fechar o peso do módulo 23, decidir com o Instituto o que o painel mostra: só campos existentes, ou captura nova. Captura nova — foto de criança incluída — é escopo adicional, com consentimento e LGPD, e não está nos 7 dias. **Decidido em 14/10/2026:** painel completo — foto (campo novo + upload pelo `UploadSeguro`; autorização de imagem já assinada na matrícula), professor (cruzamento `Voluntario.funcao` + `salaUm`/`salaDois` com `Discente.sala`, sem cadastro novo) e conteúdos trabalhados (registro novo: sala + data + texto curto). **O módulo 23 aumenta e deve ser reestimado ao desenhar (Fase 3); os 7 dias não valem mais.**
+6. **Dados do painel (US-13.2 e US-13.3):** o cadastro atual não tem foto do aluno nem professor; "horário" existe só como `turno`; não há registro de "conteúdos trabalhados" (o Diário é só upload de arquivo). Existem `sala`, `turno`, os indicadores de atividades (`karate`, `ballet`, `informatica`…) e as notas `avaliacao*` — a `avaliacaoPsicologico` não pode sair para a família (ver `memoria-tecnica/bugs/dashboard-ranking-sem-restricao-de-papel-expoe-avaliacao-psicologica.md`). Antes de fechar o peso do módulo 23, decidir com o Instituto o que o painel mostra: só campos existentes, ou captura nova. Captura nova — foto de criança incluída — é escopo adicional, com consentimento e LGPD, e não está nos 7 dias. **Decidido em 14/10/2026:** painel completo — foto (campo novo + upload pelo `UploadSeguro`; autorização de imagem já assinada na matrícula), professor (cruzamento `Voluntario.funcao` + `salaUm`/`salaDois` com `Discente.sala`, sem cadastro novo) e conteúdos trabalhados (registro novo: sala + data + texto curto). **Reestimado em 14/10/2026: o módulo 23 segue em 7 dias e a captura nova vira os módulos 31 (foto, 2 dias) e 32 (conteúdos trabalhados, 4 dias); ver "Reestimativa do módulo 23".**
+
+### Reestimativa do módulo 23 (decidida em 14/10/2026)
+
+O gate 6 já dizia que captura nova de dados estoura os 7 dias do módulo 23, e em 14/10/2026 foi decidido o painel completo, com foto, professor e conteúdos trabalhados (`memoria-tecnica/decisoes/decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica.md`, itens 3 e 9). Pela fórmula literal (pesos 2/4/7, sem reserva, sem agente como capacidade extra), a captura nova entra como dois **habilitadores sem história própria** (mesmo precedente do módulo 18), e o módulo 23 continua Grande:
+
+| Módulo | Escopo | Peso | Dias |
+|---|---|---|---|
+| 31 | Foto do aluno: campo `foto_ref`, upload pelo `UploadSeguro` na ficha do aluno, entrega só por rota autenticada com vínculo ativo | 🟢 Pequeno | 2 |
+| 32 | Conteúdos trabalhados: entidade, permissão dinâmica e tela de lançamento do professor (por dia ou semana) | 🟡 Médio | 4 |
+| 23 | Sem mudança: resumo, professor por cruzamento, frequência, atividades e leitura dos conteúdos | 🔴 Grande | 7 |
+
+- **Efeito:** fórmula de 85 para **91 dias úteis**; núcleo de 52 para **58**, terminando em 07/01/2027; total com duas homologações de 87 para **93**, terminando em 01/03/2027. Datas conferidas contra a lista de feriados desta seção.
+- **A folga do núcleo cai a 1 dia útil** (eram 7), e 08/01 é meta interna. O módulo 30 (canal de sugestões, 4 dias) permanece no núcleo; movê-lo para a etapa 2 devolveria a folga a 5 dias (núcleo de 54 dias, 30/12/2026) sem mudar o total.
+- **Ponto aberto:** a US-13.3 pede "evolução no reforço escolar" no Acompanhamento, mas a decisão 4 diz que a família não vê nota solta, só relatório aprovado. Sem fonte de dados definida para `evolucao`, a recomendação é tirá-la do Acompanhamento e deixar a evolução com os relatórios da US-13.4. Aguarda decisão do dono do projeto; a spec ainda não foi alterada.
+- **Pendente de conferência:** se `Voluntario.funcao` + `salaUm`/`salaDois` estão preenchidos em produção (só por contagem), pois sustentam o "professor" sem cadastro novo.
 
 ### Rastreabilidade história → módulo
 
@@ -122,6 +139,8 @@ Verificado em 08/10/2026 contra `docs/product/spec.md`: as 16 histórias `US-10.
 | 28 | `US-10.5`, `US-10.7`, `US-10.10` |
 | 29 | `US-10.12`, `US-10.13`, `US-10.14`, `US-10.15` |
 | 30 | `US-10.18` |
+| 31 | Habilitador sem história própria: foto do aluno, consumida pela `US-13.2` (módulo 23) |
+| 32 | Habilitador sem história própria: conteúdos trabalhados, consumidos pela `US-13.3` (módulo 23) |
 | (1 dia) | `US-7.4`, cancelamento de cestas: publicado em produção em 09/10/2026 e na `main` do GitHub (`c2eed41`); falta a validação humana do Instituto |
 
 ### Desenho de dados proposto para o escopo novo
@@ -130,15 +149,16 @@ Modelos abaixo são **propostas para fechar antes da implementação**, não mig
 
 | Entidade / mudança | Campos centrais (tipo) | Relação e controle |
 |---|---|---|
-| `responsavel_conta` | `id UUID PK`, `login VARCHAR UNIQUE`, `senha_hash VARCHAR`, `ativo BOOLEAN`, `criado_em TIMESTAMP` | Identidade separada de `users`/cargos de equipe; senha Argon2. |
+| `responsavel_conta` | `id UUID PK`, `login VARCHAR UNIQUE`, `nome TEXT cifrado`, `senha_hash VARCHAR`, `trocar_senha BOOLEAN`, `ativo BOOLEAN`, `criado_por UUID FK users`, `documento_conferido_em TIMESTAMP`, `criado_em TIMESTAMP` | Identidade separada de `users`/cargos de equipe; senha Argon2. Sem autocadastro (decisão de 14/10/2026): só a equipe autorizada cria a conta, depois de conferir o documento pessoalmente. Proposta: o número do documento não é guardado (minimização, LGPD); registra-se só quem conferiu e quando. |
 | `responsavel_discente` | `responsavel_id UUID FK`, `discente_id UUID FK`, `vinculo VARCHAR`, `ativo BOOLEAN`, `validado_por UUID`, `validado_em TIMESTAMP` | N:N; PK composta; resolve vários filhos e revogação de vínculo. |
 | `justificativa_falta` | `id UUID PK`, `frequencia_id UUID FK`, `turno VARCHAR`, `autor_id UUID FK`, `texto TEXT cifrado`, `anexo_ref VARCHAR NULL`, `criado_em TIMESTAMP`, `revogado_em TIMESTAMP NULL`, `revogado_por UUID NULL` | Registro original `F` permanece; estado justificado é derivado da justificativa ativa por turno; coordenação pode revogar. Reconciliar na Fase 3 com `FrequenciaDiscente.justificativa` (texto livre do professor), que a consulta de `FaltaAlertaDTO` já usa para ignorar faltas justificadas no alerta de 4 ou mais faltas. |
 | `auditoria_contato` | `id UUID PK`, `discente_id UUID FK`, `autor_id UUID FK`, `campo VARCHAR`, `antes/depois TEXT cifrados`, `alterado_em TIMESTAMP`, `notificado_em TIMESTAMP NULL` | Rastreia alteração de telefone e de contato de saída; nunca registrar valores em log. |
 | `documento_familia` e `autorizacao_passeio` | Documento: `id UUID PK`, `discente_id UUID FK`, `tipo VARCHAR`, `titulo VARCHAR`, `texto TEXT cifrado`, `prazo TIMESTAMP NULL`, `publicado_em TIMESTAMP`. Aceite: `id UUID PK`, `documento_id UUID FK`, `responsavel_id UUID FK`, `texto_aceito TEXT cifrado`, `aceito_em TIMESTAMP` | Snapshot imutável do texto aceito; unicidade por documento e responsável, verificação de prazo no servidor. |
-| `relatorio_desenvolvimento` | `id UUID PK`, `discente_id UUID FK`, `periodo_inicio/fim DATE`, `avancos/reforcos/orientacoes TEXT cifrados`, `publicado_em TIMESTAMP NULL`, `autor_id UUID` | Só versão publicada e destinada à família sai no DTO. |
+| `discente.foto_ref` e `conteudo_trabalhado` | Foto: `foto_ref VARCHAR NULL` em `discente`, arquivo gravado pelo `UploadSeguro`. Conteúdo: `id UUID PK`, `sala INTEGER`, `data_inicio DATE`, `data_fim DATE NULL` (um dia ou uma semana), `texto VARCHAR` (curto; limite a fixar na Fase 3), `autor_id UUID FK users`, `criado_em TIMESTAMP` | Foto de criança só sai por rota autenticada com vínculo ativo, nunca por caminho estático público. O conteúdo é da sala (não de um aluno) e não leva dado pessoal. O professor mostrado à família sai do cruzamento `Voluntario.funcao` + `salaUm`/`salaDois` com `Discente.sala`, sem cadastro novo. Autorização de imagem já assinada na matrícula (decisão de 14/10/2026). |
+| `relatorio_desenvolvimento` | `id UUID PK`, `discente_id UUID FK`, `periodo_inicio/fim DATE`, `avancos/reforcos/orientacoes TEXT cifrados`, `aprovado_por UUID NULL`, `aprovado_em TIMESTAMP NULL`, `autor_id UUID` | Só versão aprovada pela coordenação sai no DTO (a aprovação grava quem e quando). A avaliação psicológica nunca entra no relatório nem no DTO da família. |
 | `evento_institucional`, `rotina_turma`, `cardapio_dia` | Evento: `id UUID`, `tipo/titulo VARCHAR`, `inicio/fim TIMESTAMP`, `sala INTEGER NULL`, `publicado BOOLEAN`. Rotina: `id UUID`, `sala INTEGER`, `dia_semana SMALLINT`, `inicio/fim TIME`, `atividade VARCHAR`. Cardápio: `id UUID`, `data DATE UNIQUE`, `descricao TEXT`, `publicado BOOLEAN` | Agenda pública por período; agenda familiar filtra sala/filho. |
 | `conteudo_publico`, `publicacao`, `consentimento_imagem`, `publicacao_pessoa` | Conteúdo: `id UUID`, `tipo VARCHAR`, `titulo VARCHAR`, `corpo TEXT`, `publicado_em TIMESTAMP`. Publicação: `id UUID`, `tipo VARCHAR`, `data DATE`, `foto_ref VARCHAR`, `relato TEXT`, `publicado_em TIMESTAMP`. Consentimento: `id UUID`, `discente_id UUID FK NULL`, `voluntario_id UUID FK NULL`, `vigente_ate DATE NULL`, `evidencia_ref VARCHAR`, `revogado_em TIMESTAMP NULL` (exatamente uma FK de pessoa). Associação: `publicacao_id UUID FK`, `consentimento_id UUID FK` | Conteúdo editorial sem expor cadastro interno; publicação de imagem só com consentimento vigente conferido para **todas** as pessoas identificáveis. |
-| `impacto_periodo`, `prestacao_contas`, `documento_publico` | Impacto: `id UUID`, `inicio/fim DATE`, `indicador VARCHAR`, `valor NUMERIC`, `fonte VARCHAR`, `publicado_em TIMESTAMP`. Contas: `id UUID`, `inicio/fim DATE`, `categoria VARCHAR`, `recebido/distribuido NUMERIC`, `unidade VARCHAR`. Documento: `id UUID`, `categoria/titulo VARCHAR`, `arquivo_ref VARCHAR`, `publicado_em TIMESTAMP` | Somente agregados aprovados e arquivos institucionais publicados; nenhum beneficiário individual. |
+| `impacto_periodo`, `prestacao_contas`, `documento_publico` | Impacto: `id UUID`, `inicio/fim DATE`, `indicador VARCHAR`, `valor NUMERIC`, `fonte VARCHAR`, `aprovado_por UUID NULL`, `aprovado_em TIMESTAMP NULL`. Contas: `id UUID`, `inicio/fim DATE`, `categoria VARCHAR`, `recebido/distribuido NUMERIC`, `unidade VARCHAR`. Documento: `id UUID`, `categoria/titulo VARCHAR`, `arquivo_ref VARCHAR`, `publicado_em TIMESTAMP` | Somente agregados aprovados e arquivos institucionais publicados; nenhum beneficiário individual. O número de impacto só aparece depois da aprovação da administração (decisão de 14/10/2026), sem cálculo automático; antes de aprovar, a administração confere se alguma contagem pequena identificaria uma família. |
 | `manifestacao` | `id UUID PK`, `tipo VARCHAR`, `texto TEXT cifrado`, `recebido_em TIMESTAMP`, `status VARCHAR` | Anônima; rate limit no endpoint público; e-mail interno usa dados mínimos. |
 | `aviso_destinatario` + `Aviso.visibilidade` | `aviso_id UUID FK`, `discente_id UUID FK`; `visibilidade VARCHAR` em `Aviso` | Aviso geral mantém comportamento; direcionado só aparece para responsáveis com vínculo ativo ao aluno; o `GET /aviso` público existente deve excluir direcionados. |
 
@@ -149,16 +169,16 @@ Paths abaixo são relativos ao backend; o Nginx publica sob `/api/v1`. Exceto `P
 | Módulo | Método e path | Request → resposta de sucesso (campos essenciais) |
 |---|---|---|
 | 19 | `POST /familia/auth/login` | `{login:string, senha:string}` → `200 {token:string, expiraEm:datetime}`; erro genérico `401`, sem enumeração. |
-| 19 | `GET /familia/filhos` | Token → `200 [{id:UUID, nome:string, sala:int}]` apenas vínculos ativos. Provisionamento: `POST /interno/responsaveis` `{login, vinculos:[discenteId]}` → `201 {id, login, instrucoesEntrega}` para coordenação; senha temporária entregue por canal aprovado, nunca em log. |
+| 19 | `GET /familia/filhos` | Token → `200 [{id:UUID, nome:string, sala:int}]` apenas vínculos ativos. Provisionamento, sem autocadastro: `POST /interno/responsaveis` `{nome, vinculos:[{discenteId, vinculo}], documentoConferido:true}` → `201 {id, login, senhaTemporaria}` só para quem a equipe autoriza (COOR, ADM e TECH, que acompanha o ADM), depois de conferir o documento pessoalmente; a senha temporária aparece uma única vez, nunca em log nem e-mail. Detalhes, ameaças e testes na seção do módulo 19 abaixo. |
 | 20 | `POST /familia/filhos/{id}/comunicacoes` | `{tipo: MENSAGEM|ATENDIMENTO, texto:string}` → `202 {protocolo:UUID}`; encaminha por e-mail, sem caixa de mensagens interna. |
 | 20 | `POST /familia/filhos/{id}/faltas/{frequenciaId}/justificativas` | `{turno:MANHA|TARDE, texto:string, anexoRef?:string}` → `201 {id, estado:JUSTIFICADA, criadoEm}`; `409` se não há falta elegível ou já foi justificada. `POST /interno/justificativas/{id}/revogar` → `200 {estado:REVOGADA}` para coordenação. |
 | 20 | `PUT /familia/filhos/{id}/contato` | `{tipo:TELEFONE|CONTATO_SAIDA, valor:string}` → `200 {atualizadoEm}`; alteração de saída gera notificação à equipe/outro responsável. |
 | 21 | `GET /familia/filhos/{id}/documentos` | Token → `200 [{id,tipo,titulo,prazo,estado}]`; só documentos destinados ao filho. `POST /familia/filhos/{id}/documentos/{documentoId}/autorizar` → `201 {autorizacaoId, aceitoEm}`; `409` após prazo/aceite duplicado. Cadastro interno de documento: `POST /interno/documentos-familia` `{discenteIds,tipo,titulo,texto,prazo}` → `201 {id}`. |
 | 22 | `GET /familia/filhos/{id}/avisos` | Token → `200 [{id,titulo,corpo,tipo:GERAL|DIRECIONADO}]`; criação interna `POST /interno/avisos-direcionados` `{discenteIds,titulo,corpo,inicio,fim}` → `201 {id}`. |
-| 23 | `GET /familia/filhos/{id}/resumo` | Token → `200 {nome,fotoRef,sala,professor,horario,frequenciaMes}`. `GET /familia/filhos/{id}/acompanhamento?mes=YYYY-MM` → `200 {frequencias,atividades,evolucao,conteudos,observacoesPublicaveis}`. |
-| 24 | `GET /familia/filhos/{id}/desenvolvimento` | Token → `200 [{periodo,avancos,reforcos,orientacoes}]` (lista vazia com estado explicativo na UI). `POST /interno/desenvolvimento` `{discenteId,periodo,avancos,reforcos,orientacoes}` → `201 {id}`; publicação interna explícita. |
+| 23 | `GET /familia/filhos/{id}/resumo` | Token → `200 {nome,temFoto,sala,professor,horario,frequenciaMes}`; `GET /familia/filhos/{id}/foto` → imagem (404 igual para sem vínculo e sem foto; nunca caminho público). `GET /familia/filhos/{id}/acompanhamento?mes=YYYY-MM` → `200 {frequencias,atividades,evolucao,conteudos,observacoesPublicaveis}`; `evolucao` tem ponto aberto (ver reestimativa do módulo 23). Lançamento dos conteúdos pelo professor: `POST /interno/conteudos-trabalhados` `{sala,dataInicio,dataFim?,texto}` → `201 {id}`. |
+| 24 | `GET /familia/filhos/{id}/desenvolvimento` | Token → `200 [{periodo,avancos,reforcos,orientacoes}]` (lista vazia com estado explicativo na UI). `POST /interno/desenvolvimento` `{discenteId,periodo,avancos,reforcos,orientacoes}` → `201 {id}`; `POST /interno/desenvolvimento/{id}/aprovar` → `200 {aprovadoEm}` só coordenação (grava quem aprovou). Sem aprovação o relatório não aparece à família, e a avaliação psicológica nunca faz parte do DTO. |
 | 25–26 | `GET /publico/agenda?de=DATE&ate=DATE`, `GET /publico/cardapio?semana=DATE`, `GET /familia/filhos/{id}/agenda?de=DATE&ate=DATE` | `200` com eventos/rotina publicados, dias do cardápio ou compromissos filtrados pelo filho. Cadastro interno: `POST/PUT /interno/eventos`, `/interno/rotinas`, `/interno/cardapios` com campos da tabela de dados acima; `201/200 {id}`. |
-| 27–29 | `GET /publico/conteudos/{tipo}`, `/publico/publicacoes?tipo=...`, `/publico/impacto?periodo=...`, `/publico/prestacoes`, `/publico/documentos` | `200` com itens publicados e agregados. `POST/PUT /interno/conteudos`, `/interno/publicacoes`, `/interno/impactos`, `/interno/prestacoes`, `/interno/documentos-publicos` → `201/200 {id}`; mídia e documento só publicados após revisão/consentimento. |
+| 27–29 | `GET /publico/conteudos/{tipo}`, `/publico/publicacoes?tipo=...`, `/publico/impacto?periodo=...`, `/publico/prestacoes`, `/publico/documentos` | `200` com itens publicados e agregados. `POST/PUT /interno/conteudos`, `/interno/publicacoes`, `/interno/impactos`, `/interno/prestacoes`, `/interno/documentos-publicos` → `201/200 {id}`; mídia e documento só publicados após revisão/consentimento. Números de impacto: `POST /interno/impactos/{id}/aprovar` só administração; `/publico/impacto` devolve apenas os aprovados. |
 | 30 | `POST /publico/manifestacoes` | `{tipo:SUGESTAO|RECLAMACAO, texto:string}` → `202 {protocolo:UUID}`; sem login; `429` sob abuso. Consulta interna apenas por coordenação/secretaria. |
 | 14 | Nenhum endpoint público novo | Mesmo gatilho da US-5.5; WhatsApp independente do envio de e-mail. Falha do provedor fica em auditoria técnica sem expor telefone. |
 
@@ -876,6 +896,70 @@ Backend: `OcorrenciaTecnicaServiceTest` (7 testes: cadastro válido associa auto
 
 ### Origem
 Pedido do dono do projeto, para dar ao cargo TECH (recém-criado no Módulo 16) um lugar de registrar achados técnicos do sistema — muitos deles originados de sessões de trabalho com IA/agente técnico, como a própria correção do bug do hash Argon2 corrompido via SSH nesta mesma sessão (ver `memoria-tecnica/` se aplicável, ou o histórico desta sessão).
+
+---
+
+## MÓDULO 19: IDENTIDADE E VÍNCULO DE RESPONSÁVEIS
+**Peso: 🔴 GRANDE (7 dias, estimativa) | Status: ⬜ Pendente (blueprint preliminar de 14/10/2026; a Fase 3 formal só fecha depois do congelamento visual, G3)**
+
+> Épico de referência: [spec.md #Épico 13 — US-13.1](./docs/product/spec.md)
+
+Decisão de origem (14/10/2026): coordenação e administração cadastram cada responsável depois de conferir o documento pessoalmente e entregam o login inicial; não há autocadastro. Justificativa em `memoria-tecnica/decisoes/decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica.md` (item 1). Pré-requisito de todas as rotas `/familia/**` (módulos 20–24 e 26).
+
+### Mudança de modelo
+`responsavel_conta` e `responsavel_discente` (ver "Desenho de dados proposto"), em migration nova (a próxima livre, hoje a `V18`; migrations só para a frente). `nome` cifrado com o `SensitiveDataConverter`; senha Argon2.
+
+### Princípio central: o token de família não pode valer como token de equipe
+Hoje o JWT da equipe usa emissor `sistemamelvin`, a mesma chave e `sub` igual à matrícula; o `SecurityFilter` carrega o usuário por `findByLogin`. Um token de família no mesmo formato, com login igual ao de um usuário de equipe, autenticaria como essa pessoa. E, se a família autenticasse na mesma cadeia, passaria pelas regras de "qualquer logado" (`/dashboard/**`, `/permissoes/minhas`). Por isso:
+- **Cadeia própria:** um `SecurityFilterChain` com `securityMatcher("/familia/**")` e filtro próprio; a cadeia da equipe nunca vê token de família, e a da família nunca aceita token de equipe.
+- **Token distinto:** emissor e audiência próprios (por exemplo `sistemamelvin-familia`), `sub` = UUID da conta (nunca o login) e claim de tipo. Decidido: chave própria (variável nova no servidor, que exige ajuste de ambiente em produção, R2, a fazer só com autorização no momento do deploy do módulo).
+- **Autoridade fora do `UserRole`:** a família não é um cargo de equipe e não alimenta `PermissaoService` nem as classes `*Acesso`.
+- **Conta e vínculo conferidos a cada requisição:** `ativo` e vínculo ativo valem no servidor em toda chamada, de modo que desativar a conta ou revogar o vínculo corta o acesso sem esperar o token expirar.
+
+### Contratos API (preliminar)
+| Método | Endpoint | Auth | Descrição |
+|---|---|---|---|
+| `POST` | `/familia/auth/login` | pública (única rota pública do portal) | `{login, senha}` → `200 {token, expiraEm, trocarSenha}`; `401` genérico sem enumeração; `429` por excesso de tentativas |
+| `PUT` | `/familia/auth/senha` | família | `{senhaAtual, novaSenha}` pela `PoliticaDeSenha` → `204`; com `trocarSenha=true` é a única rota liberada |
+| `GET` | `/familia/filhos` | família | `[{id, nome, sala}]` só dos vínculos ativos |
+| `POST` | `/interno/responsaveis` | `GERENCIAR_RESPONSAVEIS` | `{nome, vinculos:[{discenteId, vinculo}], documentoConferido:true}` → `201 {id, login, senhaTemporaria}` |
+| `GET` | `/interno/responsaveis` | `GERENCIAR_RESPONSAVEIS` | lista mínima (`id`, `nome`, `ativo`, vínculos), com filtro por aluno |
+| `PUT` | `/interno/responsaveis/{id}/vinculos` | `GERENCIAR_RESPONSAVEIS` | adiciona ou revoga vínculo; revogar marca `ativo=false` e não apaga (auditável) |
+| `POST` | `/interno/responsaveis/{id}/redefinir-senha` | `GERENCIAR_RESPONSAVEIS` | → `200 {senhaTemporaria}` e `trocar_senha=true` |
+| `PUT` | `/interno/responsaveis/{id}/desativar` | `GERENCIAR_RESPONSAVEIS` | a conta deixa de entrar e os tokens vigentes são recusados |
+
+`GERENCIAR_RESPONSAVEIS` é uma permissão dinâmica nova (regras semeadas: COOR, ADM; o TECH acompanha o ADM pela US-1.5), no padrão do RBAC atual. O login da família tem contadores próprios de falhas (IP e login), mas a vaga de Argon2 (cada verificação ocupa 64 MB de heap) tem de ser a mesma do login de equipe, porque o teto de memória vale para o processo todo. Hoje o `Semaphore` mora dentro do `LoginAttemptService`; uma segunda instância dobraria o teto. Na Fase 3, separar o semáforo dos contadores ou reutilizar o mesmo bean.
+
+### Ameaças e controles (R2)
+| Ameaça | Controle | Teste |
+|---|---|---|
+| Token de família aceito como de equipe (colisão de login) | Cadeia, emissor e `sub` UUID próprios | Token de família com `sub` igual a matrícula real de equipe é recusado em rota de equipe |
+| Família entra em rota "qualquer logado" da equipe | `securityMatcher` separado | `MatrizDeAcessoTest` ganha a classe `FAMILIA` e prova 403 de token de família em toda rota de equipe |
+| Acesso ao filho de outra família | Vínculo ativo validado no servidor em toda chamada; `404` igual para inexistente e sem vínculo | Dois responsáveis, dois alunos, cruzando as chamadas |
+| Enumeração de login | `401` genérico; tempo parecido para login inexistente | Respostas idênticas para login inexistente e senha errada |
+| Força bruta | `LoginAttemptService` próprio e teto de verificações Argon2 simultâneas | `429` depois do limite |
+| Cadastro por quem não conferiu o documento | Só perfis autorizados; `documentoConferido` obrigatório; grava quem cadastrou e quando | `403` para outros cargos e `400` sem a confirmação |
+| Senha temporária vazada | Aparece uma vez na resposta; nunca em log nem e-mail; troca obrigatória no primeiro acesso | Log sem a senha; rotas bloqueadas até trocar |
+| Conta desativada com token vigente | `ativo` checado por requisição | Token válido de conta desativada recebe `401` |
+| Dado pessoal em log ou DTO | DTOs mínimos; `LogSanitizer`; nome cifrado | Respostas sem campo além do contrato |
+
+### Entrega (TDD), na ordem
+1. `FamiliaTokenIsolamentoSecurityTest` (token real passando pelos dois filtros, nos dois sentidos, inclusive a colisão de login), vermelho antes de qualquer código.
+2. `ResponsavelServiceTest`: cadastro exige vínculo e confirmação do documento; senha temporária nasce com troca obrigatória; revogar e desativar.
+3. `FamiliaAuthControllerTest`: login genérico, `429`, troca obrigatória de senha.
+4. `MatrizDeAcessoTest` com a classe `FAMILIA` e as rotas novas classificadas.
+5. Frontend, depois do protótipo da Fase 2: tela de login da família e tela interna de cadastro de responsável.
+
+### Fora do escopo
+Telas do portal além do login e do seletor de filhos (módulos 20–24 e 26), convite por link no e-mail (evolução prevista), recuperação de senha por e-mail (a redefinição é presencial) e segundo fator.
+
+### Decisões de desenho (14/10/2026)
+Recomendações da sessão aceitas pelo dono do projeto (`memoria-tecnica/decisoes/decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica.md`, item 9):
+1. Login gerado pelo sistema, não derivável de CPF, matrícula ou telefone.
+2. Senha temporária com troca obrigatória no primeiro acesso.
+3. Não guardar o número do documento, só quem conferiu e quando.
+4. Chave JWT própria para a família (exige variável nova no servidor).
+5. `GERENCIAR_RESPONSAVEIS` como permissão dinâmica, não regra fixa.
 
 ---
 

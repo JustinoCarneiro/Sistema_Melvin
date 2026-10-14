@@ -16,6 +16,16 @@ menu primeiro) e avisa-se quando algo ficar pronto, sem citar datas. A ordem das
 aritmética e as consequências abaixo continuam válidas; só a atribuição mudou. Detalhe e
 justificativa em [[decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica]] (item 8).
 
+## Atualização de 14/10/2026 (noite): números com os módulos 31 e 32
+Os números e datas abaixo são os de 08/10/2026 e ficam como registro. Com a decisão do painel
+completo (foto e conteúdos trabalhados), entraram os módulos **31** (foto do aluno, 2 dias) e **32**
+(conteúdos trabalhados, 4 dias), ambos na **etapa 1**, que passa de 52 para **58 dias úteis**
+(termina em **07/01/2027**, com 1 dia útil de folga em vez de 7). A fórmula passa de 85 para 91 dias
+úteis, e o total com duas homologações de 87 para **93** (conclusão em **01/03/2027**). A ordem das
+etapas e a atribuição das datas (meta do dono do projeto) não mudam. O módulo 30 poderia ir para a
+etapa 2 para devolver 4 dias de folga ao núcleo; não foi movido. Detalhe em
+[[decisoes-14-10-2026-area-da-familia-transparencia-e-nota-psicologica]] (item 9) e na seção "Reestimativa do módulo 23" do `ROADMAP.md`.
+
 ## Contexto
 Em 08/10/2026 o dono do projeto fixou 08/01/2027 como meta para todo o escopo aberto: as 16
 histórias novas do site (US-10.3 a US-10.18), as 8 da Área da Família (US-13.1 a US-13.8), a US-5.6
