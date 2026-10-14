@@ -7,6 +7,7 @@ import br.com.melvin.sistema.domain.frequencia.repository.FrequenciaDiscenteRepo
 import br.com.melvin.sistema.domain.ocorrencia.model.CategoriaOcorrencia;
 import br.com.melvin.sistema.domain.ocorrencia.model.Ocorrencia;
 import br.com.melvin.sistema.domain.ocorrencia.repository.OcorrenciaRepository;
+import br.com.melvin.sistema.shared.service.ExcelExportService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,6 +32,7 @@ import br.com.melvin.sistema.domain.discente.dto.DiscenteAvaliacaoDTO;
 
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.mockito.MockedStatic;
@@ -53,6 +55,9 @@ public class DiscenteServiceTest {
 
     @Mock
     private DiarioService diarioService;
+
+    @Mock
+    private ExcelExportService excelExportService;
 
     @InjectMocks
     private DiscenteService discenteService;
@@ -318,6 +323,7 @@ public class DiscenteServiceTest {
             
             when(permissaoService.hasPermission(auth, "EDITAR_RENDIMENTO")).thenReturn(false);
             when(permissaoService.hasPermission(auth, "EDITAR_AVALIACAO_PSICO")).thenReturn(true);
+            doReturn(List.of(new SimpleGrantedAuthority("ROLE_PSICO"))).when(auth).getAuthorities();
 
             ResponseEntity<?> response = discenteService.alterarAvaliacoes(matricula, dto);
 
@@ -325,5 +331,53 @@ public class DiscenteServiceTest {
             assertEquals(null, discente.getAvaliacaoRendimento());
             assertEquals(3.0, discente.getAvaliacaoPsicologico());
         }
+    }
+
+    // Decisão do Instituto (14/10/2026): só Psicologia e Coordenação veem a nota psicológica.
+    // Quem não a vê também não a grava: a tela deixa de mostrar o campo, e o envio sem ele
+    // apagaria a nota existente.
+    @Test
+    public void testAlterarAvaliacoesNaoMexeNaNotaPsicologicaDeQuemNaoPodeVela() {
+        String matricula = "2026001";
+        Discente discente = new Discente();
+        discente.setMatricula(matricula);
+        discente.setAvaliacaoPsicologico(8.0);
+
+        DiscenteAvaliacaoDTO dto = new DiscenteAvaliacaoDTO();
+        dto.setAvaliacaoRendimento(4.5);
+        dto.setAvaliacaoPsicologico(null);
+
+        when(discenteRepository.findByMatricula(matricula)).thenReturn(discente);
+
+        Authentication auth = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(auth);
+
+        try (MockedStatic<SecurityContextHolder> mockedSecurity = Mockito.mockStatic(SecurityContextHolder.class)) {
+            mockedSecurity.when(SecurityContextHolder::getContext).thenReturn(securityContext);
+
+            when(permissaoService.hasPermission(auth, "EDITAR_RENDIMENTO")).thenReturn(true);
+            when(permissaoService.hasPermission(auth, "EDITAR_AVALIACAO_PSICO")).thenReturn(true);
+            doReturn(List.of(new SimpleGrantedAuthority("ROLE_ADM"))).when(auth).getAuthorities();
+
+            ResponseEntity<?> response = discenteService.alterarAvaliacoes(matricula, dto);
+
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(4.5, discente.getAvaliacaoRendimento());
+            assertEquals(8.0, discente.getAvaliacaoPsicologico());
+        }
+    }
+
+    @Test
+    public void testExportarDiscentesRepassaSeAPlanilhaIncluiANotaPsicologica() throws Exception {
+        Discente discente = new Discente();
+        discente.setMatricula("2026001");
+        when(discenteRepository.findAll()).thenReturn(List.of(discente));
+
+        discenteService.exportarDiscentes(null, true);
+        verify(excelExportService).exportarDiscentesParaExcel(List.of(discente), true);
+
+        discenteService.exportarDiscentes(null, false);
+        verify(excelExportService).exportarDiscentesParaExcel(List.of(discente), false);
     }
 }

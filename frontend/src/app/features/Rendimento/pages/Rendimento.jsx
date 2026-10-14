@@ -63,13 +63,19 @@ function Rendimento() {
 
     if (loading || loadingPerms) return <div className={styles.loading}>Carregando...</div>;
     
+    // A nota psicológica só é entregue pela API a Psicologia e Coordenação: para os demais a chave
+    // vem omitida (e não zerada), e a linha some da tela.
+    const veNotaPsicologica = !!aluno && 'avaliacaoPsicologico' in aluno;
+
     // Categorias de avaliação
     const categorias = [
         { id: 'avaliacaoPresenca', nome: 'Presença', editavel: podeAvaliarGeral },
         { id: 'avaliacaoParticipacao', nome: 'Participação', editavel: podeAvaliarGeral },
         { id: 'avaliacaoComportamento', nome: 'Comportamento', editavel: podeAvaliarGeral },
         { id: 'avaliacaoRendimento', nome: 'Rendimento Escolar', editavel: podeAvaliarGeral },
-        { id: 'avaliacaoPsicologico', nome: 'Avaliação Psicológica', editavel: podeAvaliarPsico },
+        ...(veNotaPsicologica
+            ? [{ id: 'avaliacaoPsicologico', nome: 'Avaliação Psicológica', editavel: podeAvaliarPsico }]
+            : []),
     ];
 
     return (
@@ -105,7 +111,7 @@ function Rendimento() {
                 </div>
                 
                 {/* --- FOOTER --- */}
-                {(podeAvaliarGeral || podeAvaliarPsico) && (
+                {(podeAvaliarGeral || (podeAvaliarPsico && veNotaPsicologica)) && (
                      <div className={styles.footerActions}>
                         <Botao 
                             nome="Salvar Avaliações" 

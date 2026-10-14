@@ -17,7 +17,8 @@ import java.util.List;
 @Service
 public class ExcelExportService {
 
-    public ByteArrayInputStream exportarDiscentesParaExcel(List<Discente> discentes) throws IOException {
+    // incluiNotaPsicologica: só Psicologia e Coordenação. Sem ela, a coluna fica vazia e a média usa as quatro notas pedagógicas.
+    public ByteArrayInputStream exportarDiscentesParaExcel(List<Discente> discentes, boolean incluiNotaPsicologica) throws IOException {
         String[] COLUNAS = {
             "Matrícula", "Nome", "Email", "Contato", "Sexo", "Data de Nascimento", "Cor/Raça", "Nacionalidade",
             "Endereço", "Bairro", "Cidade", "RG/CPF", "Sala", "Turno", "Status",
@@ -30,6 +31,10 @@ public class ExcelExportService {
             "Karatê", "Ballet", "Informática", "Música", "Artesanato", "Futsal", "Inglês", "Teatro",
             "Avaliação Presença", "Avaliação Participação", "Avaliação Comportamento", "Avaliação Rendimento", "Avaliação Psicológico", "Média Geral"
         };
+
+        if (!incluiNotaPsicologica) {
+            COLUNAS[COLUNAS.length - 1] = "Média Pedagógica";
+        }
 
         try (
             Workbook workbook = new XSSFWorkbook();
@@ -116,9 +121,14 @@ public class ExcelExportService {
                 row.createCell(60).setCellValue(participacao);
                 row.createCell(61).setCellValue(comportamento);
                 row.createCell(62).setCellValue(rendimento);
-                row.createCell(63).setCellValue(psicologico);
-
-                double media = (presenca + participacao + comportamento + rendimento + psicologico) / 5.0;
+                double notasPedagogicas = presenca + participacao + comportamento + rendimento;
+                double media;
+                if (incluiNotaPsicologica) {
+                    row.createCell(63).setCellValue(psicologico);
+                    media = (notasPedagogicas + psicologico) / 5.0;
+                } else {
+                    media = notasPedagogicas / 4.0;
+                }
                 row.createCell(64).setCellValue(media);
             }
 

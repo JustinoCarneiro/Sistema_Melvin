@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;
 
+import br.com.melvin.sistema.domain.dashboard.service.NotaPsicologicaAcesso;
 import br.com.melvin.sistema.domain.discente.model.Discente;
 import br.com.melvin.sistema.domain.discente.repository.DiscenteRepository;
 import br.com.melvin.sistema.domain.diario.service.DiarioService;
@@ -270,9 +271,9 @@ public class DiscenteService {
         return discenteRepository.searchByTerm(searchTerm);
     }
 
-    public ByteArrayInputStream exportarDiscentes(String searchTerm) throws IOException {
+    public ByteArrayInputStream exportarDiscentes(String searchTerm, boolean incluiNotaPsicologica) throws IOException {
         List<Discente> discentes = searchDiscentes(searchTerm); // Reutiliza a lógica de busca
-        return excelExportService.exportarDiscentesParaExcel(discentes);
+        return excelExportService.exportarDiscentesParaExcel(discentes, incluiNotaPsicologica);
     }
 
     public ResponseEntity<?> alterarAvaliacoes(String matricula, DiscenteAvaliacaoDTO data) {
@@ -290,7 +291,10 @@ public class DiscenteService {
             discente.setAvaliacaoRendimento(data.getAvaliacaoRendimento());
         }
 
-        if (permissaoService.hasPermission(authentication, "EDITAR_AVALIACAO_PSICO")) {
+        // Quem não vê a nota psicológica (só PSICO e COOR a recebem) também não a grava: a tela
+        // não mostra o campo, e o envio sem ele apagaria a nota existente.
+        if (permissaoService.hasPermission(authentication, "EDITAR_AVALIACAO_PSICO")
+                && NotaPsicologicaAcesso.podeVer(authentication)) {
             discente.setAvaliacaoPsicologico(data.getAvaliacaoPsicologico());
         }
 
