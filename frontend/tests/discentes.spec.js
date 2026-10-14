@@ -112,7 +112,9 @@ test.describe('Discentes Management', () => {
   test('should send the deletion after the confirmation is accepted', async ({ page }) => {
     const chamadas = [];
     const dialogos = [];
-    page.on('dialog', dialog => { dialogos.push(dialog.message()); dialog.accept(); });
+    // Depois do DELETE a tela mostra um segundo alert ("Salvo com sucesso!"), que pode chegar já com
+    // o teste encerrado; o accept() dele rejeitaria com "Test ended" e reprovava o teste por corrida.
+    page.on('dialog', dialog => { dialogos.push(dialog.message()); dialog.accept().catch(() => {}); });
     await abrirEdicaoDoAluno(page, chamadas);
 
     await page.selectOption('select[name="status"]', 'deletar');
