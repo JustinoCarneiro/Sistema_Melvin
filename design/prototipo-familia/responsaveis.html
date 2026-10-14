@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Responsáveis — Sistema Melvin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="familia.css">
+  <link rel="stylesheet" href="admin.css">
+  <script src="proto.js" defer></script>
+</head>
+<body class="admin"
+      data-estados-lista="normal:Lista|carregando:Carregando|vazio:Nenhum cadastrado|erro:Erro ao carregar|sem-permissao:Sem permissão"
+      data-dica="use os botões de cada linha: Vínculos, Redefinir senha e Desativar">
+  <a class="pular" href="#principal">Pular para o conteúdo</a>
+
+  <header class="a-topo">
+    <a class="botao botao-texto voltar" href="#" data-proto-nota="No sistema real, volta para Configurações." aria-label="Voltar para Configurações">← <span class="so-desktop">Configurações</span></a>
+    <p class="titulo">SISTEMA MELVIN</p>
+    <span class="usuario">Coordenação</span>
+  </header>
+
+  <main id="principal" class="a-pagina">
+    <div class="a-cartao">
+
+      <section class="estado estado-erro" data-estados="sem-permissao" role="alert" aria-labelledby="sp-titulo">
+        <span class="estado-icone" aria-hidden="true">!</span>
+        <h1 id="sp-titulo" class="a-titulo a-titulo-neutro">Você não tem permissão para ver os responsáveis</h1>
+        <p>Esta área é da coordenação e da administração.</p>
+      </section>
+
+      <div data-estados="normal carregando vazio erro" class="form-grade">
+        <div class="a-cabecalho">
+          <div>
+            <h1 class="a-titulo">Responsáveis</h1>
+            <p class="a-subtitulo">Acessos da Área da Família. Cada pessoa é cadastrada pessoalmente, depois de conferir o documento.</p>
+          </div>
+          <a class="botao botao-admin" href="cadastrar-responsavel.html">Cadastrar responsável</a>
+        </div>
+
+        <!-- Estado: carregando -->
+        <div data-estados="carregando" role="status" aria-label="Carregando os responsáveis" class="form-grade">
+          <div class="esqueleto esq-cartao"></div><div class="esqueleto esq-cartao"></div><div class="esqueleto esq-cartao"></div>
+        </div>
+
+        <!-- Estado: vazio -->
+        <section class="estado" data-estados="vazio" aria-labelledby="vz-titulo">
+          <span class="estado-icone" aria-hidden="true">+</span>
+          <h2 id="vz-titulo">Nenhum responsável cadastrado ainda</h2>
+          <p>Cadastre o primeiro responsável para que ele possa acompanhar o filho pela Área da Família.</p>
+          <a class="botao botao-admin" href="cadastrar-responsavel.html">Cadastrar responsável</a>
+        </section>
+
+        <!-- Estado: erro -->
+        <section class="estado estado-erro" data-estados="erro" role="alert" aria-labelledby="er-titulo">
+          <span class="estado-icone" aria-hidden="true">!</span>
+          <h2 id="er-titulo">Não foi possível carregar a lista</h2>
+          <p>Nada foi alterado. Tente novamente; se continuar, avise o suporte técnico.</p>
+          <a class="botao botao-admin" href="?estado=normal">Tentar de novo</a>
+        </section>
+
+        <!-- Estado: lista -->
+        <div class="tabela-wrap" data-estados="normal">
+          <table class="tabela">
+            <caption class="sr-only">Responsáveis cadastrados na Área da Família</caption>
+            <thead>
+              <tr><th scope="col">Responsável</th><th scope="col">Alunos vinculados</th><th scope="col">Situação</th><th scope="col">Cadastro</th><th scope="col">Ações</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-rotulo="Responsável"><span class="nome">Carla Exemplo Lima</span></td>
+                <td data-rotulo="Alunos vinculados"><ul class="vinculos"><li>Mãe de Davi Exemplo Lima (Sala 3)</li><li>Mãe de Alice Exemplo Lima (Sala 1)</li></ul></td>
+                <td data-rotulo="Situação"><span class="selos"><span class="selo selo-ativo">Ativo</span></span></td>
+                <td data-rotulo="Cadastro">05/10/2026<br><small>por Coordenação</small></td>
+                <td data-rotulo="Ações"><div class="acoes-celula">
+                  <button type="button" class="botao botao-admin-sec botao-pequeno" data-abrir-dialogo="dlg-vinculos" data-nome-responsavel="Carla Exemplo Lima">Vínculos<span class="sr-only"> de Carla Exemplo Lima</span></button>
+                  <button type="button" class="botao botao-admin-sec botao-pequeno" data-abrir-dialogo="dlg-senha" data-nome-responsavel="Carla Exemplo Lima">Redefinir senha<span class="sr-only"> de Carla Exemplo Lima</span></button>
+                  <button type="button" class="botao botao-perigo botao-pequeno" data-abrir-dialogo="dlg-desativar" data-nome-responsavel="Carla Exemplo Lima">Desativar<span class="sr-only"> Carla Exemplo Lima</span></button>
+                </div></td>
+              </tr>
+              <tr>
+                <td data-rotulo="Responsável"><span class="nome">Roberto Exemplo Souza</span></td>
+                <td data-rotulo="Alunos vinculados"><ul class="vinculos"><li>Avô de Bruno Exemplo Souza (Sala 2)</li></ul></td>
+                <td data-rotulo="Situação"><span class="selos"><span class="selo selo-ativo">Ativo</span><span class="selo selo-pendente">Ainda não criou a própria senha</span></span></td>
+                <td data-rotulo="Cadastro">13/10/2026<br><small>por Administração</small></td>
+                <td data-rotulo="Ações"><div class="acoes-celula">
+                  <button type="button" class="botao botao-admin-sec botao-pequeno" data-abrir-dialogo="dlg-vinculos" data-nome-responsavel="Roberto Exemplo Souza">Vínculos<span class="sr-only"> de Roberto Exemplo Souza</span></button>
+                  <button type="button" class="botao botao-admin-sec botao-pequeno" data-abrir-dialogo="dlg-senha" data-nome-responsavel="Roberto Exemplo Souza">Redefinir senha<span class="sr-only"> de Roberto Exemplo Souza</span></button>
+                  <button type="button" class="botao botao-perigo botao-pequeno" data-abrir-dialogo="dlg-desativar" data-nome-responsavel="Roberto Exemplo Souza">Desativar<span class="sr-only"> Roberto Exemplo Souza</span></button>
+                </div></td>
+              </tr>
+              <tr>
+                <td data-rotulo="Responsável"><span class="nome">Marta Exemplo Dias</span></td>
+                <td data-rotulo="Alunos vinculados"><ul class="vinculos"><li>Responsável legal de Pedro Exemplo Dias (Sala 4)</li></ul></td>
+                <td data-rotulo="Situação"><span class="selos"><span class="selo selo-inativo">Desativado</span></span></td>
+                <td data-rotulo="Cadastro">22/09/2026<br><small>por Coordenação</small></td>
+                <td data-rotulo="Ações"><span class="dica">Sem ações: o acesso está desativado.</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Diálogo: vínculos -->
+  <dialog id="dlg-vinculos" aria-labelledby="dlg-vinculos-titulo">
+    <div class="dialogo-corpo">
+      <h2 id="dlg-vinculos-titulo">Alunos de <span data-preencher="nome"></span></h2>
+      <p class="dica">Revogar não apaga o histórico: o acesso ao aluno deixa de valer na hora, e o registro continua guardado.</p>
+      <ul class="vinculo-lista">
+        <li class="vinculo-item" data-revogado="false">
+          <span class="vinculo-nome">Mãe de Davi Exemplo Lima (Sala 3)</span>
+          <button type="button" class="botao botao-perigo botao-pequeno" data-revogar aria-label="Revogar vínculo com Davi Exemplo Lima">Revogar</button>
+        </li>
+        <li class="vinculo-item" data-revogado="false">
+          <span class="vinculo-nome">Mãe de Alice Exemplo Lima (Sala 1)</span>
+          <button type="button" class="botao botao-perigo botao-pequeno" data-revogar aria-label="Revogar vínculo com Alice Exemplo Lima">Revogar</button>
+        </li>
+      </ul>
+      <div class="acoes"><button type="button" class="botao botao-admin" data-fechar-dialogo>Concluir</button></div>
+    </div>
+  </dialog>
+
+  <!-- Diálogo: redefinir senha -->
+  <dialog id="dlg-senha" aria-labelledby="dlg-senha-titulo">
+    <div class="dialogo-corpo" data-etapa="confirmar">
+      <h2 id="dlg-senha-titulo">Redefinir a senha de <span data-preencher="nome"></span>?</h2>
+      <p>Será gerada uma senha temporária nova, mostrada uma única vez. A senha atual deixa de valer, e a pessoa criará uma senha só dela no próximo acesso. Faça isso com o responsável presente.</p>
+      <div class="acoes">
+        <button type="button" class="botao botao-admin" data-confirmar-dialogo><span class="botao-rotulo">Gerar senha temporária</span><span class="spinner" aria-hidden="true"></span></button>
+        <button type="button" class="botao botao-admin-sec" data-fechar-dialogo>Cancelar</button>
+      </div>
+    </div>
+    <div class="dialogo-corpo" data-etapa="resultado" hidden>
+      <h2>Senha temporária gerada</h2>
+      <div class="mensagem mensagem-aviso" role="status"><strong>Anote agora.</strong> Esta senha não poderá ser vista de novo.</div>
+      <div class="credencial">
+        <div class="credencial-linha">
+          <div><p class="credencial-rotulo">Senha temporária</p><p class="credencial-valor" id="senha-redefinida">Mx4p-7Tqd-Hn2v</p></div>
+          <button type="button" class="botao botao-admin-sec botao-pequeno" data-copiar="senha-redefinida" data-nome-campo="a senha temporária">Copiar</button>
+        </div>
+      </div>
+      <div class="acoes"><button type="button" class="botao botao-admin" data-fechar-dialogo>Concluir</button></div>
+    </div>
+  </dialog>
+
+  <!-- Diálogo: desativar -->
+  <dialog id="dlg-desativar" aria-labelledby="dlg-desativar-titulo">
+    <div class="dialogo-corpo" data-etapa="confirmar">
+      <h2 id="dlg-desativar-titulo">Desativar o acesso de <span data-preencher="nome"></span>?</h2>
+      <p>A pessoa deixa de entrar na Área da Família agora, mesmo que esteja com a sessão aberta. Os vínculos e o histórico continuam guardados.</p>
+      <div class="acoes">
+        <button type="button" class="botao botao-perigo" data-confirmar-dialogo><span class="botao-rotulo">Desativar acesso</span></button>
+        <button type="button" class="botao botao-admin-sec" data-fechar-dialogo>Cancelar</button>
+      </div>
+    </div>
+    <div class="dialogo-corpo" data-etapa="resultado" hidden>
+      <h2>Acesso desativado</h2>
+      <div class="mensagem mensagem-sucesso" role="status">O acesso foi desativado. A pessoa já não consegue entrar.</div>
+      <div class="acoes"><button type="button" class="botao botao-admin" data-fechar-dialogo>Concluir</button></div>
+    </div>
+  </dialog>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Crie a sua senha — Área da Família — Instituto Melvin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="familia.css">
+  <script src="proto.js" defer></script>
+</head>
+<body class="login-pagina"
+      data-estados-lista="normal:Normal|carregando:Enviando|sucesso:Senha criada|erro-servidor:Erro no servidor"
+      data-dica="tente 12345678 (senha comum), senhas diferentes, ou menos de 8 caracteres">
+  <a class="pular" href="#principal">Pular para o formulário</a>
+  <div class="login-fundo" aria-hidden="true"></div>
+
+  <main id="principal" class="login-cartao">
+    <img class="login-logo" src="../../frontend/src/docs/logo_institutomelvin_horizontal.png" alt="Instituto Social Melvin" width="140" height="56">
+
+    <!-- Estado: senha criada -->
+    <section data-estados="sucesso" class="coluna" aria-labelledby="ok-titulo">
+      <h1 class="login-titulo" id="ok-titulo">Tudo certo!</h1>
+      <div class="mensagem mensagem-sucesso" role="status">
+        <strong>Sua senha foi criada.</strong>
+        A senha temporária não vale mais. Da próxima vez, entre com a senha nova.
+      </div>
+      <a class="botao botao-primario botao-bloco" href="filhos.html">Continuar</a>
+    </section>
+
+    <!-- Estados: formulário -->
+    <div data-estados="normal carregando erro-servidor" class="coluna">
+      <h1 class="login-titulo">Crie a sua senha</h1>
+      <p class="login-subtitulo">Você entrou com uma senha temporária. Por segurança, crie uma senha só sua para continuar.</p>
+
+      <div class="mensagem mensagem-erro" role="alert" data-estados="erro-servidor">
+        <strong>Não foi possível salvar agora.</strong>
+        Nada foi alterado. Tente novamente em alguns instantes; se continuar, procure a coordenação.
+      </div>
+      <p class="sr-only" role="status" data-estados="carregando">Salvando a nova senha.</p>
+
+      <form class="login-form" data-proto-form="senha" data-destino="trocar-senha.html?estado=sucesso" novalidate>
+        <div class="campo">
+          <label for="nova-senha">Nova senha</label>
+          <div class="campo-senha">
+            <input id="nova-senha" name="nova-senha" type="password" autocomplete="new-password"
+                   required aria-describedby="nova-senha-dica nova-senha-erro" data-erro="Crie a sua nova senha.">
+            <button type="button" class="ver-senha" data-ver-senha="nova-senha" data-nome-campo="a nova senha"
+                    aria-pressed="false" aria-label="Mostrar a nova senha">Mostrar</button>
+          </div>
+          <p class="dica" id="nova-senha-dica">De 8 a 128 caracteres. Uma frase fácil de lembrar funciona bem. Não use senhas comuns, como 12345678.</p>
+          <p class="campo-erro" id="nova-senha-erro" hidden></p>
+        </div>
+
+        <div class="campo">
+          <label for="repete-senha">Repita a nova senha</label>
+          <div class="campo-senha">
+            <input id="repete-senha" name="repete-senha" type="password" autocomplete="new-password"
+                   required aria-describedby="repete-senha-erro" data-erro="Repita a nova senha.">
+            <button type="button" class="ver-senha" data-ver-senha="repete-senha" data-nome-campo="a repetição da senha"
+                    aria-pressed="false" aria-label="Mostrar a repetição da senha">Mostrar</button>
+          </div>
+          <p class="campo-erro" id="repete-senha-erro" hidden></p>
+        </div>
+
+        <button class="botao-login" type="submit" data-rotulo-enviando="Salvando…">
+          <span class="botao-rotulo">Salvar nova senha</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+
+      <p class="login-ajuda">Enquanto a senha não for trocada, o restante da Área da Família fica bloqueado.</p>
+    </div>
+  </main>
+</body>
+</html>

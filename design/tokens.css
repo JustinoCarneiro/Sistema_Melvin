@@ -1,0 +1,87 @@
+/*
+ * Tokens visuais do Sistema Melvin (Instituto Social Melvin).
+ *
+ * Coletados da identidade JÁ EM PRODUÇÃO (congelada em maio/2026, CLAUDE.md §5), não inventados:
+ *   - frontend/src/index.scss        (bloco :root)
+ *   - docs/DESIGN_SYSTEM.md          (tipografia, botões, campos, cartões, breakpoints)
+ *   - frontend/src/app/features/Auth/pages/Login.module.scss (tela de login)
+ *
+ * Este arquivo serve ao protótipo da Fase 2 (design/prototipo-familia/). A aplicação React continua
+ * lendo seus tokens de frontend/src/index.scss; se um valor mudar lá, mude aqui também.
+ *
+ * Grupo "AJUSTE AA": o login atual tem trechos abaixo de 4,5:1 (subtítulo #94a3b8 = 2,56:1; início do
+ * gradiente do botão #cf4848 = 4,49:1; texto de erro #dc2626 = 4,41:1) e bordas de campo abaixo de 3:1
+ * (#e2e8f0 em branco = 1,2:1). As telas novas usam as variantes escuras abaixo, mais próximas do
+ * texto/cor original possível, sem criar linguagem visual nova.
+ */
+
+:root {
+  /* ---------- Paleta institucional (index.scss) ---------- */
+  --cor-bg-principal: #FDFCF8;
+  --cor-bg-secundario: #F4F1EA;
+  --cor-texto-forte: #2A363B;
+  --cor-texto-corpo: #5A666B;
+  --cor-primaria: #1A4D80;      /* azul institucional: ação principal da Área da Família */
+  --cor-secundaria: #207556;    /* verde institucional: sucesso, frequência boa */
+  --cor-destaque: #E29421;      /* dourado: SÓ decorativo (2,41:1 sobre o fundo); nunca como texto */
+
+  /* ---------- Sistema interno "Glass Admin" (index.scss) ---------- */
+  --bg-color: #f1f5f3;
+  --surface-color: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: #e2e8f0;
+  --glass-blur: blur(12px);
+  --text-main: #1e293b;
+  --text-muted: #64748b;        /* 4,76:1 sobre branco; NÃO usar sobre --cor-bg-secundario (4,22:1) */
+  --accent-primary: #217346;    /* verde das telas internas */
+  --accent-secondary: #F29F05;
+
+  /* ---------- Login (DESIGN_SYSTEM.md §2.4 e §4.3) ---------- */
+  --login-bg: #f0f5f1;
+  --login-blob-vermelho: rgba(207, 72, 72, 0.08);
+  --login-blob-verde: rgba(79, 170, 116, 0.1);
+
+  /* ---------- AJUSTE AA (derivados, ver cabeçalho) ---------- */
+  --aa-botao-login-inicio: #c23f3f;   /* 5,15:1 com texto branco (original #cf4848 = 4,49:1) */
+  --aa-botao-login-fim: #b93636;      /* 5,76:1 (inalterado) */
+  --aa-texto-secundario: #5A666B;     /* no lugar de #94a3b8 (2,56:1): 5,77:1 no fundo, 5,92:1 no branco */
+  --aa-erro-texto: #b91c1c;           /* 5,91:1 sobre --erro-bg (original #dc2626 = 4,41:1) */
+  --aa-borda-campo: #738089;          /* 4,06:1 sobre branco, 3,60:1 sobre --cor-bg-secundario */
+  --aa-sucesso-texto: #14583F;        /* 7,27:1 sobre --sucesso-bg */
+  --aa-aviso-texto: #92400e;          /* 6,84:1 sobre --aviso-bg (inalterado) */
+  --aa-ouro-texto: #8A5A00;           /* 5,43:1 sobre --ouro-bg: texto dourado legível */
+
+  /* Fundos de mensagem (login atual) */
+  --erro-bg: #fef2f2;
+  --erro-borda: #fecaca;
+  --aviso-bg: #fffbeb;
+  --aviso-borda: #fef3c7;
+  --sucesso-bg: #E3F2EA;
+  --sucesso-borda: #b6dcc6;
+  --ouro-bg: #FFF4DC;
+  --azul-suave-bg: #E8EEF5;           /* 7,44:1 com --cor-primaria */
+
+  /* ---------- Tipografia (DESIGN_SYSTEM.md §3) ---------- */
+  --fonte-corpo: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fonte-titulo: 'Outfit', 'Inter', system-ui, sans-serif;
+  --fonte-login: 'Caveat', 'Kalam', cursive;   /* só no login, como na tela de equipe */
+
+  /* ---------- Forma e profundidade ---------- */
+  --raio-campo: 1rem;                 /* login: 1rem; telas internas: 12px */
+  --raio-campo-admin: 12px;
+  --raio-cartao: 16px;
+  --raio-login: 2.5rem;
+  --altura-campo: 3.25rem;            /* >= 44px de alvo de toque */
+  --sombra-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --sombra-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --sombra-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+
+  /* ---------- Movimento ---------- */
+  --transicao-suave: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transicao-rapida: all 0.15s ease;
+
+  /* ---------- Breakpoints (SASS $size-* em index.scss; CSS não aceita var() em media query) ----------
+   *   450px  mobile médio        690px  tablet em pé       965px  desktop médio
+   *   1100px desktop grande      Telas novas: mobile-first, saltos em 690px e 965px.
+   */
+}

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar na Área da Família — Instituto Melvin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="familia.css">
+  <script src="proto.js" defer></script>
+</head>
+<body class="login-pagina"
+      data-estados-lista="normal:Normal|carregando:Enviando|erro:Usuário ou senha inválidos|bloqueado:Muitas tentativas|indisponivel:Sistema ocupado"
+      data-dica="digite no usuário: erro, bloqueio, ocupado, novo (1º acesso), unico (um filho só) ou qualquer outro (dois filhos)">
+  <a class="pular" href="#principal">Pular para o formulário</a>
+  <div class="login-fundo" aria-hidden="true"></div>
+
+  <main id="principal" class="login-cartao">
+    <img class="login-logo" src="../../frontend/src/docs/logo_institutomelvin_horizontal.png" alt="Instituto Social Melvin" width="140" height="56">
+    <h1 class="login-titulo">Área da Família</h1>
+    <p class="login-subtitulo">Acompanhe o seu filho no Instituto. O acesso é entregue pela coordenação, depois de conferir o seu documento.</p>
+
+    <!-- Mensagem genérica: nunca revela se o usuário existe (sem enumeração). -->
+    <div class="mensagem mensagem-erro" role="alert" data-estados="erro">
+      <strong>Não foi possível entrar.</strong>
+      Usuário ou senha inválidos. Confira os dados e tente de novo.
+    </div>
+    <div class="mensagem mensagem-aviso" role="alert" data-estados="bloqueado">
+      <strong>Muitas tentativas de acesso.</strong>
+      Aguarde alguns minutos e tente novamente. Se precisar de ajuda, procure a coordenação.
+    </div>
+    <div class="mensagem mensagem-aviso" role="alert" data-estados="indisponivel">
+      <strong>O sistema está ocupado.</strong>
+      Tente novamente em alguns instantes.
+    </div>
+    <p class="sr-only" role="status" data-estados="carregando">Verificando os seus dados.</p>
+
+    <form class="login-form" data-proto-form="login" data-destino="filhos.html" novalidate>
+      <div class="campo">
+        <label for="login">Usuário</label>
+        <input id="login" name="login" type="text" autocomplete="username" autocapitalize="none" spellcheck="false"
+               required aria-describedby="login-erro" data-erro="Informe o seu usuário.">
+        <p class="campo-erro" id="login-erro" hidden></p>
+      </div>
+
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <div class="campo-senha">
+          <input id="senha" name="senha" type="password" autocomplete="current-password"
+                 required aria-describedby="senha-erro" data-erro="Informe a sua senha.">
+          <button type="button" class="ver-senha" data-ver-senha="senha" data-nome-campo="senha"
+                  aria-pressed="false" aria-label="Mostrar senha">Mostrar</button>
+        </div>
+        <p class="campo-erro" id="senha-erro" hidden></p>
+      </div>
+
+      <button class="botao-login" type="submit" data-rotulo-enviando="Entrando…">
+        <span class="botao-rotulo">Entrar</span>
+        <span class="spinner" aria-hidden="true"></span>
+      </button>
+    </form>
+
+    <p class="login-ajuda">Ainda não recebeu o seu acesso ou esqueceu a senha? Procure a coordenação do Instituto: a entrega e a redefinição são feitas pessoalmente.</p>
+    <p class="login-ajuda"><a href="#" data-proto-nota="No sistema real, volta para o site do Instituto.">Voltar ao site do Instituto</a></p>
+  </main>
+</body>
+</html>

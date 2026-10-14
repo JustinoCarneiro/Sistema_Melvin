@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cadastrar responsável — Sistema Melvin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="familia.css">
+  <link rel="stylesheet" href="admin.css">
+  <script src="proto.js" defer></script>
+</head>
+<body class="admin"
+      data-estados-lista="normal:Formulário|carregando:Enviando|sucesso:Cadastrado (login e senha)|erro-servidor:Erro no servidor|sem-permissao:Sem permissão"
+      data-dica="deixe campos em branco ou não marque a conferência do documento para ver os avisos">
+  <a class="pular" href="#principal">Pular para o conteúdo</a>
+
+  <header class="a-topo">
+    <a class="botao botao-texto voltar" href="responsaveis.html" aria-label="Voltar para a lista de responsáveis">← <span class="so-desktop">Responsáveis</span></a>
+    <p class="titulo">SISTEMA MELVIN</p>
+    <span class="usuario">Coordenação</span>
+  </header>
+
+  <main id="principal" class="a-pagina">
+    <div class="a-cartao">
+
+      <!-- Estado: sem permissão (403) -->
+      <section class="estado estado-erro" data-estados="sem-permissao" role="alert" aria-labelledby="sp-titulo">
+        <span class="estado-icone" aria-hidden="true">!</span>
+        <h1 id="sp-titulo" class="a-titulo a-titulo-neutro">Você não tem permissão para cadastrar responsáveis</h1>
+        <p>Esta ação é da coordenação e da administração. Fale com quem administra o acesso se precisar dela.</p>
+        <a class="botao botao-admin" href="responsaveis.html">Voltar</a>
+      </section>
+
+      <!-- Estado: cadastrado — login e senha temporária aparecem uma única vez -->
+      <section data-estados="sucesso" aria-labelledby="ok-titulo" class="form-grade">
+        <div class="a-cabecalho">
+          <div>
+            <h1 class="a-titulo" id="ok-titulo">Responsável cadastrado</h1>
+            <p class="a-subtitulo">Carla Exemplo Lima · mãe de Davi Exemplo Lima (Sala 3)</p>
+          </div>
+        </div>
+
+        <div class="mensagem mensagem-aviso" role="status">
+          <strong>Anote ou imprima agora.</strong>
+          A senha temporária aparece só nesta tela e não poderá ser vista de novo. Se for perdida, será preciso redefinir a senha.
+        </div>
+
+        <div class="credencial" aria-label="Acesso do responsável">
+          <div class="credencial-linha">
+            <div>
+              <p class="credencial-rotulo">Usuário</p>
+              <p class="credencial-valor" id="cred-usuario">F-4K7M29</p>
+            </div>
+            <button type="button" class="botao botao-admin-sec botao-pequeno nao-imprimir" data-copiar="cred-usuario" data-nome-campo="o usuário">Copiar usuário</button>
+          </div>
+          <div class="credencial-linha">
+            <div>
+              <p class="credencial-rotulo">Senha temporária</p>
+              <p class="credencial-valor" id="cred-senha">K7m2-Pq9x-Wd4n</p>
+            </div>
+            <button type="button" class="botao botao-admin-sec botao-pequeno nao-imprimir" data-copiar="cred-senha" data-nome-campo="a senha temporária">Copiar senha</button>
+          </div>
+        </div>
+
+        <ol class="passos">
+          <li>Entregue o usuário e a senha ao responsável, pessoalmente.</li>
+          <li>Explique que, no primeiro acesso, ele vai criar uma senha só dele; a temporária deixa de valer.</li>
+          <li>Não envie por mensagem nem por e-mail.</li>
+        </ol>
+
+        <div class="acoes nao-imprimir">
+          <button type="button" class="botao botao-admin" onclick="window.print()">Imprimir ficha de entrega</button>
+          <a class="botao botao-admin-sec" href="cadastrar-responsavel.html">Cadastrar outro responsável</a>
+          <a class="botao botao-texto" href="responsaveis.html">Ver responsáveis</a>
+        </div>
+      </section>
+
+      <!-- Estados: formulário -->
+      <div class="form-grade" data-estados="normal carregando erro-servidor">
+        <div class="a-cabecalho">
+          <div>
+            <h1 class="a-titulo">Cadastrar responsável</h1>
+            <p class="a-subtitulo">Cada responsável é cadastrado pessoalmente, depois de conferir o documento. Não há cadastro pela internet.</p>
+          </div>
+        </div>
+
+        <div class="mensagem mensagem-erro" role="alert" data-estados="erro-servidor">
+          <strong>Não foi possível cadastrar agora.</strong>
+          Nada foi salvo. Tente novamente em alguns instantes; se continuar, avise o suporte técnico.
+        </div>
+        <p class="sr-only" role="status" data-estados="carregando">Cadastrando o responsável.</p>
+
+        <form class="form-grade" data-proto-form="cadastro" data-destino="cadastrar-responsavel.html?estado=sucesso" novalidate>
+          <div class="campo">
+            <label for="nome">Nome completo do responsável</label>
+            <input id="nome" name="nome" type="text" autocomplete="off" required aria-describedby="nome-erro" data-erro="Informe o nome completo do responsável.">
+            <p class="campo-erro" id="nome-erro" hidden></p>
+          </div>
+
+          <div class="campo">
+            <label for="vinculo">Vínculo com o aluno</label>
+            <select id="vinculo" name="vinculo" required aria-describedby="vinculo-erro" data-erro="Escolha o vínculo.">
+              <option value="">Selecione…</option>
+              <option>Mãe</option><option>Pai</option><option>Avó</option><option>Avô</option>
+              <option>Tia/Tio</option><option>Responsável legal</option><option>Outro</option>
+            </select>
+            <p class="campo-erro" id="vinculo-erro" hidden></p>
+          </div>
+
+          <fieldset class="grupo" aria-describedby="alunos-dica alunos-erro">
+            <legend>Alunos vinculados</legend>
+            <p class="dica" id="alunos-dica">Marque todos os filhos que esta pessoa pode acompanhar. Na tela real há busca por nome ou matrícula.</p>
+            <label class="opcao"><input type="checkbox" name="aluno" value="1"><span>Davi Exemplo Lima<small>Sala 3 · manhã · matrícula 2026001</small></span></label>
+            <label class="opcao"><input type="checkbox" name="aluno" value="2"><span>Alice Exemplo Lima<small>Sala 1 · tarde · matrícula 2026002</small></span></label>
+            <label class="opcao"><input type="checkbox" name="aluno" value="3"><span>Bruno Exemplo Souza<small>Sala 2 · manhã · matrícula 2026003</small></span></label>
+            <p class="campo-erro" id="alunos-erro" hidden>Marque pelo menos um aluno.</p>
+          </fieldset>
+
+          <div class="campo">
+            <label class="opcao confirmacao" for="documento">
+              <input id="documento" name="documento" type="checkbox" required aria-describedby="documento-dica documento-erro" data-erro="Confirme que conferiu o documento para cadastrar.">
+              <span>Conferi pessoalmente o documento de identificação desta pessoa.
+                <small id="documento-dica">O número do documento não é gravado. O sistema registra apenas quem conferiu e quando.</small>
+              </span>
+            </label>
+            <p class="campo-erro" id="documento-erro" hidden></p>
+          </div>
+
+          <div class="rodape-form">
+            <a class="botao botao-admin-sec" href="responsaveis.html">Cancelar</a>
+            <button class="botao botao-admin" type="submit" data-rotulo-enviando="Cadastrando…">
+              <span class="botao-rotulo">Cadastrar responsável</span>
+              <span class="spinner" aria-hidden="true"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

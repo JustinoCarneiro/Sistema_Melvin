@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Meu filho — Área da Família — Instituto Melvin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="familia.css">
+  <script src="proto.js" defer></script>
+</head>
+<body data-estados-lista="normal:Completo|sem-foto:Sem foto|sem-professor:Sem professor|mes-sem-aulas:Mês sem aulas|carregando:Carregando|erro:Erro ao carregar|sem-acesso:Sem acesso ao aluno">
+  <a class="pular" href="#principal">Pular para o conteúdo</a>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="avatar-neutro" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#E8EEF5"/>
+      <circle cx="50" cy="40" r="17" fill="#B7C7DB"/>
+      <path d="M16 100c2-22 16-34 34-34s32 12 34 34z" fill="#B7C7DB"/>
+    </symbol>
+  </svg>
+
+  <header class="f-topo">
+    <div class="f-topo-interno">
+      <a class="f-marca" href="painel.html" aria-label="Área da Família, início">
+        <img src="../../frontend/src/docs/logo_institutomelvin_horizontal.png" alt="">
+        <span class="f-marca-texto">Área da Família</span>
+      </a>
+      <div class="f-usuario">
+        <span class="pilula">Carla Exemplo Lima</span>
+        <a class="botao botao-texto" href="entrar.html">Sair</a>
+      </div>
+    </div>
+  </header>
+
+  <nav class="f-nav" aria-label="Seções da Área da Família">
+    <ul>
+      <li><a href="painel.html" aria-current="page">Meu filho</a></li>
+      <li><a href="#" aria-disabled="true" data-proto-nota="Esta seção (Acompanhamento) chega depois do painel.">Acompanhamento <span class="em-breve">em breve</span></a></li>
+      <li><a href="#" aria-disabled="true" data-proto-nota="Esta seção (Desenvolvimento) chega depois do painel.">Desenvolvimento <span class="em-breve">em breve</span></a></li>
+      <li><a href="#" aria-disabled="true" data-proto-nota="Esta seção (Minha Agenda) chega depois do painel.">Minha agenda <span class="em-breve">em breve</span></a></li>
+      <li><a href="#" aria-disabled="true" data-proto-nota="Esta seção (Documentos e passeios) chega depois do painel.">Documentos <span class="em-breve">em breve</span></a></li>
+      <li><a href="#" aria-disabled="true" data-proto-nota="Esta seção (Fale com o Instituto) chega depois do painel.">Fale com o Instituto <span class="em-breve">em breve</span></a></li>
+    </ul>
+  </nav>
+
+  <main id="principal" class="f-conteudo">
+
+    <!-- Estado: carregando -->
+    <div data-estados="carregando" role="status" aria-label="Carregando o painel" class="cartao">
+      <div class="aluno-hero">
+        <div class="esqueleto esq-avatar"></div>
+        <div><div class="esqueleto esq-linha esq-60"></div><div class="esqueleto esq-linha esq-35"></div></div>
+        <div class="fatos"><div class="esqueleto esq-linha"></div><div class="esqueleto esq-linha"></div><div class="esqueleto esq-linha"></div></div>
+      </div>
+    </div>
+
+    <!-- Estado: erro -->
+    <section class="estado estado-erro" data-estados="erro" role="alert" aria-labelledby="er-titulo">
+      <span class="estado-icone" aria-hidden="true">!</span>
+      <h2 id="er-titulo">Não conseguimos carregar o painel</h2>
+      <p>Nada foi alterado. Tente novamente; se continuar, procure a coordenação.</p>
+      <a class="botao botao-primario" href="?estado=normal">Tentar de novo</a>
+    </section>
+
+    <!-- Estado: sem acesso (mesma resposta para "não existe" e "não é seu filho") -->
+    <section class="estado" data-estados="sem-acesso" aria-labelledby="sa-titulo">
+      <span class="estado-icone" aria-hidden="true">i</span>
+      <h2 id="sa-titulo">Não encontramos este aluno no seu acesso</h2>
+      <p>Escolha um dos filhos vinculados a você. Se acha que há um engano, procure a coordenação.</p>
+      <a class="botao botao-primario" href="filhos.html">Ver meus filhos</a>
+    </section>
+
+    <!-- Estados com conteúdo -->
+    <div class="bloco" data-estados="normal sem-foto sem-professor mes-sem-aulas">
+      <div class="f-linha-topo">
+        <p class="sobretitulo">Meu filho</p>
+        <a class="botao botao-texto" href="filhos.html">Trocar de filho(a)</a>
+      </div>
+
+      <section class="cartao aluno-hero" aria-labelledby="aluno-nome">
+        <div class="avatar">
+          <svg role="img" aria-label="Foto de Davi Exemplo Lima (ilustração no protótipo)" data-estados="normal sem-professor mes-sem-aulas"><use href="#avatar-neutro"/></svg>
+          <span aria-hidden="true" data-estados="sem-foto">DE</span>
+        </div>
+        <div>
+          <h1 class="aluno-nome" id="aluno-nome">Davi Exemplo Lima</h1>
+        </div>
+        <dl class="fatos">
+          <div class="fato"><dt>Turma</dt><dd>Sala 3</dd></div>
+          <div class="fato">
+            <dt>Professor(a)</dt>
+            <dd data-estados="normal sem-foto mes-sem-aulas">Profª. Helena Exemplo</dd>
+            <dd class="vazio" data-estados="sem-professor">Ainda não informado</dd>
+          </div>
+          <div class="fato"><dt>Horário</dt><dd>Turno da manhã</dd></div>
+        </dl>
+      </section>
+
+      <section class="cartao" aria-labelledby="freq-titulo">
+        <h2 id="freq-titulo">Frequência de outubro</h2>
+
+        <div data-estados="normal sem-foto sem-professor">
+          <p class="freq-numero"><strong>92%</strong> <span>de presença no mês</span></p>
+          <div class="progresso" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="92" aria-label="Presença em outubro: 92%"><span style="width:92%"></span></div>
+          <ul class="freq-resumo">
+            <li>11 presenças</li>
+            <li class="justificada">1 falta justificada</li>
+            <li class="falta">0 faltas sem justificativa</li>
+          </ul>
+          <p class="nota">Atualizado com a chamada de 14/10/2026.</p>
+        </div>
+
+        <div data-estados="mes-sem-aulas">
+          <p class="nota nota-grande">Ainda não há aulas registradas neste mês. Assim que a primeira chamada for feita, a frequência aparece aqui.</p>
+        </div>
+      </section>
+
+      <section class="cartao" aria-labelledby="atalhos-titulo">
+        <h2 id="atalhos-titulo">Conheça o Instituto</h2>
+        <p class="nota nota-colada">Abre o site do Instituto, em outra aba.</p>
+        <ul class="atalhos">
+          <li><a href="#" data-proto-nota="No sistema real, abre a página pública “Equipe”.">Professores<span class="sr-only"> (abre o site do Instituto)</span></a></li>
+          <li><a href="#" data-proto-nota="No sistema real, abre a página pública “Diretoria”.">Diretoria<span class="sr-only"> (abre o site do Instituto)</span></a></li>
+          <li><a href="#" data-proto-nota="No sistema real, abre a página pública “Secretaria”.">Secretaria<span class="sr-only"> (abre o site do Instituto)</span></a></li>
+          <li><a href="#" data-proto-nota="No sistema real, abre a página pública “Projetos”.">Projetos<span class="sr-only"> (abre o site do Instituto)</span></a></li>
+          <li><a href="#" data-proto-nota="No sistema real, abre a página pública “Nossos Espaços”.">Nossos Espaços<span class="sr-only"> (abre o site do Instituto)</span></a></li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="f-rodape">
+    <p>Os dados do seu filho são protegidos pela LGPD e só aparecem para quem está vinculado a ele. Para corrigir alguma informação, procure a coordenação.</p>
+  </footer>
+</body>
+</html>

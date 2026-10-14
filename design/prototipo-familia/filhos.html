@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Escolha o seu filho — Área da Família — Instituto Melvin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="familia.css">
+  <script src="proto.js" defer></script>
+</head>
+<body data-estados-lista="normal:Dois filhos|carregando:Carregando|sem-vinculo:Sem vínculo ativo|erro:Erro ao carregar">
+  <a class="pular" href="#principal">Pular para o conteúdo</a>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="avatar-neutro" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#E8EEF5"/>
+      <circle cx="50" cy="40" r="17" fill="#B7C7DB"/>
+      <path d="M16 100c2-22 16-34 34-34s32 12 34 34z" fill="#B7C7DB"/>
+    </symbol>
+  </svg>
+
+  <header class="f-topo">
+    <div class="f-topo-interno">
+      <a class="f-marca" href="filhos.html" aria-label="Área da Família, início">
+        <img src="../../frontend/src/docs/logo_institutomelvin_horizontal.png" alt="">
+        <span class="f-marca-texto">Área da Família</span>
+      </a>
+      <div class="f-usuario">
+        <span class="pilula">Carla Exemplo Lima</span>
+        <a class="botao botao-texto" href="entrar.html">Sair</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="principal" class="f-conteudo">
+    <div>
+      <p class="sobretitulo">Olá, Carla</p>
+      <h1 data-estados="normal carregando erro">Quem você quer acompanhar?</h1>
+      <h1 data-estados="sem-vinculo">Área da Família</h1>
+    </div>
+
+    <!-- Estado: carregando -->
+    <div data-estados="carregando" role="status" aria-label="Carregando os seus filhos" class="filhos-lista">
+      <div class="esqueleto esq-cartao"></div>
+      <div class="esqueleto esq-cartao"></div>
+    </div>
+
+    <!-- Estado: normal (dois filhos vinculados) -->
+    <ul class="filhos-lista" data-estados="normal">
+      <li>
+        <a class="filho-cartao" href="painel.html">
+          <span class="avatar" aria-hidden="true"><svg><use href="#avatar-neutro"/></svg></span>
+          <span class="filho-info">
+            <strong>Davi Exemplo Lima</strong>
+            <span>Sala 3 · turno da manhã</span>
+          </span>
+          <span class="filho-ir">Ver painel</span>
+        </a>
+      </li>
+      <li>
+        <a class="filho-cartao" href="painel.html?estado=sem-foto">
+          <span class="avatar" aria-hidden="true">AE</span>
+          <span class="filho-info">
+            <strong>Alice Exemplo Lima</strong>
+            <span>Sala 1 · turno da tarde</span>
+          </span>
+          <span class="filho-ir">Ver painel</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Estado: sem vínculo ativo -->
+    <section class="estado" data-estados="sem-vinculo" aria-labelledby="sv-titulo">
+      <span class="estado-icone" aria-hidden="true">i</span>
+      <h2 id="sv-titulo">Nenhum filho vinculado ao seu acesso</h2>
+      <p>Seu acesso ainda não está ligado a nenhum aluno, ou o vínculo foi encerrado. Procure a coordenação do Instituto para regularizar.</p>
+      <a class="botao botao-secundario" href="entrar.html">Sair</a>
+    </section>
+
+    <!-- Estado: erro -->
+    <section class="estado estado-erro" data-estados="erro" role="alert" aria-labelledby="er-titulo">
+      <span class="estado-icone" aria-hidden="true">!</span>
+      <h2 id="er-titulo">Não conseguimos carregar agora</h2>
+      <p>Nada foi alterado. Tente novamente em instantes; se continuar, procure a coordenação.</p>
+      <a class="botao botao-primario" href="?estado=normal">Tentar de novo</a>
+    </section>
+  </main>
+
+  <footer class="f-rodape">
+    <p>Quem tem um só filho vinculado pula esta tela e entra direto no painel dele.</p>
+  </footer>
+</body>
+</html>

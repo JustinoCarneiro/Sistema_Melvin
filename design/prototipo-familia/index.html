@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Protótipo da Área da Família — Instituto Melvin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../tokens.css">
+  <link rel="stylesheet" href="familia.css">
+  <style>
+    .mapa { list-style: none; margin: 0; padding: 0; display: grid; gap: .85rem; }
+    .mapa li { background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: var(--raio-cartao); box-shadow: var(--sombra-sm); padding: 1rem 1.25rem; display: grid; gap: .35rem; }
+    .mapa a.tela { display: inline-flex; align-items: center; min-height: 2.75rem; font-family: var(--fonte-titulo); font-size: 1.15rem; font-weight: 700; color: var(--cor-primaria); }
+    .mapa .meta { font-size: .85rem; color: var(--aa-texto-secundario); }
+    .lista { margin: .5rem 0 0; padding-left: 1.25rem; display: grid; gap: .35rem; }
+    code { background: var(--cor-bg-secundario); padding: .05rem .35rem; border-radius: .3rem; font-size: .9em; }
+  </style>
+</head>
+<body>
+  <a class="pular" href="#principal">Pular para o conteúdo</a>
+  <main id="principal" class="f-conteudo">
+    <header>
+      <p class="sobretitulo">Fase 2 · protótipo estático para aprovação</p>
+      <h1>Área da Família: protótipo navegável</h1>
+      <p style="margin-top:.5rem">Telas de exemplo com dados inventados (nenhuma criança ou família real). Nada aqui conversa com o sistema. A identidade visual é a que o Instituto já aprovou; nenhuma linguagem visual nova foi criada.</p>
+    </header>
+
+    <section class="cartao" aria-labelledby="como-ver">
+      <h2 id="como-ver">Como navegar</h2>
+      <ul class="lista">
+        <li>Abra as telas na ordem abaixo. Em cada uma, a <strong>barra escura no rodapé</strong> troca o estado (normal, carregando, erro, vazio…). Essa barra é do protótipo e não existirá no sistema.</li>
+        <li>No login, o campo <em>Usuário</em> aceita palavras-chave para ver os caminhos: <code>erro</code>, <code>bloqueio</code>, <code>ocupado</code>, <code>novo</code> (primeiro acesso), <code>unico</code> (um filho só). Qualquer outro texto entra com dois filhos. A senha pode ser qualquer uma.</li>
+        <li>Funciona no celular e no computador; reduza a janela para conferir.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="familia-titulo">
+      <h2 id="familia-titulo" style="margin-bottom:.75rem">O que a família vê</h2>
+      <ol class="mapa">
+        <li>
+          <a class="tela" href="entrar.html">1. Entrar na Área da Família</a>
+          <span class="meta">História US-13.1 · estados: normal, enviando, usuário/senha inválidos, muitas tentativas, sistema ocupado</span>
+          <span>Não há botão “Criar conta”: o acesso é entregue pela coordenação. A mensagem de erro nunca diz se o usuário existe.</span>
+        </li>
+        <li>
+          <a class="tela" href="trocar-senha.html">2. Criar a própria senha (primeiro acesso)</a>
+          <span class="meta">História US-13.1 · estados: normal, enviando, senha criada, erro no servidor, validações no campo</span>
+          <span>Aparece só para quem entrou com a senha temporária. Sem criar a senha, o resto fica bloqueado.</span>
+        </li>
+        <li>
+          <a class="tela" href="filhos.html">3. Escolher o filho</a>
+          <span class="meta">História US-13.1 · estados: dois filhos, carregando, sem vínculo ativo, erro</span>
+          <span>Quem tem um só filho pula esta tela.</span>
+        </li>
+        <li>
+          <a class="tela" href="painel.html">4. Painel “Meu Filho”</a>
+          <span class="meta">História US-13.2 · estados: completo, sem foto, sem professor, mês sem aulas, carregando, erro, sem acesso ao aluno</span>
+          <span>Foto, nome, turma, professor, horário e frequência do mês, mais atalhos para o site do Instituto. As outras seções do menu aparecem como “em breve”.</span>
+        </li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="equipe-titulo">
+      <h2 id="equipe-titulo" style="margin-bottom:.75rem">O que a coordenação e a administração veem</h2>
+      <ol class="mapa">
+        <li>
+          <a class="tela" href="responsaveis.html">5. Lista de responsáveis</a>
+          <span class="meta">História US-13.1 · estados: lista, carregando, nenhum cadastrado, erro, sem permissão</span>
+          <span>Vínculos, redefinir senha (presencial) e desativar acesso, cada um com confirmação.</span>
+        </li>
+        <li>
+          <a class="tela" href="cadastrar-responsavel.html">6. Cadastrar responsável</a>
+          <span class="meta">História US-13.1 · estados: formulário, enviando, cadastrado (usuário e senha temporária), erro no servidor, sem permissão</span>
+          <span>Só se cadastra depois de conferir o documento pessoalmente. O usuário e a senha temporária aparecem uma única vez, com ficha para imprimir.</span>
+        </li>
+      </ol>
+    </section>
+
+    <section class="cartao" aria-labelledby="conferir">
+      <h2 id="conferir">O que conferir antes de aprovar</h2>
+      <ul class="lista">
+        <li>O <strong>horário</strong> do painel mostra só o turno (manhã ou tarde), porque o cadastro do aluno hoje não guarda horário de início e fim.</li>
+        <li>A <strong>foto</strong> é uma ilustração neutra no protótipo; no sistema será a foto cadastrada na ficha do aluno (a autorização de imagem já está assinada na matrícula).</li>
+        <li>O <strong>professor</strong> vem da sala do aluno; se não houver professor identificado, o painel mostra “Ainda não informado”.</li>
+        <li>As seções <em>Acompanhamento, Desenvolvimento, Minha agenda, Documentos</em> e <em>Fale com o Instituto</em> chegam em entregas seguintes; aqui só aparecem como “em breve”.</li>
+        <li>Não há opção de reativar um acesso desativado nem de recuperar senha pela internet: a redefinição é sempre presencial. Isso é o desenho atual; diga se falta algo.</li>
+      </ul>
+    </section>
+
+    <p class="nota">Aprovado este layout, ele entra em <strong>congelamento visual</strong>: mudanças de layout depois disso passam a ser mudança de escopo.</p>
+  </main>
+</body>
+</html>
