@@ -29,8 +29,18 @@ Dado que uma matrícula acumulou 10 tentativas de senha errada (de qualquer IP) 
 matrículas diferentes, numa janela de 15 minutos,
 Quando uma nova tentativa chega, mesmo com a senha certa,
 Então o sistema responde 429 até a janela acabar; um login bem-sucedido zera a contagem da matrícula (não a do IP).
+
+Dado que a pessoa foi desligada (o voluntário de mesma matrícula está com status diferente de "true"),
+Quando ela tenta entrar, mesmo com a senha certa, ou usa um token emitido antes do desligamento,
+Então o login responde o mesmo 401 "Matrícula ou senha inválida" (sem revelar que a conta existe) e o token deixa de
+autenticar já na requisição seguinte; reativar o voluntário reabre o acesso sem mexer no usuário.
+
+Dado uma conta da equipe sem voluntário de mesma matrícula (conta administrativa ou técnica),
+Quando ela entra,
+Então o acesso segue como antes: a regra só vale para quem tem voluntário desligado.
 ```
 > **Nota de implementação (10/10/2026):** `LoginAttemptService`. Ver [[login-sem-limite-de-tentativas-e-verificacao-de-senha-sem-teto]].
+> **Nota de implementação (15/10/2026):** `ContaDeEquipeAtiva`, conferida no login (`AuthorizationService`) e a cada requisição (`SecurityFilter`). Ver [[voluntario-desligado-continuava-logando]].
 
 #### US-1.2: Registro de Usuário
 **Como** administrador,

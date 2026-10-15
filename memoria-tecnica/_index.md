@@ -30,6 +30,7 @@ Piloto do padrão "memória técnica por projeto" da metodologia Onda-Dev (avali
 - [[cadastros-publicos-confiavam-no-corpo-da-requisicao]]
 - [[login-sem-limite-de-tentativas-e-verificacao-de-senha-sem-teto]]
 - [[upload-aceitava-qualquer-arquivo-servido-pelo-mesmo-dominio]]
+- [[voluntario-desligado-continuava-logando]]
 - [[flyway-nao-reconstroi-banco-do-zero-baseline-vazio]] — pendente
 
 ## Decisões
