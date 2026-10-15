@@ -2,7 +2,7 @@
 tipo: bug
 data: 2026-10-15
 severidade: Alta
-status: Corrigido no código (branch fix/login-voluntario-desligado), sem deploy
+status: Corrigido e publicado em produção em 15/10/2026 (commit 4dab670); sem validação humana com login real ainda
 ---
 
 # Voluntário desligado continuava entrando no sistema
