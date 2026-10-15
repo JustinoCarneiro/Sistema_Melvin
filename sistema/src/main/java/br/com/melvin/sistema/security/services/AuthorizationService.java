@@ -14,10 +14,15 @@ public class AuthorizationService implements UserDetailsService{
     @Autowired
     UserRepository repository;
 
+    @Autowired
+    ContaDeEquipeAtiva contaAtiva;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserDetails user = repository.findByLogin(username);
-        if (user == null) {
+        // Voluntário desligado responde como matrícula inexistente: o login falha com a mesma
+        // mensagem de senha errada e não revela que a conta existe.
+        if (user == null || !contaAtiva.ativa(username)) {
             throw new UsernameNotFoundException("Usuário não encontrado: " + username);
         }
         return user;

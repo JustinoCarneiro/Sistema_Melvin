@@ -25,10 +25,17 @@ class UserTest {
     }
 
     @Test
-    void getAuthorities_Dire_AindaResolveViaFallback() {
-        // Guarda de regressão do comportamento existente: DIRE é o único cargo sem branch próprio
-        // em getAuthorities(), resolvido pelo "else" final. Continua funcionando após a adição do TECH.
+    void getAuthorities_Dire_RetornaRoleDire() {
         assertEquals("ROLE_DIRE", singleAuthority(UserRole.DIRE));
+    }
+
+    // Antes, qualquer cargo sem branch próprio (ou nulo) caía no "else" final e ganhava ROLE_DIRE.
+    // Um cargo novo no enum esquecido aqui passaria a ter privilégio alto sem aviso; agora fica sem nenhum.
+    @Test
+    void getAuthorities_CargoAusenteNaoGanhaPrivilegioNenhum() {
+        User user = new User("matricula", "senha", null);
+
+        assertTrue(user.getAuthorities().isEmpty());
     }
 
     @Test

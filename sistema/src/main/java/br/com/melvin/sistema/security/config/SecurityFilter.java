@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import br.com.melvin.sistema.security.repository.UserRepository;
+import br.com.melvin.sistema.security.services.ContaDeEquipeAtiva;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,6 +32,9 @@ public class SecurityFilter extends OncePerRequestFilter{
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ContaDeEquipeAtiva contaAtiva;
 
     // Map to store public endpoints by HTTP method
     private static final Map<String, List<String>> PUBLIC_ENDPOINTS_BY_METHOD = new HashMap<>();
@@ -68,7 +72,8 @@ public class SecurityFilter extends OncePerRequestFilter{
             logger.debug("Login extracted from token: {}", login);
             UserDetails user = userRepository.findByLogin(login);
 
-            if (user != null) {
+            // Token válido de voluntário desligado não autentica: a conta é conferida a cada requisição.
+            if (user != null && contaAtiva.ativa(user.getUsername())) {
                 logger.debug("User found: {}", user.getUsername());
                 var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);

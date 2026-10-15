@@ -21,6 +21,9 @@ public class AuthorizationServiceTest {
     @Mock
     private UserRepository repository;
 
+    @Mock
+    private ContaDeEquipeAtiva contaAtiva;
+
     @InjectMocks
     private AuthorizationService service;
 
@@ -28,10 +31,23 @@ public class AuthorizationServiceTest {
     void deveRetornarUsuarioQuandoMatriculaExiste() {
         User user = new User("2026001", "hash", UserRole.ADM);
         when(repository.findByLogin("2026001")).thenReturn(user);
+        when(contaAtiva.ativa("2026001")).thenReturn(true);
 
         UserDetails result = service.loadUserByUsername("2026001");
 
         assertThat(result).isEqualTo(user);
+    }
+
+    // Voluntário desligado responde como matrícula inexistente: o login falha com a mesma
+    // mensagem de senha errada e não revela que a conta existe.
+    @Test
+    void deveRecusarContaDeVoluntarioDesligadoComoSeNaoExistisse() {
+        User user = new User("2026002", "hash", UserRole.PROF);
+        when(repository.findByLogin("2026002")).thenReturn(user);
+        when(contaAtiva.ativa("2026002")).thenReturn(false);
+
+        assertThatThrownBy(() -> service.loadUserByUsername("2026002"))
+                .isInstanceOf(UsernameNotFoundException.class);
     }
 
     @Test

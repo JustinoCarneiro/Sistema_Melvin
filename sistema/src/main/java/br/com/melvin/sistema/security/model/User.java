@@ -53,7 +53,9 @@ public class User implements UserDetails {
         else if(this.role == UserRole.PSICO) return List.of(new SimpleGrantedAuthority("ROLE_PSICO")); // Adicionado
         else if(this.role == UserRole.ASSIST) return List.of(new SimpleGrantedAuthority("ROLE_ASSIST")); // Adicionado (Correção Principal)
         else if(this.role == UserRole.TECH)  return List.of(new SimpleGrantedAuthority("ROLE_TECH")); // Perfil técnico (US-1.5)
-        else                                 return List.of(new SimpleGrantedAuthority("ROLE_DIRE"));
+        else if(this.role == UserRole.DIRE)  return List.of(new SimpleGrantedAuthority("ROLE_DIRE"));
+        // Cargo ausente ou esquecido neste mapa não ganha privilégio nenhum (antes caía em ROLE_DIRE).
+        else                                 return List.of();
     }
 
     @Override
